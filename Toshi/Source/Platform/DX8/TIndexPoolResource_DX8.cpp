@@ -11,6 +11,7 @@
 
 TOSHI_NAMESPACE_START
 
+// NOTE: GetClass 006d5dc0, CreateObject 006d5ef0, CreateObjectInPlace 006d5f30
 TDEFINE_CLASS( TIndexPoolResource );
 
 // $Barnyard: FUNCTION 006d5ef0
@@ -42,27 +43,27 @@ TBOOL TIndexPoolResource::Validate()
 		TUINT32 uiFlags;
 		TUINT16 uiMaxVertices;
 
-		TUINT8 uiUnk1 = m_uiFlags & 7;
+		TUINT8 uiUsage = m_uiFlags & FLAGS_USAGE_MASK;
 
-		if ( uiUnk1 == 1 )
+		if ( uiUsage == FLAGS_STATIC )
 		{
 			uiMaxVertices = pFactory->GetMaxStaticIndices();
-			uiFlags       = 1;
+			uiFlags       = FLAGS_STATIC;
 		}
-		else if ( uiUnk1 == 2 )
+		else if ( uiUsage == FLAGS_DYNAMIC )
 		{
 			uiMaxVertices = GetMaxIndices();
-			uiFlags       = 2;
+			uiFlags       = FLAGS_DYNAMIC;
 		}
 		else
 		{
-			if ( uiUnk1 != 4 )
+			if ( uiUsage != FLAGS_DYNAMIC_APPEND )
 			{
 				return TFALSE;
 			}
 
 			uiMaxVertices = GetMaxIndices();
-			uiFlags       = 4;
+			uiFlags       = FLAGS_DYNAMIC_APPEND;
 		}
 
 		pBlock = pFactory->CreateBlockResource( uiMaxVertices, uiFlags );
@@ -95,7 +96,7 @@ void TIndexPoolResource::Invalidate()
 // $Barnyard: FUNCTION 006d5e20
 void TIndexPoolResource::OnDestroy()
 {
-	if ( m_uiFlags & 1 && m_pIndices )
+	if ( m_uiFlags & FLAGS_STATIC && m_pIndices )
 	{
 		delete[] m_pIndices;
 		m_pIndices = TNULL;
@@ -115,14 +116,14 @@ TBOOL TIndexPoolResource::Lock( LockBuffer* a_pLockBuffer )
 
 	if ( uiOldLockCount == 0 )
 	{
-		TUINT8 uiUnk1 = m_uiFlags & 7;
+		TUINT8 uiUsage = m_uiFlags & FLAGS_USAGE_MASK;
 
-		if ( uiUnk1 == 1 )
+		if ( uiUsage == FLAGS_STATIC )
 		{
 			a_pLockBuffer->pBuffer = m_pIndices;
 			return TTRUE;
 		}
-		else if ( uiUnk1 == 2 )
+		else if ( uiUsage == FLAGS_DYNAMIC )
 		{
 			Validate();
 
@@ -132,7 +133,7 @@ TBOOL TIndexPoolResource::Lock( LockBuffer* a_pLockBuffer )
 				return TTRUE;
 			}
 		}
-		else if ( uiUnk1 == 4 )
+		else if ( uiUsage == FLAGS_DYNAMIC_APPEND )
 		{
 			Validate();
 
@@ -170,11 +171,11 @@ void TIndexPoolResource::Unlock( TUINT16 a_uiNewNumIndices )
 
 		m_uiNumIndices = a_uiNewNumIndices;
 
-		if ( m_uiFlags & 6 )
+		if ( m_uiFlags & ( FLAGS_DYNAMIC | FLAGS_DYNAMIC_APPEND ) )
 		{
 			GetIndexBlock()->Unlock();
 		}
-		else if ( m_uiFlags & 1 )
+		else if ( m_uiFlags & FLAGS_STATIC )
 		{
 			Validate();
 		}
@@ -184,14 +185,14 @@ void TIndexPoolResource::Unlock( TUINT16 a_uiNewNumIndices )
 // $Barnyard: FUNCTION 006d5dd0
 TBOOL TIndexPoolResource::Create( TIndexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxIndices, TUINT16 a_uiFlags )
 {
-	if ( a_uiFlags & 4 )
+	if ( a_uiFlags & FLAGS_DYNAMIC_APPEND )
 	{
-		a_uiFlags = a_uiFlags & 0xfffb | 2;
+		a_uiFlags = a_uiFlags & ~FLAGS_DYNAMIC_APPEND | FLAGS_DYNAMIC;
 	}
 
 	if ( TIndexPoolResourceInterface::Create( a_pFactory, a_uiMaxIndices, a_uiFlags ) )
 	{
-		if ( m_uiFlags & 1 )
+		if ( m_uiFlags & FLAGS_STATIC )
 		{
 			m_pIndices = new TIndexType[ a_uiMaxIndices ];
 			TVALIDPTR( m_pIndices );

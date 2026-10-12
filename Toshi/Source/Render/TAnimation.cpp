@@ -18,7 +18,8 @@ TBOOL TAnimation::UpdateTime( TFLOAT a_fDeltaTime )
 
 	TFLOAT fSeqDuration = pSeq->GetDuration();
 
-	m_fTotalTime += m_fSpeed * a_fDeltaTime;
+	// The total time always grows, even when playing backwards
+	m_fTotalTime += TMath::Abs( m_fSpeed * a_fDeltaTime );
 	m_fSeqTime += m_fSpeed * a_fDeltaTime;
 
 	if ( pSeq->GetMode() == TSkeletonSequence::MODE_LOOPED && !HASANYFLAG( m_eFlags, Flags_Managed ) )
@@ -97,6 +98,7 @@ void TAnimation::RemoveAnimation( TFLOAT a_fVal )
 		m_pSkeletonInstance->RemoveAnimation( this, a_fVal );
 }
 
+// $Barnyard: FUNCTION 006ca2d0
 TFLOAT TAnimation::SetDestWeight( TFLOAT a_fDestWeight, TFLOAT a_fBlendInSpeed )
 {
 	TFLOAT fOldValue = m_fDestWeight;
@@ -142,6 +144,49 @@ void TAnimation::ChangeToManaged( TFLOAT a_fBlendOutSpeed )
 		m_fSeqTime       = m_fSeqTime - TMath::FloorToInt( m_fSeqTime / fSeqDuration ) * fSeqDuration;
 		m_fTotalTime     = m_fSeqTime;
 	}
+}
+
+
+// $Barnyard: FUNCTION 006ca1d0
+TBOOL TAnimation::IsFinishing( TFLOAT a_fDeltaTime ) const
+{
+	if ( !IsManaged() || m_eState != STATE_BLENDING_OUT )
+		return TFALSE;
+
+	if ( 0.0f == m_fBlendOutSpeed )
+		return TTRUE;
+
+	return m_fWeight - 1.0f / m_fBlendOutSpeed * a_fDeltaTime <= 0.0f;
+}
+
+// $Barnyard: FUNCTION 006ca310
+TFLOAT TAnimation::SetTime( TFLOAT a_fTime )
+{
+	TFLOAT             fOldTime  = m_fTotalTime;
+	TSkeletonSequence* pSequence = m_pSkeletonInstance->GetSkeleton()->GetSequence( m_iSeqID );
+
+	m_fTotalTime = a_fTime;
+	m_fSeqTime   = a_fTime;
+
+	if ( pSequence->GetMode() != TSkeletonSequence::MODE_LOOPED || IsManaged() )
+	{
+		if ( a_fTime >= 0.0f )
+		{
+			if ( a_fTime > pSequence->GetDuration() )
+				m_fSeqTime = pSequence->GetDuration();
+		}
+		else
+		{
+			m_fSeqTime = 0.0f;
+		}
+	}
+	else
+	{
+		TFLOAT fDuration = pSequence->GetDuration();
+		m_fSeqTime       = m_fSeqTime - TMath::FloorToInt( a_fTime / fDuration ) * fDuration;
+	}
+
+	return fOldTime;
 }
 
 TOSHI_NAMESPACE_END

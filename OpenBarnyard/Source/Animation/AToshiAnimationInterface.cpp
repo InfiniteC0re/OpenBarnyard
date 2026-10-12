@@ -11,7 +11,7 @@
 TOSHI_NAMESPACE_USING
 
 // $Barnyard: FUNCTION 00582690
-static AToshiAnimationRef* GetAnimationRef( T2DList<AToshiAnimationRef>& a_rList, const TPString8& a_strAnimationName )
+AToshiAnimationRef* AToshiAnimationInterface::GetAnimationRef( T2DList<AToshiAnimationRef>& a_rList, const TPString8& a_strAnimationName )
 {
 	T2_FOREACH( a_rList, it )
 	{
@@ -45,7 +45,7 @@ AToshiAnimationInterface::AToshiAnimationInterface()
     : m_pSkeletonInstance( TNULL )
     , m_fTime( 0.0f )
     , m_Unk2( 0 )
-    , m_eFlags( 0 )
+    , m_eFlags( FLAGS_NONE )
 {
 }
 
@@ -69,9 +69,9 @@ void AToshiAnimationInterface::Update( TFLOAT a_fDeltaTime, AnimEventList& a_rEv
 		// Some animation has just started playing, update flags
 
 		if ( IsAllStatic() )
-			m_eFlags |= 1;
+			m_eFlags |= FLAGS_ALL_STATIC;
 		else
-			m_eFlags &= ~1;
+			m_eFlags &= ~FLAGS_ALL_STATIC;
 	}
 }
 
@@ -279,6 +279,7 @@ void AToshiAnimationInterface::UpdateAnimation( TFLOAT a_fDeltaTime, AToshiAnima
 	}
 }
 
+// NOTE: inlined into UpdateAnimation (005827a0)
 void AToshiAnimationInterface::UpdateAnimationBreakpoints( AToshiAnimationRef& a_rAnimRef, Toshi::TAnimation* a_pAnimation, AnimEventList& a_rEventList )
 {
 	ANamedAnimation* pNamedAnimation = a_rAnimRef.GetNamedAnimation();
@@ -288,14 +289,22 @@ void AToshiAnimationInterface::UpdateAnimationBreakpoints( AToshiAnimationRef& a
 	TINT        iNumBreakpoints    = pNamedAnimation->GetBreakpoints().Size();
 	TAnimation* pAnimation         = m_pSkeletonInstance->GetAnimation( pNamedAnimation->GetSequenceId() );
 
+	// Animations that aren't managed (removed when they end) are looped
+	TBOOL bLooped = pAnimation && !pAnimation->IsManaged();
+
 	// Reset breakpoint index if necessary
-	if ( pAnimation && pAnimation->IsManaged() && a_rAnimRef.m_iBreakpointIndex >= iNumBreakpoints )
+	if ( bLooped && iCurrentBreakpoint >= iNumBreakpoints )
+	{
+		// NOTE: the original only resets the stored index and keeps using the old one
+		// in this update, which would read past the breakpoints
+		iCurrentBreakpoint            = 0;
 		a_rAnimRef.m_iBreakpointIndex = 0;
+	}
 
 	TFLOAT fCurrentAnimTime  = ( !a_pAnimation ) ? pNamedAnimation->GetDuration() : a_pAnimation->GetSeqTime();
 	TFLOAT fPreviousAnimTime = a_rAnimRef.m_fTime;
 
-	if ( iCurrentBreakpoint < iNumBreakpoints || ( pAnimation && pAnimation->IsManaged() ) )
+	if ( iCurrentBreakpoint < iNumBreakpoints || bLooped )
 	{
 		TFLOAT fAnimDeltaTime = fCurrentAnimTime - fPreviousAnimTime;
 
@@ -303,22 +312,21 @@ void AToshiAnimationInterface::UpdateAnimationBreakpoints( AToshiAnimationRef& a
 		if ( fAnimDeltaTime < 0.0f )
 			fAnimDeltaTime += pNamedAnimation->GetDuration();
 
-		for ( TINT i = 0; iCurrentBreakpoint < iNumBreakpoints && i < iNumBreakpoints && ( !pAnimation || pAnimation->IsManaged() ); i++ )
+		for ( TINT i = 0; ( iCurrentBreakpoint < iNumBreakpoints || bLooped ) && i < iNumBreakpoints; i++ )
 		{
 			AAnimationBreakpoint* pBreakpoint       = pNamedAnimation->GetBreakpoints()[ iCurrentBreakpoint ];
 			TFLOAT                fTimeToBreakpoint = fCurrentAnimTime - pBreakpoint->GetTime();
 
 			if ( a_pAnimation && fTimeToBreakpoint < 0.0f )
 			{
-				// If animation didn't start from the beginning, or we already fetched this breakpoint, skip...
-				if ( !pAnimation || !pAnimation->IsManaged() || fCurrentAnimTime >= fPreviousAnimTime || fPreviousAnimTime >= pBreakpoint->GetTime() )
+				// The breakpoint is ahead, unless the looped animation has restarted and it was skipped
+				if ( !bLooped || fCurrentAnimTime >= fPreviousAnimTime || fPreviousAnimTime >= pBreakpoint->GetTime() )
 					break;
 
-				// The animation did start from the beginning, so need to normalize the time value
 				fTimeToBreakpoint += pNamedAnimation->GetDuration();
 			}
 
-			// If we already activated that breakpoint before, skip...
+			// The breakpoint hasn't been reached during this update
 			if ( fAnimDeltaTime < fTimeToBreakpoint )
 				break;
 
@@ -327,7 +335,8 @@ void AToshiAnimationInterface::UpdateAnimationBreakpoints( AToshiAnimationRef& a
 			animEvent.SetBreakpointEvent( pBreakpoint, pNamedAnimation->IsOverlay(), pNamedAnimation->GetName(), TMath::Max( fTimeToBreakpoint, 0.0f ) );
 
 			iCurrentBreakpoint++;
-			if ( iCurrentBreakpoint >= iNumBreakpoints )
+
+			if ( bLooped && iCurrentBreakpoint >= iNumBreakpoints )
 			{
 				iCurrentBreakpoint = 0;
 
@@ -342,6 +351,7 @@ void AToshiAnimationInterface::UpdateAnimationBreakpoints( AToshiAnimationRef& a
 	a_rAnimRef.m_fTime = fCurrentAnimTime;
 }
 
+// NOTE: inlined into UpdateAnimation (005827a0)
 void AToshiAnimationInterface::UpdateAnimationBreakpointsReverse( AToshiAnimationRef& a_rAnimRef, Toshi::TAnimation* a_pAnimation, AnimEventList& a_rEventList )
 {
 	ANamedAnimation* pNamedAnimation = a_rAnimRef.GetNamedAnimation();
@@ -351,47 +361,48 @@ void AToshiAnimationInterface::UpdateAnimationBreakpointsReverse( AToshiAnimatio
 	TINT        iNumBreakpoints    = pNamedAnimation->GetBreakpoints().Size();
 	TAnimation* pAnimation         = m_pSkeletonInstance->GetAnimation( pNamedAnimation->GetSequenceId() );
 
+	// Animations that aren't managed (removed when they end) are looped
+	TBOOL bLooped = pAnimation && !pAnimation->IsManaged();
+
 	// Reset breakpoint index if necessary
-	if ( pAnimation && pAnimation->IsManaged() && a_rAnimRef.m_iBreakpointIndex < 0 )
-		a_rAnimRef.m_iBreakpointIndex = iNumBreakpoints - 1;
+	if ( bLooped && iCurrentBreakpoint < 0 )
+	{
+		// NOTE: the original only resets the stored index and keeps using the old one in this update
+		iCurrentBreakpoint            = iNumBreakpoints - 1;
+		a_rAnimRef.m_iBreakpointIndex = iCurrentBreakpoint;
+	}
 
 	TFLOAT fCurrentAnimTime  = ( !a_pAnimation ) ? 0.0f : a_pAnimation->GetSeqTime();
 	TFLOAT fPreviousAnimTime = a_rAnimRef.m_fTime;
 
-	if ( iCurrentBreakpoint > 0 || ( pAnimation && pAnimation->IsManaged() ) )
+	if ( iCurrentBreakpoint > 0 || bLooped )
 	{
-		TFLOAT fAnimDeltaTime  = fPreviousAnimTime - fCurrentAnimTime;
-		TINT   iPrevBreakpoint = iCurrentBreakpoint - 1;
+		TFLOAT fAnimDeltaTime = fPreviousAnimTime - fCurrentAnimTime;
 
 		// Normalize time if the animation restarted
 		if ( fAnimDeltaTime < 0.0f )
 			fAnimDeltaTime += pNamedAnimation->GetDuration();
 
-		TINT iBreakpoint = iPrevBreakpoint;
-		if ( pAnimation && pAnimation->IsManaged() && iPrevBreakpoint <= -1 )
-		{
-			iPrevBreakpoint = iNumBreakpoints - 1;
-			iBreakpoint     = iPrevBreakpoint;
-		}
+		TINT iBreakpoint = iCurrentBreakpoint - 1;
 
-		for ( TINT i = 0; i < iNumBreakpoints && iPrevBreakpoint > -1 || ( pAnimation && pAnimation->IsManaged() ); i++ )
-		{
-			iPrevBreakpoint = iCurrentBreakpoint;
+		if ( bLooped && iBreakpoint < 0 )
+			iBreakpoint = iNumBreakpoints - 1;
 
+		for ( TINT i = 0; ( iBreakpoint >= 0 || bLooped ) && i < iNumBreakpoints; i++ )
+		{
 			AAnimationBreakpoint* pBreakpoint       = pNamedAnimation->GetBreakpoints()[ iBreakpoint ];
 			TFLOAT                fTimeToBreakpoint = pBreakpoint->GetTime() - fCurrentAnimTime;
 
-			if ( pAnimation && fTimeToBreakpoint < 0.0f )
+			if ( a_pAnimation && fTimeToBreakpoint < 0.0f )
 			{
-				// If animation didn't start from the beginning, or we already fetched this breakpoint, skip...
-				if ( !pAnimation || !pAnimation->IsManaged() || fCurrentAnimTime <= fPreviousAnimTime || fPreviousAnimTime <= pBreakpoint->GetTime() )
+				// The breakpoint is behind, unless the looped animation has restarted and it was skipped
+				if ( !bLooped || fPreviousAnimTime >= fCurrentAnimTime || pBreakpoint->GetTime() >= fPreviousAnimTime )
 					break;
 
-				// The animation did start from the beginning, so need to normalize the time value
 				fTimeToBreakpoint += pNamedAnimation->GetDuration();
 			}
 
-			// If we already activated that breakpoint before, skip...
+			// The breakpoint hasn't been reached during this update
 			if ( fAnimDeltaTime < fTimeToBreakpoint )
 				break;
 
@@ -399,16 +410,21 @@ void AToshiAnimationInterface::UpdateAnimationBreakpointsReverse( AToshiAnimatio
 			AnimEvent& animEvent = a_rEventList.Push();
 			animEvent.SetBreakpointEvent( pBreakpoint, pNamedAnimation->IsOverlay(), pNamedAnimation->GetName(), TMath::Max( fTimeToBreakpoint, 0.0f ) );
 
-			iCurrentBreakpoint--;
+			// NOTE: the original continues with the breakpoint at the old index (not the previous one)
+			iBreakpoint = iCurrentBreakpoint--;
 
-			if ( pAnimation && pAnimation->IsManaged() )
+			if ( bLooped )
 			{
 				if ( iCurrentBreakpoint < 0 )
 					iCurrentBreakpoint = iNumBreakpoints - 1;
 
-				if ( iPrevBreakpoint == iNumBreakpoints - 1 && fCurrentAnimTime < fPreviousAnimTime )
+				if ( iBreakpoint == iNumBreakpoints - 1 && fPreviousAnimTime > fCurrentAnimTime )
 					break;
 			}
+
+			// NOTE: not in the original, keeps the index in range
+			if ( iBreakpoint >= iNumBreakpoints )
+				break;
 		}
 
 		a_rAnimRef.m_iBreakpointIndex = iCurrentBreakpoint;
@@ -472,8 +488,7 @@ TBOOL AToshiAnimationInterface::StopAnim( const AToshiAnimationRef& a_rcAnimatio
 		}
 	}
 
-	// It will never get here
-	TASSERT( TFALSE );
+	// Manually finished animations (or unmanaged transitions) are removed right away
 	pAnimation->RemoveAnimation( pAnimation->GetBlendOutSpeed() );
 	return TTRUE;
 }
@@ -524,12 +539,124 @@ TBOOL AToshiAnimationInterface::SetAnimationTransition( AToshiAnimationRef& a_rA
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005834d0
+TPString8 AToshiAnimationInterface::GetTransitionName( AToshiAnimationRef* a_pAnimRef )
+{
+	if ( a_pAnimRef->m_pNamedAnimation )
+	{
+		ANamedAnimationTransition* pTransition = a_pAnimRef->m_pTransition;
+
+		if ( !pTransition )
+			pTransition = a_pAnimRef->m_pNamedAnimation->GetTransitionSet().GetDestTransition();
+
+		if ( pTransition )
+			return pTransition->GetAnimationName();
+	}
+
+	return TPString8();
+}
+
+// $Barnyard: FUNCTION 00583660
+TBOOL AToshiAnimationInterface::StopAnim( const TPString8& a_strName )
+{
+	AToshiAnimationRef* pAnimRef = GetAnimationRef( m_llAnimRefs, a_strName );
+
+	if ( !pAnimRef )
+	{
+		pAnimRef = GetAnimationRef( m_llOverlayAnimRefs, a_strName );
+
+		if ( !pAnimRef )
+			return TFALSE;
+	}
+
+	return StopAnim( *pAnimRef );
+}
+
+// $Barnyard: FUNCTION 00583740
+TBOOL AToshiAnimationInterface::KillAnim( const TPString8& a_strName )
+{
+	AToshiAnimationRef* pAnimRef = GetAnimationRef( m_llAnimRefs, a_strName );
+
+	if ( !pAnimRef )
+	{
+		pAnimRef = GetAnimationRef( m_llOverlayAnimRefs, a_strName );
+
+		if ( !pAnimRef )
+			return TFALSE;
+	}
+
+	KillAnim( pAnimRef );
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 00583240
+void AToshiAnimationInterface::KillAnim( AToshiAnimationRef* a_pAnimRef )
+{
+	// NOTE: retail returns an iterator to the next ref
+	if ( a_pAnimRef->GetNamedAnimation() )
+	{
+		TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( a_pAnimRef->GetSequenceId() );
+
+		if ( pAnimation )
+			pAnimation->RemoveAnimation( 0.0f );
+	}
+
+	for ( auto it = m_llAnimRefs.Begin(); it != m_llAnimRefs.End(); it++ )
+	{
+		if ( it == a_pAnimRef )
+		{
+			m_llAnimRefs.Erase( it );
+			g_oAnimationRefPool.DeleteObject( a_pAnimRef );
+			return;
+		}
+	}
+
+	// NOTE: retail walks m_llAnimRefs again until the end of m_llOverlayAnimRefs (and erases from m_llAnimRefs),
+	// which never ends if the ref is an overlay. KillAnim( const TPString8& ) is only used for main animations.
+#ifdef BARNYARD_COMMUNITY_PATCH
+	for ( auto it = m_llOverlayAnimRefs.Begin(); it != m_llOverlayAnimRefs.End(); it++ )
+	{
+		if ( it == a_pAnimRef )
+		{
+			m_llOverlayAnimRefs.Erase( it );
+			g_oAnimationRefPool.DeleteObject( a_pAnimRef );
+			return;
+		}
+	}
+#else
+	TASSERT( TFALSE && "KillAnim of an overlay animation never returns in retail" );
+#endif
+}
+
+// $Barnyard: FUNCTION 005826e0
+TBOOL AToshiAnimationInterface::SetAnimSpeed( AToshiAnimationRef* a_pAnimRef, TFLOAT a_fSpeed )
+{
+	ANamedAnimation* pNamedAnimation = a_pAnimRef->GetNamedAnimation();
+
+	if ( pNamedAnimation )
+	{
+		if ( pNamedAnimation->IsReversed() )
+			a_fSpeed *= -1.0f;
+
+		TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( pNamedAnimation->GetSequenceId() );
+
+		if ( pAnimation )
+		{
+			pAnimation->SetSpeed( a_fSpeed );
+			return TTRUE;
+		}
+	}
+
+	return TFALSE;
+}
+
 // $Barnyard: FUNCTION 00470970
 ANamedAnimationSetRef AToshiAnimationInterface::GetAnimationSet()
 {
 	return m_pAnimationSet;
 }
 
+// $Barnyard: FUNCTION 004a6bf0
 AToshiAnimationRef* AToshiAnimationInterface::FindAnimationRef( const TPString8& a_strName )
 {
 	AToshiAnimationRef* pAnimRef = TNULL;
@@ -613,18 +740,255 @@ void AToshiAnimationInterface::AnimEvent::SetSimpleEvent( ANIMEVENT_TYPE a_eType
 	bIsOverlay          = a_bIsOverlay;
 	strAnimationName    = a_strAnimationName;
 	pNextBreakpoint     = TNULL;
-	a_fTimeToBreakpoint = fTimeFromBreakpoint;
+	fTimeFromBreakpoint = a_fTimeToBreakpoint;
 }
 
 // $Barnyard: FUNCTION 00580280
 void AToshiAnimationInterface::AnimEvent::SetBreakpointEvent( AAnimationBreakpoint* a_pBreakpoint, TBOOL a_bIsOverlay, const Toshi::TPString8& a_strAnimationName, TFLOAT a_fTimeFromBreakpoint )
 {
-	eType                 = ANIMEVENT_TYPE_BREAKPOINT;
-	bIsOverlay            = a_bIsOverlay;
-	strAnimationName      = a_strAnimationName;
-	pNextBreakpoint       = a_pBreakpoint;
-	a_fTimeFromBreakpoint = fTimeFromBreakpoint;
+	eType               = ANIMEVENT_TYPE_BREAKPOINT;
+	bIsOverlay          = a_bIsOverlay;
+	strAnimationName    = a_strAnimationName;
+	pNextBreakpoint     = a_pBreakpoint;
+	fTimeFromBreakpoint = a_fTimeFromBreakpoint;
 }
 
 // T2ObjectPool<AToshiAnimationRef, 100>::NewObject
 // $Barnyard: FUNCTION 00582660
+
+// $Barnyard: FUNCTION 00582380
+TBOOL AToshiAnimationInterface::IsAnimLooping( AToshiAnimationRef* a_pAnimRef )
+{
+	if ( a_pAnimRef->GetNamedAnimation() )
+	{
+		TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( a_pAnimRef->GetSequenceId() );
+
+		if ( pAnimation )
+			return !pAnimation->IsManaged();
+	}
+
+	return TFALSE;
+}
+
+// $Barnyard: FUNCTION 005825b0
+TBOOL AToshiAnimationInterface::IsAnimLoopEnding( AToshiAnimationRef* a_pAnimRef, TFLOAT a_fDeltaTime )
+{
+	TFLOAT fDuration = -1.0f;
+
+	if ( a_pAnimRef->GetNamedAnimation() )
+	{
+		TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( a_pAnimRef->GetSequenceId() );
+
+		if ( pAnimation )
+			fDuration = pAnimation->GetSequencePtr()->GetDuration();
+	}
+
+	TFLOAT fTime = 0.0f;
+
+	if ( a_pAnimRef->GetNamedAnimation() )
+	{
+		TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( a_pAnimRef->GetSequenceId() );
+
+		if ( pAnimation )
+			fTime = pAnimation->GetSeqTime();
+	}
+
+	return TFLOAT( fmod( fTime / fDuration, 1.0 ) ) * fDuration + a_fDeltaTime >= fDuration;
+}
+
+// $Barnyard: FUNCTION 005823b0
+TFLOAT AToshiAnimationInterface::GetAnimSpeed( AToshiAnimationRef* a_pAnimRef )
+{
+	if ( a_pAnimRef->GetNamedAnimation() )
+	{
+		TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( a_pAnimRef->GetSequenceId() );
+
+		if ( pAnimation )
+			return pAnimation->GetSpeed();
+	}
+
+	return 1.0f;
+}
+
+// $Barnyard: FUNCTION 00582480
+TFLOAT AToshiAnimationInterface::GetAnimProgress( AToshiAnimationRef* a_pAnimRef )
+{
+	if ( a_pAnimRef->GetNamedAnimation() )
+	{
+		TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( a_pAnimRef->GetSequenceId() );
+
+		if ( pAnimation )
+			return pAnimation->GetSeqTime() / pAnimation->GetSequencePtr()->GetDuration();
+	}
+
+	return 1.0f;
+}
+
+// $Barnyard: FUNCTION 005824d0
+TBOOL AToshiAnimationInterface::SetAnimProgress( AToshiAnimationRef* a_pAnimRef, TFLOAT a_fProgress )
+{
+	if ( !a_pAnimRef->GetNamedAnimation() )
+		return TFALSE;
+
+	TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( a_pAnimRef->GetSequenceId() );
+
+	if ( !pAnimation )
+		return TFALSE;
+
+	pAnimation->SetTime( a_fProgress * pAnimation->GetSequencePtr()->GetDuration() );
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 00582240
+TBOOL AToshiAnimationInterface::IsAnimFinishing( AToshiAnimationRef* a_pAnimRef, TFLOAT a_fDeltaTime )
+{
+	if ( a_pAnimRef->GetNamedAnimation() )
+	{
+		TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( a_pAnimRef->GetSequenceId() );
+
+		if ( pAnimation )
+			return pAnimation->IsFinishing( a_fDeltaTime );
+	}
+
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 005823e0
+TFLOAT AToshiAnimationInterface::GetAnimWeight( AToshiAnimationRef* a_pAnimRef )
+{
+	if ( a_pAnimRef->GetNamedAnimation() )
+	{
+		TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( a_pAnimRef->GetSequenceId() );
+
+		if ( pAnimation )
+			return pAnimation->GetWeight();
+	}
+
+	return 0.0f;
+}
+
+// $Barnyard: FUNCTION 00582570
+TBOOL AToshiAnimationInterface::SetAnimWeight( AToshiAnimationRef* a_pAnimRef, TFLOAT a_fWeight )
+{
+	a_pAnimRef->SetWeight( a_fWeight );
+
+	if ( a_pAnimRef->GetNamedAnimation() )
+	{
+		TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( a_pAnimRef->GetSequenceId() );
+
+		if ( pAnimation )
+			pAnimation->SetDestWeight( a_fWeight, 0.0f );
+	}
+
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 00582410
+TFLOAT AToshiAnimationInterface::GetAnimTime( AToshiAnimationRef* a_pAnimRef )
+{
+	if ( a_pAnimRef->GetNamedAnimation() )
+	{
+		TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( a_pAnimRef->GetSequenceId() );
+
+		if ( pAnimation )
+			return pAnimation->GetSeqTime();
+	}
+
+	return 0.0f;
+}
+
+// $Barnyard: FUNCTION 005822b0
+TBOOL AToshiAnimationInterface::IsAnimPlayingBackwards( AToshiAnimationRef* a_pAnimRef )
+{
+	if ( !a_pAnimRef->GetNamedAnimation() )
+		return TFALSE;
+
+	TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( a_pAnimRef->GetSequenceId() );
+
+	return pAnimation && pAnimation->GetSpeed() < 0.0f;
+}
+
+// $Barnyard: FUNCTION 00582440
+TBOOL AToshiAnimationInterface::SetAnimTime( AToshiAnimationRef* a_pAnimRef, TFLOAT a_fTime )
+{
+	if ( !a_pAnimRef->GetNamedAnimation() )
+		return TFALSE;
+
+	TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( a_pAnimRef->GetSequenceId() );
+
+	if ( !pAnimation )
+		return TFALSE;
+
+	pAnimation->SetTime( a_fTime );
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 00582f00
+TBOOL AToshiAnimationInterface::IsAnimPlaying( const TPString8& a_strName, TBOOL a_bDetailedCheck )
+{
+	AToshiAnimationRef* pAnimRef = GetAnimationRef( m_llAnimRefs, a_strName );
+
+	if ( !pAnimRef )
+		pAnimRef = GetAnimationRef( m_llOverlayAnimRefs, a_strName );
+
+	if ( !a_bDetailedCheck || !pAnimRef )
+		return pAnimRef != TNULL;
+
+	TPString8 strPlayingName = pAnimRef->GetNamedAnimation()->GetExportedName();
+	TPString8 strSetName     = GetAnimationSet()->GetNamedAnimation( a_strName )->GetExportedName();
+
+	return strPlayingName == strSetName;
+}
+
+// $Barnyard: FUNCTION 00582270
+TFLOAT AToshiAnimationInterface::GetAnimDuration( AToshiAnimationRef* a_pAnimRef )
+{
+	if ( a_pAnimRef->GetNamedAnimation() )
+	{
+		TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( a_pAnimRef->GetSequenceId() );
+
+		if ( pAnimation )
+			return pAnimation->GetSequencePtr()->GetDuration();
+	}
+
+	return -1.0f;
+}
+
+// $Barnyard: FUNCTION 00582e80
+void AToshiAnimationInterface::SetAllAnimSpeeds( TFLOAT a_fSpeed )
+{
+	T2_FOREACH( m_llAnimRefs, it )
+	{
+		ANamedAnimation* pNamedAnimation = it->GetNamedAnimation();
+
+		if ( pNamedAnimation )
+		{
+			TFLOAT fSpeed = a_fSpeed;
+
+			if ( pNamedAnimation->IsReversed() )
+				fSpeed = a_fSpeed * -1.0f;
+
+			TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( pNamedAnimation->GetSequenceId() );
+
+			if ( pAnimation )
+				pAnimation->SetSpeed( fSpeed );
+		}
+	}
+}
+
+// $Barnyard: FUNCTION 005836a0
+void AToshiAnimationInterface::KillBaseAnimations()
+{
+	while ( !m_llAnimRefs.IsEmpty() )
+	{
+		T2DList<AToshiAnimationRef>::Iterator itAnimRef = m_llAnimRefs.Begin();
+		m_llAnimRefs.Erase( itAnimRef );
+
+		g_oAnimationRefPool.DeleteObject( itAnimRef );
+	}
+
+	TQList<TAnimation>& rAnimations = m_pSkeletonInstance->GetBaseAnimations();
+
+	while ( !rAnimations.IsEmpty() )
+		m_pSkeletonInstance->RemoveAnimation( rAnimations.Begin(), 0.0f );
+}

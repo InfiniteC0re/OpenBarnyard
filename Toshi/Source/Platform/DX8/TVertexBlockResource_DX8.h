@@ -34,6 +34,7 @@ public:
 
 public:
 	TVertexBlockResource();
+	~TVertexBlockResource();
 
 	virtual TBOOL Validate() override;
 	virtual void  Invalidate() override;

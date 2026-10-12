@@ -10,10 +10,12 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006ba980
 static constexpr TTRB::t_MemoryFuncAlloc s_cbDefAllocator = []( TTRB::AllocType alloctype, TUINT32 size, short unk1, TUINT32 unk2, void* userData ) {
-	return TMalloc( size );
+	return TMemalign( 128, size, TNULL );
 };
 
+// $Barnyard: FUNCTION 006ba9a0
 static constexpr TTRB::t_MemoryFuncDealloc s_cbDefDeallocator = []( TTRB::AllocType alloctype, void* ptr, short unk1, TUINT32 unk2, void* userData ) {
 	TFree( ptr );
 };
@@ -119,9 +121,9 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 					SecInfo* pSect = GetSectionInfo( i );
 
 					ttsf.ReadRaw( pSect, 0xC );
-					pSect->m_Data = m_MemAllocator( AllocType_Data, pSect->m_Size, 0, 0, m_MemUserData );
-					pSect->m_Unk1 = ( pSect->m_Unk1 == 0 ) ? 16 : pSect->m_Unk1;
-					pSect->m_Unk2 = 0;
+					pSect->m_Data      = m_MemAllocator( AllocType_Data, pSect->m_Size, 0, 0, m_MemUserData );
+					pSect->m_Alignment = ( pSect->m_Alignment == 0 ) ? 16 : pSect->m_Alignment;
+					pSect->m_Unk2      = 0;
 				}
 
 				ttsf.SkipHunk();
@@ -223,9 +225,9 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 
 				for ( TINT i = 0; i < m_pHeader->m_i32SectionCount; i++ )
 				{
-					SecInfo* pSect = GetSectionInfo( i );
-					pSect->m_Unk1  = ( pSect->m_Unk1 == 0 ) ? 16 : pSect->m_Unk1;
-					pSect->m_Data  = m_MemAllocator( AllocType_Data, pSect->m_Size, pSect->m_Unk1, pSect->m_Unk2, m_MemUserData );
+					SecInfo* pSect     = GetSectionInfo( i );
+					pSect->m_Alignment = ( pSect->m_Alignment == 0 ) ? 16 : pSect->m_Alignment;
+					pSect->m_Data      = m_MemAllocator( AllocType_Data, pSect->m_Size, pSect->m_Alignment, pSect->m_Unk2, m_MemUserData );
 				}
 			}
 			else

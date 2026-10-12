@@ -9,9 +9,22 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// NOTE: GetClass 0045c3f0, CreateObject 0045ccb0, CreateObjectInPlace 0045cd10
 TDEFINE_CLASS( AFadeManager );
 
 TOSHI_NAMESPACE_USING
+
+// $Barnyard: FUNCTION 0045caa0
+AFadeManager::AFadeManager()
+{
+}
+
+// $Barnyard: FUNCTION 0045cd70
+// $Barnyard: FUNCTION 0045cd50
+AFadeManager::~AFadeManager()
+{
+	m_ActiveFades.Clear();
+}
 
 // $Barnyard: FUNCTION 0045c840
 TBOOL AFadeManager::OnUpdate( TFLOAT a_fDeltaTime )

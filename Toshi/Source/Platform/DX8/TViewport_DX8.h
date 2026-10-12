@@ -14,6 +14,10 @@ public:
 	TViewportHAL( TBOOL a_bFlag )
 	    : TViewport( a_bFlag )
 	{}
+
+	// $Barnyard: FUNCTION 0060c510
+	// $Barnyard: FUNCTION 0060c4f0
+	~TViewportHAL() {}
 };
 
 TOSHI_NAMESPACE_END

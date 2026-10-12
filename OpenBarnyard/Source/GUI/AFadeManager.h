@@ -10,7 +10,8 @@ public:
 	TDECLARE_CLASS( AFadeManager, Toshi::TTask );
 
 public:
-	AFadeManager() = default;
+	AFadeManager();
+	~AFadeManager();
 
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) override;
 

@@ -16,8 +16,31 @@ public:
 	void SetId( TINT a_iID ) { m_iID = a_iID; }
 	TINT GetId() const { return m_iID; }
 
+	// Handles mouse clicks on the arrows by emulating Left/Right key presses
+	TBOOL ProcessInputEvent( const Toshi::TInputInterface::InputEvent* a_pInputEvent );
+
+	Toshi::T2GUIRectangle& GetBar( TINT a_iIndex ) { return m_aBars[ a_iIndex ]; }
+	static constexpr TINT  GetNumBars() { return 5; }
+
+	// Unlinks the arrows, the bars and the slider itself
+	void RemoveElements()
+	{
+		for ( TINT i = 0; i < TARRAYSIZE( m_aArrows ); i++ )
+			m_aArrows[ i ].RemoveSelf();
+
+		for ( TINT i = 0; i < TARRAYSIZE( m_aBars ); i++ )
+			m_aBars[ i ].RemoveSelf();
+
+		RemoveSelf();
+	}
+
 	void SetCallbackUserData( void* a_pUserData ) { m_pCallbackUserData = a_pUserData; }
 	void SetArrowFocusedCallback( ArrowFocusCallback a_fnCallback ) { m_fnArrowFocusCallback = a_fnCallback; }
+
+	//-----------------------------------------------------------------------------
+	// Toshi::T2GUIElement
+	//-----------------------------------------------------------------------------
+	virtual void SetAlpha( TFLOAT a_fAlpha ) OVERRIDE; // +0x38
 
 	//-----------------------------------------------------------------------------
 	// AGUI2MenuGridItem
@@ -65,8 +88,10 @@ public:
 	//-----------------------------------------------------------------------------
 	virtual TBOOL ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent ) OVERRIDE;
 	virtual TBOOL ProcessCommand( AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents ) OVERRIDE;
+	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) OVERRIDE;
 	virtual void  OnInsertion() OVERRIDE;
 	virtual void  OnRemoval() OVERRIDE;
+	virtual void  OnActivate() OVERRIDE;
 
 	//-----------------------------------------------------------------------------
 	// ABYardMenuState
@@ -81,9 +106,17 @@ public:
 	virtual void OnMenuGridItemFocused( AGUI2MenuGridItem& a_rOldFocus, AGUI2MenuGridItem& a_rNewFocus );
 
 private:
+	void ChangeFocusedVolume( TINT a_iDelta );
+	void UpdateBarColours( TINT a_iSlider, TFLOAT a_fDeltaTime );
+
+private:
 	AGUI2MenuGrid         m_oGridMenu;
 	AGUI2MenuGridTextItem m_aTextItems[ AUDIOOPTIONS_NUMOF ];
 	AVolumeSlider         m_aVolumeSliders[ AUDIOOPTIONS_NUMOF ];
-	// ...
-	TINT m_iFocusedItemId;
+	TINT                  m_aVolumes[ AUDIOOPTIONS_NUMOF ];         // 0x1a3c
+	TINT                  m_aOriginalVolumes[ AUDIOOPTIONS_NUMOF ]; // 0x1a48
+	TINT                  m_iFocusedItemId;                         // 0x1a54
+	TINT                  m_iMusicCue;                              // 0x1a58, music sample played while the music volume is focused
+	TBOOL                 m_bSettingsChangedOnInsertion;            // 0x1a5c
+	TBOOL                 m_bLoadedMusicSamples;                    // 0x1a5d
 };

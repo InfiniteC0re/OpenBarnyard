@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "AAnimController.h"
+#include "AAnimatableObject.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -14,7 +15,7 @@ TDEFINE_CLASS_NORUNTIME( AAnimController );
 // $Barnyard: FUNCTION 005803f0
 AAnimController::AAnimController()
 {
-	m_pUnk1             = TNULL;
+	m_pOwner            = TNULL;
 	m_pAnimatableObject = TNULL;
 	m_pControllerType   = TNULL;
 	m_bDisabled         = TFALSE;
@@ -26,30 +27,17 @@ AAnimController::~AAnimController()
 {
 }
 
-TBOOL AAnimController::OnCreate()
+TBOOL AAnimController::Create( void* a_pOwner, AAnimatableObject* a_pAnimatableObject, AAnimControllerType* a_pControllerType )
 {
-	return TTRUE;
-}
-
-void AAnimController::OnUpdate( TFLOAT a_fDeltaTime )
-{
-}
-
-TBOOL AAnimController::Unknown3( void* )
-{
-	return TTRUE;
-}
-
-TBOOL AAnimController::IsAnimationAllowed( ANamedAnimation* a_pNamedAnimation )
-{
-	return TTRUE;
-}
-
-TBOOL AAnimController::Create( void* a_pUnk, AAnimatableObject* a_pAnimatableObject, AAnimControllerType* a_pControllerType )
-{
-	m_pUnk1             = a_pUnk;
+	m_pOwner            = a_pOwner;
 	m_pAnimatableObject = a_pAnimatableObject;
 	m_pControllerType   = a_pControllerType;
 
 	return OnCreate();
+}
+
+// $Barnyard: FUNCTION 005803a0
+AToshiAnimationInterface& AAnimController::GetAnimInterface()
+{
+	return m_pAnimatableObject->GetToshiAnimInterface();
 }

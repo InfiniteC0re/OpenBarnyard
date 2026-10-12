@@ -49,9 +49,9 @@ TryLocking:
 			// Fast path, wastes the CPU a lot, but it's fast
 			unsigned long      uiWaitTime  = 1 << ( ( iAttempts < 8 ) ? iAttempts : 8 );
 			unsigned long long uiEndRDTime = __rdtsc() + uiWaitTime;
-		
+
 			do _mm_pause();
-			while (__rdtsc() < uiEndRDTime);
+			while ( __rdtsc() < uiEndRDTime );
 		}
 		else
 		{
@@ -69,6 +69,31 @@ TryLocking:
 	goto TryLocking;
 }
 
+TBOOL T2AtomicMutex::TryLock()
+{
+	TUINT32 uiActiveThread = GetCurrentThreadId();
+
+	if ( m_uiLockedThread == uiActiveThread )
+	{
+		m_uiThreadDepth += 1;
+		return TTRUE;
+	}
+
+	// Count this attempt as a wait (Unlock removes one), then try to set STATEFLAG_LOCKED once
+	m_iState.Add( GET_STATEFLAG_NUM_WAITS( 1 ) );
+
+	if ( ( m_iState.Or( STATEFLAG_LOCKED ) & STATEFLAG_LOCKED ) == 0 )
+	{
+		m_uiLockedThread = uiActiveThread;
+		m_uiThreadDepth  = 1;
+		return TTRUE;
+	}
+
+	// Someone else owns it, take the wait back
+	m_iState.Add( -GET_STATEFLAG_NUM_WAITS( 1 ) );
+	return TFALSE;
+}
+
 void T2AtomicMutex::Unlock()
 {
 	if ( --m_uiThreadDepth == 0 )
@@ -76,7 +101,7 @@ void T2AtomicMutex::Unlock()
 		constexpr TINT ONE_LOCK_FLAGS = STATEFLAG_LOCKED | GET_STATEFLAG_NUM_WAITS( 1 );
 
 		// Mark as unused and remove one wait from the total count
-		TINT iOldState = m_iState.Add( -ONE_LOCK_FLAGS );
+		TINT iOldState   = m_iState.Add( -ONE_LOCK_FLAGS );
 		m_uiLockedThread = 0;
 
 		// Signal only when there's some thread waiting for this mutex to be unlocked to avoid unnecessary kernel calls

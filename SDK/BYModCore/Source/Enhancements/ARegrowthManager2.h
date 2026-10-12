@@ -19,16 +19,23 @@ public:
 		TUINT8             uiScalePacked; // 0x2A: scale = packed / 255 * 0.4 + 0.8
 	};
 
+	using GROWTHSTYLE = TUINT8;
+	enum GROWTHSTYLE_ : GROWTHSTYLE
+	{
+		GROWTHSTYLE_MODELS = 0, // one model per stage
+		GROWTHSTYLE_SCALE  = 1, // the models are scaled up
+	};
+
 	struct GrowthMapping
 	{
-		TFLOAT flGrowthRate;     // 0x00
-		TINT   iNumFrames;       // 0x04
-		TCHAR  PADDING1[ 0x18 ]; // 0x08
-		TUINT8 uiModelIndex;     // 0x20: 0xFF = unused mapping
-		TUINT8 uiAnimType;       // 0x21: 1 = scale-up growth animation
-		TUINT8 uiFlags;          // 0x22: bit 5 = ignore per-object scale
-		TUINT8 uiFruitType;      // 0x23
-		TCHAR  PADDING2[ 4 ];    // 0x24
+		TFLOAT      flGrowthRate;     // 0x00
+		TINT        iNumFrames;       // 0x04
+		TCHAR       PADDING1[ 0x18 ]; // 0x08
+		TUINT8      uiModelIndex;     // 0x20: 0xFF = unused mapping
+		GROWTHSTYLE uiAnimType;       // 0x21
+		TUINT8      uiFlags;          // 0x22: bit 5 = ignore per-object scale
+		TUINT8      uiFruitType;      // 0x23
+		TCHAR       PADDING2[ 4 ];    // 0x24
 	};
 
 	struct ModelRef

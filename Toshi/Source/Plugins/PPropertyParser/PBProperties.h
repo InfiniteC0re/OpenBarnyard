@@ -9,6 +9,10 @@
 #include "Toshi/Toshi.h"
 #include "Toshi/TStringManager.h"
 #include "Toshi/TString8.h"
+#include "Math/TVector2.h"
+#include "Math/TVector3.h"
+#include "Math/TVector4.h"
+#include "Math/TQuaternion.h"
 
 struct PBPropertyLocaleString
 {
@@ -46,6 +50,7 @@ public:
 	};
 
 	friend class PPropertiesWriter;
+	friend class PBPropertyReader;
 
 public:
 	PBPropertyValue()
@@ -149,11 +154,16 @@ public:
 		return m_uValue.UInt32;
 	}
 
+	// $Barnyard: FUNCTION 006b1cf0
 	PBPropertyLocaleString GetLocaleString() const
 	{
 		TASSERT( m_eType == Type::LocaleString );
 		return m_uValue.UInt32;
 	}
+
+	// Returns the localised string of the LocaleString value
+	// NOTE: unreferenced in retail, the name is invented (defined in PBPropertyReader.cpp)
+	const TWCHAR* GetLocalisedString() const;
 
 	const TCHAR* GetString() const
 	{
@@ -163,6 +173,7 @@ public:
 
 #ifdef __TOSHI_TPSTRING8_H__
 	// $Barnyard: FUNCTION 006b2450
+	// $Barnyard: FUNCTION 006b2420
 	Toshi::TPString8 GetTPString8() const
 	{
 		TASSERT( m_eType == Type::String );
@@ -181,6 +192,18 @@ public:
 		TASSERT( m_eType == Type::Array );
 		return m_uValue.Array;
 	}
+
+	// Reads an array of 2 numbers (floats or integers). Returns TFALSE if the array has another size
+	TBOOL GetVector2( Toshi::TVector2& a_rOutVector ) const;
+
+	// Reads an array of 3 numbers (floats or integers). Returns TFALSE if the array has another size
+	TBOOL GetVector3( Toshi::TVector3& a_rOutVector ) const;
+
+	// Reads an array of 3 or 4 numbers (floats or integers), w is 1.0f if there are 3. Returns TFALSE if the array has another size
+	TBOOL GetVector4( Toshi::TVector4& a_rOutVector ) const;
+
+	// Reads an array of 4 numbers (floats or integers). Returns TFALSE if the array has another size
+	TBOOL GetQuaternion( Toshi::TQuaternion& a_rOutQuaternion ) const;
 
 	class PBProperties* GetProperties()
 	{
@@ -396,6 +419,12 @@ struct PBPropertiesTypeCast<const TCHAR*>
 };
 
 template <>
+struct PBPropertiesTypeCast<PBPropertyLocaleString>
+{
+	static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::LocaleString;
+};
+
+template <>
 struct PBPropertiesTypeCast<Toshi::TString8>
 {
 	static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::String;
@@ -415,6 +444,7 @@ class PBPropertyValueArray
 {
 public:
 	friend class PPropertiesWriter;
+	friend class PBPropertyReader;
 
 public:
 	PBPropertyValueArray()
@@ -585,6 +615,80 @@ private:
 	PBPropertyValue* m_pValues;
 	TUINT32          m_iSize;
 };
+
+// $Barnyard: FUNCTION 006b1d00
+inline TBOOL PBPropertyValue::GetVector2( Toshi::TVector2& a_rOutVector ) const
+{
+	const PBPropertyValueArray* pArray = m_uValue.Array;
+
+	if ( pArray->GetSize() != 2 )
+		return TFALSE;
+
+	// Anything that isn't a float is read as an integer
+	auto fnGetFloat = []( const PBPropertyValue* a_pValue ) -> TFLOAT {
+		return ( a_pValue->GetType() == PBPropertyValue::Type::Float ) ? a_pValue->GetFloat() : TFLOAT( TINT( TREINTERPRETCAST( TUINTPTR, a_pValue->GetRaw() ) ) );
+	};
+
+	a_rOutVector.x = fnGetFloat( pArray->GetValue( 0 ) );
+	a_rOutVector.y = fnGetFloat( pArray->GetValue( 1 ) );
+
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 006b1dc0
+inline TBOOL PBPropertyValue::GetVector4( Toshi::TVector4& a_rOutVector ) const
+{
+	const PBPropertyValueArray* pArray = m_uValue.Array;
+
+	if ( pArray->GetSize() != 3 && pArray->GetSize() != 4 )
+		return TFALSE;
+
+	// Anything that isn't a float is read as an integer
+	auto fnGetFloat = []( const PBPropertyValue* a_pValue ) -> TFLOAT {
+		return ( a_pValue->GetType() == PBPropertyValue::Type::Float ) ? a_pValue->GetFloat() : TFLOAT( TINT( TREINTERPRETCAST( TUINTPTR, a_pValue->GetRaw() ) ) );
+	};
+
+	a_rOutVector.x = fnGetFloat( pArray->GetValue( 0 ) );
+	a_rOutVector.y = fnGetFloat( pArray->GetValue( 1 ) );
+	a_rOutVector.z = fnGetFloat( pArray->GetValue( 2 ) );
+	a_rOutVector.w = 1.0f;
+
+	if ( pArray->GetSize() == 4 )
+		a_rOutVector.w = fnGetFloat( pArray->GetValue( 3 ) );
+
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 006b1d50
+inline TBOOL PBPropertyValue::GetVector3( Toshi::TVector3& a_rOutVector ) const
+{
+	const PBPropertyValueArray* pArray = m_uValue.Array;
+
+	if ( pArray->GetSize() != 3 )
+		return TFALSE;
+
+	a_rOutVector.x = pArray->GetValue( 0 )->GetFloat();
+	a_rOutVector.y = pArray->GetValue( 1 )->GetFloat();
+	a_rOutVector.z = pArray->GetValue( 2 )->GetFloat();
+
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 006b1e60
+inline TBOOL PBPropertyValue::GetQuaternion( Toshi::TQuaternion& a_rOutQuaternion ) const
+{
+	const PBPropertyValueArray* pArray = m_uValue.Array;
+
+	if ( pArray->GetSize() != 4 )
+		return TFALSE;
+
+	a_rOutQuaternion.x = pArray->GetValue( 0 )->GetFloat();
+	a_rOutQuaternion.y = pArray->GetValue( 1 )->GetFloat();
+	a_rOutQuaternion.z = pArray->GetValue( 2 )->GetFloat();
+	a_rOutQuaternion.w = pArray->GetValue( 3 )->GetFloat();
+
+	return TTRUE;
+}
 
 class PBPropertyName
 {
@@ -900,15 +1004,168 @@ public:
 		return TNULL;
 	}
 
+	// Like GetOptionalPropertyValue for TFLOAT, but also accepts integer values
+	// $Barnyard: FUNCTION 006b2270
+	TBOOL GetOptionalFloatOrIntValue( TFLOAT& a_rOutValue, const TCHAR* a_szName ) const
+	{
+		const PBPropertyValue* pValue = GetProperty( a_szName );
+
+		if ( pValue )
+		{
+			if ( pValue->GetType() == PBPropertyValue::Type::Float )
+			{
+				a_rOutValue = pValue->GetFloat();
+				return TTRUE;
+			}
+
+			if ( pValue->GetType() == PBPropertyValue::Type::Int )
+			{
+				a_rOutValue = TFLOAT( pValue->GetInteger() );
+				return TTRUE;
+			}
+		}
+
+		return TFALSE;
+	}
+
+	// Reads a_szName as an array of 2 numbers
+	// NOTE: unreferenced in retail. Like the other ones, only the type of the first element is checked
+	// $Barnyard: FUNCTION 006b2020
+	TBOOL GetOptionalVector2( Toshi::TVector2& a_rOutValue, const TCHAR* a_szName ) const
+	{
+		const PBPropertyValue* pValue = GetProperty( a_szName );
+
+		if ( !pValue || pValue->GetType() != PBPropertyValue::Type::Array )
+			return TFALSE;
+
+		const PBPropertyValueArray* pArray = pValue->GetArray();
+
+		if ( pArray->GetSize() != 2 )
+			return TFALSE;
+
+		for ( TINT i = 0; i < 2; i++ )
+		{
+			if ( pArray->GetValue( 0 )->GetType() != PBPropertyValue::Type::Float )
+				return TFALSE;
+		}
+
+		return pValue->GetVector2( a_rOutValue );
+	}
+
+	// Reads the LocaleString a_szName as the localised string
+	// NOTE: unreferenced in retail, the name is invented (defined in PBPropertyReader.cpp)
+	TBOOL GetOptionalLocalisedString( const TWCHAR*& a_rOutValue, const TCHAR* a_szName ) const;
+
+	// Reads a_szName as an array of 3 numbers
+	// NOTE: like the original, only the type of the first element is checked
+	// $Barnyard: FUNCTION 006b20b0
+	TBOOL GetOptionalVector3( Toshi::TVector3& a_rOutValue, const TCHAR* a_szName ) const
+	{
+		const PBPropertyValue* pValue = GetProperty( a_szName );
+
+		if ( !pValue || pValue->GetType() != PBPropertyValue::Type::Array )
+			return TFALSE;
+
+		const PBPropertyValueArray* pArray = pValue->GetArray();
+
+		if ( pArray->GetSize() != 3 )
+			return TFALSE;
+
+		for ( TINT i = 0; i < 3; i++ )
+		{
+			if ( pArray->GetValue( 0 )->GetType() != PBPropertyValue::Type::Float )
+				return TFALSE;
+		}
+
+		return pValue->GetVector3( a_rOutValue );
+	}
+
+	// Reads a_szName as an array of 3 or 4 numbers (see PBPropertyValue::GetVector4)
+	// NOTE: like the original, only the type of the first element is checked
+	// $Barnyard: FUNCTION 006b2110
+	// $Barnyard: FUNCTION 006b2340
+	TBOOL GetOptionalVector4( Toshi::TVector4& a_rOutValue, const TCHAR* a_szName ) const
+	{
+		const PBPropertyValue* pValue = GetProperty( a_szName );
+
+		if ( !pValue || pValue->GetType() != PBPropertyValue::Type::Array )
+			return TFALSE;
+
+		const PBPropertyValueArray* pArray = pValue->GetArray();
+
+		if ( pArray->GetSize() != 3 && pArray->GetSize() != 4 )
+			return TFALSE;
+
+		for ( TUINT32 i = 0; i < pArray->GetSize(); i++ )
+		{
+			if ( pArray->GetValue( 0 )->GetType() != PBPropertyValue::Type::Float )
+				return TFALSE;
+		}
+
+		return pValue->GetVector4( a_rOutValue );
+	}
+
+	// Reads a_szName as an array of 4 numbers
+	// NOTE: like the original, only the type of the first element is checked
+	// $Barnyard: FUNCTION 006b2180
+	// $Barnyard: FUNCTION 006b2350
+	TBOOL GetOptionalQuaternion( Toshi::TQuaternion& a_rOutValue, const TCHAR* a_szName ) const
+	{
+		const PBPropertyValue* pValue = GetProperty( a_szName );
+
+		if ( !pValue || pValue->GetType() != PBPropertyValue::Type::Array )
+			return TFALSE;
+
+		const PBPropertyValueArray* pArray = pValue->GetArray();
+
+		if ( pArray->GetSize() != 4 )
+			return TFALSE;
+
+		for ( TINT i = 0; i < 4; i++ )
+		{
+			if ( pArray->GetValue( 0 )->GetType() != PBPropertyValue::Type::Float )
+				return TFALSE;
+		}
+
+		return pValue->GetQuaternion( a_rOutValue );
+	}
+
+	// $Barnyard: FUNCTION 006b1f30
+	const PBProperties* FindProperties( const TCHAR* a_szName ) const
+	{
+		const PBPropertyValue* pValue = GetProperty( a_szName );
+
+		if ( pValue && pValue->GetType() == PBPropertyValue::Type::Properties )
+			return pValue->GetProperties();
+
+		return TNULL;
+	}
+
+	// NOTE: retail has a separate copy of this per type that takes the name as a const TPString8&:
+	// 006b1f50 (TFLOAT, same code as 006b2270), 006b1fa0/006b22c0 (TINT), 006b1fe0/006b2300 (TBOOL),
+	// 006b2230 (PBPropertyLocaleString), 006b2470 (TPString8)
+	// $Barnyard: FUNCTION 006b1f50
+	// $Barnyard: FUNCTION 006b1fa0
+	// $Barnyard: FUNCTION 006b22c0
+	// $Barnyard: FUNCTION 006b1fe0
+	// $Barnyard: FUNCTION 006b2300
+	// $Barnyard: FUNCTION 006b2230
+	// $Barnyard: FUNCTION 006b2470
 	template <typename T>
 	TBOOL GetOptionalPropertyValue( T& a_rOutValue, const TCHAR* a_szName ) const
 	{
+		// Like the original, the TFLOAT version also accepts integers
+		if constexpr ( PBPropertiesTypeCast<T>::type == PBPropertyValue::Type::Float )
+			return GetOptionalFloatOrIntValue( a_rOutValue, a_szName );
+
 		const PBPropertyValue* pFoundProperty = GetProperty( a_szName );
 
 		if ( pFoundProperty && pFoundProperty->GetType() == PBPropertiesTypeCast<T>::type )
 		{
 			if constexpr ( PBPropertiesTypeCast<T>::type == PBPropertyValue::Type::Float )
 				a_rOutValue = pFoundProperty->GetFloat();
+			else if constexpr ( PBPropertiesTypeCast<T>::type == PBPropertyValue::Type::LocaleString )
+				a_rOutValue = pFoundProperty->GetLocaleString();
 			else if constexpr ( PBPropertiesTypeCast<T>::type == PBPropertyValue::Type::Int )
 				a_rOutValue = pFoundProperty->GetInteger();
 			else if constexpr ( PBPropertiesTypeCast<T>::type == PBPropertyValue::Type::Bool )
@@ -1080,6 +1337,32 @@ inline PBPropertyValue::PBPropertyValue( const PBPropertyValue& other )
 	else
 		m_uValue = other.m_uValue;
 }
+
+class PPropertyValue;
+class PPropertyValueArray;
+
+//-----------------------------------------------------------------------------
+// Converts the binary properties into PPropertyValue values.
+// NOTE: defined in PBPropertyReader.cpp since it needs the whole PPropertyValue.
+//-----------------------------------------------------------------------------
+class PBPropertyReader
+{
+public:
+	// Returns a new value, owned by the caller
+	static PPropertyValue* ToValue( const PBPropertyValue* a_pValue );
+
+	// Returns a new array, owned by the caller
+	static PPropertyValueArray* ToValueArray( const PBPropertyValueArray* a_pArray );
+
+	// Returns a new name (a_pName with an empty sub name), owned by the caller
+	static class PPropertyName* CreatePropertyName( const PBPropertyName* a_pName );
+
+	// Returns new properties with the converted properties of a_pBProperties
+	static class PProperties* CreateProperties( const PBProperties* a_pBProperties );
+
+	// Adds the converted properties of a_pBProperties to a_pProperties
+	static TBOOL FillProperties( const PBProperties* a_pBProperties, class PProperties* a_pProperties );
+};
 
 inline PBPropertyValue::PBPropertyValue( PBPropertyValue&& other ) noexcept
 {

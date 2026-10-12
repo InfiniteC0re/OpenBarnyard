@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_START
 
+// NOTE: GetClass 006dab80, CreateObject 006dbf60, CreateObjectInPlace 006dbf80
 TDEFINE_CLASS( TInputDXDeviceKeyboard );
 
 // $Barnyard: FUNCTION 006dbae0
@@ -20,6 +21,16 @@ TInputDXDeviceKeyboard::TInputDXDeviceKeyboard()
 	m_poDXInputDevice = TNULL;
 	m_bFlag           = TFALSE;
 	m_aKeys.InitialiseAll( { TNULL } );
+}
+
+// $Barnyard: FUNCTION 006dbb20
+// $Barnyard: FUNCTION 006dbfa0
+TInputDXDeviceKeyboard::~TInputDXDeviceKeyboard()
+{
+	Release();
+
+	for ( TINT i = 0; i < KEYBOARD_NUM_DOODADS; i++ )
+		delete[] m_aKeys[ i ].wszKeyName;
 }
 
 // $Barnyard: FUNCTION 006dac40
@@ -97,6 +108,36 @@ TBOOL TInputDXDeviceKeyboard::Flush()
 // $Barnyard: FUNCTION 006dbc00
 TINT TInputDXDeviceKeyboard::ProcessEvents( TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, TFLOAT deltaTime )
 {
+#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
+	// Development: key changes queued by Dev_QueueKey (-devkeys) are handled like the device's own
+	// buffered data. Unattended runs never get the focus, so the device isn't acquired then and the
+	// injected key states are the only ones (held keys repeat through ProcessRepeats)
+	TINT iNumDevProcessed = 0;
+
+	if ( ms_bDevKeys )
+	{
+		if ( !m_bIsUpdating )
+		{
+			iNumDevProcessed += ProcessRepeats( emitter, deltaTime );
+			iNumDevProcessed += ProcessVirtualButtons( emitter, deltaTime );
+		}
+
+		for ( TINT i = 0; i < ms_iNumDevKeys; i++ )
+		{
+			HandleKeyChange( emitter, TranslateDoodadToDX( ms_aDevKeys[ i ].iDoodad ), ms_aDevKeys[ i ].bDown ? 0x80 : 0x00 );
+			iNumDevProcessed++;
+		}
+
+		ms_iNumDevKeys = 0;
+
+		if ( !m_bIsUpdating )
+		{
+			UpdateVirtualButtons();
+			return iNumDevProcessed;
+		}
+	}
+#endif
+
 	if ( m_bIsUpdating )
 	{
 		if ( m_bFlag )
@@ -125,9 +166,7 @@ TINT TInputDXDeviceKeyboard::ProcessEvents( TEmitter<TInputInterface, TInputInte
 
 			for ( DWORD i = 0; i < dwNumElements; i++ )
 			{
-				HandleKeyChange( emitter, aDeviceData[ i ].dwOfs, TUINT8( aDeviceData[ i ].dwData ) );
-
-				if ( aDeviceData[ i ].dwData != 0 )
+				if ( HandleKeyChange( emitter, aDeviceData[ i ].dwOfs, TUINT8( aDeviceData[ i ].dwData ) ) )
 					iNumProcessed++;
 			}
 
@@ -151,8 +190,14 @@ TINT TInputDXDeviceKeyboard::GetButtonCount() const
 // $Barnyard: FUNCTION 006dbd30
 TBOOL TInputDXDeviceKeyboard::IsDown( TINT doodad ) const
 {
+#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
+	// Development: injected keys (-devkeys) are down while the device isn't acquired
+	if ( !m_bIsUpdating && !ms_bDevKeys )
+		return TFALSE;
+#else
 	if ( !m_bIsUpdating )
 		return TFALSE;
+#endif
 
 	if ( doodad == VIRTKEY_SHIFT )
 		return IsShiftDown();
@@ -843,6 +888,7 @@ const TBOOL TInputDXDeviceKeyboard::BindToDIDevice( HWND a_hMainWindow, LPCDIDEV
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006dbe30
 BOOL CALLBACK TInputDXDeviceKeyboard::EnumObjectCallback( LPCDIDEVICEOBJECTINSTANCEA a_poObjectInstance, LPVOID a_pvRef )
 {
 	TInputDXDeviceKeyboard* pKeyboard = TREINTERPRETCAST( TInputDXDeviceKeyboard*, a_pvRef );

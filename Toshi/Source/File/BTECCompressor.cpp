@@ -15,14 +15,14 @@ BTECCompressor::BTECCompressor()
 	this->m_DataEnd     = TNULL;
 	this->m_Buffer2     = TNULL;
 	this->m_Buffer3     = TNULL;
-	this->m_SomeArray1  = TNULL;
+	this->m_pNodes      = TNULL;
 	this->m_Buckets     = TNULL;
 	this->m_BucketCount = 0;
 }
 
 BTECCompressor::~BTECCompressor()
 {
-	TFree( m_SomeArray1 );
+	TFree( m_pNodes );
 
 	for ( TSIZE i = 0; i < m_BucketCount; i++ )
 	{
@@ -51,14 +51,14 @@ void BTECCompressor::Initialize( TBYTE* buffer, TSIZE bufferSize, TINT maxoffset
 	m_Root2.Reset();
 
 	TSIZE arraySize1 = m_BucketCount * maxoffset;
-	m_SomeArray1     = (Node*)TMemalign( arraySize1 * sizeof( Node ), 16 );
+	m_pNodes         = (Node*)TMemalign( arraySize1 * sizeof( Node ), 16 );
 
 	for ( TSIZE i = 0; i < arraySize1; i++ )
 	{
-		m_SomeArray1[ i ].m_Ptr1         = &m_Root1;
-		m_SomeArray1[ i ].m_Ptr2         = m_Root1.m_Ptr2;
-		m_SomeArray1[ i ].m_Ptr1->m_Ptr2 = &m_SomeArray1[ i ];
-		m_SomeArray1[ i ].m_Ptr2->m_Ptr1 = &m_SomeArray1[ i ];
+		m_pNodes[ i ].m_pNext          = &m_Root1;
+		m_pNodes[ i ].m_pPrev          = m_Root1.m_pPrev;
+		m_pNodes[ i ].m_pNext->m_pPrev = &m_pNodes[ i ];
+		m_pNodes[ i ].m_pPrev->m_pNext = &m_pNodes[ i ];
 	}
 
 	TUtil::MemClear( m_Offsets, sizeof( m_Offsets ) );
@@ -71,15 +71,15 @@ void BTECCompressor::Initialize( TBYTE* buffer, TSIZE bufferSize, TINT maxoffset
 
 		for ( TSIZE k = 0; k < 256; k++ )
 		{
-			Node* someNode      = new Node();
-			someNode->m_Unk1    = someNode;
-			someNode->m_Unk2    = someNode;
-			m_Buckets[ i ][ k ] = someNode;
+			Node* someNode        = new Node();
+			someNode->m_pHashNext = someNode;
+			someNode->m_pHashPrev = someNode;
+			m_Buckets[ i ][ k ]   = someNode;
 		}
 	}
 }
 
-void BTECCompressor::FUN_0068ae40( TSIZE dataSize )
+void BTECCompressor::AdvanceWindow( TSIZE dataSize )
 {
 	// 0068ae40
 	auto oldBuffer3 = m_Buffer3;
@@ -104,22 +104,22 @@ void BTECCompressor::FUN_0068ae40( TSIZE dataSize )
 			}
 		}
 
-		auto node = m_Root2.m_Ptr1;
+		auto node = m_Root2.m_pNext;
 		while ( node != &m_Root2 )
 		{
-			if ( m_Buffer2 <= node->m_Unk3 ) break;
-			auto nextNode = node->m_Ptr1;
+			if ( m_Buffer2 <= node->m_pData ) break;
+			auto nextNode = node->m_pNext;
 
-			node->m_Unk1->m_Unk2 = node->m_Unk2;
-			node->m_Unk2->m_Unk1 = node->m_Unk1;
-			node->m_Unk1         = node;
-			node->m_Unk2         = node;
-			node->m_Ptr1->m_Ptr2 = node->m_Ptr2;
-			node->m_Ptr2->m_Ptr1 = node->m_Ptr1;
-			node->m_Ptr1         = &m_Root1;
-			node->m_Ptr2         = m_Root1.m_Ptr2;
-			m_Root1.m_Ptr2       = node;
-			node->m_Ptr2->m_Ptr1 = node;
+			node->m_pHashNext->m_pHashPrev = node->m_pHashPrev;
+			node->m_pHashPrev->m_pHashNext = node->m_pHashNext;
+			node->m_pHashNext              = node;
+			node->m_pHashPrev              = node;
+			node->m_pNext->m_pPrev         = node->m_pPrev;
+			node->m_pPrev->m_pNext         = node->m_pNext;
+			node->m_pNext                  = &m_Root1;
+			node->m_pPrev                  = m_Root1.m_pPrev;
+			m_Root1.m_pPrev                = node;
+			node->m_pPrev->m_pNext         = node;
 
 			node = nextNode;
 		}
@@ -132,7 +132,7 @@ void BTECCompressor::FUN_0068ae40( TSIZE dataSize )
 	}
 }
 
-TBOOL BTECCompressor::FUN_0068af10( TBYTE* buffer, TSIZE bufferSize, TBYTE*& offset, TSIZE& dataSize )
+TBOOL BTECCompressor::FindMatch( TBYTE* buffer, TSIZE bufferSize, TBYTE*& offset, TSIZE& dataSize )
 {
 	// +++
 	offset   = TNULL;
@@ -157,7 +157,7 @@ TBOOL BTECCompressor::FUN_0068af10( TBYTE* buffer, TSIZE bufferSize, TBYTE*& off
 
 			Node* localNode1;
 			Node* localNode2;
-			TBOOL bRes = FUN_0068b300( buffer, m_Buckets[ i ], localSize, localNode1, localNode2 );
+			TBOOL bRes = FindNodeInBucket( buffer, m_Buckets[ i ], localSize, localNode1, localNode2 );
 			if ( bRes == TFALSE ) break;
 
 			size   = localSize;
@@ -172,7 +172,7 @@ TBOOL BTECCompressor::FUN_0068af10( TBYTE* buffer, TSIZE bufferSize, TBYTE*& off
 
 			if ( bucket == m_Buckets[ m_BucketCount - 1 ] )
 			{
-				someSize = TMath::Min( bufferSize, static_cast<TSIZE>( m_DataEnd - node1->m_Unk3 ) );
+				someSize = TMath::Min( bufferSize, static_cast<TSIZE>( m_DataEnd - node1->m_pData ) );
 			}
 			else
 			{
@@ -188,7 +188,7 @@ TBOOL BTECCompressor::FUN_0068af10( TBYTE* buffer, TSIZE bufferSize, TBYTE*& off
 			{
 				size = 0;
 
-				while ( node1->m_Unk3[ size ] == buffer[ size ] )
+				while ( node1->m_pData[ size ] == buffer[ size ] )
 				{
 					if ( someSize <= size ) break;
 					size++;
@@ -197,7 +197,7 @@ TBOOL BTECCompressor::FUN_0068af10( TBYTE* buffer, TSIZE bufferSize, TBYTE*& off
 				if ( dataSize < size )
 				{
 					dataSize = size;
-					offset   = node1->m_Unk3;
+					offset   = node1->m_pData;
 
 					if ( someSize <= size )
 					{
@@ -205,7 +205,7 @@ TBOOL BTECCompressor::FUN_0068af10( TBYTE* buffer, TSIZE bufferSize, TBYTE*& off
 					}
 				}
 
-				node1 = node1->m_Unk1;
+				node1 = node1->m_pHashNext;
 
 				if ( node1 == node2 )
 				{
@@ -235,7 +235,7 @@ void BTECCompressor::AllocSubstring( TBYTE* buffer )
 			return;
 		}
 
-		auto node = m_Root1.m_Ptr1;
+		auto node = m_Root1.m_pNext;
 		if ( node == &m_Root1 )
 		{
 			TERROR( "SlidingWindow::AllocSubstring: No free substrings!\n" );
@@ -243,40 +243,40 @@ void BTECCompressor::AllocSubstring( TBYTE* buffer )
 			return;
 		}
 
-		node->m_Ptr1->m_Ptr2 = node->m_Ptr2;
-		node->m_Ptr2->m_Ptr1 = node->m_Ptr1;
-		node->m_Ptr1         = &m_Root2;
-		node->m_Ptr2         = m_Root2.m_Ptr2;
-		m_Root2.m_Ptr2       = node;
-		node->m_Ptr2->m_Ptr1 = node;
-		node->m_Unk4         = (void*)( m_DataEnd - buffer );
-		node->m_Unk3         = buffer;
+		node->m_pNext->m_pPrev = node->m_pPrev;
+		node->m_pPrev->m_pNext = node->m_pNext;
+		node->m_pNext          = &m_Root2;
+		node->m_pPrev          = m_Root2.m_pPrev;
+		m_Root2.m_pPrev        = node;
+		node->m_pPrev->m_pNext = node;
+		node->m_Unk4           = (void*)( m_DataEnd - buffer );
+		node->m_pData          = buffer;
 
 		TUINT32 hash = HashData( buffer, unknown );
 
-		auto hashedNode      = m_Buckets[ i ][ hash % 256 ];
-		node->m_Unk1         = hashedNode;
-		node->m_Unk2         = hashedNode->m_Unk2;
-		hashedNode->m_Unk2   = node;
-		node->m_Unk2->m_Unk1 = node;
+		auto hashedNode                = m_Buckets[ i ][ hash % 256 ];
+		node->m_pHashNext              = hashedNode;
+		node->m_pHashPrev              = hashedNode->m_pHashPrev;
+		hashedNode->m_pHashPrev        = node;
+		node->m_pHashPrev->m_pHashNext = node;
 	}
 }
 
-TBOOL BTECCompressor::FUN_0068b300( TBYTE* buffer, Bucket nodeBucket, TSIZE bufferSize, Node*& out1, Node*& out2 )
+TBOOL BTECCompressor::FindNodeInBucket( TBYTE* buffer, Bucket nodeBucket, TSIZE bufferSize, Node*& out1, Node*& out2 )
 {
 	auto hash       = HashData( buffer, bufferSize );
 	auto hashedNode = nodeBucket[ hash % 256 ];
 
 	out2       = hashedNode;
-	hashedNode = hashedNode->m_Unk1;
+	hashedNode = hashedNode->m_pHashNext;
 	out1       = hashedNode;
 
 	while ( hashedNode != out2 )
 	{
-		TINT difference = Toshi::TUtil::MemCompare( out1->m_Unk3, buffer, bufferSize );
+		TINT difference = Toshi::TUtil::MemCompare( out1->m_pData, buffer, bufferSize );
 		if ( difference == 0 ) break;
 
-		hashedNode = hashedNode->m_Unk1;
+		hashedNode = hashedNode->m_pHashNext;
 		out1       = hashedNode;
 	}
 

@@ -13,7 +13,7 @@ TDEFINE_CLASS_NORUNTIME( ASkinMaterial );
 
 // $Barnyard: FUNCTION 005f14d0
 ASkinMaterial::ASkinMaterial()
-    : m_eBlendMode( 0 ), m_pTexture( TNULL ), m_bFlag( TTRUE )
+    : m_eBlendMode( BLENDMODE_DEFAULT ), m_pTexture( TNULL ), m_bFlag( TTRUE )
 {
 	m_apLightingTextures[ LT_0 ] = TNULL;
 	m_apLightingTextures[ LT_1 ] = TNULL;
@@ -22,6 +22,7 @@ ASkinMaterial::ASkinMaterial()
 }
 
 // $Barnyard: FUNCTION 005f1510
+// $Barnyard: FUNCTION 005f16a0
 ASkinMaterial::~ASkinMaterial()
 {
 }
@@ -38,7 +39,7 @@ void ASkinMaterial::SetBlendMode( BLENDMODE a_eBlendMode )
 	m_eBlendMode = a_eBlendMode;
 	m_Flags &= ~FLAGS_BLENDING;
 
-	if ( a_eBlendMode != 0 )
+	if ( a_eBlendMode != BLENDMODE_DEFAULT )
 	{
 		m_Flags |= FLAGS_BLENDING;
 	}

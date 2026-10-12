@@ -11,6 +11,7 @@
 
 TOSHI_NAMESPACE_START
 
+// NOTE: GetClass 006d3c20, CreateObject 006d4190, CreateObjectInPlace 006d41d0
 TDEFINE_CLASS( TInputDXDeviceMouse );
 
 // $Barnyard: FUNCTION 006d3dd0
@@ -160,16 +161,17 @@ TINT TInputDXDeviceMouse::ProcessEvents( EventEmitter& a_rEmitter, TFLOAT a_fDel
 					if ( ( m_dwButtonCurrent & uiButtonFlag ) == 0 )
 					{
 						a_rEmitter.Throw( TInputInterface::InputEvent( this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_DOWN ) );
+						iNumProcessed += 1;
 						m_dwButtonCurrent |= uiButtonFlag;
 					}
 				}
 				else if ( ( m_dwButtonCurrent & uiButtonFlag ) != 0 )
 				{
 					a_rEmitter.Throw( TInputInterface::InputEvent( this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_UP ) );
+					iNumProcessed += 1;
 					m_dwButtonCurrent &= ~uiButtonFlag;
 				}
 
-				iNumProcessed += 1;
 				break;
 			}
 		}
@@ -180,7 +182,7 @@ TINT TInputDXDeviceMouse::ProcessEvents( EventEmitter& a_rEmitter, TFLOAT a_fDel
 		a_rEmitter.Throw(
 		    TInputInterface::InputEvent(
 		        this,
-		        0x3000b,
+		        AXIS_CURSOR,
 		        TInputInterface::EVENT_TYPE_MOVED,
 		        m_iDeltaPositionX,
 		        m_iDeltaPositionY
@@ -192,7 +194,38 @@ TINT TInputDXDeviceMouse::ProcessEvents( EventEmitter& a_rEmitter, TFLOAT a_fDel
 
 	if ( m_iDeltaPositionZ != 0 )
 	{
-		TTODO( "Throw scroll events" );
+		// One wheel notch is 120 (WHEEL_DELTA)
+		a_rEmitter.Throw( TInputInterface::InputEvent( this, AXIS_WHEEL, TInputInterface::EVENT_TYPE_MOVED, 0.0f, m_iDeltaPositionZ * ( 1.0f / 120.0f ) ) );
+		iNumProcessed += 1;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+		// Retail divides by zero if the device reports no wheel granularity
+		TINT iNumSteps = ( m_iWheelGranularity != 0 ) ? m_iDeltaPositionZ / m_iWheelGranularity : 0;
+#else
+		TINT iNumSteps = m_iDeltaPositionZ / m_iWheelGranularity;
+#endif
+
+		// Every step of the wheel is a press of the wheel button (held while the further steps repeat)
+		if ( iNumSteps < 0 )
+		{
+			a_rEmitter.Throw( TInputInterface::InputEvent( this, BUTTON_WHEEL_BACKWARD, TInputInterface::EVENT_TYPE_GONE_DOWN ) );
+
+			for ( TINT i = iNumSteps + 1; i < 0; i++ )
+				a_rEmitter.Throw( TInputInterface::InputEvent( this, BUTTON_WHEEL_BACKWARD, TInputInterface::EVENT_TYPE_REPEAT ) );
+
+			a_rEmitter.Throw( TInputInterface::InputEvent( this, BUTTON_WHEEL_BACKWARD, TInputInterface::EVENT_TYPE_GONE_UP ) );
+			iNumProcessed += 1 - iNumSteps;
+		}
+		else if ( iNumSteps > 0 )
+		{
+			a_rEmitter.Throw( TInputInterface::InputEvent( this, BUTTON_WHEEL_FORWARD, TInputInterface::EVENT_TYPE_GONE_DOWN ) );
+
+			for ( TINT i = 1; i < iNumSteps; i++ )
+				a_rEmitter.Throw( TInputInterface::InputEvent( this, BUTTON_WHEEL_FORWARD, TInputInterface::EVENT_TYPE_REPEAT ) );
+
+			a_rEmitter.Throw( TInputInterface::InputEvent( this, BUTTON_WHEEL_FORWARD, TInputInterface::EVENT_TYPE_GONE_UP ) );
+			iNumProcessed += iNumSteps + 1;
+		}
 	}
 
 	return iNumProcessed;
@@ -302,11 +335,11 @@ TBOOL TInputDXDeviceMouse::Initialise()
 
 	if ( hr != DIERR_OBJECTNOTFOUND )
 	{
-		m_bInitiliased = ( hr != DI_OK ) - 1 & dwordProperty.diph.dwHeaderSize;
+		m_iWheelGranularity = ( hr == DI_OK ) ? dwordProperty.dwData : 0;
 		return TTRUE;
 	}
 
-	m_bInitiliased = FALSE;
+	m_iWheelGranularity = 0;
 	return TTRUE;
 }
 

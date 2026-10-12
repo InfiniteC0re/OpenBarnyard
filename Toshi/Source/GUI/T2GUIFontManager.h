@@ -12,13 +12,16 @@ public:
 
 public:
 	static TBOOL Open( const TCHAR* a_szFileName );
+	static void  Close( const TCHAR* a_szFileName );
 
 	static T2GUIFont*         FindFont( const TCHAR* a_szFontName );
+	static void               ReleaseFont( T2GUIFont* a_pFont );
 	static T2GUIFontRef*      FindFontRef( const TCHAR* a_szFontName );
 	static T2GUIFontResource* FindFontResource( const TCHAR* a_szResourceName );
 
 private:
 	static T2GUIFontRef*      FindUnusedFontRef();
+	static void               DestroyFontRefs( T2GUIFontResource* a_pFontResource );
 	static T2GUIFontResource* FindUnusedFontResource();
 	static void               CreateFontFromResource( T2GUIFontResource* a_pFontResource );
 

@@ -29,6 +29,7 @@
  * @param size Size to allocate
  * @return Pointer to allocated memory
  */
+// $Barnyard: FUNCTION 00401000
 void* __CRTDECL operator new( TSIZE size )
 {
 #ifdef TOSHI_PROFILER_MEMORY
@@ -515,7 +516,7 @@ TMemory::MemBlock* TMemory::CreateMemBlockInPlace( void* a_pMem, TSIZE a_uiSize,
 			pBlockFooter->m_pBlockOwner = TNULL;
 			pBlockFooter->m_Unk4        = 0;
 			pBlockFooter->m_Unk1        = 0;
-			pBlockFooter->m_Unk2        = g_pMemory->m_uiGlobalFlags | TMEMORY_FLAGS_HOLE_PROCESS;
+			pBlockFooter->m_uiSize      = g_pMemory->m_uiGlobalFlags | TMEMORY_FLAGS_HOLE_PROCESS;
 			pBlockFooter->m_pBlockOwner = pBlock;
 
 			pBlock->m_pNextBlock   = pBlock;
@@ -626,10 +627,80 @@ Toshi::TMemory::MemNode* TMemory::GetMemNodeFromAddress( void* a_pMem )
  * 2. Checks hole linkages
  * 3. Verifies memory boundaries
  */
-int TMemory::TestMemIntegrity( MemBlock* a_pMemBlock )
+// $Barnyard: FUNCTION 006b4cb0
+TBOOL TMemory::TestMemIntegrity( MemBlock* a_pMemBlock )
 {
-	// TODO: this method is cut in the release build
-	return 0;
+	TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
+
+	MemBlock* pMemBlock = a_pMemBlock ? a_pMemBlock : g_pMemory->m_pGlobalBlock;
+
+	// Walk every node of the block and gather the stats
+	TSIZE uiMaxNodes        = pMemBlock->m_uiTotalSize1 / 12;
+	TINT  iNumHoles         = 0;
+	TSIZE uiLargestHole     = 0;
+	TSIZE uiSmallestHole    = TSIZE( -1 );
+	TSIZE uiLargestProcess  = 0;
+	TSIZE uiSmallestProcess = TSIZE( -1 );
+
+	MemNode* pNode = pMemBlock->m_pFirstHole;
+
+	while ( TAlignNumDown( pNode->uiSize ) != 0 )
+	{
+		TSIZE uiSize = TAlignNumDown( pNode->uiSize );
+
+		if ( HASANYFLAG( pNode->uiSize, TMEMORY_FLAGS_HOLE_PROCESS ) )
+		{
+			// Allocated memory has to belong to this block
+			if ( pNode->pMemBlock != pMemBlock )
+				return TFALSE;
+
+			if ( uiSize > uiLargestProcess ) uiLargestProcess = uiSize;
+			if ( uiSize < uiSmallestProcess ) uiSmallestProcess = uiSize;
+		}
+		else
+		{
+			iNumHoles++;
+
+			if ( uiSize > uiLargestHole ) uiLargestHole = uiSize;
+			if ( uiSize < uiSmallestHole ) uiSmallestHole = uiSize;
+		}
+
+		if ( --uiMaxNodes == 0 )
+			return TFALSE;
+
+		MemNode* pPrevNode = pNode;
+		pNode              = TREINTERPRETCAST( MemNode*, TREINTERPRETCAST( TUINTPTR, pNode ) + uiSize + TMEMORY_ALLOC_RESERVED_SIZE );
+
+		// The end of the block has a zero size
+		if ( pNode->pOwner != pPrevNode && TAlignNumDown( pNode->uiSize ) != 0 )
+			return TFALSE;
+	}
+
+	// Check that the free lists are linked correctly and contain every hole
+	TINT iNumListedHoles = 0;
+	uiMaxNodes           = pMemBlock->m_uiTotalSize1 / 12;
+
+	for ( TUINT i = 0; i < TMEMORY_NUM_FREELISTS; i++ )
+	{
+		TINT iIndex = 0;
+
+		for ( MemNode* pHole = pMemBlock->m_apHoles[ i ]; pHole != TNULL; pHole = pHole->pNextHole )
+		{
+			if ( HASANYFLAG( pHole->uiSize, TMEMORY_FLAGS_HOLE_PROCESS ) )
+				return TFALSE;
+
+			if ( iIndex != 0 ? pHole->pPrevHole->pNextHole != pHole : pHole->pPrevHole != TNULL )
+				return TFALSE;
+
+			iNumListedHoles++;
+			iIndex++;
+
+			if ( --uiMaxNodes == 0 )
+				return TFALSE;
+		}
+	}
+
+	return iNumListedHoles == iNumHoles;
 }
 
 /**
@@ -644,7 +715,8 @@ int TMemory::TestMemIntegrity( MemBlock* a_pMemBlock )
  */
 int TMemory::DebugTestMemoryBlock( MemBlock* a_pMemBlock )
 {
-	TIMPLEMENT();
+	// NOTE: not in BYard.exe (debug-only, cut from retail like DebugPrintHALMemInfo) and never called.
+	// The block validation and leak checks of the debug TOSHI build aren't known, so this only gathers the info.
 	DebugPrintHALMemInfo( "TMemory: DebugTestMemoryBlock:" );
 
 	MemBlock* pMemBlock = a_pMemBlock;
@@ -656,8 +728,6 @@ int TMemory::DebugTestMemoryBlock( MemBlock* a_pMemBlock )
 
 	MemInfo memInfo;
 	GetMemInfo( memInfo, pMemBlock );
-
-	// ...
 
 	return 0;
 }
@@ -813,12 +883,23 @@ void TMemory::DumpMemInfo()
  * @param a_szFormat Format string
  * @param ... Variable arguments
  */
+// $Barnyard: FUNCTION 006d8100
 void TMemory::DebugPrintHALMemInfo( const TCHAR* a_szFormat, ... )
 {
+	// NOTE: the size of the original buffer is unknown
+	static TCHAR s_szBuffer[ 1024 ];
+
 	va_list args;
 	va_start( args, a_szFormat );
+#  ifdef BARNYARD_COMMUNITY_PATCH
 	TDebug_FinalVPrintf( a_szFormat, args );
+	_vsnprintf( s_szBuffer, sizeof( s_szBuffer ) - 1, a_szFormat, args );
+#  else
+	vsprintf( s_szBuffer, a_szFormat, args );
+#  endif
 	va_end( args );
+
+	OutputDebugStringA( s_szBuffer );
 }
 
 // $Barnyard: FUNCTION 006b4ba0
@@ -970,6 +1051,17 @@ void* TMalloc( TSIZE a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum )
 	}
 
 	return pMem;
+}
+
+// NOTE: the name is unknown. It's used by the reallocation slot of AMemoryPoolAllocator
+// $Barnyard: FUNCTION 006b4e00
+void* TRealloc( void* a_pMem, TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock )
+{
+	if ( !a_pMemBlock )
+		a_pMemBlock = Toshi::g_pMemory->GetGlobalBlock();
+
+	Toshi::TMemory::DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName );
+	return TNULL;
 }
 
 // $Barnyard: FUNCTION 006b5630

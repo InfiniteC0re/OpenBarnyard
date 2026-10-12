@@ -3,6 +3,7 @@
 #include "AAnimatableObjectTypeBunch.h"
 #include "AModelRepos.h"
 #include "ALoadScreen.h"
+#include "FX/AParticleEffectManager.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -14,6 +15,11 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AAnimatableObjectManager );
 
+// T2ObjectPool<AToshiAnimationRef, 100> methods (vtable 0x00727ef0):
+// $Barnyard: FUNCTION 005822f0
+// $Barnyard: FUNCTION 00582310
+// $Barnyard: FUNCTION 00582330
+// $Barnyard: FUNCTION 00582350
 Toshi::T2ObjectPool<AToshiAnimationRef, 100> g_oAnimationRefPool;
 
 static constexpr const TCHAR* MODELTYPES_DIR = "data\\modeltypes\\";
@@ -42,12 +48,12 @@ AAnimatableObjectManager::~AAnimatableObjectManager()
 }
 
 // $Barnyard: FUNCTION 0057d710
-AAnimatableObject* AAnimatableObjectManager::CreateAnimatableObject( AAnimatableObjectType* a_pObjectType, void* a_Unk1, TUINT a_eFlags )
+AAnimatableObject* AAnimatableObjectManager::CreateAnimatableObject( AAnimatableObjectType* a_pObjectType, void* a_pOwner, TUINT a_eFlags )
 {
 	AAnimatableObject* pObject = new AAnimatableObject();
 
 	m_llAnimatableObjects.PushBack( pObject );
-	pObject->Create( a_pObjectType, a_Unk1, a_eFlags );
+	pObject->Create( a_pObjectType, a_pOwner, a_eFlags );
 
 	return pObject;
 }
@@ -117,7 +123,7 @@ void AAnimatableObjectManager::LoadAnimObjType( const TPString8& a_rcName, const
 		oTRB.DeleteSymbolTable();
 	}
 
-	TVALIDPTR( a_pProperties );
+	// NOTE: there might be no ModelTypes file (the barn items, "bn_saloon_bar_add"), the type is then created from the model of the same name
 	const PBProperties* pTypeProperties = TNULL;
 
 	AAnimatableObjectType* pObjectType = TNULL;
@@ -164,8 +170,172 @@ AAnimatableObjectType* AAnimatableObjectManager::FindType( const Toshi::TPString
 			return it;
 	}
 
-	TERROR( "AAnimatableObjectManager: unable to find animatable type '%s'\n", a_rcName.GetString() );
+	// NOTE: no error here, callers use FindType to check whether a type is loaded (e.g. 'sim_golf_flag' in
+	// AGameLoader::DestroyLevel, 'exclamation' in AAnimalPopulationManager::SetMarkersEnabled), like retail
 	return TNULL;
+}
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+TBOOL AAnimatableObjectManager::IsModelUsedByType( const AModel* a_pModel )
+{
+	T2_FOREACH( m_llObjectTypes, it )
+	{
+		if ( it->GetModel() == a_pModel )
+			return TTRUE;
+	}
+
+	return TFALSE;
+}
+#endif
+
+// $Barnyard: FUNCTION 0057e060
+void AAnimatableObjectManager::AttachObject( AAnimatableObject* a_pObject, AAnimatableObject* a_pParent, TINT8 a_iBone, TINT8 a_iParentBone, const TVector4& a_rcTranslation, const TQuaternion& a_rcRotation, TFLOAT a_fScale )
+{
+	a_pObject->m_oAttachmentInfo.pParentObject = a_pParent;
+	a_pObject->m_oAttachmentInfo.translation   = a_rcTranslation;
+	a_pObject->m_oAttachmentInfo.quaternion    = a_rcRotation;
+
+	a_pObject->GetModelInstance()->SetScale( TVector4( a_fScale, a_fScale, a_fScale, 1.0f ) );
+
+	a_pObject->m_oAttachmentInfo.iBone       = a_iBone;
+	a_pObject->m_oAttachmentInfo.iParentBone = a_iParentBone;
+	a_pParent->m_llAttachedObjects.PushFront( a_pObject );
+
+	RegisterAnimatableObject( a_pObject );
+}
+
+// $Barnyard: FUNCTION 0057e730
+void AAnimatableObjectManager::AttachObject( AAnimatableObject* a_pObject, AAnimatableObject* a_pParent, const TPString8& a_rcBone, const TPString8& a_rcParentBone, const TVector4& a_rcTranslation, const TQuaternion& a_rcRotation, TFLOAT a_fScale )
+{
+	TINT iBone       = ( a_rcBone.IsEmpty() ) ? -1 : a_pObject->GetModelInstance()->GetBoneIndex( a_rcBone );
+	TINT iParentBone = a_pParent->GetModelInstance()->GetBoneID( a_rcParentBone );
+
+	AttachObject( a_pObject, a_pParent, TINT8( iBone ), TINT8( iParentBone ), a_rcTranslation, a_rcRotation, a_fScale );
+}
+
+// $Barnyard: FUNCTION 0057daf0
+void AAnimatableObjectManager::RegisterAnimatableObject( AAnimatableObject* a_pObject )
+{
+	a_pObject->Remove();
+	m_llAnimatableObjects.PushBack( a_pObject );
+
+	T2_FOREACH( a_pObject->m_llAttachedObjects, it )
+	{
+		RegisterAnimatableObject( it );
+	}
+}
+
+// $Barnyard: FUNCTION 0057d8e0
+AAnimatableObject* AAnimatableObjectManager::GetAttachedObject( AAnimatableObject* a_pObject, TINT a_iBone, TINT a_iIndex )
+{
+	if ( a_iBone > -1 )
+	{
+		TINT iIndex = 0;
+
+		T2_FOREACH( a_pObject->m_llAttachedObjects, it )
+		{
+			if ( it->m_oAttachmentInfo.iParentBone == a_iBone )
+			{
+				if ( iIndex == a_iIndex )
+					return it;
+
+				iIndex++;
+			}
+		}
+	}
+
+	return TNULL;
+}
+
+// $Barnyard: FUNCTION 0057d950
+AAnimatableObject* AAnimatableObjectManager::GetAttachedObjectOfType( AAnimatableObject* a_pObject, TINT a_iBone, const TPString8& a_rcTypeName, TINT a_iIndex )
+{
+	if ( a_iBone > -1 )
+	{
+		TINT iIndex = 0;
+
+		T2_FOREACH( a_pObject->m_llAttachedObjects, it )
+		{
+			if ( it->m_pObjectType && it->m_oAttachmentInfo.iParentBone == a_iBone && it->m_pObjectType->GetName() == a_rcTypeName )
+			{
+				if ( iIndex == a_iIndex )
+					return it;
+
+				iIndex++;
+			}
+		}
+	}
+
+	return TNULL;
+}
+
+// $Barnyard: FUNCTION 0057e1b0
+AAnimatableObject* AAnimatableObjectManager::GetAttachedObjectOfType( AAnimatableObject* a_pObject, const TPString8& a_rcBone, const TPString8& a_rcTypeName, TINT a_iIndex )
+{
+	TINT iBone = a_pObject->GetModelInstance()->GetBoneIndex( a_rcBone );
+	return GetAttachedObjectOfType( a_pObject, iBone, a_rcTypeName, a_iIndex );
+}
+
+// $Barnyard: FUNCTION 0057e350
+AAnimatableObject* AAnimatableObjectManager::GetAttachedObject( AAnimatableObject* a_pObject, const TPString8& a_rcBone, TINT a_iIndex )
+{
+	TINT iBone = a_pObject->GetModelInstance()->GetBoneID( a_rcBone );
+	return GetAttachedObject( a_pObject, iBone, a_iIndex );
+}
+
+// $Barnyard: FUNCTION 0057e120
+AAnimatableObject* AAnimatableObjectManager::GetAttachedObjectByBoneName( AAnimatableObject* a_pObject, const TPString8& a_rcBone, TINT a_iIndex )
+{
+	TINT iBone = a_pObject->GetModelInstance()->GetBoneIndex( a_rcBone );
+	return GetAttachedObject( a_pObject, iBone, a_iIndex );
+}
+
+// $Barnyard: FUNCTION 0057d9d0
+TINT AAnimatableObjectManager::GetNumAttachedObjects( AAnimatableObject* a_pObject, TINT a_iBone )
+{
+	TINT iNumAttached = 0;
+
+	if ( a_iBone > -1 )
+	{
+		T2_FOREACH( a_pObject->m_llAttachedObjects, it )
+		{
+			if ( it->m_oAttachmentInfo.iParentBone == a_iBone )
+				iNumAttached++;
+		}
+	}
+
+	return iNumAttached;
+}
+
+// $Barnyard: FUNCTION 0057e240
+TINT AAnimatableObjectManager::GetNumAttachedObjects( AAnimatableObject* a_pObject, const TPString8& a_rcBone )
+{
+	TINT iBone = a_pObject->GetModelInstance()->GetBoneIndex( a_rcBone );
+	return GetNumAttachedObjects( a_pObject, iBone );
+}
+
+// $Barnyard: FUNCTION 0057da40
+TINT AAnimatableObjectManager::GetNumAttachedObjectsRecursive( AAnimatableObject* a_pObject, TINT a_iBone )
+{
+	TINT iNumAttached = 0;
+
+	if ( a_iBone > -1 )
+	{
+		T2_FOREACH( a_pObject->m_llAttachedObjects, it )
+		{
+			if ( it->m_oAttachmentInfo.iParentBone == a_iBone )
+				iNumAttached += GetNumAttachedObjectsRecursive( it, 0 ) + 1;
+		}
+	}
+
+	return iNumAttached;
+}
+
+// $Barnyard: FUNCTION 0057e2c0
+TINT AAnimatableObjectManager::GetNumAttachedObjectsRecursive( AAnimatableObject* a_pObject, const TPString8& a_rcBone )
+{
+	TINT iBone = a_pObject->GetModelInstance()->GetBoneIndex( a_rcBone );
+	return GetNumAttachedObjectsRecursive( a_pObject, iBone );
 }
 
 // $Barnyard: FUNCTION 0057dac0
@@ -174,6 +344,12 @@ void AAnimatableObjectManager::DetachObject( AAnimatableObject* a_pObject, AAnim
 	TASSERT( a_pObject->m_oAttachmentInfo.pParentObject == a_pParent );
 	a_pObject->m_oAttachmentInfo.pParentObject = TNULL;
 	a_pParent->m_llAttachedObjects.Erase( a_pObject );
+}
+
+// $Barnyard: FUNCTION 0057dd40
+void AAnimatableObjectManager::DestroyType( const TCHAR* a_szName )
+{
+	DestroyType( TPString8( a_szName ) );
 }
 
 // $Barnyard: FUNCTION 0057d870
@@ -210,6 +386,27 @@ void AAnimatableObjectManager::DestroyAnimatableObject( AAnimatableObject* a_pAn
 	}
 }
 
+// $Barnyard: FUNCTION 0057dcb0
+void AAnimatableObjectManager::DestroyAnimatableObjectsOfType( AAnimatableObjectType* a_pType )
+{
+	for ( auto it = m_llAnimatableObjects.Begin(); it != m_llAnimatableObjects.End(); )
+	{
+		AAnimatableObject* pObject = it;
+		++it;
+
+		if ( pObject->m_pObjectType == a_pType && m_llAnimatableObjects.Exists( pObject ) )
+		{
+			DestroyAttachedObjects( pObject );
+
+			if ( pObject->m_oAttachmentInfo.pParentObject )
+				DetachObject( pObject, pObject->m_oAttachmentInfo.pParentObject );
+
+			pObject->Remove();
+			delete pObject;
+		}
+	}
+}
+
 // $Barnyard: FUNCTION 0057d7c0
 void AAnimatableObjectManager::DestroyAttachedObjects( AAnimatableObject* a_pAnimatableObject )
 {
@@ -221,6 +418,12 @@ void AAnimatableObjectManager::DestroyAttachedObjects( AAnimatableObject* a_pAni
 		AAnimatableObject* pAttachedObject = a_pAnimatableObject->m_llAttachedObjects.Begin();
 		DestroyAnimatableObject( pAttachedObject );
 	}
+}
+
+// $Barnyard: FUNCTION 0057d370
+TINT AAnimatableObjectManager::GetAttachmentBone( AAnimatableObject* a_pObject )
+{
+	return a_pObject->m_oAttachmentInfo.iBone;
 }
 
 // $Barnyard: FUNCTION 0057d390
@@ -287,6 +490,41 @@ TBOOL AAnimatableObjectManager::OnUpdate( TFLOAT a_fDeltaTime )
 	}
 
 	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 0057dea0
+void AAnimatableObjectManager::UpdateAttachedObjects( TFLOAT a_fDeltaTime )
+{
+	if ( !IsActive() )
+		return;
+
+	T2_FOREACH( m_llAnimatableObjects, it )
+	{
+		AToshiAnimationInterface&       rAnimInterface = it->GetToshiAnimInterface();
+		AToshiAnimationInterface::FLAGS uiAnimFlags    = rAnimInterface.GetFlags();
+
+		// All animations are static: the skeleton state doesn't change, so don't recalculate it
+		if ( HASANYFLAG( uiAnimFlags, AToshiAnimationInterface::FLAGS_ALL_STATIC ) && rAnimInterface.GetTime() > 1.0f && !HASANYFLAG( uiAnimFlags, AToshiAnimationInterface::FLAGS_ALWAYS_UPDATE ) )
+			it->GetModelInstance()->GetSkeletonInstance()->UpdateStateFrame();
+
+		if ( !it->m_llAttachedObjects.IsEmpty() )
+		{
+			// Bones of this object are needed to place the attached objects
+			if ( it->GetModelInstance()->GetSceneObject()->ShouldAnimateThisFrame() )
+			{
+				TSkeletonInstance* pSkeletonInstance = it->GetModelInstance()->GetSkeletonInstance();
+				pSkeletonInstance->UpdateTime( a_fDeltaTime );
+				pSkeletonInstance->UpdateState( TTRUE ); // NOTE: retail UpdateState has no frame check
+			}
+		}
+
+		if ( it->m_oAttachmentInfo.pParentObject )
+			it->UpdateAttachmentTransform();
+		else if ( it->m_oAttachmentInfo.pLocator )
+			it->UpdateLocatorTransform();
+	}
+
+	AParticleEffectManager::GetSingleton()->OnUpdate( a_fDeltaTime );
 }
 
 // $Barnyard: FUNCTION 0057e3e0

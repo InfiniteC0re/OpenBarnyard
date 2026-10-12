@@ -27,6 +27,12 @@ AMovieState::AMovieState( const TCHAR* a_szName, TBOOL a_bFlag1, AGameState* a_p
 	m_FileName = a_szName;
 }
 
+// $Barnyard: FUNCTION 0043c1a0
+// $Barnyard: FUNCTION 0043c3b0
+AMovieState::~AMovieState()
+{
+}
+
 // $Barnyard: FUNCTION 0043c4f0
 TBOOL AMovieState::ProcessInput( const TInputInterface::InputEvent* a_pInputEvent )
 {
@@ -85,6 +91,8 @@ void AMovieState::OnInsertion()
 	SetInputMap( TPS8( DialogInputMap ) );
 	AGameState::OnInsertion();
 
+	m_Listener1.Connect( AMoviePlayer::GetSingleton()->GetEmitter(), this, TREINTERPRETCAST( TGenericListener::t_Callback, OnMoviePlayerEvent ), 0 );
+
 	if ( m_FileName == TPString8( "Attract" ) )
 	{
 		switch ( ALocaleManager::Interface()->GetLanguage() )
@@ -107,7 +115,7 @@ void AMovieState::OnInsertion()
 		}
 	}
 
-	AMoviePlayer::GetSingleton()->PlayMovie( m_FileName, -( m_bFlag2 != TFALSE ) & 2 );
+	AMoviePlayer::GetSingleton()->PlayMovie( m_FileName, m_bFlag2 ? AMoviePlayer::PLAYFLAGS_UNK1 : AMoviePlayer::PLAYFLAGS_NONE );
 }
 
 // $Barnyard: FUNCTION 0043bf40
@@ -129,14 +137,7 @@ void AMovieState::SkipMovie( TBOOL a_bFastSkip )
 			AFade::Color fadeTo( 255, 0, 0, 0 );
 
 			auto pFade = AFadeManager::GetSingleton()->StartFade( fadeFrom, fadeTo, 0.5f );
-			m_FadeOverListener.Connect(
-			    pFade->GetFadeOverEmitter(),
-			    this,
-			    []( AMovieState* a_pMovieState, AFade* a_pFade, TBOOL* ) {
-				    return a_pMovieState->EndMovieImmediately();
-			    },
-			    0
-			);
+			m_FadeOverListener.Connect( pFade->GetFadeOverEmitter(), this, OnFadeOver, 0 );
 		}
 	}
 	else
@@ -178,4 +179,21 @@ TBOOL AMovieState::EndMovieImmediately()
 	AFadeManager::GetSingleton()->StartFade( fadeFrom, fadeTo, 0.75f );
 	AGameStateController::GetSingleton()->ReplaceState( m_pNextGameState );
 	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 0043c070
+TBOOL AMovieState::OnFadeOver( AMovieState* a_pMovieState, AFade* a_pFade, TBOOL* a_pData )
+{
+	return a_pMovieState->EndMovieImmediately();
+}
+
+// $Barnyard: FUNCTION 0043c5b0
+TBOOL AMovieState::OnMoviePlayerEvent( AMovieState* a_pMovieState, AMoviePlayer* a_pMoviePlayer, TINT* a_pEvent )
+{
+	// Only react to the movie being stopped or finished
+	if ( *a_pEvent != 0 && *a_pEvent != 2 )
+		return TTRUE;
+
+	// NOTE: retail has a copy of EndMovieImmediately inlined here
+	return a_pMovieState->EndMovieImmediately();
 }

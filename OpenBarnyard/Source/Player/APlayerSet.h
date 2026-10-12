@@ -4,6 +4,9 @@
 #include <Toshi/T2Vector.h>
 #include <Toshi/TPString8.h>
 #include <Input/TInputDeviceController.h>
+#include <Toshi/TRefCounted.h>
+
+class AUnitProxy;
 
 #define MAX_NUM_PLAYERS SPLITSCREEN_MAX_NUM_PLAYERS
 
@@ -36,9 +39,9 @@ public:
 	APlayerSlot& operator=( const APlayerSlot& a_rcOther );
 
 public:
-	TINT                           m_Unk1;
+	Toshi::TRef<AUnitProxy>        m_pUnitProxy; // proxy of the unit of the player, set by APlayerSet::SetPlayerUnit
 	Toshi::TInputDeviceController* m_pController;
-	Toshi::TPString8               m_strUnk;
+	Toshi::TPString8               m_strUnitType; // the unit type (or name) the slot plays
 	TUINT8                         m_uiFlags;
 };
 
@@ -49,17 +52,31 @@ public:
 	virtual ~APlayerSet();
 
 	// Add AI/Human players
-	TINT         AddAIPlayer();
-	APlayerSlot* AddHumanPlayer( Toshi::TInputDeviceController* a_pController );
+	TINT AddAIPlayer();
+	// NOTE: a_iUnused isn't read on PC, every retail caller passes -1
+	APlayerSlot* AddHumanPlayer( Toshi::TInputDeviceController* a_pController, TINT a_iUnused );
 
 	// Get info about slots
 	APlayerSlot* GetPlayerSlot( TINT a_iSlot );
-	TBOOL        IsPlayerSlotUsedByHuman( TINT a_iSlot ) const;
-	TBOOL        IsPlayerSlotUsedByAI( TINT a_iSlot ) const;
+	APlayerSlot* GetAIPlayerSlot( TINT a_iIndex ); // slot of the a_iIndex-th AI player or TNULL
+	TINT         GetPlayerSlotIndexByDevice( Toshi::TInputDevice* a_pDevice );
+	class AUnit* GetPlayerUnit( TINT a_iSlot );
+	class AUnit* GetHumanPlayerUnit( TINT a_iIndex ); // unit of the a_iIndex-th slot used by a human
 
-	TINT GetTotalNumPlayers() const { return m_iNumAIPlayers + m_iNumHumanPlayers; }
+	// Makes a_pUnit the unit of the slot a_iSlot, or of the first slot without a unit if a_iSlot is negative
+	TBOOL SetPlayerUnit( class AUnit* a_pUnit, TINT a_iSlot );
+
+	// Clears the units of all the slots
+	void  ResetPlayerUnits();
+	TBOOL IsPlayerSlotUsedByHuman( TINT a_iSlot ) const;
+	TBOOL IsPlayerSlotUsedByAI( TINT a_iSlot ) const;
+
+	TINT GetTotalPlayerCount() const { return m_iNumAIPlayers + m_iNumHumanPlayers; }
 	TINT GetNumAIPlayers() const { return m_iNumAIPlayers; }
-	TINT GetNumHumanPlayers() const { return m_iNumHumanPlayers; }
+	TINT GetHumanPlayerCount() const { return m_iNumHumanPlayers; }
+
+	// $Barnyard: FUNCTION 006203f0
+	APLAYERTEAM GetPlayerTeam( TINT a_iSlot ) const { return m_aPlayerTeams[ a_iSlot ]; }
 
 	void MakeTeamsFair();
 	void FinishUpAddingAIs();

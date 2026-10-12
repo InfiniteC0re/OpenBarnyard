@@ -18,6 +18,7 @@ AGUI2MenuItem::AGUI2MenuItem()
 }
 
 // $Barnyard: FUNCTION 0063ff90
+// $Barnyard: FUNCTION 00640000
 AGUI2MenuItem::~AGUI2MenuItem()
 {
 }
@@ -77,4 +78,13 @@ void AGUI2MenuItem::LinkMenuItemBefore( AGUI2MenuItem& a_rLinkAfter )
 	m_pNextMenuItem                  = a_rLinkAfter.m_pNextMenuItem;
 	a_rLinkAfter.m_pNextMenuItem     = this;
 	m_pNextMenuItem->m_pPrevMenuItem = this;
+}
+
+// $Barnyard: FUNCTION 0063ffe0
+void AGUI2MenuItem::UnlinkMenuItem()
+{
+	m_pPrevMenuItem->m_pNextMenuItem = m_pNextMenuItem;
+	m_pNextMenuItem->m_pPrevMenuItem = m_pPrevMenuItem;
+	m_pPrevMenuItem                  = this;
+	m_pNextMenuItem                  = this;
 }

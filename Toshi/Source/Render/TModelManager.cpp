@@ -145,7 +145,8 @@ TBOOL TManagedModel::Create( const TCHAR* a_szFileName, TTRB* a_pTRB )
 	return m_pModel != TNULL;
 }
 
-TSceneObject* TManagedModel::CreateSceneObject()
+// $Barnyard: FUNCTION 006c1af0
+TSceneObject* TManagedModel::CreateSceneObject( const TCHAR* a_szName )
 {
 	TSceneObject* pSceneObject = new TSceneObject();
 	pSceneObject->Create( this );

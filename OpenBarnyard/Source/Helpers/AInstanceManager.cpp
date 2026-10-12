@@ -4,6 +4,9 @@
 #include "Assets/AMaterialLibraryManager.h"
 #include "ALoadScreen.h"
 #include "Render/AGlowViewport.h"
+#include "Helpers/ARegrowthManager.h"
+#include "Helpers/AInstanceLightingHelper.h"
+#include "MiniGame/ABarnExploreMinigameState.h"
 
 #ifdef TRENDERINTERFACE_DX8
 #  include "Platform/DX8/ASkinShader/ASkinMaterial_DX8.h"
@@ -40,19 +43,31 @@ static TMatrix44 s_mInstanceTransform = {
 	0.0f, 0.0f, 0.0f, 1.0f
 };
 
-static TINT DAT_00773a64 = 1;
-
 constexpr TFLOAT INSTANCE_RENDER_DISTANCE_MULTIPLIER = 1.2f;
+
+// $Barnyard: FUNCTION 005dfd10
+AInstanceManager::ACollisionObjectModelNode::ACollisionObjectModelNode()
+{
+}
+
+// $Barnyard: FUNCTION 005dfac0
+// $Barnyard: FUNCTION 005dfb60
+// $Barnyard: FUNCTION 005dfd00
+AInstanceManager::ACollisionObjectModelNode::~ACollisionObjectModelNode()
+{
+}
 
 // $Barnyard: FUNCTION 005dfd60
 AInstanceManager::AInstanceManager()
     : m_ppKeyLibs( TNULL )
     , m_pModels( TNULL )
     , m_pModelsRenderLists( TNULL )
+    , m_iNumDynamicInstances( 0 )
+    , m_pDynamicInstances( TNULL )
     , m_iInstanceLibIndex( -1 )
     , m_pCollObjectModelNodes( TNULL )
     , m_pCollisionModelInstances( TNULL )
-    , m_uiFlags( 0 )
+    , m_uiFlags( FLAGS_NONE )
     , m_iNumKeyLibraries( 0 )
     , m_flLOD0Distance( 30.0f )
     , m_flVisibilityDistanceBlendEnd( 85.0f )
@@ -70,7 +85,7 @@ AInstanceManager::AInstanceManager()
 // $Barnyard: FUNCTION 005e1d80
 AInstanceManager::~AInstanceManager()
 {
-	m_llUsedInstances.Clear();
+	m_llFreeInstances.Clear();
 	Reset();
 }
 
@@ -82,13 +97,13 @@ TBOOL AInstanceManager::LoadModels( TINT a_iInstanceLibIndex, TINT a_iNumModels,
 	// Update flags
 	if ( a_bCreateCollisionModelNodes )
 	{
-		m_uiFlags |= 4;
-		m_uiFlags |= 12;
+		m_uiFlags |= FLAGS_COLLISION_NODES;
+		m_uiFlags |= FLAGS_COLLISION_NODES | FLAGS_UNK3;
 	}
 	else
 	{
-		m_uiFlags &= ~4;
-		m_uiFlags &= ~12;
+		m_uiFlags &= ~FLAGS_COLLISION_NODES;
+		m_uiFlags &= ~( FLAGS_COLLISION_NODES | FLAGS_UNK3 );
 	}
 
 	Reset();
@@ -175,6 +190,54 @@ TBOOL AInstanceManager::LoadModels( TINT a_iInstanceLibIndex, TINT a_iNumModels,
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005e1a80
+AInstanceManager::StaticInstanceEntry* AInstanceManager::FindInstance( TUINT8 a_uiModelIndex, TINT a_iIndex )
+{
+	for ( auto it = m_llUsedInstances.Begin(); it != m_llUsedInstances.End(); it++ )
+	{
+		if ( it->uiModelIndex == a_uiModelIndex && --a_iIndex < 0 )
+			return it;
+	}
+
+	return TNULL;
+}
+
+// $Barnyard: FUNCTION 005dfc60
+void AInstanceManager::GetInstanceBoneTransform( TINT a_iModelIndex, StaticInstanceEntry* a_pInstance, TINT a_iBone, TMatrix44& a_rOutTransform )
+{
+	TMatrix44 mLocator;
+	a_pInstance->pLocatorList->GetLocator( a_pInstance->uiLocatorIndex )->GetMatrix( mLocator );
+
+	TMatrix44 mWorld;
+	mWorld.Multiply( s_mInstanceTransform, mLocator );
+
+	TSkeleton* pSkeleton = m_pModels[ a_iModelIndex ].pManagedModel->GetModel()->GetSkeleton();
+	a_rOutTransform.Multiply( mWorld, pSkeleton->GetBone( a_iBone )->GetTransform() );
+}
+
+// $Barnyard: FUNCTION 005dff30
+void AInstanceManager::CreateDynamicInstances( TINT a_iNumInstances )
+{
+	m_iNumDynamicInstances = a_iNumInstances;
+	m_pDynamicInstances    = new DynamicInstanceEntry[ a_iNumInstances ];
+
+	for ( TINT i = 0; i < a_iNumInstances; i++ )
+		m_llFreeDynamicInstances.PushFront( &m_pDynamicInstances[ i ] );
+}
+
+// $Barnyard: FUNCTION 005dffe0
+void AInstanceManager::DestroyDynamicInstances()
+{
+	m_llFreeDynamicInstances.Clear();
+	m_llUsedDynamicInstances.Clear();
+
+	delete[] m_pDynamicInstances;
+
+	m_uiFlags &= ~FLAGS_UNK0;
+	m_pDynamicInstances    = TNULL;
+	m_iNumDynamicInstances = 0;
+}
+
 // $Barnyard: FUNCTION 005e1ae0
 void AInstanceManager::Reset()
 {
@@ -243,7 +306,7 @@ TBOOL AInstanceManager::Render()
 	const TFLOAT flBlendFactor                  = 1.0f / ( m_flVisibilityDistanceBlendEnd - flVisibilityDistanceBlendStart );
 
 	TINT iRenderListSize = 0;
-	if ( m_uiFlags & 16 )
+	if ( m_uiFlags & FLAGS_INTERIOR )
 	{
 		// Don't check terrain section visibility
 
@@ -276,9 +339,8 @@ TBOOL AInstanceManager::Render()
 	}
 
 	const TFLOAT flOldShadeCoeff = pRenderContext->GetShadeCoeff();
-	
-	TTODO( "Use DAT_0079b14c and a value from it as shade coeff" );
-	pRenderContext->SetShadeCoeff( 0.0f );
+
+	pRenderContext->SetShadeCoeff( AInstanceLightingHelper::GetSingleton()->GetShadeCoeff() );
 
 	// Render everything
 	for ( TINT i = 0; i < m_iNumModels * MAX_NUM_LODS; i++ )
@@ -320,7 +382,7 @@ TBOOL AInstanceManager::Render()
 			pRenderContext->SetClipFlags( m_aInstanceVisMasks[ pRenderList - s_aRenderList ] );
 			pRenderContext->SetModelViewMatrix( pRenderList->matTransform );
 
-			for (TINT k = 0; k < pLOD->iNumMeshes; k++)
+			for ( TINT k = 0; k < pLOD->iNumMeshes; k++ )
 			{
 				pLOD->ppMeshes[ k ]->Render();
 			}
@@ -428,27 +490,26 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 		};
 
 		TBOOL bIsRegrowthObject = TFALSE;
-		TTODO( "ARegrowthManager skip here" );
-		// 		if ( ARegrowthManager::GetSingleton() != TNULL && ( ARegrowthManager::GetSingleton()->GetFlags() & 0x20 ) != 0 )
-		// 		{
-		// 			for ( TSIZE f = 0; f < TARRAYSIZE( s_apszRegrowthNames ); f++ )
-		// 			{
-		// 				TSIZE uLen = TStringManager::String8Length( s_apszRegrowthNames[ f ] );
-		// 				if ( TStringManager::String8CompareNoCase( s_apszRegrowthNames[ f ], pszName, uLen ) == 0 )
-		// 				{
-		// 					bIsRegrowthObject = TTRUE;
-		// 					break;
-		// 				}
-		// 			}
-		// 		}
+
+		if ( ARegrowthManager::IsSingletonCreated() && HASANYFLAG( ARegrowthManager::GetSingleton()->GetFlags(), ARegrowthManager::FLAGS_IN_USE ) )
+		{
+			// NOTE: retail doesn't stop at the first match
+			for ( TSIZE f = 0; f < TARRAYSIZE( s_apszRegrowthNames ); f++ )
+			{
+				TSIZE uLen = TStringManager::String8Length( s_apszRegrowthNames[ f ] );
+
+				if ( TStringManager::String8CompareNoCase( s_apszRegrowthNames[ f ], pszName, uLen ) == 0 )
+					bIsRegrowthObject = TTRUE;
+			}
+		}
 
 		if ( bIsRegrowthObject ) continue;
 
 		// ---- Validate prerequisites ----
 		Model& rModel = m_pModels[ iModelIndex ];
 
-		// Flag 1: model must be loaded before an instance can be created
-		if ( ( m_uiFlags & 1 ) && rModel.pManagedModel == TNULL ) continue;
+		// FLAGS_UNK0: model must be loaded before an instance can be created
+		if ( ( m_uiFlags & FLAGS_UNK0 ) && rModel.pManagedModel == TNULL ) continue;
 
 		// Must have a free instance node and a valid model pointer
 		if ( m_llFreeInstances.IsEmpty() || rModel.pManagedModel == TNULL ) continue;
@@ -456,56 +517,59 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 		TModel* pModel = rModel.pManagedModel->GetModel();
 
 		// ---- Setup collision type if needed ----
-		if ( ( m_uiFlags & 4 ) && ( m_uiFlags & 8 ) )
+		if ( ( m_uiFlags & FLAGS_COLLISION_NODES ) && ( m_uiFlags & FLAGS_UNK3 ) )
 		{
-			const TBOOL bHasCollisionSet = ( m_uiFlags & 2 ) && ( apModelCollSets[ iModelIndex ] != TNULL ) && ( pModel->GetNumCollisionMeshes() > 0 );
+			const TBOOL bHasCollisionSet = ( m_uiFlags & FLAGS_COLLISION_SETS ) && ( apModelCollSets[ iModelIndex ] != TNULL ) && ( pModel->GetNumCollisionMeshes() > 0 );
 
 			// "radius" bone presence is a secondary collision indicator
 			const TINT iBoneRadius = pModel->GetSkeleton()->GetBoneID( "radius", 0 );
 
-			const TBOOL bIsInIgnoreList1 =
-			    ( T2String8::FindString( pszName, "_coll" ) == 0 ) ||
-			    ( T2String8::FindString( pszName, "bale01" ) == 0 ) ||
-			    ( T2String8::FindString( pszName, "rock01" ) == 0 );
+			// Names that always get a capsule collision
+			const TBOOL bForceCapsule =
+			    T2String8::FindString( pszName, "_coll" ) != TNULL ||
+			    T2String8::FindString( pszName, "bale01" ) != TNULL ||
+			    T2String8::FindString( pszName, "rock01" ) != TNULL;
 
-			const TBOOL bIsInIgnoreList2 =
-			    ( T2String8::FindString( pszName, "FenceRBrown" ) == 0 ) ||
-			    ( T2String8::FindString( pszName, "FenceRGrey" ) == 0 ) ||
-			    ( T2String8::FindString( pszName, "roadbarrier" ) == 0 ) ||
-			    ( T2String8::FindString( pszName, "car_treewall" ) == 0 );
+			// Names that never get a collision
+			const TBOOL bNoCollision =
+			    T2String8::FindString( pszName, "FenceRBrown" ) != TNULL ||
+			    T2String8::FindString( pszName, "FenceRGrey" ) != TNULL ||
+			    T2String8::FindString( pszName, "roadbarrier" ) != TNULL ||
+			    T2String8::FindString( pszName, "car_treewall" ) != TNULL;
 
-			// Check whether this instance is actually useful for rendering
-			if ( ( !bHasCollisionSet && iBoneRadius == -1 && !bIsInIgnoreList1 ) || ( pLocator->iFlags2 < 0 ) || bIsInIgnoreList2 )
+			// NOTE: the instance itself is always created, this only decides which collision it gets
+			if ( ( !bHasCollisionSet && iBoneRadius == -1 && !bForceCapsule ) || ( pLocator->iFlags2 < 0 ) || bNoCollision )
 			{
 				*( pCollisionFlagCursor++ ) = InstanceFlags_None;
-				continue;
-			}
-
-			if ( bHasCollisionSet )
-			{
-				*pCollisionFlagCursor = InstanceFlags_WithCollision;
-
-				// Only allocate one collision model instance per unique model slot
-				if ( !abCollInstAllocated[ iModelIndex ] )
-				{
-					abCollInstAllocated[ iModelIndex ] = TTRUE;
-					iNumCollisionModels++;
-
-					pCollisionFlagCursor++;
-				}
 			}
 			else
 			{
-				// No collision for this instance
-				*( pCollisionFlagCursor++ ) = InstanceFlags_RenderOnly;
-			}
+				if ( bHasCollisionSet )
+				{
+					*( pCollisionFlagCursor++ ) = InstanceFlags_WithCollision;
 
-			iNumInstancesWithCollision++;
+					// Only allocate one collision model instance per unique model slot
+					if ( !abCollInstAllocated[ iModelIndex ] )
+					{
+						abCollInstAllocated[ iModelIndex ] = TTRUE;
+						iNumCollisionModels++;
+					}
+				}
+				else
+				{
+					// Capsule collision only
+					*( pCollisionFlagCursor++ ) = InstanceFlags_RenderOnly;
+				}
+
+				iNumInstancesWithCollision++;
+			}
 		}
 
-		// Re encode scale and rotation???
-		const TUINT8 uiScalePacked = (TUINT8)TMath::Round( ( pLocator->uiFlags1 & 0b1111 ) * 20.0f * 0.05f );
-		const TUINT8 uiYawPacked   = (TUINT8)TMath::Round( ( pLocator->uiFlags1 >> 4 ) * 6.667f * 0.15f );
+		// Re encode scale and rotation (truncating, like retail)
+		const TUINT8 uiScale20     = TUINT8( ( pLocator->uiFlags1 & 0b1111 ) * 20.0 );
+		const TUINT8 uiYaw6        = TUINT8( ( pLocator->uiFlags1 >> 4 ) * 6.6666665 );
+		const TUINT8 uiScalePacked = TUINT8( TINT( TINT( uiScale20 ) * 0.050000001f ) );
+		const TUINT8 uiYawPacked   = TUINT8( TINT( uiYaw6 * 0.14999999f ) );
 
 		// Pop a free instance node
 		StaticInstanceEntry* pNode = m_llFreeInstances.PopFront();
@@ -596,10 +660,10 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 		const TUINT16          uiLocatorIdx = pNode->uiLocatorIndex;
 		const ATerrainLocator* pLoc         = pNodeLocList->GetLocator( uiLocatorIdx );
 
-		// Y is negated — terrain uses a left-handed coordinate convention
+		// NOTE: the locator position is Z up, the Z is negated and becomes Y
 		const TFLOAT fLocX = pLoc->vecPosition.x;
-		const TFLOAT fLocY = -pLoc->vecPosition.y;
-		const TFLOAT fLocZ = pLoc->vecPosition.z;
+		const TFLOAT fLocY = -pLoc->vecPosition.z;
+		const TFLOAT fLocZ = pLoc->vecPosition.y;
 
 		const TUINT8 uiModelIndex = pNode->uiModelIndex;
 		TModel*      pModel       = m_pModels[ uiModelIndex ].pManagedModel->GetModel();
@@ -612,7 +676,7 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 		// ---- Capsule shape parameters ----
 		TVector4 vCapsuleDir    = TVector4::VEC_NEGY;
 		TFLOAT   fCapsuleLength = 0.0f;
-		TFLOAT   fCapsuleRadius = 0.0f;
+		TFLOAT   fCapsuleRadius = TFLOAT( pNode->uiPackedScaleYaw & 0b1111 ) * pModel->GetLOD( 0 ).BoundingSphere.GetRadius() * 0.23f;
 		TBOOL    bHasAxis       = TFALSE;
 
 		// ---- World transform: locator * global instance matrix, then scaled ----
@@ -665,9 +729,14 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 		}
 
 		// ---- "radius" bone: compute capsule/sphere radius ----
+		// Only the WithCollision nodes use the collision mesh of the model (and need a transform),
+		// the others use the capsule as the collision
 		TTransformObject         transformForNode;
 		TTransformObject*        pTransformForNode = TNULL;
 		ACollisionModelInstance* pCollInstance     = TNULL;
+
+		transformForNode.SetMatrix( TMatrix44::IDENTITY );
+		transformForNode.SetScale( TVector3( 1.0f, 1.0f, 1.0f ) );
 
 		iBone = pSkel->GetBoneID( "radius", 0 );
 		if ( iBone != -1 && pSkel->GetBone( iBone ) != TNULL )
@@ -680,18 +749,13 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 			TVector4 vScaledDir;
 			vScaledDir.Multiply( vCapsuleDir, fCapsuleLength );
 
-			TVector4 vCapsuleEnd = vScaledDir + vOrigin;
+			TVector4 vCapsuleEnd( vScaledDir.x + vOrigin.x, vScaledDir.y + vOrigin.y, vScaledDir.z + vOrigin.z, vScaledDir.w );
 
 			if ( bHasAxis )
 			{
 				if ( !vOrigin.IsEqual( vCapsuleEnd ) )
 				{
-					TFLOAT fDistSq = 0.0f;
-					// 					TFLOAT fDistSq = TMath::DistancePointToSegmentSq(
-					// 					    (TVector3*)&vRadiusPt,
-					// 					    (TVector3*)&vOrigin,
-					// 					    (TVector3*)&vCapsuleEnd
-					// 					);
+					TFLOAT fDistSq = TMath::DistancePointToSegmentSq( vRadiusPt, vOrigin.AsVector3(), vCapsuleEnd.AsVector3() );
 
 					if ( fDistSq > 0.0001f )
 					{
@@ -713,14 +777,13 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 
 					if ( aCollisionFlags[ iIndex ] == InstanceFlags_WithCollision )
 						fCapsuleRadius *= 1.2f;
-
-					goto CreateNode; // no transform needed for a sphere shape
 				}
 			}
+		}
 
-			// Set up a TTransformObject for shaped (capsule) collision nodes
-			transformForNode.SetMatrix( TMatrix44::IDENTITY );
-			transformForNode.SetScale( TVector3( 1.0f, 1.0f, 1.0f ) );
+		if ( aCollisionFlags[ iIndex ] == InstanceFlags_WithCollision )
+		{
+			pCollInstance = ( aCollInstances[ uiModelIndex ] != 0 ) ? &aCollInstances[ uiModelIndex ]->GetNodeValue() : TNULL;
 
 			if ( fScale != 1.0f )
 			{
@@ -736,30 +799,8 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 			transformForNode.SetScale( TVector3( fScale, fScale, fScale ) );
 			pTransformForNode = &transformForNode;
 		}
-		else
-		{
-			// No radius bone — only InstanceFlags_WithCollision nodes get a transform
-			if ( aCollisionFlags[ iIndex ] == InstanceFlags_WithCollision )
-			{
-				pCollInstance = ( aCollInstances[ uiModelIndex ] != 0 ) ? &aCollInstances[ uiModelIndex ]->GetNodeValue() : TNULL;
 
-				if ( fScale != 1.0f )
-				{
-					TMatrix44 mScaled = mWorldUnscaled;
-					mScaled.Scale( fScale, fScale, fScale );
-					transformForNode.SetMatrix( mScaled );
-				}
-				else
-				{
-					transformForNode.SetMatrix( mWorldUnscaled );
-				}
-
-				transformForNode.SetScale( TVector3( fScale, fScale, fScale ) );
-				pTransformForNode = &transformForNode;
-			}
-		}
-
-	CreateNode:
+		// NOTE: retail doesn't create the collision if there are no free nodes left
 		if ( !m_llFreeCollisionModelNodes.IsEmpty() )
 		{
 			ACollisionObjectModelNode* pCollNode = m_llFreeCollisionModelNodes.PopBack();
@@ -769,17 +810,7 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 				TVALIDPTR( pTargetList );
 				pTargetList->llCollModelNodes.PushBack( pCollNode );
 
-				TTODO( "FUN_0061e730 = ACollisionObjectModel::Create?" );
-				// (origin, radius, length, direction, maxSubNodes, collInstHandle, transform)
-				// 				pCollNode->GetNodeValue().Create(
-				// 				    vOrigin,
-				// 				    fCapsuleRadius,
-				// 				    fCapsuleLength,
-				// 				    vCapsuleDir,
-				// 				    64,
-				// 				    iCollInstHandle,
-				// 				    pTransformForNode
-				// 				);
+				pCollNode->Create( vOrigin, fCapsuleRadius, fCapsuleLength, vCapsuleDir, ACollisionObject::TYPE_INSTANCE, pCollInstance, pTransformForNode );
 			}
 		}
 	}
@@ -797,8 +828,7 @@ void AInstanceManager::FillRenderList_All( const Toshi::T2SList<StaticInstanceEn
 
 	T2_FOREACH( a_rcInstanceList, it )
 	{
-		if ( a_bDynamic ) TASSERT( TFALSE && "Not supported" );
-		const TVector3* pInstancePosition = ( a_bDynamic ) ? TNULL : &it->pLocatorList->GetLocator( it->uiLocatorIndex )->vecPosition;
+		const TVector3* pInstancePosition = ( a_bDynamic ) ? &TSTATICCAST( DynamicInstanceEntry, it.Get() )->matTransform.GetTranslation3() : &it->pLocatorList->GetLocator( it->uiLocatorIndex )->vecPosition;
 
 		// Check whether the instance is visible
 		TSphere vecInstanceBounding(
@@ -810,29 +840,33 @@ void AInstanceManager::FillRenderList_All( const Toshi::T2SList<StaticInstanceEn
 
 		const TFLOAT flInstanceDistanceSq = TVector4::DistanceSq( vecInstanceBounding.AsVector4(), vecCameraPos );
 
-		// There's some odd hack I don't currently understand
+		// Only the instances of the barn floor the player is on: the loft is above y = 3.246
+		const TINT iBarnFloor = ABarnExploreMinigameState::ms_iFloor;
+
 		if ( flInstanceDistanceSq < flMaxRenderDistanceSq &&
-		     ( vecInstanceBounding.GetOrigin().y <= 3.246f || DAT_00773a64 == 0 ) &&
-		     ( vecInstanceBounding.GetOrigin().y >= 3.246f || DAT_00773a64 == 1 || DAT_00773a64 == 2 ) )
+		     ( vecInstanceBounding.GetOrigin().y <= 3.246f || iBarnFloor == ABarnExploreMinigameState::FLOOR_LOFT ) &&
+		     ( vecInstanceBounding.GetOrigin().y >= 3.246f || iBarnFloor == ABarnExploreMinigameState::FLOOR_GROUND || iBarnFloor == ABarnExploreMinigameState::FLOOR_BASEMENT ) )
 		{
 			TINT iLODIndex = flInstanceDistanceSq >= flLOD0DistanceSq ? 1 : 0;
 
 			const TBOOL bVisibleInFrustum = pRenderContext->CullSphereToFrustumSimple( vecInstanceBounding, pRenderContext->GetWorldPlanes(), 6 );
 			if ( bVisibleInFrustum )
 			{
-				if ( a_bDynamic ) TASSERT( TFALSE && "Not supported" );
-
 				TMatrix44 matLocatorLocalTransform;
-				it->pLocatorList->GetLocator( it->uiLocatorIndex )->GetMatrix( matLocatorLocalTransform );
+
+				if ( a_bDynamic )
+					matLocatorLocalTransform = TSTATICCAST( DynamicInstanceEntry, it.Get() )->matTransform;
+				else
+					it->pLocatorList->GetLocator( it->uiLocatorIndex )->GetMatrix( matLocatorLocalTransform );
 
 				if ( a_rNumInstances >= MAX_RENDERED_INSTANCES ) return;
-				
+
 				// Collect light sources
 				Toshi::TLightIDList oLightList;
 				AGlowViewport::GetSingleton()->GetInfluencingLightIDs( vecInstanceBounding, oLightList );
 
 				// Store data about the instance
-				m_aInstanceVisMasks[ a_rNumInstances ] = TTRUE;
+				m_aInstanceVisMasks[ a_rNumInstances ] = 0x3F; // clip flags: all six frustum planes
 				m_aInstanceFlags[ a_rNumInstances ]    = it->uiPackedScaleYaw >> 4;
 				m_aInstanceLightIDs[ a_rNumInstances ] = oLightList[ 0 ];
 
@@ -843,7 +877,7 @@ void AInstanceManager::FillRenderList_All( const Toshi::T2SList<StaticInstanceEn
 				TMatrix44 matLocatorTransform;
 				matLocatorTransform.Multiply( s_mInstanceTransform, matLocatorLocalTransform );
 				matLocatorTransform.Scale( flLocatorScale, flLocatorScale, flLocatorScale );
-				
+
 				// Add to the render list, applying world transform
 				RenderListEntry* pRenderListEntry = &a_pOutRenderData[ a_rNumInstances++ ];
 				pRenderListEntry->matTransform.Multiply( a_rcWorldTransform, matLocatorTransform );
@@ -954,8 +988,7 @@ void AInstanceManager::FillRenderList_Visible( const Toshi::T2SList<StaticInstan
 				// Skip all other sections if rendered the required number
 				if ( uiNumRenderedSections >= uiNumSectionsToRender ) break;
 
-				if ( a_bDynamic ) TASSERT( TFALSE && "Not supported" );
-				const TVector3* pInstancePosition = ( a_bDynamic ) ? TNULL : &it->pLocatorList->GetLocator( it->uiLocatorIndex )->vecPosition;
+				const TVector3* pInstancePosition = ( a_bDynamic ) ? &TSTATICCAST( DynamicInstanceEntry, it.Get() )->matTransform.GetTranslation3() : &it->pLocatorList->GetLocator( it->uiLocatorIndex )->vecPosition;
 
 				// Check whether the instance is visible
 				TSphere vecInstanceBounding(
@@ -964,6 +997,10 @@ void AInstanceManager::FillRenderList_Visible( const Toshi::T2SList<StaticInstan
 				    pInstancePosition->y,
 				    INSTANCE_RENDER_DISTANCE_MULTIPLIER * m_pModels[ it->uiModelIndex ].pManagedModel->GetModel()->GetRenderDistance()
 				);
+
+				// Models 44 and 45 of the instance library get a bigger visibility radius
+				if ( it->uiModelIndex == 44 || it->uiModelIndex == 45 )
+					vecInstanceBounding.GetRadius() *= 1.75f;
 
 				const TFLOAT flInstanceDistanceSq = TVector4::DistanceSq( vecInstanceBounding.AsVector4(), vecCameraPos );
 
@@ -974,10 +1011,12 @@ void AInstanceManager::FillRenderList_Visible( const Toshi::T2SList<StaticInstan
 					const TBOOL bVisibleInFrustum = pRenderContext->CullSphereToFrustumSimple( vecInstanceBounding, pRenderContext->GetWorldPlanes(), 6 );
 					if ( bVisibleInFrustum )
 					{
-						if ( a_bDynamic ) TASSERT( TFALSE && "Not supported" );
-
 						TMatrix44 matLocatorLocalTransform;
-						it->pLocatorList->GetLocator( it->uiLocatorIndex )->GetMatrix( matLocatorLocalTransform );
+
+						if ( a_bDynamic )
+							matLocatorLocalTransform = TSTATICCAST( DynamicInstanceEntry, it.Get() )->matTransform;
+						else
+							it->pLocatorList->GetLocator( it->uiLocatorIndex )->GetMatrix( matLocatorLocalTransform );
 
 						if ( a_rNumInstances >= MAX_RENDERED_INSTANCES ) return;
 
@@ -986,7 +1025,7 @@ void AInstanceManager::FillRenderList_Visible( const Toshi::T2SList<StaticInstan
 						AGlowViewport::GetSingleton()->GetInfluencingLightIDs( vecInstanceBounding, oLightList );
 
 						// Store data about the instance
-						m_aInstanceVisMasks[ a_rNumInstances ] = TTRUE;
+						m_aInstanceVisMasks[ a_rNumInstances ] = 0x3F; // clip flags: all six frustum planes
 						m_aInstanceFlags[ a_rNumInstances ]    = it->uiPackedScaleYaw >> 4;
 						m_aInstanceLightIDs[ a_rNumInstances ] = oLightList[ 0 ];
 
@@ -1022,7 +1061,60 @@ void AInstanceManager::DestroyCollisionSets()
 		m_vecCollisionSets.PopBack();
 	}
 
-	m_uiFlags &= ~2;
+	m_uiFlags &= ~FLAGS_COLLISION_SETS;
+}
+
+// $Barnyard: FUNCTION 005e0f80
+void AInstanceManager::DestroyInstances( ATerrainLocatorList* a_pLocatorList )
+{
+	// Collisions
+	for ( TSIZE i = 0; i < TARRAYSIZE( m_aLists ); i++ )
+	{
+		if ( m_aLists[ i ].pLocators == a_pLocatorList )
+		{
+			ClearList( m_aLists[ i ] );
+			break;
+		}
+	}
+
+	// Instances
+	for ( auto it = m_llUsedInstances.Begin(); it != m_llUsedInstances.End(); )
+	{
+		StaticInstanceEntry* pInstance = it;
+		it                             = it->Next();
+
+		if ( pInstance->pLocatorList == a_pLocatorList )
+		{
+			m_llUsedInstances.Erase( pInstance );
+			m_llFreeInstances.PushFront( pInstance );
+		}
+	}
+
+	// NOTE: the original also returns these to m_llFreeInstances
+	for ( auto it = m_llOtherInstances_Unused.Begin(); it != m_llOtherInstances_Unused.End(); )
+	{
+		StaticInstanceEntry* pInstance = it;
+		it                             = it->Next();
+
+		if ( pInstance->pLocatorList == a_pLocatorList )
+		{
+			m_llOtherInstances_Unused.Erase( pInstance );
+			m_llFreeInstances.PushFront( pInstance );
+		}
+	}
+
+	// Dynamic instances
+	for ( auto it = m_llUsedDynamicInstances.Begin(); it != m_llUsedDynamicInstances.End(); )
+	{
+		StaticInstanceEntry* pInstance = it;
+		it                             = it->Next();
+
+		if ( pInstance->pLocatorList == a_pLocatorList )
+		{
+			m_llUsedDynamicInstances.Erase( pInstance );
+			m_llFreeDynamicInstances.PushFront( pInstance );
+		}
+	}
 }
 
 // $Barnyard: FUNCTION 005e0050
@@ -1033,11 +1125,19 @@ void AInstanceManager::ClearList( List& a_rList )
 		auto pLast = a_rList.llCollModelNodes.Back().Get();
 		a_rList.llCollModelNodes.PopBack();
 
-		ACollisionObjectModel* pModel = &pLast->GetNodeValue();
+		ACollisionObjectModel* pModel = pLast;
 
 		m_llFreeCollisionModelNodes.PushBack( pLast );
 		if ( pModel->IsCollisionObjectLinked() )
 			pModel->UnlinkCollisionObject();
+	}
+
+	while ( !a_rList.llCollModelInstances.IsEmpty() )
+	{
+		ACollisionModelInstanceNode* pLast = a_rList.llCollModelInstances.Back().Get();
+		a_rList.llCollModelInstances.PopBack();
+
+		m_llFreeCollisionModelInstances.PushBack( pLast );
 	}
 
 	a_rList.pLocators = TNULL;
@@ -1046,16 +1146,16 @@ void AInstanceManager::ClearList( List& a_rList )
 // $Barnyard: FUNCTION 005e0140
 void AInstanceManager::SetupCollisions( TBOOL a_bCreateCollisionSets )
 {
-	const TBOOL bHasCollisionSets = ( ( m_uiFlags & 2 ) == 2 );
+	const TBOOL bHasCollisionSets = ( ( m_uiFlags & FLAGS_COLLISION_SETS ) == FLAGS_COLLISION_SETS );
 
 	// Check if new flag value is different
 	if ( bHasCollisionSets == a_bCreateCollisionSets ) return;
 
 	// Update flags
-	if ( bHasCollisionSets ) m_uiFlags |= 2;
-	else m_uiFlags &= ~2;
+	if ( a_bCreateCollisionSets ) m_uiFlags |= FLAGS_COLLISION_SETS;
+	else m_uiFlags &= ~FLAGS_COLLISION_SETS;
 
-	if ( bHasCollisionSets )
+	if ( a_bCreateCollisionSets )
 	{
 		if ( m_llFreeCollisionModelInstances.IsEmpty() )
 		{
@@ -1073,10 +1173,11 @@ void AInstanceManager::SetupCollisions( TBOOL a_bCreateCollisionSets )
 		// Create collision sets for the models
 		for ( TINT i = 0; i < m_iNumModels; i++ )
 		{
-			TModel*    pModel         = m_pModels[ i ].pManagedModel->GetModel();
-			const TINT iNumCollMeshes = pModel->GetNumCollisionMeshes();
+			if ( m_pModels[ i ].pManagedModel == TNULL ) continue;
 
-			if ( iNumCollMeshes > 0 )
+			TModel* pModel = m_pModels[ i ].pManagedModel->GetModel();
+
+			if ( pModel->GetNumCollisionMeshes() > 0 )
 			{
 				ACollisionModelSet* pCollModelSet = new ACollisionModelSet;
 				pCollModelSet->Create( pModel );
@@ -1099,10 +1200,15 @@ AInstanceManager::Model::~Model()
 	Reset();
 }
 
+// NOTE: inlined in AInstanceManager::Reset (005e1ae0)
 void AInstanceManager::Model::Reset()
 {
 	if ( pSceneObject ) pSceneObject->Delete();
 	if ( pManagedModel ) delete pManagedModel;
+
+	// Reset can be called again (e.g. LoadModels resets after LoadMiniGameImpl already did), don't free twice
+	pManagedModel = TNULL;
+	pSceneObject  = TNULL;
 }
 
 // T2SList:

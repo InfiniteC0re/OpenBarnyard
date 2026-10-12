@@ -91,6 +91,16 @@ void ALoadScreen::Create()
 	m_fTotalTime = 0.0f;
 }
 
+// $Barnyard: FUNCTION 0042ad50
+void ALoadScreen::RemoveElements()
+{
+	for ( TUINT i = 0; i < NUM_LOAD_INDICATORS; i++ )
+		m_aRectangles[ i ].RemoveSelf();
+
+	m_CanvasElement.RemoveSelf();
+	m_TextBox.RemoveSelf();
+}
+
 // $Barnyard: FUNCTION 0042b160
 void ALoadScreen::StartLoading( TINT a_iUnused, TBOOL a_bRender )
 {
@@ -172,6 +182,20 @@ void ALoadScreen::ResetIndicators( TBOOL a_bRender )
 		m_iCowPos      = 0;
 
 		UpdateUI( a_bRender );
+	}
+}
+
+// $Barnyard: FUNCTION 0042b0a0
+void ALoadScreen::SetPicture( const TPString8& a_rcPicture, TBOOL a_bRender )
+{
+	if ( a_rcPicture.GetPooledString() && !a_rcPicture.GetPooledString()->GetString8().IsEmpty() )
+	{
+		g_pGUISystem->SetPicture( a_rcPicture );
+		m_bFlag = TTRUE;
+		m_CanvasElement.Hide();
+
+		if ( a_bRender )
+			ARenderer::GetSingleton()->ForceUpdate30FPS();
 	}
 }
 

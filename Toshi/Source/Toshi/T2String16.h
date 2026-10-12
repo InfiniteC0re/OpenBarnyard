@@ -24,6 +24,7 @@ public:
 	static TINT CompareNoCase( const TWCHAR* str1, const TWCHAR* str2, TSIZE size = -1 );
 
 	static TWCHAR* Copy( TWCHAR* dst, const TWCHAR* src, TSIZE size = -1 );
+	static TWCHAR* Move( TWCHAR* dst, const TWCHAR* src, TSIZE size = -1 );
 	static TWCHAR* CopySafe( TWCHAR* dst, const TWCHAR* src, TSIZE size );
 
 	static TWCHAR* Concat( TWCHAR* dst, const TWCHAR* src, TSIZE size = -1 );
@@ -41,6 +42,10 @@ public:
 
 	static void ToLowerCase( TWCHAR* str );
 	static void ToUpperCase( TWCHAR* str );
+
+	// Converts an ASCII character to upper case (only the low byte of a wide character is used)
+	// NOTE: the name is unknown
+	static TWCHAR CharToUpperCase( TUINT8 a_uiChar );
 
 	static void IntToString( TINT value, TWCHAR* dst, TINT unused, TINT radix );
 	static void IntToString( TINT value, TWCHAR* dst, TINT radix );

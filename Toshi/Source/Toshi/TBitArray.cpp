@@ -188,14 +188,14 @@ TINT TBitArray::GetBit( TINT a_iIndex ) const
 {
 	TASSERT( a_iIndex < m_iSize );
 
-	return ( m_pBuffer[ a_iIndex / MIN_NUM_BITS ] & ( 1 << ( a_iIndex % m_iSize ) ) );
+	return ( m_pBuffer[ a_iIndex / MIN_NUM_BITS ] & ( 1 << ( a_iIndex % MIN_NUM_BITS ) ) );
 }
 
 void TBitArray::ClearBit( TINT a_iIndex )
 {
 	TASSERT( a_iIndex < m_iSize );
 
-	TUINT uiBit = 1 << ( a_iIndex % m_iSize );
+	TUINT uiBit = 1 << ( a_iIndex % MIN_NUM_BITS );
 	m_pBuffer[ a_iIndex / MIN_NUM_BITS ] &= ~uiBit;
 }
 
@@ -203,7 +203,7 @@ void TBitArray::ToggleBit( TINT a_iIndex )
 {
 	TASSERT( a_iIndex < m_iSize );
 
-	TUINT uiBit = 1 << ( a_iIndex % m_iSize );
+	TUINT uiBit = 1 << ( a_iIndex % MIN_NUM_BITS );
 	m_pBuffer[ a_iIndex / MIN_NUM_BITS ] ^= uiBit;
 }
 
@@ -211,21 +211,23 @@ void TBitArray::SetBit( TINT a_iIndex )
 {
 	TASSERT( a_iIndex < m_iSize );
 
-	TUINT uiBit = 1 << ( a_iIndex % m_iSize );
+	TUINT uiBit = 1 << ( a_iIndex % MIN_NUM_BITS );
 	m_pBuffer[ a_iIndex / MIN_NUM_BITS ] |= uiBit;
 }
 
+// $Barnyard: FUNCTION 006cda30
 void TBitArray::SetBit( TINT a_iIndex, TINT a_iValue )
 {
 	TASSERT( a_iIndex < m_iSize );
 
-	TUINT uiBit = 1 << ( a_iIndex % m_iSize );
+	TUINT uiBit = 1 << ( a_iIndex % MIN_NUM_BITS );
 
 	if ( a_iValue == 0 ) m_pBuffer[ a_iIndex / MIN_NUM_BITS ] &= ~uiBit;
 	else
 		m_pBuffer[ a_iIndex / MIN_NUM_BITS ] |= uiBit;
 }
 
+// $Barnyard: FUNCTION 006cda00
 void TBitArray::Reset()
 {
 	TUINT uiNumElements = GetNumAllocatedBytes() / sizeof( TUINT32 );

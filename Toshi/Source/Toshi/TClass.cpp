@@ -45,6 +45,17 @@ TClass::~TClass()
 	}
 }
 
+// $Barnyard: FUNCTION 006bbd20
+void TClass::Deinitialize()
+{
+	if ( m_fnDeinitialise )
+	{
+		m_bInitialised = TFALSE;
+		m_fnDeinitialise();
+	}
+}
+
+// $Barnyard: FUNCTION 006bbd00
 void TClass::Initialize()
 {
 	if ( m_fnInitialise )
@@ -89,7 +100,7 @@ const TClass* TClass::FindRecurse( const TCHAR* const& name, const TClass* paren
 	while ( parent )
 	{
 		const TClass* previous   = hasPrevious ? parent->m_pPrevious : TNULL;
-		TINT    difference = Toshi::TStringManager::String8CompareNoCase( parent->m_szName, name, -1 );
+		TINT          difference = Toshi::TStringManager::String8CompareNoCase( parent->m_szName, name, -1 );
 
 		if ( difference == 0 )
 		{
@@ -158,6 +169,7 @@ TBOOL TClass::IsA( const TClass* cmpClass ) const
 // $Barnyard: FUNCTION 006bc020
 TUINT32 TClass::GetMaxSizeOfDerivedClasses()
 {
+	// $Barnyard: FUNCTION 006bbe80
 	auto GetMaxSizeOfClass = []( TClass* a_pClass, void* a_pSize ) -> TBOOL {
 		if ( *(TUINT32*)a_pSize < a_pClass->m_uiClassSize )
 		{
@@ -179,6 +191,7 @@ TUINT32 TClass::GetMaxSizeOfDerivedClasses()
 // $Barnyard: FUNCTION 006bc060
 TUINT32 TClass::GetMaxAlignmentOfDerivedClasses()
 {
+	// $Barnyard: FUNCTION 006bbea0
 	auto GetMaxAlignmentOfClass = []( TClass* a_pClass, void* a_pAlignment ) -> TBOOL {
 		if ( *(TUINT32*)a_pAlignment < a_pClass->m_uiClassAlignment )
 		{

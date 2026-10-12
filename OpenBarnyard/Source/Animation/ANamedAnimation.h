@@ -21,6 +21,7 @@ public:
 
 public:
 	ANamedAnimationTransition();
+	ANamedAnimationTransition( const ANamedAnimationTransition& a_rcOther );
 	~ANamedAnimationTransition();
 
 	void                    SetTransitionName( const Toshi::TPString8& a_strName );
@@ -88,6 +89,7 @@ public:
 		FLAGS_NO_ANIM_REF        = BITFLAG( 4 ),
 		FLAGS_LOOP               = BITFLAG( 5 ),
 		FLAGS_REVERSE            = BITFLAG( 6 ),
+		FLAGS_HAS_TRANSITION_IN  = BITFLAG( 7 ), // set on the LinkTo animation of a loaded transition
 	};
 
 	using FINISHTYPE = TINT;
@@ -126,7 +128,12 @@ public:
 	TBOOL Create( const PBProperties* a_pProperties, Toshi::TSkeleton* a_pSkeleton );
 	void  Reset();
 
-	void AttachBreakpoint( AAnimationBreakpoint* a_pBreakpoint );
+	// NOTE: a_pSkeleton is unused
+	void AttachBreakpoint( AAnimationBreakpoint* a_pBreakpoint, Toshi::TSkeleton* a_pSkeleton );
+
+	// Creates a breakpoint of the class named by "Type" of a_pProperties (see AAnimationBreakpoint::CreateBreakpoint)
+	// and calls its Create. If a_bTimed is TFALSE, the breakpoint is untimed. Returns TNULL if there's no such class.
+	static AAnimationBreakpoint* CreateBreakpointRuntime( const PBProperties* a_pProperties, TBOOL a_bTimed );
 
 	ANamedAnimationTransitionSet& GetTransitionSet() { return m_oTransitionSet; }
 
@@ -137,6 +144,7 @@ public:
 	TBOOL                   IsLooped() const { return m_eFlags & FLAGS_LOOP; }
 	TBOOL                   IsStatic() const { return m_eFlags & FLAGS_STATIC; }
 	FLAGS                   GetFlags() const { return m_eFlags; }
+	void                    AddFlags( FLAGS a_eFlags ) { m_eFlags |= a_eFlags; }
 	TFLOAT                  GetDefaultBlendOutTime() const { return m_fDefaultBlendOutTime; }
 	TFLOAT                  GetDefaultBlendInTime() const { return m_fDefaultBlendInTime; }
 	TFLOAT                  GetDefaultWeight() const { return m_fDefaultWeight; }

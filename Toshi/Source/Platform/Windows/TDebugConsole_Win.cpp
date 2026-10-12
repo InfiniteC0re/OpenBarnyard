@@ -64,31 +64,34 @@ TBOOL TDebugConsole::Toggle()
 	return m_Visible;
 }
 
+// $Barnyard: FUNCTION 006c1600
 HWND TDebugConsole::FindConsole() const
 {
-	TString8 str = TString8( TDebugConsoleUUID );
+	// Generate a unique title for the console so we can find its HWND
+	TCHAR szTimeHex[ 32 ];
+	_ultoa( timeGetTime(), szTimeHex, 16 );
 
-	// Generate title for the console so we can find it's HWND
-	LARGE_INTEGER time;
-	QueryPerformanceCounter( &time );
-	TCHAR timeHex[ sizeof( time.QuadPart ) + 1 ] = { 0 };
-	_ultoa_s( (unsigned long)time.QuadPart, timeHex, 0x10 );
-	str += timeHex;
+	static TCHAR s_szWindowName[ 256 ];
+	strcpy( s_szWindowName, TDebugConsoleUUID );
+	strcat( s_szWindowName, szTimeHex );
 
 	// Save the current title
-	TCHAR lpConsoleTitle[ 256 ];
-	DWORD titleLength = GetConsoleTitleA( lpConsoleTitle, 256 );
-	if ( titleLength == 0 ) { return TNULL; }
+	TCHAR szConsoleTitle[ 512 ];
+	if ( GetConsoleTitleA( szConsoleTitle, sizeof( szConsoleTitle ) ) == 0 )
+		return TNULL;
 
-	// Set the genereated title and wait for 50ms so it's applied
-	SetConsoleTitleA( str );
+	SetConsoleTitleA( s_szWindowName );
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Wait for the new title to be applied
 	ThreadSleep( 50 );
+#endif // BARNYARD_COMMUNITY_PATCH
 
-	// Find a window with the generated title and restore it
-	HWND consoleHWND = FindWindowA( TNULL, str );
-	SetConsoleTitleA( lpConsoleTitle );
+	// Find the window with the generated title and restore the title
+	HWND hConsole = FindWindowA( TNULL, s_szWindowName );
+	SetConsoleTitleA( szConsoleTitle );
 
-	return consoleHWND;
+	return hConsole;
 }
 
 static TBOOL s_bIsSimpleMode = TFALSE;

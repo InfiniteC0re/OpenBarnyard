@@ -14,6 +14,7 @@ TFileStream::TFileStream()
 {
 }
 
+// $Barnyard: FUNCTION 006d7f20
 // $Barnyard: FUNCTION 006d7fb0
 TFileStream::~TFileStream()
 {

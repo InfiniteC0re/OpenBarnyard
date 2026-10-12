@@ -29,6 +29,12 @@ TINT ASound::GetRandomSample( TINT a_iWaveIndexMin, TINT a_iWaveIndexMax )
 	return a_iWaveIndexMin + ARandom::GetSingleton()->m_oRandom.GetInt( a_iWaveIndexMax - a_iWaveIndexMin );
 }
 
+// NOTE: used as the element destructor of the ASound arrays in ASoundManager::LoadSoundBankImpl/UnloadSoundBank
+// $Barnyard: FUNCTION 005d72e0
+ASound::~ASound()
+{
+}
+
 // $Barnyard: FUNCTION 005d68b0
 TINT ASound::GetRandomSampleWeighted( TINT a_iTrackIndex, TINT a_iWaveIndexMin, TINT a_iWaveIndexMax )
 {

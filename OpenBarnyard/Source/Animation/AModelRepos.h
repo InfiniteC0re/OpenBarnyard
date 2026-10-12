@@ -14,6 +14,13 @@ public:
 
 	static constexpr TSIZE MAX_UNUSED_MODELS_NUM = 9;
 
+	using RENDERMASK = TUINT;
+	enum RENDERMASK_ : RENDERMASK
+	{
+		RENDERMASK_GLOW   = BITFLAG( 0 ), // instances with AModelInstance::Flags_Glow, rendered after the particles
+		RENDERMASK_NORMAL = BITFLAG( 1 ), // all the other instances, rendered before the terrain
+	};
+
 public:
 	AModelRepos();
 	~AModelRepos();
@@ -29,15 +36,18 @@ public:
 	void UnloadModel( const Toshi::TPString8& a_rcName, TBOOL a_bDestroy );
 
 	void Update( TFLOAT a_fDeltaTime );
-	void RenderModels( TUINT a_uiMask );
+
+	// Calls a_fnCallback for every used model and then for every model
+	void ForEachModel( void ( *a_fnCallback )( AModel* a_pModel ) );
+	void RenderModels( RENDERMASK a_eMask );
 
 	void UnloadAllModels();
 	void UnloadUnusedModels();
+	void MarkAllModelsUnused();
 
 private:
 	AModel* AllocateAModel( const Toshi::TPString8& a_rcName, Toshi::TTRB* a_pTRB );
 
-	void MarkAllModelsUnused();
 	void MarkModelUnused( AModel* a_pModel );
 
 protected:

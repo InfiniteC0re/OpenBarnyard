@@ -7,6 +7,7 @@ class TRefCounted
 {
 public:
 	TRefCounted() { m_iRefCount = 0; }
+	// $Barnyard: FUNCTION 0040d7e0
 	~TRefCounted() { m_iRefCount = -1; }
 
 	TINT         DecRefCount() { return m_iRefCount--; }
@@ -25,6 +26,8 @@ class TRef
 {
 public:
 	// constructors/destructor
+	// NOTE: every instantiation is folded into one out of line copy, used by the vector constructor iterators: 00440e20
+	// $Barnyard: FUNCTION 00440e20
 	constexpr TRef()
 	    : m_pPtr( TNULL )
 	{
@@ -36,6 +39,8 @@ public:
 		Create( a_pPtr );
 	}
 
+	// TRef<AUnitProxy> 0040d8a0
+	// $Barnyard: FUNCTION 0040d8a0
 	TRef( const TRef& a_rcOther )
 	    : m_pPtr( TNULL )
 	{
@@ -44,12 +49,19 @@ public:
 
 	TRef( TRef&& a_rOther )
 	{
-		a_rOther.m_pPtr = m_pPtr;
-		m_pPtr          = TNULL;
+		m_pPtr          = a_rOther.m_pPtr;
+		a_rOther.m_pPtr = TNULL;
 	}
 
+	// NOTE: 006b1c50 is the scalar deleting destructor of TRef<PPropertyValueArray>
+	// $Barnyard: FUNCTION 006b1c50
+	// Folded destructor of the TRef instances (AUnitProxy, ...) 005c5330
+	// $Barnyard: FUNCTION 005c5330
 	~TRef() { Destroy(); }
 
+	// NOTE: TRef<PProperties> (006b1b80), TRef<PPropertyValueArray> (006b1bb0)
+	// $Barnyard: FUNCTION 006b1b80
+	// $Barnyard: FUNCTION 006b1bb0
 	TRef& operator=( T* a_pPtr )
 	{
 		if ( a_pPtr != m_pPtr )
@@ -60,6 +72,8 @@ public:
 		return *this;
 	}
 
+	// TRef<AUnitProxy> 0040d8c0
+	// $Barnyard: FUNCTION 0040d8c0
 	TRef& operator=( const TRef& a_rOther )
 	{
 		if ( a_rOther.m_pPtr != m_pPtr )

@@ -109,7 +109,7 @@ TSIZE TCompress::Compress( TFile* file, TBYTE* buffer, TUINT32 size, TUINT32 unu
 
 		TBYTE* offset    = TNULL;
 		TSIZE  dataSize  = 0;
-		TBOOL  hasOffset = compressor.FUN_0068af10( bufferPos, uncompressedLeft, offset, dataSize );
+		TBOOL  hasOffset = compressor.FindMatch( bufferPos, uncompressedLeft, offset, dataSize );
 
 		if ( hasOffset == TFALSE || dataSize < 3 )
 		{
@@ -142,7 +142,7 @@ TSIZE TCompress::Compress( TFile* file, TBYTE* buffer, TUINT32 size, TUINT32 unu
 			compressedSize += TCompress::WriteOffset( dataSize, bufferPos - offset, bufferPos, file );
 		}
 
-		compressor.FUN_0068ae40( dataSize );
+		compressor.AdvanceWindow( dataSize );
 	}
 
 	if ( chunkStart != TNULL )

@@ -2,11 +2,18 @@
 #include "AModelLoader.h"
 #include "AAssetLoader.h"
 #include "AMaterialLibraryManager.h"
+#include "AOptions.h"
+#include "Render/AStaticInstanceShader/AStaticInstanceShader.h"
+#include "Render/AFOBShader/AFOBShader.h"
+#include "Render/AFOBShader/AFOBMaterial.h"
 
 #ifdef TOSHI_SKU_WINDOWS
 #  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
+#  include "Platform/DX8/AWorldShader/AWorldMaterial_DX8.h"
 #  include "Platform/DX8/ASkinShader/ASkinShader_DX8.h"
 #  include "Platform/DX8/AGrassShader/AGrassShaderHAL_DX8.h"
+#  include "Platform/DX8/AFXShader/AFXShader_DX8.h"
+#  include "Platform/DX8/AFXShader/AFXMaterial_DX8.h"
 
 #  include <Render/TTMDWin.h>
 #  include <Platform/DX8/TRenderInterface_DX8.h>
@@ -19,6 +26,7 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// NOTE: GetClass 00611390, CreateObject 006121c0, CreateObjectInPlace 00612220
 TDEFINE_CLASS( AModelLoader );
 
 TOSHI_NAMESPACE_USING
@@ -111,9 +119,108 @@ AModelLoader::AModelLoader()
 	}
 }
 
+// $Barnyard: FUNCTION 00611950
 // $Barnyard: FUNCTION 00611560
 AModelLoader::~AModelLoader()
 {
+	ms_oFreeMaterials.Clear();
+
+	if ( ms_pDefaultSkinMaterial )
+	{
+		ms_pDefaultSkinMaterial->Destroy();
+		ms_pDefaultSkinMaterial = TNULL;
+	}
+
+	if ( ms_pDefaultWorldMaterial )
+	{
+		ms_pDefaultWorldMaterial->Destroy();
+		ms_pDefaultWorldMaterial = TNULL;
+	}
+
+	if ( ms_pDefaultStaticInstanceMaterial )
+	{
+		ms_pDefaultStaticInstanceMaterial->Destroy();
+		ms_pDefaultStaticInstanceMaterial = TNULL;
+	}
+}
+
+// Layouts of the WorldEndRender/WorldStartRender and WorldUVOffsetsPerSec symbols of the material properties
+struct WorldMaterialList
+{
+	TINT          iNumMaterials;
+	const TCHAR** ppNames;
+};
+
+struct WorldUVOffsetsList
+{
+	struct Entry
+	{
+		const TCHAR* szName;
+		TFLOAT       fSpeedX;
+		TFLOAT       fSpeedY;
+	};
+
+	TINT   iNumMaterials;
+	Entry* pEntries;
+};
+
+// $Barnyard: FUNCTION 006113a0
+TBOOL AModelLoader::IsWorldEndRenderMaterial( const TCHAR* a_szMaterialName )
+{
+	auto pList = TSTATICCAST( WorldMaterialList, ms_pWorldEndRender );
+
+	for ( TINT i = 0; i < pList->iNumMaterials; i++ )
+	{
+		if ( TStringManager::String8CompareNoCase( pList->ppNames[ i ], a_szMaterialName ) == 0 )
+			return TTRUE;
+	}
+
+	return TFALSE;
+}
+
+// $Barnyard: FUNCTION 006113f0
+TBOOL AModelLoader::IsWorldStartRenderMaterial( const TCHAR* a_szMaterialName )
+{
+	auto pList = TSTATICCAST( WorldMaterialList, ms_pWorldStartRender );
+
+	for ( TINT i = 0; i < pList->iNumMaterials; i++ )
+	{
+		if ( TStringManager::String8CompareNoCase( pList->ppNames[ i ], a_szMaterialName ) == 0 )
+			return TTRUE;
+	}
+
+	return TFALSE;
+}
+
+// $Barnyard: FUNCTION 00611630
+void AModelLoader::WorldMaterialApplyUVOffsets( AWorldMaterial* a_pMaterial, const TCHAR* a_szMaterialName )
+{
+	auto pList = TSTATICCAST( WorldUVOffsetsList, ms_pWorldUVOffsetsPerSec );
+
+	for ( TINT i = 0; i < pList->iNumMaterials; i++ )
+	{
+		if ( TStringManager::String8CompareNoCase( pList->pEntries[ i ].szName, a_szMaterialName ) == 0 )
+		{
+			a_pMaterial->SetUVAnimationSpeed( pList->pEntries[ i ].fSpeedX, pList->pEntries[ i ].fSpeedY );
+			return;
+		}
+	}
+}
+
+// $Barnyard: FUNCTION 00611970
+void AModelLoader::WorldMaterialApplyProperties( AWorldMaterial* a_pMaterial, const TCHAR* a_szMaterialName )
+{
+	if ( IsWorldEndRenderMaterial( a_szMaterialName ) )
+	{
+		AWorldShaderHAL* pShader = TSTATICCAST( AWorldShaderHAL, AWorldShader::GetSingleton() );
+		TSTATICCAST( AWorldMaterialHAL, a_pMaterial )->SetOrderTable( pShader->GetOrderTable( 5 ) );
+	}
+	else if ( IsWorldStartRenderMaterial( a_szMaterialName ) )
+	{
+		a_pMaterial->SetBlendMode( AWorldMaterial::BLENDMODE_START_RENDER );
+	}
+
+	WorldMaterialApplyUVOffsets( a_pMaterial, a_szMaterialName );
 }
 
 void AModelLoader::MaterialApplyFlags( TMaterial* a_pMaterial, const TCHAR* a_szMaterialName )
@@ -121,7 +228,7 @@ void AModelLoader::MaterialApplyFlags( TMaterial* a_pMaterial, const TCHAR* a_sz
 	// Check if material is glowing
 	for ( TINT i = 0; i < ms_iNumGlowMaterials; i++ )
 	{
-		if ( TStringManager::String8Compare( ms_pGlowMaterials[ i ], a_szMaterialName ) == 0 )
+		if ( TStringManager::String8CompareNoCase( ms_pGlowMaterials[ i ], a_szMaterialName ) == 0 )
 		{
 			a_pMaterial->SetFlags( TMaterial::FLAGS_GLOW, TTRUE );
 			break;
@@ -131,7 +238,7 @@ void AModelLoader::MaterialApplyFlags( TMaterial* a_pMaterial, const TCHAR* a_sz
 	// Check if material is double sided
 	for ( TINT i = 0; i < ms_iNumDoubleSidedMaterials; i++ )
 	{
-		if ( TStringManager::String8Compare( ms_pDoubleSidedMaterials[ i ], a_szMaterialName ) == 0 )
+		if ( TStringManager::String8CompareNoCase( ms_pDoubleSidedMaterials[ i ], a_szMaterialName ) == 0 )
 		{
 			a_pMaterial->SetFlags( TMaterial::FLAGS_NO_CULL, TTRUE );
 			break;
@@ -147,7 +254,7 @@ void AModelLoader::MaterialApplyClamp( TMaterial* a_pMaterial, const TCHAR* a_sz
 	for ( ;; )
 	{
 		if ( pClampedMaterial->szName == TNULL ) return;
-		if ( TStringManager::String8Compare( pClampedMaterial->szName, a_szMaterialName ) == 0 ) break;
+		if ( TStringManager::String8CompareNoCase( pClampedMaterial->szName, a_szMaterialName ) == 0 ) break;
 
 		pClampedMaterial += 1;
 	}
@@ -174,7 +281,7 @@ void AModelLoader::MaterialApplyAlphaRef( TMaterial* a_pMaterial, const TCHAR* a
 	for ( ;; )
 	{
 		if ( pAlphaRefMaterial->szName == TNULL ) return;
-		if ( TStringManager::String8Compare( pAlphaRefMaterial->szName, a_szMaterialName ) == 0 ) break;
+		if ( TStringManager::String8CompareNoCase( pAlphaRefMaterial->szName, a_szMaterialName ) == 0 ) break;
 
 		pAlphaRefMaterial += 1;
 	}
@@ -193,13 +300,25 @@ TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMa
 	{
 		TStringManager::String8Copy( prefixName, "ss_" );
 	}
+	else if ( a_pShader->IsA( &TGetClass( AStaticInstanceShader ) ) )
+	{
+		TStringManager::String8Copy( prefixName, "si_" );
+	}
 	else if ( a_pShader->IsA( &TGetClass( AWorldShader ) ) )
 	{
 		TStringManager::String8Copy( prefixName, "ws_" );
 	}
+	else if ( a_pShader->IsA( &TGetClass( AFOBShader ) ) )
+	{
+		TStringManager::String8Copy( prefixName, "fo_" );
+	}
 	else if ( a_pShader->IsA( &TGetClass( AGrassShader ) ) )
 	{
 		TStringManager::String8Copy( prefixName, "gs_" );
+	}
+	else if ( a_pShader->IsA( &TGetClass( AFXShader ) ) )
+	{
+		TStringManager::String8Copy( prefixName, "fx_" );
 	}
 	else
 	{
@@ -226,10 +345,11 @@ TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMa
 
 		szTextureName = pTMDMaterial->szTextureFile;
 	}
-	
+
 	if ( !pTMDMaterial || !pTexture )
 	{
-		TTRACE( "Couldn't find texture for material '%s'", a_szMaterialName );
+		// NOTE: retail falls back silently. E.g. 'golfsign' of golfgate.trb lives in the sim_gates matlib and
+		// the terrain matlibs of the golf course, neither is loaded when AGateManager creates the gate models
 		pTexture = TDYNAMICCAST(
 		    TTextureResourceHAL,
 		    TRenderD3DInterface::Interface()->GetInvalidTexture()
@@ -254,6 +374,16 @@ TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMa
 
 		pResultMaterial = pMaterial;
 	}
+	else if ( a_pShader->IsA( &TGetClass( AStaticInstanceShader ) ) )
+	{
+		AStaticInstanceShader*   pShader   = TSTATICCAST( AStaticInstanceShader, a_pShader );
+		AStaticInstanceMaterial* pMaterial = pShader->CreateMaterial( TNULL );
+		pMaterial->Create( bIsAlpha ? 1 : 0 );
+		pMaterial->SetTextureNum( 1 );
+		pMaterial->SetTexture( 0, pTexture );
+
+		pResultMaterial = pMaterial;
+	}
 	else if ( a_pShader->IsA( &TGetClass( AWorldShader ) ) )
 	{
 		AWorldShaderHAL* pShader   = TDYNAMICCAST( AWorldShaderHAL, a_pShader );
@@ -262,9 +392,19 @@ TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMa
 		pMaterial->SetTexture( 0, pTexture );
 		pMaterial->SetTextureNum( 1 );
 
+		WorldMaterialApplyProperties( pMaterial, a_szMaterialName );
 		pResultMaterial = pMaterial;
+	}
+	else if ( a_pShader->IsA( &TGetClass( AFOBShader ) ) )
+	{
+		// NOTE: AFOBShader is stripped from PC retail, so this is never reached
+		AFOBShader*   pShader   = TSTATICCAST( AFOBShader, a_pShader );
+		AFOBMaterial* pMaterial = pShader->CreateMaterial( TNULL );
+		pMaterial->Create( bIsAlpha ? 1 : 0 );
+		pMaterial->SetTextureNum( 1 );
+		pMaterial->SetTexture( 0, pTexture );
 
-		TTODO( "Setup material using properties" );
+		pResultMaterial = pMaterial;
 	}
 	else if ( a_pShader->IsA( &TGetClass( AGrassShader ) ) )
 	{
@@ -273,6 +413,17 @@ TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMa
 		pMaterial->Create( 0 );
 		pMaterial->SetTexture( 0, pTexture );
 		pMaterial->SetTextureNum( 1 );
+
+		pResultMaterial = pMaterial;
+	}
+	else if ( a_pShader->IsA( &TGetClass( AFXShader ) ) )
+	{
+		// NOTE: No AFXShaderHAL is ever created in retail
+		AFXShader*   pShader   = TSTATICCAST( AFXShader, a_pShader );
+		AFXMaterial* pMaterial = pShader->CreateMaterial( TNULL );
+		pMaterial->Create( 0 );
+		pMaterial->SetTextureNum( 1 );
+		pMaterial->SetTexture( 0, pTexture );
 
 		pResultMaterial = pMaterial;
 	}
@@ -353,6 +504,35 @@ void AModelLoader::DestroyMaterial( TMaterial* a_pMaterial )
 	}
 }
 
+// $Barnyard: FUNCTION 00612000
+void AModelLoader::ChangeMaterialTexture( TMaterial* a_pMaterial, const TCHAR* a_szTextureName )
+{
+	T2_FOREACH( ms_oUsedMaterials, it )
+	{
+		if ( it->pMaterial != a_pMaterial )
+			continue;
+
+		TTexture* pTexture = AMaterialLibraryManager::GetSingleton()->FindTexture( a_szTextureName );
+
+		if ( pTexture )
+		{
+			TStringManager::String8Copy( it->szTextureName, a_szTextureName, sizeof( it->szTextureName ) );
+
+			// NOTE: retail writes the first texture field (+0x4c) of these materials
+			if ( ASkinMaterial* pSkinMaterial = TDynamicCast<ASkinMaterial>( a_pMaterial ) )
+				pSkinMaterial->SetTexture( pTexture );
+			else if ( AStaticInstanceMaterial* pStaticInstanceMaterial = TDynamicCast<AStaticInstanceMaterial>( a_pMaterial ) )
+				pStaticInstanceMaterial->SetTexture( 0, pTexture );
+			else if ( AWorldMaterial* pWorldMaterial = TDynamicCast<AWorldMaterial>( a_pMaterial ) )
+				pWorldMaterial->SetTexture( 0, pTexture );
+			else if ( AGrassMaterial* pGrassMaterial = TDynamicCast<AGrassMaterial>( a_pMaterial ) )
+				pGrassMaterial->SetTexture( 0, pTexture );
+		}
+
+		return;
+	}
+}
+
 // $Barnyard: FUNCTION 006120e0
 void AModelLoader::ResolveTextures()
 {
@@ -365,12 +545,16 @@ void AModelLoader::ResolveTextures()
 
 		if ( ASkinMaterial* pSkinMaterial = TDynamicCast<ASkinMaterial>( it->pMaterial ) )
 			pSkinMaterial->m_pTexture = pTexture;
+		else if ( AStaticInstanceMaterial* pStaticInstanceMaterial = TDynamicCast<AStaticInstanceMaterial>( it->pMaterial ) )
+			pStaticInstanceMaterial->SetTexture( 0, pTexture );
 		else if ( AWorldMaterial* pWorldMaterial = TDynamicCast<AWorldMaterial>( it->pMaterial ) )
 			pWorldMaterial->SetTexture( 0, pTexture );
+		else if ( AFOBMaterial* pFOBMaterial = TDynamicCast<AFOBMaterial>( it->pMaterial ) )
+			pFOBMaterial->SetTexture( 0, pTexture );
 		else if ( AGrassMaterial* pGrassMaterial = TDynamicCast<AGrassMaterial>( it->pMaterial ) )
 			pGrassMaterial->SetTexture( 0, pTexture );
-		else
-			TASSERT( TFALSE && "Add other materials" );
+
+		// Other materials are skipped
 	}
 }
 
@@ -504,9 +688,10 @@ TMaterial* AModelLoader::FindMaterial( const TString8& a_rName )
 
 TTMDBase::Material* AModelLoader::FindMaterialInModel( const TCHAR* a_szName )
 {
+	// Case insensitive like retail: e.g. the flower meshes use 'flower_swatch' while the TMD lists 'Flower_swatch'
 	for ( TINT i = 0; i < ms_oCurrentModelMaterialsHeader.iNumMaterials; i++ )
 	{
-		if ( TStringManager::String8Compare( ms_oCurrentModelMaterials[ i ].szMatName, a_szName ) == 0 )
+		if ( TStringManager::String8CompareNoCase( ms_oCurrentModelMaterials[ i ].szMatName, a_szName ) == 0 )
 		{
 			return &ms_oCurrentModelMaterials[ i ];
 		}
@@ -540,6 +725,12 @@ TBOOL __stdcall AModelLoader::AModelLoaderLoadTRBCallback( TModel* a_pModel )
 		}
 	}
 
+	return LoadTRBModelLODs( a_pModel );
+}
+
+// $Barnyard: FUNCTION 00613130
+TBOOL AModelLoader::LoadTRBModelLODs( TModel* a_pModel )
+{
 	TTMDWin::TRBWinHeader*     pHeader    = a_pModel->CastSymbol<TTMDWin::TRBWinHeader>( "Header" );
 	TTMDBase::MaterialsHeader* pMaterials = a_pModel->CastSymbol<TTMDBase::MaterialsHeader>( "Materials" );
 
@@ -567,8 +758,17 @@ TBOOL __stdcall AModelLoader::AModelLoaderLoadTRBCallback( TModel* a_pModel )
 				LoadSkinLOD( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
 				break;
 			case TTMDBase::SHADERTYPE_GRASS:
-				LoadGrassMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
+			{
+				// The grass is rendered as a world mesh without pixel shaders or with the low detail grass
+				auto pDevice = TSTATICCAST( TD3DAdapter::Mode::Device, TRenderD3DInterface::Interface()->GetCurrentDevice() );
+
+				if ( pDevice->SupportsPixelShaders() && AOptions::GetSingleton()->IsHighDetailGrassEnabled() )
+					LoadGrassMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
+				else
+					LoadWorldMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
+
 				break;
+			}
 			default:
 				TASSERT( !"The model is using an unknown shader" );
 				return TFALSE;

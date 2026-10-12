@@ -37,8 +37,8 @@ TLogFile::Error TLogFile::Create( const TCHAR* fileName, const TCHAR* str2, TBOO
 		return Error::AlreadyCreated;
 	}
 
-	TIMPLEMENT_D( "uVar1 = FUN_008289A0(fileName);" );
-	TIMPLEMENT_D( "FUN_00828A40(uVar1);" );
+	// NOTE: TLogFile isn't in BYard.exe (logging is compiled out of retail). Other TOSHI builds pass fileName through
+	// two unidentified functions here (likely preparing the directory), not needed since TFile::Create opens the path directly.
 
 	TFILEMODE fileMode = writeExisting ?
 	    TFILEMODE_NOBUFFER | TFILEMODE_WRITE :
@@ -66,6 +66,7 @@ TLogFile::Error TLogFile::Create( const TCHAR* fileName, const TCHAR* str2, TBOO
 	return Error::OK;
 }
 
+// $Barnyard: FUNCTION 006d9080
 void TLogFile::Close()
 {
 	m_curLevel = 0;
@@ -83,6 +84,7 @@ void TLogFile::Close()
 	}
 }
 
+// $Barnyard: FUNCTION 006d9020
 void TLogFile::RecalcLevel()
 {
 	m_curLevel = TMath::Min<TUINT32>( m_curLevel, cLevelMax );
@@ -96,6 +98,7 @@ void TLogFile::RecalcLevel()
 	m_LevelString[ m_curLevel ] = 0;
 }
 
+// $Barnyard: FUNCTION 006d8ec0
 void TLogFile::Print( const TCHAR* format, ... )
 {
 	if ( m_pFile != TNULL )
@@ -119,10 +122,15 @@ void TLogFile::Print( const TCHAR* format, ... )
 	}
 }
 
+// $Barnyard: FUNCTION 006d8f30
 void TLogFile::Log( TUtil::LogType type, const TCHAR* str1, const TCHAR* str2, const TCHAR* format, ... )
 {
 	if ( m_pFile != TNULL )
 	{
+		TCHAR strTime[ 128 ];
+		strTime[ 0 ] = '\0';
+		_strtime( strTime );
+
 		if ( m_bIsSimpleMode )
 		{
 			if ( m_bAllowIndentation )
@@ -137,9 +145,6 @@ void TLogFile::Log( TUtil::LogType type, const TCHAR* str1, const TCHAR* str2, c
 		}
 		else
 		{
-			TCHAR strTime[ 128 ];
-			_strtime( strTime );
-
 			m_pFile->CPrintf(
 			    "%d [%s] [%s]: %s: %s: %s",
 			    m_iTotalLogCount,
@@ -147,15 +152,16 @@ void TLogFile::Log( TUtil::LogType type, const TCHAR* str1, const TCHAR* str2, c
 			    strTime,
 			    str1,
 			    str2 != TNULL ? str2 : "",
-			    !m_bAllowIndentation ? m_LevelString : ""
+			    m_bAllowIndentation ? m_LevelString : ""
 			);
 		}
 
 		va_list args;
 		va_start( args, format );
-		T2String8::FormatV( TStringManager::GetTempString8(), format, args );
-		m_pFile->CPrintf( TStringManager::GetTempString8() );
+		m_pFile->VCPrintf( format, args );
 		va_end( args );
+
+		m_pFile->CPrintf( "\n" );
 
 		m_typeCounts[ type ]++;
 		m_iTotalLogCount++;

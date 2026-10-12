@@ -22,6 +22,11 @@ TIndexFactoryResourceInterface::TIndexFactoryResourceInterface()
 	m_uiFlags            = 0;
 }
 
+// $Barnyard: FUNCTION 006dc1f0
+TIndexFactoryResourceInterface::~TIndexFactoryResourceInterface()
+{
+}
+
 // $Barnyard: FUNCTION 006dc1b0
 TBOOL TIndexFactoryResourceInterface::Create( TIndexFactoryFormat* a_pIndexFormat, TUINT16 a_uiMaxStaticIndices, TUINT32 a_uiFlags )
 {

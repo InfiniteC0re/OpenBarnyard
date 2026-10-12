@@ -19,7 +19,14 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 00605850, CreateObject 00605bd0, CreateObjectInPlace 00605c60
 TDEFINE_CLASS( ABINKMoviePlayer );
+
+// $Barnyard: FUNCTION 00605880
+// $Barnyard: FUNCTION 00605ce0
+ABINKMoviePlayer::~ABINKMoviePlayer()
+{
+}
 
 ABINKMoviePlayer::ABINKMoviePlayer()
 {
@@ -31,13 +38,17 @@ ABINKMoviePlayer::ABINKMoviePlayer()
 	m_iNumRects = 0;
 }
 
+// $Barnyard: FUNCTION 00605830
+static void* RADLINK BinkAlloc( U32 a_uiSize )
+{
+	return TMalloc( a_uiSize );
+}
+
 // $Barnyard: FUNCTION 00605890
 TBOOL ABINKMoviePlayer::OnCreate()
 {
 	BinkSetMemory(
-	    []( unsigned int size ) {
-		    return TMalloc( size );
-	    },
+	    BinkAlloc,
 	    []( void* ptr ) {
 		    TFree( ptr );
 	    }
@@ -110,7 +121,7 @@ TBOOL ABINKMoviePlayer::OnUpdate( TFLOAT a_fDeltaTime )
 						return TTRUE;
 					}
 
-					m_eFormat |= 0x80000000;
+					m_eFormat |= BINKCOPYALL;
 				}
 			}
 
@@ -123,7 +134,7 @@ TBOOL ABINKMoviePlayer::OnUpdate( TFLOAT a_fDeltaTime )
 				if ( S_OK == ( *ppRenderSurface )->LockRect( &rect, TNULL, 0 ) )
 				{
 					BinkCopyToBuffer( m_Bink, rect.pBits, rect.Pitch, m_Bink->Height, 0, 0, m_eFormat );
-					m_eFormat &= 0x7fffffff;
+					m_eFormat &= ~BINKCOPYALL;
 					( *ppRenderSurface )->UnlockRect();
 
 					if ( !m_bVideoFitsBackBuffer )
@@ -147,11 +158,18 @@ void ABINKMoviePlayer::OnDestroy()
 }
 
 // $Barnyard: FUNCTION 00606180
-TBOOL ABINKMoviePlayer::PlayMovie( const TCHAR* a_szFileName, TUINT32 a_Unk )
+TBOOL ABINKMoviePlayer::PlayMovie( const TCHAR* a_szFileName, PLAYFLAGS a_eFlags )
 {
 	TVALIDPTR( a_szFileName );
 
 	SetMovieFile( a_szFileName );
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Dev switches: "-background" (and "-mute") runs open movies without their sound tracks
+	if ( T2String8::FindString( GetCommandLineA(), "-background" ) || T2String8::FindString( GetCommandLineA(), "-mute" ) )
+		BinkSetSoundTrack( 0, TNULL );
+#endif
+
 	m_Bink = BinkOpen( m_szMoviePath, 0 );
 
 	if ( m_Bink != TNULL )
@@ -191,25 +209,25 @@ TBOOL ABINKMoviePlayer::CreateSurfaces()
 			switch ( desc.Format )
 			{
 				case D3DFMT_R8G8B8:
-					m_eFormat = 1;
+					m_eFormat = BINKSURFACE24;
 					break;
 				case D3DFMT_A8R8G8B8:
-					m_eFormat = 5;
+					m_eFormat = BINKSURFACE32A;
 					break;
 				case D3DFMT_X8R8G8B8:
-					m_eFormat = 3;
+					m_eFormat = BINKSURFACE32;
 					break;
 				case D3DFMT_R5G6B5:
-					m_eFormat = 10;
+					m_eFormat = BINKSURFACE565;
 					break;
 				case D3DFMT_X1R5G5B5:
-					m_eFormat = 9;
+					m_eFormat = BINKSURFACE555;
 					break;
 				case D3DFMT_A1R5G5B5:
-					m_eFormat = 8;
+					m_eFormat = BINKSURFACE5551;
 					break;
 				case D3DFMT_A4R4G4B4:
-					m_eFormat = 7;
+					m_eFormat = BINKSURFACE4444;
 					break;
 			}
 		}
@@ -470,11 +488,11 @@ TBOOL ABINKMoviePlayer::Rect::Create( int a_iPosX, int a_iPosY, int a_iWidth, in
 	pData            = new TUINT8[ uiDataSize ];
 	auto pTexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>( SYSRESOURCE_TEXTUREFACTORY );
 
-	pTexture = pTexFactory->CreateEx( pData, uiDataSize, uiWidth, uiHeight, 1, a_eFormat, 4 );
+	pTexture = pTexFactory->CreateEx( pData, uiDataSize, uiWidth, uiHeight, 1, a_eFormat, TTexture::MIPFLAGS_UNK2 );
 	pTexture->SetAddressing( ADDRESSINGMODE_CLAMP );
 
 	pMaterial = AGUI2::GetRenderer()->CreateMaterial( pTexture );
-	pMaterial->SetBlendState( 0 );
+	pMaterial->SetBlendState( T2GUIMaterial::BLENDSTATE_OPAQUE );
 
 	UV1 = { 0.0f, 0.0f };
 	UV2 = { TFLOAT( a_iWidth ) / uiWidth, TFLOAT( a_iHeight ) / uiHeight };

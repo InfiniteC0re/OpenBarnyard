@@ -9,4 +9,6 @@ public:
 	virtual TBOOL        IsReady() const OVERRIDE;
 	virtual LOADRESULT   Load( LOADFLAGS a_uiFlags, TINT a_iBufferSize ) OVERRIDE;
 	virtual UNLOADRESULT Unload() OVERRIDE;
+
+	~AWaveBankFMODFSBStream();
 };

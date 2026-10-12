@@ -14,6 +14,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_NORUNTIME( ASkinMesh );
 
+// $Barnyard: FUNCTION 005f1470
 ASkinSubMesh::ASkinSubMesh()
     : uiUnknown( 0 ), pIndexPool( TNULL ), uiNumVertices( 0 ), uiNumBones( 0 )
 {
@@ -140,7 +141,7 @@ TBOOL ASkinMesh::CreateResource()
 	auto pVertexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TVertexFactoryResourceInterface>( SYSRESOURCE_VFSKIN );
 	TVALIDPTR( pVertexFactory );
 
-	m_pVertexPool = pVertexFactory->CreatePoolResource( m_uiMaxVertices, 1 );
+	m_pVertexPool = pVertexFactory->CreatePoolResource( m_uiMaxVertices, TVertexPoolResourceInterface::FLAGS_STATIC );
 	m_pSubMeshes  = new ASkinSubMesh[ m_uiNumSubMeshes ];
 
 	return TTRUE;

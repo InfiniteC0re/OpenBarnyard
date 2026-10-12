@@ -32,7 +32,6 @@ public:
 
 		TUINT DecRefCount()
 		{
-			// TODO: Add something more?
 			TASSERT( m_uiRefCount > 0 );
 			return --m_uiRefCount;
 		}
@@ -85,8 +84,9 @@ public:
 	TManagedModel();
 	~TManagedModel();
 
-	TBOOL         Create( const TCHAR* a_szFileName, TTRB* a_pTRB );
-	TSceneObject* CreateSceneObject();
+	TBOOL Create( const TCHAR* a_szFileName, TTRB* a_pTRB );
+	// NOTE: a_szName is unused (retail passes the instance name from AModel::CreateInstance)
+	TSceneObject* CreateSceneObject( const TCHAR* a_szName = TNULL );
 
 	// $Barnyard: FUNCTION 006c1ae0
 	void SetModel( TModel* a_pModel ) { m_pModel = a_pModel; }

@@ -65,7 +65,7 @@ TBOOL ABoneAttachCameraHelper::Unk2( void* )
 	return TTRUE;
 }
 
-TBOOL ABoneAttachCameraHelper::Unk3( void*, void* )
+TBOOL ABoneAttachCameraHelper::ProcessInputCommand( void*, void* )
 {
 	return TTRUE;
 }
@@ -162,6 +162,21 @@ void ABoneAttachCameraHelper::SetAnimation( const TCHAR* a_szSeqName )
 	TASSERT( iSeqId != TSEQ_INVALID );
 
 	m_pAnimation = m_pSkeletonInstance->AddAnimation( iSeqId, 1.0f, 0.0f );
+}
+
+// $Barnyard: FUNCTION 0045fb60
+void ABoneAttachCameraHelper::Reset()
+{
+	if ( m_pAnimation )
+	{
+		m_pSkeletonInstance->RemoveAnimation( m_pAnimation, 0.0f );
+		m_pAnimation = TNULL;
+	}
+
+	m_oAnimStartListener.Disconnect();
+	m_pSceneObject      = TNULL;
+	m_pSkeletonInstance = TNULL;
+	m_iBoneId           = -1;
 }
 
 // $Barnyard: FUNCTION 0045fb30

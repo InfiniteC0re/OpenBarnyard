@@ -18,6 +18,7 @@ public:
 		Create( &mutex );
 	}
 
+	// $Barnyard: FUNCTION 006d89e0
 	TMutexLock( TMutex* mutex )
 	{
 		Create( mutex );

@@ -18,6 +18,7 @@ ASkinShader::ASkinShader()
 }
 
 // $Barnyard: FUNCTION 005f1680
+// $Barnyard: FUNCTION 005f1720
 ASkinShader::~ASkinShader()
 {
 }

@@ -34,15 +34,32 @@ void TRenderContext::SetFogDistance( TFLOAT a_fStart, TFLOAT a_fEnd )
 	m_fFogDistanceStart = a_fStart;
 	m_fFogDistanceEnd   = a_fEnd;
 	m_eFlags |= FLAG_DIRTY;
-	m_eFlags &= ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 );
+	m_eFlags &= ~( FLAG_UNK4 | FLAG_UNK5 | FLAG_HAS_WORLDPLANES | FLAG_UNK7 );
 }
 
 // $Barnyard: FUNCTION 006cecc0
 TRenderContext::TRenderContext( TRenderInterface* a_pRenderer )
-    : m_pRenderer( a_pRenderer ), m_eFlags( FLAG_DIRTY ), m_eClipFlags( 0x3F ), m_eCameraMode( CameraMode_Perspective ), m_pCurrentSkeletonInstance( TNULL ), m_pCurrentCameraObject( TNULL ), m_AmbientColor( 1.0f, 1.0f, 1.0f, 0.0f ), m_FogColor( 1.0f, 1.0f, 1.0f, 0.0f ), m_fFogDistanceStart( 10.0f ), m_fFogDistanceEnd( 1000.0f ), m_fAlphaBlend( 1.0f ), m_fShadeCoeff( 0.0f )
+    : m_pRenderer( a_pRenderer )
+    , m_eFlags( FLAG_DIRTY )
+    , m_eClipFlags( CLIPFLAGS_ALL )
+    , m_eGuardFlags( 0 )
+    , m_eCameraMode( CameraMode_Perspective )
+    , m_pCurrentSkeletonInstance( TNULL )
+    , m_AmbientColor( 1.0f, 1.0f, 1.0f, 0.0f )
+    , m_FogColor( 1.0f, 1.0f, 1.0f, 0.0f )
+    , m_vUnk16C( 1.0f, 1.0f, 1.0f, 1.0f )
+    , m_vUnk17C( 0.5f, 0.5f, 0.5f, 0.0f )
+    , m_vUnk18C( 1.0f, 1.0f, 1.0f )
+    , m_fUnk198( 0.6f )
+    , m_fUnk19C( 0.4f )
+    , m_fFogDistanceStart( 10.0f )
+    , m_fFogDistanceEnd( 1000.0f )
+    , m_fAlphaBlend( 1.0f )
+    , m_fUnk3AC( 1.0f )
+    , m_fShadeCoeff( 0.0f )
+    , PADDING4( TFALSE )
+    , m_pCurrentCameraObject( TNULL )
 {
-	TIMPLEMENT();
-
 	// Setup viewport parameters
 	if ( m_pRenderer->GetCurrentDevice() != TNULL )
 	{
@@ -57,10 +74,10 @@ TRenderContext::TRenderContext( TRenderInterface* a_pRenderer )
 		m_oViewportParams.fHeight = 480.0f;
 	}
 
-	m_oViewportParams.fX    = 0;
-	m_oViewportParams.fY    = 0;
+	m_oViewportParams.fX    = 0.0f;
+	m_oViewportParams.fY    = 0.0f;
+	m_oViewportParams.fMinZ = 0.0f;
 	m_oViewportParams.fMaxZ = 1.0f;
-	m_oViewportParams.fMinZ = 1.0f;
 
 	// Setup projection parameters
 	m_oProjParams.SetFromFOV( m_oViewportParams.fWidth, m_oViewportParams.fHeight, TMath::DegToRad( 45.0f ), 1.0f, 1000.0f );
@@ -74,6 +91,7 @@ TRenderContext::TRenderContext( TRenderInterface* a_pRenderer )
 }
 
 // $Barnyard: FUNCTION 006ce8e0
+// $Barnyard: FUNCTION 006ceed0
 TRenderContext::~TRenderContext()
 {
 }
@@ -83,15 +101,15 @@ void TRenderContext::SetModelViewMatrix( const TMatrix44& a_rMatrix )
 {
 	m_eFlags |= ( FLAG_DIRTY_WORLDMODELMATRIX | FLAG_DIRTY_VIEWMODELMATRIX );
 	m_oModelViewMatrix = a_rMatrix;
-	m_eFlags &= ~( FLAG_HAS_MODELWORLDMATRIX | FLAG_UNK3 );
+	m_eFlags &= ~( FLAG_HAS_MODELWORLDMATRIX | FLAG_UNK4 );
 }
 
 // $Barnyard: FUNCTION 006ce920
 void TRenderContext::SetWorldViewMatrix( const TMatrix44& a_rMatrix )
 {
-	m_eFlags |= FLAG_DIRTY_VIEWMODELMATRIX;
+	m_eFlags |= FLAG_DIRTY_WORLDMODELMATRIX;
 	m_oWorldViewMatrix = a_rMatrix;
-	m_eFlags &= ~( FLAG_HAS_MODELWORLDMATRIX | FLAG_HAS_VIEWWORLDMATRIX | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 );
+	m_eFlags &= ~( FLAG_HAS_MODELWORLDMATRIX | FLAG_HAS_VIEWWORLDMATRIX | FLAG_UNK5 | FLAG_HAS_WORLDPLANES | FLAG_UNK7 );
 }
 
 // $Barnyard: FUNCTION 006cef30
@@ -105,21 +123,21 @@ void TRenderContext::SetProjectionParams( const PROJECTIONPARAMS& params )
 	TASSERT( TMath::IsFinite( params.m_Centre.y ) && ( !TMath::IsNaN( params.m_Centre.y ) ) );
 
 	m_oProjParams = params;
-	m_eFlags      = ( m_eFlags & ( ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 ) ) ) | FLAG_DIRTY;
+	m_eFlags      = ( m_eFlags & ( ~( FLAG_UNK4 | FLAG_UNK5 | FLAG_HAS_WORLDPLANES | FLAG_UNK7 ) ) ) | FLAG_DIRTY;
 }
 
 // $Barnyard: FUNCTION 006ceef0
 void TRenderContext::SetViewportParameters( const VIEWPORTPARAMS& params )
 {
 	m_oViewportParams = params;
-	m_eFlags          = ( m_eFlags & ( ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 ) ) ) | FLAG_DIRTY;
+	m_eFlags          = ( m_eFlags & ( ~( FLAG_UNK4 | FLAG_UNK5 | FLAG_HAS_WORLDPLANES | FLAG_UNK7 ) ) ) | FLAG_DIRTY;
 }
 
 // $Barnyard: FUNCTION 006cef70
 void TRenderContext::SetCameraMode( CameraMode cameraMode )
 {
 	m_eCameraMode = cameraMode;
-	m_eFlags      = ( m_eFlags & ( ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 ) ) ) | FLAG_DIRTY;
+	m_eFlags      = ( m_eFlags & ( ~( FLAG_UNK4 | FLAG_UNK5 | FLAG_HAS_WORLDPLANES | FLAG_UNK7 ) ) ) | FLAG_DIRTY;
 }
 
 // $Barnyard: FUNCTION 006ceba0
@@ -182,6 +200,15 @@ TUINT TRenderContext::GetClipFlags() const
 TUINT TRenderContext::SetClipFlags( TUINT a_uiClipFlags )
 {
 	return std::exchange( m_eClipFlags, a_uiClipFlags );
+}
+
+// $Barnyard: FUNCTION 006cea00
+void TRenderContext::GetWorldPlanes( TPlane* a_pOutPlanes, TINT a_iNumPlanes )
+{
+	const TPlane* pWorldPlanes = GetWorldPlanes();
+
+	for ( TINT i = 0; i < a_iNumPlanes; i++ )
+		a_pOutPlanes[ i ] = pWorldPlanes[ i ];
 }
 
 // $Barnyard: FUNCTION 006ce990

@@ -22,6 +22,8 @@ struct T2Pair
 	    , second( Second() )
 	{}
 
+	// T2Pair<TPString8, ANamedAnimationTransition> 00581dc0
+	// $Barnyard: FUNCTION 00581dc0
 	constexpr T2Pair( const First& a_rcFirst, const Second& a_rcSecond )
 	    : first( a_rcFirst )
 	    , second( a_rcSecond )

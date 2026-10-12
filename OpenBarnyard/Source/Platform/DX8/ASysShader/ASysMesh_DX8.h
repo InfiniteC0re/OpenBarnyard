@@ -8,6 +8,7 @@ public:
 
 public:
 	ASysMeshHAL();
+	~ASysMeshHAL();
 
 	virtual TBOOL Render() override;
 	virtual void  SetZBias( TINT a_iZBias ) override;

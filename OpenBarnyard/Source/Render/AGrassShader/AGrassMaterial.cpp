@@ -15,7 +15,7 @@ TDEFINE_CLASS_NORUNTIME( AGrassMaterial );
 
 // $Barnyard: FUNCTION 005f7970
 AGrassMaterial::AGrassMaterial()
-    : m_eBlendMode( 0 )
+    : m_eBlendMode( BLENDMODE_DEFAULT )
 {
 	m_aTextures[ 0 ] = TNULL;
 	m_aTextures[ 1 ] = TNULL;
@@ -46,6 +46,6 @@ void AGrassMaterial::SetBlendMode( BLENDMODE a_eBlendMode )
 	m_eBlendMode = a_eBlendMode;
 	m_Flags &= ~FLAGS_BLENDING;
 
-	if ( a_eBlendMode != 0 )
+	if ( a_eBlendMode != BLENDMODE_DEFAULT )
 		m_Flags |= FLAGS_BLENDING;
 }

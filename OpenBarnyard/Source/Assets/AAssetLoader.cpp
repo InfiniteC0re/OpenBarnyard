@@ -1,11 +1,23 @@
 #include "pch.h"
 #include "AAssetLoader.h"
+#include "GUI/ASubtitleManager.h"
+#include "Sound/APositionalSoundSet.h"
+#include "Helpers/ASimPersistData.h"
+#include "GameInterface/AHackedQuickSave.h"
+#include "Sound/AVOStream.h"
 #include "AAssetStreaming.h"
 #include "AMaterialLibraryManager.h"
 #include "AKeyFrameLibraryManager.h"
 #include "ATRBLoaderJob.h"
 #include "ALoadScreen.h"
 #include "Animation/AAnimatableObjectManager.h"
+#include "Player/APlayerProfileManager.h"
+#include "Helpers/ABikeManager.h"
+#include "Physics/AVehicleSkidManager.h"
+#include "Sound/ASoundManager.h"
+#include "FX/AParticleEffectManager.h"
+#include "FX/AParticleEffectLocatorManager.h"
+#include "UnitMovement/PathfindingNetworks/AInteriorNetworkManager.h"
 
 #include <Toshi/TString8.h>
 #include <File/TTRB.h>
@@ -19,12 +31,48 @@
 
 TOSHI_NAMESPACE_USING
 
-static void TranslateLibraryName( Toshi::TString8& a_rOutName, const TCHAR* a_szLibraryName )
+// Names of the player's costumes, used to build the name of the player's material library (0x007727d8)
+static const TCHAR* s_aCostumeNames[] = {
+	"american",
+	"angus",
+	"beefmstr",
+	"spaniard",
+	"longhorn",
+	"brahman",
+	"holsten",
+};
+
+// Returns the day phase stored by the quick save (DAT_007810fc), 4 means night
+static TINT GetSavedDayPhase()
+{
+	return AHackedQuickSave::GetSavedDayPhase();
+}
+
+// Returns the current act of the story (+0x64 of the singleton at DAT_00783e64)
+static TINT GetCurrentMainGameAct()
+{
+	return ASimPersistData::GetSingleton()->GetAct();
+}
+
+// NOTE: retail inlines this into LoadAssetPackOfLibrary, DestroyAssetPackOfLibrary and CreateAssetsFromLibrary
+void AAssetLoader::GetLibraryFileName( TString8& a_rOutLibName, TString8& a_rOutFileName, const TCHAR* a_szLibraryName, TINT a_iMainGameAct )
 {
 	TVALIDPTR( a_szLibraryName );
-	TTODO( "Take day/night cycle and current story progress into account" );
 
-	a_rOutName.Format( "Data/%s.trb", a_szLibraryName );
+	a_rOutLibName = a_szLibraryName;
+
+	if ( TStringManager::String8CompareNoCase( a_szLibraryName, "ABarnExploreMinigameState" ) == 0 && GetSavedDayPhase() == AGameTimeManager::DAYPHASE_NIGHT )
+	{
+		// Night version of the barn
+		a_rOutLibName.Format( "%s-n", a_szLibraryName );
+	}
+	else if ( TStringManager::String8CompareNoCase( a_szLibraryName, "lib_maingame" ) == 0 && a_iMainGameAct > 1 )
+	{
+		// Library of the current act
+		a_rOutLibName.Format( "%s_a%d", a_szLibraryName, a_iMainGameAct );
+	}
+
+	a_rOutFileName.Format( "Data/%s.trb", a_rOutLibName.GetString() );
 }
 
 // $Barnyard: FUNCTION 00425600
@@ -32,25 +80,19 @@ TBOOL AAssetLoader::LoadAssetPackOfLibrary( const TCHAR* a_szLibraryName, TBOOL 
 {
 	TPROFILER_SCOPE();
 
-	TString8 libFileName;
-	TranslateLibraryName( libFileName, a_szLibraryName );
+	TString8 strLibName;
+	TString8 strLibFileName;
+	GetLibraryFileName( strLibName, strLibFileName, a_szLibraryName, GetCurrentMainGameAct() );
 
 	TTRB libTrb;
-	auto eResult = libTrb.Load( libFileName );
 
-	if ( eResult == TTRB::ERROR_OK )
+	if ( libTrb.Load( strLibFileName ) == TTRB::ERROR_OK )
 	{
-		auto pProperties = PBProperties::LoadFromTRB( libTrb );
-		TVALIDPTR( pProperties );
+		const PBProperties* pProperties = PBProperties::LoadFromTRB( libTrb );
 
 		// Load asset pack
-		auto pModelLib = pProperties->GetProperty( "modellib" );
-
-		if ( pModelLib )
-		{
-			TBOOL bResult = Load( pModelLib->GetString(), AAssetType_AssetPack, a_bStream );
-			TASSERT( bResult );
-		}
+		if ( const PBPropertyValue* pModelLib = pProperties->GetProperty( "modellib" ) )
+			Load( pModelLib->GetString(), AAssetType_AssetPack, a_bStream );
 
 		return TTRUE;
 	}
@@ -58,42 +100,221 @@ TBOOL AAssetLoader::LoadAssetPackOfLibrary( const TCHAR* a_szLibraryName, TBOOL 
 	return TFALSE;
 }
 
-// $Barnyard: FUNCTION 00424cf0 WIP
+// $Barnyard: FUNCTION 00424cf0
+// $BarnyardWiiJP: FUNCTION 8012ce08
 TBOOL AAssetLoader::DestroyAssetPackOfLibrary( const TCHAR* a_szLibraryName )
 {
 	TPROFILER_SCOPE();
 
-	TTODO( "Unload some assets manually" );
+	if ( AVehicleSkidManager::IsSingletonCreated() )
+		AVehicleSkidManager::GetSingleton()->ReleaseTyreTrackTexture();
 
-	TString8 libFileName;
-	TranslateLibraryName( libFileName, a_szLibraryName );
+	if ( ABikeManager::IsSingletonCreated() )
+	{
+		if ( ABikeManager::GetSingleton()->GetLoadedBikeType() != -1 )
+			ABikeManager::GetSingleton()->DestroyBikeAssets();
+
+		ABikeManager::GetSingleton()->Disable();
+	}
+
+	TString8 strLibName;
+	TString8 strLibFileName;
+
+#ifdef BARNYARD_LATEST
+	// Wii: the time of the day was changed by the story while the barn of the night was loaded (AQuestManager::SetQuestTier)
+	if ( TStringManager::String8CompareNoCase( a_szLibraryName, "ABarnExploreMinigameState" ) == 0 && GetSavedDayPhase() == AHackedQuickSave::SAVEDDAYPHASE_NIGHT_BARN )
+	{
+		strLibName.Format( "%s-n", a_szLibraryName );
+		strLibFileName.Format( "Data/%s.trb", strLibName.GetString() );
+		AHackedQuickSave::SetSavedDayPhase( 6 );
+	}
+	else
+#endif // BARNYARD_LATEST
+		GetLibraryFileName( strLibName, strLibFileName, a_szLibraryName, ms_iMainGameAct );
+
+	// The variant of lib_maingame is no longer loaded
+	if ( TStringManager::String8CompareNoCase( a_szLibraryName, "lib_maingame" ) == 0 && TStringManager::String8CompareNoCase( strLibName.GetString(), a_szLibraryName ) != 0 )
+		ms_iMainGameAct = -1;
 
 	TTRB libTrb;
-	auto eResult = libTrb.Load( libFileName );
 
-	if ( eResult == TTRB::ERROR_OK )
+	if ( libTrb.Load( strLibFileName ) == TTRB::ERROR_OK )
 	{
-		auto pProperties = PBProperties::LoadFromTRB( libTrb );
-		TVALIDPTR( pProperties );
+		const PBProperties* pProperties = PBProperties::LoadFromTRB( libTrb );
 
 		// Unload animatable object types
-		if ( auto pAnimObjTypes = pProperties->GetProperty( "AnimObjTypes" ) )
+		const PBPropertyValue* pAnimObjTypes = pProperties->GetProperty( "AnimObjTypes" );
+		if ( pAnimObjTypes && AAnimatableObjectManager::IsSingletonCreated() )
 		{
 			AAnimatableObjectManager::GetSingleton()->UnloadTypesFromProperties( pAnimObjTypes );
 			g_oLoadScreen.Update( 1.0f, TTRUE );
 		}
 
 		// Unload keyframe libraries
-		if ( auto pKeyframes = pProperties->GetProperty( "keylib" ) )
+		const PBPropertyValue* pKeylibs = pProperties->GetProperty( "keylib" );
+		if ( pKeylibs && AKeyFrameLibraryManager::IsSingletonCreated() )
 		{
-			AKeyFrameLibraryManager::GetSingleton()->UnloadLibrariesFromProperties( pKeyframes );
+			AKeyFrameLibraryManager::GetSingleton()->UnloadLibrariesFromProperties( pKeylibs );
 			g_oLoadScreen.Update( 1.0f, TTRUE );
 		}
 
 		// Unload material libraries
-		if ( auto pMatlibs = pProperties->GetProperty( "matlib" ) )
+		const PBPropertyValue* pMatlibs = pProperties->GetProperty( "matlib" );
+		if ( pMatlibs && AMaterialLibraryManager::IsSingletonCreated() )
 		{
 			AMaterialLibraryManager::GetSingleton()->UnloadLibrariesFromProperties( pMatlibs, TTRUE );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		// Unload sound banks
+		const PBPropertyValue* pSoundBanks = pProperties->GetProperty( "soundbanks" );
+		if ( pSoundBanks && ASoundManager::IsSingletonCreated() )
+		{
+			ASoundManager::GetSingleton()->UnloadSoundBanksFromProperty( pSoundBanks );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		// Unload ambient sounds
+		const PBPropertyValue* pAmbientSounds = pProperties->GetProperty( "ambientsoundbanks" );
+		if ( pAmbientSounds && APositionalSoundSet::IsSingletonCreated() )
+		{
+			// NOTE: the original passes TNULL (the parameter isn't used)
+			APositionalSoundSet::GetSingleton()->UnloadFromProperty( TNULL );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		// Unload assets of the player character
+		if ( const PBPropertyValue* pPlayerCharacter = pProperties->GetProperty( "playercharacter" ) )
+			UnloadPlayerCharacter( pPlayerCharacter );
+
+		// Unload particle library
+		if ( pProperties->GetProperty( "ParticleLibrary" ) )
+		{
+			AParticleEffectManager::UnloadParticleLibrary();
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		if ( pProperties->GetProperty( "VOStream" ) && AVOStream::IsSingletonCreated() )
+		{
+			AVOStream::GetSingleton()->Close( TTRUE );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		if ( pProperties->GetProperty( "Subs" ) && ASubtitleManager::IsSingletonCreated() )
+		{
+			ASubtitleManager::GetSingleton()->UnloadSubtitles();
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		Close( AAssetType_AssetPack );
+		g_oLoadScreen.Update( 1.0f, TTRUE );
+
+		return TTRUE;
+	}
+
+	return TFALSE;
+}
+
+// $Barnyard: FUNCTION 00425060
+TBOOL AAssetLoader::CreateAssetsFromLibrary( const TCHAR* a_szLibraryName )
+{
+	TPROFILER_SCOPE();
+
+	TINT iMainGameAct = GetCurrentMainGameAct();
+
+	TString8 strLibName;
+	TString8 strLibFileName;
+	GetLibraryFileName( strLibName, strLibFileName, a_szLibraryName, iMainGameAct );
+
+	// Remember the variant of lib_maingame, DestroyAssetPackOfLibrary needs it
+	if ( TStringManager::String8CompareNoCase( a_szLibraryName, "lib_maingame" ) == 0 && TStringManager::String8CompareNoCase( strLibName.GetString(), a_szLibraryName ) != 0 )
+		ms_iMainGameAct = iMainGameAct;
+
+	TTRB libTrb;
+
+	if ( libTrb.Load( strLibFileName ) == TTRB::ERROR_OK )
+	{
+		const PBProperties* pProperties = PBProperties::LoadFromTRB( libTrb );
+
+		// Load particle library
+		if ( const PBPropertyValue* pParticleLibrary = pProperties->GetProperty( "ParticleLibrary" ) )
+		{
+			AParticleEffectManager::UnloadParticleLibrary();
+
+			AParticleEffectManager::GetSingleton()->GetParticleSystem()->LoadLibrary( pParticleLibrary->GetString() );
+
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		// Load material libraries
+		if ( const PBPropertyValue* pMatlibs = pProperties->GetProperty( "matlib" ) )
+		{
+			AMaterialLibraryManager::GetSingleton()->LoadLibrariesFromProperties( pMatlibs, GetAssetTRB( AAssetType_AssetPack ), TTRUE );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		// Load keyframe libraries
+		if ( const PBPropertyValue* pKeylibs = pProperties->GetProperty( "keylib" ) )
+		{
+			AKeyFrameLibraryManager::GetSingleton()->LoadLibrariesFromProperties( pKeylibs, GetAssetTRB( AAssetType_AssetPack ) );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		// Load animatable object types (Data/ModelTypes/Libs/<library>.trb)
+		if ( pProperties->GetProperty( "AnimObjTypes" ) )
+		{
+			AAnimatableObjectManager::GetSingleton()->LoadTypesFromLibrary( strLibName.GetString() );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		// Load pathfinding networks
+		if ( const PBPropertyValue* pNetworks = pProperties->GetProperty( "AInteriorNetwork" ) )
+		{
+			AInteriorNetworkManager::GetSingleton()->LoadNetworksFromProperty( pNetworks, TFALSE );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		// Load sound banks
+		if ( const PBPropertyValue* pSoundBanks = pProperties->GetProperty( "soundbanks" ) )
+		{
+			ASoundManager::GetSingleton()->LoadSoundBanksFromProperty( pSoundBanks );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		// Load ambient sounds
+		if ( const PBPropertyValue* pAmbientSounds = pProperties->GetProperty( "ambientsoundbanks" ) )
+		{
+			APositionalSoundSet::GetSingleton()->LoadFromProperty( pAmbientSounds );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		// Load assets of the player character (gender and costume dependent)
+		if ( const PBPropertyValue* pPlayerCharacter = pProperties->GetProperty( "playercharacter" ) )
+		{
+			LoadPlayerCharacter( pPlayerCharacter );
+		}
+
+		if ( const PBPropertyValue* pVOStream = pProperties->GetProperty( "VOStream" ) )
+		{
+			AVOStream::GetSingleton()->Open( pVOStream->GetString(), TTRUE, TFALSE );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		if ( const PBPropertyValue* pLocatorLists = pProperties->GetProperty( "ParticleEffectLocators" ) )
+		{
+			AParticleEffectLocatorManager::GetSingleton()->LoadLocatorLists( pLocatorLists );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+		// NOTE: the original doesn't check whether the singleton exists
+		if ( AVehicleSkidManager::IsSingletonCreated() )
+#endif
+			AVehicleSkidManager::GetSingleton()->LoadTyreTrackTexture();
+
+		if ( const PBPropertyValue* pSubs = pProperties->GetProperty( "Subs" ) )
+		{
+			ASubtitleManager::GetSingleton()->LoadSubtitles( pSubs->GetString() );
 			g_oLoadScreen.Update( 1.0f, TTRUE );
 		}
 
@@ -103,61 +324,110 @@ TBOOL AAssetLoader::DestroyAssetPackOfLibrary( const TCHAR* a_szLibraryName )
 	return TFALSE;
 }
 
-// $Barnyard: FUNCTION 00425060 WIP
-TBOOL AAssetLoader::CreateAssetsFromLibrary( const TCHAR* a_szLibraryName )
+// $Barnyard: FUNCTION 00424a20
+void AAssetLoader::LoadPlayerCharacter( const PBPropertyValue* a_pProperty )
 {
-	TPROFILER_SCOPE();
+	if ( !a_pProperty )
+		return;
 
-	TString8 libFileName;
-	TranslateLibraryName( libFileName, a_szLibraryName );
+	const PBProperties*    pProperties         = a_pProperty->GetProperties();
+	const PBPropertyValue* pDisableBreakpoints = pProperties->GetProperty( "disablebreakpoints" );
+	TBOOL                  bDisableBreakpoints = pDisableBreakpoints && pDisableBreakpoints->GetRaw() != TNULL;
+	APlayerProfileManager* pProfileManager     = APlayerProfileManager::GetSingleton();
 
-	TTRB libTrb;
-	auto eResult = libTrb.Load( libFileName );
+	const PBProperties* pCharacterProperties;
+	TCHAR               chGender;
 
-	if ( eResult == TTRB::ERROR_OK )
+	switch ( pProfileManager->GetMainGender() )
 	{
-		auto pProperties = PBProperties::LoadFromTRB( libTrb );
-		TVALIDPTR( pProperties );
-
-		TFIXME( "Create other assets" );
-
-		// Load material libraries
-		if ( auto pMatlibs = pProperties->GetProperty( "matlib" ) )
-		{
-			AMaterialLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
-			    pMatlibs,
-			    GetAssetTRB( AAssetType_AssetPack ),
-			    TTRUE
-			);
-
-			g_oLoadScreen.Update( 1.0f, TTRUE );
-		}
-
-		// Load keyframe libraries
-		if ( auto pKeyframes = pProperties->GetProperty( "keylib" ) )
-		{
-			AKeyFrameLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
-			    pKeyframes,
-			    GetAssetTRB( AAssetType_AssetPack )
-			);
-
-			g_oLoadScreen.Update( 1.0f, TTRUE );
-		}
-
-		// Load animatable object types
-		if ( auto pAnimObjTypes = pProperties->GetProperty( "AnimObjTypes" ) )
-		{
-			AAnimatableObjectManager::GetSingleton()->LoadTypesFromLibrary( a_szLibraryName );
-
-			g_oLoadScreen.Update( 1.0f, TTRUE );
-		}
-
-		// ...
-
-		return TTRUE;
+		case APlayerProfile::GENDER_MALE:
+			pCharacterProperties = pProperties->FindProperties( "male" );
+			chGender             = 'm';
+			break;
+		case APlayerProfile::GENDER_FEMALE:
+			pCharacterProperties = pProperties->FindProperties( "female" );
+			chGender             = 'f';
+			break;
+		default:
+			return;
 	}
 
-	return TFALSE;
+	ms_iPlayerCostume = pProfileManager->GetMainCostume();
+
+	// Load material library of the player's costume (pmamerican, pfangus...)
+	TCHAR szMatlibName[ 16 ];
+	TStringManager::String8Format( szMatlibName, sizeof( szMatlibName ), "p%c%s", chGender, s_aCostumeNames[ ms_iPlayerCostume ] );
+
+	AMaterialLibraryManager::GetSingleton()->LoadLibrary( TPString8( szMatlibName ), GetAssetTRB( AAssetType_AssetPack ), TTRUE );
+	g_oLoadScreen.Update( 1.0f, TTRUE );
+
+	// Load keyframe libraries
+	if ( const PBPropertyValue* pKeylibs = pCharacterProperties->GetProperty( "keylib" ) )
+	{
+		AKeyFrameLibraryManager::GetSingleton()->LoadLibrariesFromProperties( pKeylibs, GetAssetTRB( AAssetType_AssetPack ) );
+		g_oLoadScreen.Update( 1.0f, TTRUE );
+	}
+
+	// Load animatable object types, each from Data/ModelTypes/<name>.trb
+	if ( const PBPropertyValue* pAnimObjTypes = pCharacterProperties->GetProperty( "AnimObjTypes" ) )
+	{
+		const PBPropertyValueArray* pTypes = pAnimObjTypes->GetArray();
+
+		for ( TUINT i = 0; i < pTypes->GetSize(); i++ )
+		{
+			AAnimatableObjectManager::GetSingleton()->LoadAnimObjType( pTypes->GetValue( i )->GetTPString8(), TNULL, bDisableBreakpoints );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+	}
+}
+
+// $Barnyard: FUNCTION 004248a0
+void AAssetLoader::UnloadPlayerCharacter( const PBPropertyValue* a_pProperty )
+{
+	if ( !a_pProperty )
+		return;
+
+	const PBProperties* pCharacterProperties;
+	TCHAR               chGender;
+
+	switch ( APlayerProfileManager::GetSingleton()->GetMainGender() )
+	{
+		case APlayerProfile::GENDER_MALE:
+			pCharacterProperties = a_pProperty->GetProperties()->FindProperties( "male" );
+			chGender             = 'm';
+			break;
+		case APlayerProfile::GENDER_FEMALE:
+			pCharacterProperties = a_pProperty->GetProperties()->FindProperties( "female" );
+			chGender             = 'f';
+			break;
+		default:
+			return;
+	}
+
+	// Unload animatable object types
+	if ( const PBPropertyValue* pAnimObjTypes = pCharacterProperties->GetProperty( "AnimObjTypes" ) )
+	{
+		AAnimatableObjectManager::GetSingleton()->UnloadTypesFromProperties( pAnimObjTypes );
+		g_oLoadScreen.Update( 1.0f, TTRUE );
+	}
+
+	// Unload keyframe libraries
+	if ( const PBPropertyValue* pKeylibs = pCharacterProperties->GetProperty( "keylib" ) )
+	{
+		AKeyFrameLibraryManager::GetSingleton()->UnloadLibrariesFromProperties( pKeylibs );
+		g_oLoadScreen.Update( 1.0f, TTRUE );
+	}
+
+	// Unload material library of the costume that was loaded
+	TASSERT( ms_iPlayerCostume >= 0 && ms_iPlayerCostume < TINT( TARRAYSIZE( s_aCostumeNames ) ) );
+
+	TCHAR szMatlibName[ 16 ];
+	TStringManager::String8Format( szMatlibName, sizeof( szMatlibName ), "p%c%s", chGender, s_aCostumeNames[ ms_iPlayerCostume ] );
+
+	AMaterialLibraryManager::GetSingleton()->UnrefLibrary( TPString8( szMatlibName ), TTRUE );
+	ms_iPlayerCostume = -1;
+
+	g_oLoadScreen.Update( 1.0f, TTRUE );
 }
 
 // $Barnyard: FUNCTION 004012d0
@@ -215,6 +485,21 @@ void AAssetLoader::Close( AAssetType a_eAssetType )
 		ms_pTRBFiles[ a_eAssetType ]->Close();
 		delete ms_pTRBFiles[ a_eAssetType ];
 		ms_pTRBFiles[ a_eAssetType ] = TNULL;
+	}
+}
+
+// $Barnyard: FUNCTION 004011c0
+// $Barnyard: FUNCTION 004012c0
+void AAssetLoader::CloseAll()
+{
+	for ( TINT i = 0; i < AAssetType_NUMOF; i++ )
+	{
+		if ( ms_pTRBFiles[ i ] )
+		{
+			ms_pTRBFiles[ i ]->Close();
+			delete ms_pTRBFiles[ i ];
+			ms_pTRBFiles[ i ] = TNULL;
+		}
 	}
 }
 

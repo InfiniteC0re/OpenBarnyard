@@ -42,6 +42,12 @@ public:
 
 			static constexpr TUINT32 NUMDEPTHSTENCILFORMATS = TARRAYSIZE( DEPTHSTENCILFORMATS );
 
+			// $Barnyard: FUNCTION 006d6740
+			static D3DDEVTYPE GetD3DDeviceType( TUINT32 a_uiDeviceIndex ) { return DEVICETYPES[ a_uiDeviceIndex ]; }
+
+		public:
+			Device();
+
 		public:
 			virtual TRenderAdapter::Mode* GetMode() const override;
 			virtual TUINT32               GetDeviceIndex() const override;
@@ -58,7 +64,18 @@ public:
 
 			TUINT32 GetD3DDeviceFlags() const { return m_eFlags; }
 
-			D3DCAPS8&       GetD3DCaps() { return m_Caps; }
+			// NOTE: the name is unknown
+			// $Barnyard: FUNCTION 006d68b0
+			TBOOL SupportsVertexShaders() const { return ( ( m_Caps.VertexShaderVersion >> 8 ) & 0xFF ) >= 1; }
+
+			// NOTE: the name is unknown
+			// $Barnyard: FUNCTION 006d68c0
+			TBOOL SupportsPixelShader14() const { return m_Caps.PixelShaderVersion >= D3DPS_VERSION( 1, 4 ); }
+
+			D3DCAPS8& GetD3DCaps() { return m_Caps; }
+
+			// Checks the major version of the pixel shaders (0 if not supported)
+			TBOOL           SupportsPixelShaders() const { return ( ( m_Caps.PixelShaderVersion >> 8 ) & 0xFF ) != 0; }
 			const D3DCAPS8& GetD3DCaps() const { return m_Caps; }
 
 		private:
@@ -75,6 +92,9 @@ public:
 		};
 
 	public:
+		// $Barnyard: FUNCTION 006c6840
+		virtual ~Mode() = default;
+
 		virtual TRenderAdapter*               GetAdapter() const override;
 		virtual size_t                        GetModeIndex() const override;
 		virtual TUINT32                       GetWidth() const override;
@@ -86,9 +106,12 @@ public:
 
 		D3DFORMAT GetBackBufferFormat( TUINT32 a_uiColourDepth );
 
+		Mode();
+
 		void SetOwnerAdapter( TD3DAdapter* a_pOwnerAdapter ) { m_pOwnerAdapter = a_pOwnerAdapter; }
 		void SetModeIndex( TUINT32 a_uiModeIndex ) { m_uiModeIndex = a_uiModeIndex; }
 
+		// $Barnyard: FUNCTION 006d67d0
 		void            SetD3DDisplayMode( const D3DDISPLAYMODE& a_rDisplayMode ) { m_DisplayMode = a_rDisplayMode; }
 		D3DDISPLAYMODE& GetD3DDisplayMode() { return m_DisplayMode; }
 

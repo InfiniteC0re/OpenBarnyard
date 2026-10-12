@@ -20,6 +20,7 @@ public:
 
 public:
 	TInputDXDeviceKeyboard();
+	~TInputDXDeviceKeyboard();
 
 	virtual TBOOL   Acquire() override;
 	virtual TBOOL   Unacquire() override;

@@ -13,6 +13,7 @@
 
 TOSHI_NAMESPACE_START
 
+// NOTE: GetClass 006c04c0, CreateObject 006c06c0, CreateObjectInPlace 006c06e0
 TDEFINE_CLASS( TVertexBlockResource, 0, 1 );
 TDEFINE_FREELIST_ALLOCATOR( TVertexBlockResource );
 
@@ -24,7 +25,7 @@ TBOOL TVertexBlockResource::AttachPool( TVertexPoolResource* a_pPool )
 	m_uiVerticesUsed += a_pPool->GetNumVertices();
 	a_pPool->SetParent( this );
 
-	if ( m_uiFlags & 1 )
+	if ( m_uiFlags & TVertexPoolResourceInterface::FLAGS_STATIC )
 	{
 		Invalidate();
 	}
@@ -35,7 +36,7 @@ TBOOL TVertexBlockResource::AttachPool( TVertexPoolResource* a_pPool )
 // $Barnyard: FUNCTION 006c0670
 TBOOL TVertexBlockResource::CanFit( TVertexPoolResource* a_pPoolResource ) const
 {
-	if ( m_uiFlags & 1 && a_pPoolResource->GetFlags() & 1 )
+	if ( m_uiFlags & TVertexPoolResourceInterface::FLAGS_STATIC && a_pPoolResource->GetFlags() & TVertexPoolResourceInterface::FLAGS_STATIC )
 	{
 		return m_uiMaxVertices >= a_pPoolResource->GetNumVertices() + m_uiVerticesUsed;
 	}
@@ -83,7 +84,7 @@ TBOOL TVertexBlockResource::CreateHAL()
 		UINT  length = vertexFormat.m_aStreamFormats[ i ].m_uiVertexSize * m_uiMaxVertices;
 		DWORD usage  = D3DUSAGE_WRITEONLY;
 
-		if ( ISZERO( m_uiFlags & 1 ) )
+		if ( ISZERO( m_uiFlags & TVertexPoolResourceInterface::FLAGS_STATIC ) )
 		{
 			usage      = D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY;
 			m_uiOffset = 0;
@@ -98,7 +99,7 @@ TBOOL TVertexBlockResource::CreateHAL()
 		    length,
 		    usage,
 		    0,
-		    ( m_uiFlags & 1 ) ? D3DPOOL_MANAGED : D3DPOOL_DEFAULT,
+		    ( m_uiFlags & TVertexPoolResourceInterface::FLAGS_STATIC ) ? D3DPOOL_MANAGED : D3DPOOL_DEFAULT,
 		    &m_HALBuffer.apVertexBuffers[ i ]
 		);
 
@@ -169,7 +170,7 @@ void TVertexBlockResource::ChildVertexUsedChanged( TINT a_iChange )
 // $Barnyard: FUNCTION 006c0190
 TBOOL TVertexBlockResource::TryInvalidate()
 {
-	if ( m_uiFlags & 1 )
+	if ( !( m_uiFlags & TVertexPoolResourceInterface::FLAGS_STATIC ) )
 	{
 		Invalidate();
 	}
@@ -180,7 +181,7 @@ TBOOL TVertexBlockResource::TryInvalidate()
 // $Barnyard: FUNCTION 006c01a0
 TBOOL TVertexBlockResource::TryValidate()
 {
-	if ( m_uiFlags & 1 )
+	if ( !( m_uiFlags & TVertexPoolResourceInterface::FLAGS_STATIC ) )
 	{
 		Validate();
 	}
@@ -201,7 +202,7 @@ TBOOL TVertexBlockResource::Validate()
 		return TFALSE;
 	}
 
-	if ( m_uiFlags & 1 )
+	if ( m_uiFlags & TVertexPoolResourceInterface::FLAGS_STATIC )
 	{
 		using Pair = T2Pair<TVertexBlockResource*, TVertexPoolResourceInterface::LockBuffer>;
 		Pair pair;
@@ -211,6 +212,7 @@ TBOOL TVertexBlockResource::Validate()
 			pair.first = this;
 
 			TResource::RecurseSimple(
+			    // $Barnyard: FUNCTION 006c0540
 			    []( TResource* a_pResource, void* a_pUserData ) {
 				    if ( a_pResource->IsExactly( &TGetClass( TVertexPoolResource ) ) )
 				    {
@@ -220,7 +222,7 @@ TBOOL TVertexBlockResource::Validate()
 					    auto pFactory     = pPool->GetFactory();
 					    auto vertexFormat = pFactory->GetVertexFormat();
 
-					    if ( pPool->m_uiFlags & 1 )
+					    if ( pPool->m_uiFlags & TVertexPoolResourceInterface::FLAGS_STATIC )
 					    {
 						    pPool->m_uiVertexOffset = pPair->second.uiOffset;
 						    pPair->second.uiOffset += pPool->GetNumVertices();
@@ -273,18 +275,18 @@ TBOOL TVertexBlockResource::Lock( TVertexPoolResourceInterface::LockBuffer* a_pL
 
 	DWORD uiFlags;
 	TUINT uiNumVertices = 0;
-	TUINT uiUnk1        = m_uiFlags & 7;
+	TUINT uiUsage       = m_uiFlags & TVertexPoolResourceInterface::FLAGS_USAGE_MASK;
 
-	if ( uiUnk1 == 1 )
+	if ( uiUsage == TVertexPoolResourceInterface::FLAGS_STATIC )
 	{
 		uiFlags                 = D3DLOCK_NOSYSLOCK;
 		a_pLockBuffer->uiOffset = 0;
 	}
 	else
 	{
-		if ( uiUnk1 != 2 )
+		if ( uiUsage != TVertexPoolResourceInterface::FLAGS_DYNAMIC )
 		{
-			if ( uiUnk1 != 4 )
+			if ( uiUsage != TVertexPoolResourceInterface::FLAGS_DYNAMIC_APPEND )
 			{
 				return TFALSE;
 			}
@@ -363,6 +365,11 @@ TVertexBlockResource::TVertexBlockResource()
 	m_uiVerticesUsed = 0;
 	m_uiLockCount    = 0;
 	m_Unk1           = 0;
+}
+
+// $Barnyard: FUNCTION 006c0700
+TVertexBlockResource::~TVertexBlockResource()
+{
 }
 
 TBOOL TVertexBlockResource::GetHALBuffer( HALBuffer* a_pHALBuffer ) const

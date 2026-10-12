@@ -23,7 +23,7 @@ T2GUIElement::T2GUIElement()
 	m_cbPostRender     = TNULL;
 	m_ePivot           = T2GUIATTACHMENT_MIDDLECENTER;
 	m_eAnchor          = T2GUIATTACHMENT_MIDDLECENTER;
-	m_eFlags           = 3;
+	m_eFlags           = FLAGS_VISIBLE | FLAGS_FOCUSED;
 }
 
 // $Barnyard: FUNCTION 006c22c0
@@ -36,6 +36,7 @@ void T2GUIElement::Tick( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 006c2300
+// $BarnyardWiiJP: FUNCTION 8049f238
 void T2GUIElement::PreRender()
 {
 	TVector2 vecAnchorPos = { 0.0f, 0.0f };
@@ -51,6 +52,15 @@ void T2GUIElement::PreRender()
 	TFLOAT fWidth, fHeight;
 	GetDimensions( fWidth, fHeight );
 	PivotPos( vecPivotPos.x, vecPivotPos.y, fWidth, fHeight );
+
+#ifdef BARNYARD_LATEST
+	if ( m_eFlags & FLAGS_XUIELEMENT )
+	{
+		const TVector2& rcPivot = GetPivot();
+		vecPivotPos.x += rcPivot.x * -1.0f;
+		vecPivotPos.y += rcPivot.y * -1.0f;
+	}
+#endif
 
 	T2GUI::GetRenderer()->PushTransform( m_oTransform, vecAnchorPos, vecPivotPos );
 }
@@ -170,11 +180,11 @@ void T2GUIElement::SetFocus( TBOOL a_bFocused )
 {
 	if ( a_bFocused )
 	{
-		m_eFlags |= 2;
+		m_eFlags |= FLAGS_FOCUSED;
 	}
 	else
 	{
-		m_eFlags &= ~2;
+		m_eFlags &= ~FLAGS_FOCUSED;
 	}
 }
 

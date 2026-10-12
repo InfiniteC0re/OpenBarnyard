@@ -77,7 +77,7 @@ public:
 	};
 
 public:
-	TQList() = default;
+	TQList()  = default;
 	~TQList() = default;
 
 	void PushFront( T* a_pNode )
@@ -102,6 +102,8 @@ public:
 		return m_oRoot.m_pNext;
 	}
 
+	// NOTE: retail folds every instantiation whose node follows the vtable (GetHead 0052cc70)
+	// $Barnyard: FUNCTION 0052cc70
 	TNode::Iterator Begin() const
 	{
 		return m_oRoot.m_pNext;
@@ -112,6 +114,8 @@ public:
 		return &m_oRoot;
 	}
 
+	// NOTE: retail folds every instantiation whose node follows the vtable (AFade, ...): 0045c640
+	// $Barnyard: FUNCTION 0045c640
 	void Clear()
 	{
 		while ( !IsEmpty() )
@@ -139,6 +143,8 @@ public:
 		delete a_pNode;
 	}
 
+	// NOTE: retail compares Begin() with End() (005fd4f0, TQList<AFSMInstruction>)
+	// $Barnyard: FUNCTION 005fd4f0
 	TBOOL IsEmpty() const
 	{
 		return !m_oRoot.IsLinked();

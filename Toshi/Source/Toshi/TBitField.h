@@ -21,6 +21,8 @@ public:
 		}
 	}
 
+	// TBitField<32> 00413220
+	// $Barnyard: FUNCTION 00413220
 	void Set( TINT a_iBitNum, TBOOL a_bSet )
 	{
 		TASSERT( a_iBitNum >= 0 );
@@ -33,12 +35,27 @@ public:
 			m_Values[ a_iBitNum / MIN_NUM_BITS ] &= ~uiBit;
 	}
 
+	// TBitField<32> 0040e940
+	// $Barnyard: FUNCTION 0040e940
 	TBOOL IsSet( TINT a_iBitNum ) const
 	{
 		TASSERT( a_iBitNum >= 0 );
 		TASSERT( a_iBitNum < NUM_BITS );
 
 		return ( m_Values[ a_iBitNum / MIN_NUM_BITS ] & ( 1 << ( a_iBitNum % NUM_BITS ) ) ) != 0;
+	}
+
+	// NOTE: TBitField<32> instance used on AUnitFlagSet masks by AInteraction::UpdatePriority
+	// $Barnyard: FUNCTION 0059e630
+	TBOOL IsEmpty() const
+	{
+		T2_FOREACH_ARRAY( m_Values, i )
+		{
+			if ( m_Values[ i ] != 0 )
+				return TFALSE;
+		}
+
+		return TTRUE;
 	}
 
 private:

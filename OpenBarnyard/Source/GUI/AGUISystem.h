@@ -15,12 +15,16 @@ public:
 
 public:
 	AGUISystem();
+	~AGUISystem();
 
 	virtual TBOOL OnCreate() override;
 	virtual void  OnDestroy() override;
 
 	void SetPicture( const Toshi::TPString8& a_rName );
 	void ResetPicture();
+
+	// DOES_NOTHING (AGameState::HUDParams::Apply)
+	void ApplyHUDParams() {}
 
 	PGUITRRenderObject* GetRenderObject( TUINT a_uiIndex )
 	{

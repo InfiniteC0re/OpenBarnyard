@@ -4,6 +4,12 @@
 #include "Terrain/ATerrainLocator.h"
 #include "Render/AGlowViewport.h"
 #include "Assets/AAssetLoader.h"
+#include "Helpers/ARegrowthManager.h"
+#include "Physics/ACollisionModelSet.h"
+#include "Physics/ACollisionModelInstance.h"
+
+// NOTE: Opcode defines PI
+#undef PI
 
 #ifdef TRENDERINTERFACE_DX8
 #  include "Platform/DX8/TRenderInterface_DX8.h"
@@ -20,25 +26,130 @@ TOSHI_NAMESPACE_USING
 
 // $Barnyard: FUNCTION 005efdf0
 ATreeManager::ATreeManager()
-    : m_pTrunks( TNULL )
+    : m_ppKeyLibs( TNULL )
+    , m_pTrunks( TNULL )
     , m_pFOBs( TNULL )
-    , m_bFlag( TFALSE )
-    , m_bCreateCollision( TTRUE )
+    , m_pRenderData( TNULL )
+    , m_pTrunkCollisionObjects( TNULL )
     , m_fLODSwitchDistance( 30.0f )
     , m_fRenderDistance( 110.0f )
     , m_fBlendingDistance( 98.0f )
+    , m_bCreateCollision( TTRUE )
+    , m_bCollisionEnabled( TFALSE )
+    , m_iNumCollisionSets( 0 )
 {
-	// TODO: initialise other members
+	m_apUnk6670[ 0 ] = TNULL;
+	m_apUnk6670[ 1 ] = TNULL;
 }
 
+// $Barnyard: FUNCTION 005eff00
 ATreeManager::~ATreeManager()
 {
+	m_llUsedTreeInstances.Clear();
+	Destroy();
+
+	// NOTE: the lists at +0x6678/+0x6688, the locked meshes and the instance lists are destroyed by their destructors
+}
+
+// $Barnyard: FUNCTION 005ee7f0
+void ATreeManager::Destroy()
+{
+	for ( TINT i = 0; i < TARRAYSIZE( m_apUnk6670 ); i++ )
+	{
+		if ( m_apUnk6670[ i ] )
+		{
+			m_apUnk6670[ i ]->Destroy();
+			delete m_apUnk6670[ i ];
+			m_apUnk6670[ i ] = TNULL;
+		}
+	}
+
+	for ( TINT i = 0; i < m_iNumKeyLibs; i++ )
+		TRenderInterface::GetSingleton()->GetKeyframeLibraryManager().UnloadLibrary( m_ppKeyLibs[ i ] );
+
+	TFree( m_ppKeyLibs );
+	m_ppKeyLibs = TNULL;
+
+	// Destroy the models (this releases their materials)
+	delete[] m_pTrunks;
+	delete[] m_pFOBs;
+
+	// NOTE: the original doesn't reset these pointers
+	m_pTrunks    = TNULL;
+	m_iNumTrunks = 0;
+	m_pFOBs      = TNULL;
+	m_iNumFOBs   = 0;
+
+	delete[] m_pRenderData;
+	m_pRenderData = TNULL;
+
+	delete[] m_pTrunkCollisionObjects;
+	m_pTrunkCollisionObjects = TNULL;
+
+	DestroyCollisionSets();
+}
+
+// $Barnyard: FUNCTION 005edf90
+void ATreeManager::DestroyCollisionSets()
+{
+	while ( m_iNumCollisionSets != 0 )
+	{
+		ACollisionModelSet* pSet                 = m_apCollisionSets[ --m_iNumCollisionSets ];
+		m_apCollisionSets[ m_iNumCollisionSets ] = TNULL;
+
+		if ( pSet )
+			delete pSet;
+	}
+}
+
+// $Barnyard: FUNCTION 005ee020
+ACollisionModelSet* ATreeManager::FindCollisionSet( TINT a_iTrunk ) const
+{
+	for ( TINT i = 0; i < m_iNumCollisionSets; i++ )
+	{
+		if ( m_apCollisionSets[ i ]->GetModel() == m_pTrunks[ a_iTrunk ].m_pManagedModel->GetModel() )
+			return m_apCollisionSets[ i ];
+	}
+
+	return TNULL;
+}
+
+// $Barnyard: FUNCTION 005ee070
+void ATreeManager::SetCollisionEnabled( TBOOL a_bEnable )
+{
+	if ( m_bCollisionEnabled == a_bEnable )
+		return;
+
+	m_bCollisionEnabled = a_bEnable;
+
+	if ( a_bEnable )
+	{
+		for ( TINT i = 0; i < m_iNumTrunks; i++ )
+		{
+			Model*              pTrunk = &m_pTrunks[ i ];
+			ACollisionModelSet* pSet   = TNULL;
+
+			if ( pTrunk->m_pManagedModel && m_iNumCollisionSets < MAX_COLLISION_SETS && pTrunk->m_pManagedModel->GetModel()->GetNumCollisionMeshes() > 0 )
+			{
+				pSet = new ACollisionModelSet();
+				pSet->Create( pTrunk->m_pManagedModel->GetModel() );
+
+				m_apCollisionSets[ m_iNumCollisionSets++ ] = pSet;
+			}
+		}
+	}
+	else
+	{
+		DestroyCollisionSets();
+	}
 }
 
 // $Barnyard: FUNCTION 005ee170
 TBOOL ATreeManager::Initialise()
 {
 	TASSERT( m_pTrunks == TNULL && m_pFOBs == TNULL );
+
+	m_iNumKeyLibs = 0;
 
 	const TCHAR szFOBBoneName[] = "FOB";
 
@@ -175,164 +286,358 @@ void ATreeManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 
 	TASSERT( m_pFOBs != TNULL && m_pTrunks != TNULL );
 
-	struct LocatorInfo
-	{
-		TINT         iIndex;
-		const TCHAR* szName;
-		TBOOL        bHasCollision;
-	} aLocators[] = {
-		{ 3, "tree02", TTRUE },
-		{ 5, "tree03", TTRUE },
-		{ 4, "tree05", TTRUE },
-		{ 1, "fob2", TTRUE },
-		{ 1, "fobw", TTRUE },
-		{ 1, "busha", TFALSE },
-		{ 6, "treewall2", TTRUE },
-		{ 6, "treewall", TTRUE },
-		{ 2, "treelittle", TFALSE },
-		{ 3, "tree_bent", TTRUE },
-		{ 4, "tree_standard", TTRUE },
-		{ 5, "tree_tall", TTRUE },
-		{ 6, "treewall_sim", TTRUE },
-		{ 0, "fob_bens", TTRUE },
-		{ 7, "fob_pond", TTRUE },
+	static constexpr TINT NUM_LOCATOR_TYPES = 15;
+
+	// The trunk of the locator types
+	const TINT aTrunkIndices[ NUM_LOCATOR_TYPES ] = { 3, 5, 4, 1, 1, 1, 6, 6, 2, 3, 4, 5, 6, 0, 7 };
+
+	const TCHAR* aLocatorNames[ NUM_LOCATOR_TYPES ] = {
+		"tree02",
+		"tree03",
+		"tree05",
+		"fob2",
+		"fobw",
+		"busha",
+		"treewall2",
+		"treewall",
+		"treelittle",
+		"tree_bent",
+		"tree_standard",
+		"tree_tall",
+		"treewall_sim",
+		"fob_bens",
+		"fob_pond",
 	};
 
-	// Initialise transform that is going to be used for each of the tree
-	TMatrix44 matGlobalTransform;
-	matGlobalTransform.m_f11 = 1.0f;
-	matGlobalTransform.m_f12 = 0.0f;
-	matGlobalTransform.m_f13 = 0.0f;
-	matGlobalTransform.m_f14 = 0.0f;
-	matGlobalTransform.m_f21 = 0.0f;
-	matGlobalTransform.m_f22 = 0.0f;
-	matGlobalTransform.m_f23 = 1.0f;
-	matGlobalTransform.m_f24 = 0.0f;
-	matGlobalTransform.m_f31 = 0.0f;
-	matGlobalTransform.m_f32 = -1.0f;
-	matGlobalTransform.m_f33 = 0.0f;
-	matGlobalTransform.m_f34 = 0.0f;
-	matGlobalTransform.m_f41 = 0.0f;
-	matGlobalTransform.m_f42 = 0.0f;
-	matGlobalTransform.m_f43 = 0.0f;
-	matGlobalTransform.m_f44 = 1.0f;
+	// Whether the FOBs of the locator types get collisions
+	const TBOOL aHasFOBCollision[ NUM_LOCATOR_TYPES ] = {
+		TTRUE, TTRUE, TTRUE, TTRUE, TTRUE, TFALSE, TTRUE, TTRUE, TFALSE, TTRUE, TTRUE, TTRUE, TTRUE, TTRUE, TTRUE
+	};
 
-	TINT iNumCollisionObjects = 0;
-	TINT iNumLocators         = a_pLocatorList->GetNumLocators();
+	// The locators are Z up
+	TMatrix44 matGlobalTransform = {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
 
-	if ( iNumLocators > 0 )
+	TINT iNumTrunkCollisions = 0;
+	TINT iNumLocators        = a_pLocatorList->GetNumLocators();
+
+	// For each created instance (in the order of creation): whether its trunk gets a collision and its locator type
+	TBOOL aTrunkCollision[ MAX_INSTANCES - 2 ];
+	TINT  aLocatorTypes[ MAX_INSTANCES ];
+	TINT  iNumCreated = 0;
+
+	ATerrainLocatorTRBHeader* pLocatorHeader = a_pLocatorList->GetHeader();
+	ATerrainLocator*          pLocators      = pLocatorHeader->pLocators;
+
+	for ( TINT i = 0; i < iNumLocators; i++ )
 	{
-		TBOOL aFlags[ MAX_INSTANCES - 2 ];
-		TINT  aUnk[ MAX_INSTANCES ];
+		const TCHAR* pchLocatorName = pLocatorHeader->ppNames[ pLocators[ i ].uiNameId ];
 
-		TBOOL* pFlag = aFlags;
-		TINT*  pUnk  = aUnk;
+		TINT iType = 0;
+		while ( iType < NUM_LOCATOR_TYPES && TStringManager::String8CompareNoCase( aLocatorNames[ iType ], pchLocatorName, TStringManager::String8Length( aLocatorNames[ iType ] ) ) != 0 )
+			iType++;
 
-		ATerrainLocatorTRBHeader* pLocatorHeader = a_pLocatorList->GetHeader();
-		ATerrainLocator*          pLocators      = pLocatorHeader->pLocators;
+		if ( iType >= NUM_LOCATOR_TYPES || m_llFreeTreeInstances.IsEmpty() )
+			continue;
 
-		for ( TINT i = 0; i < iNumLocators; i++ )
+		TINT  iTrunkIndex   = aTrunkIndices[ iType ];
+		TBOOL bFOBCollision = TFALSE;
+
+		if ( m_bCollisionEnabled != TTRUE || m_pTrunks[ iTrunkIndex ].m_pManagedModel != TNULL )
 		{
-			const TCHAR* pchLocatorName = pLocatorHeader->ppNames[ pLocators[ i ].uiNameId ];
-			TVALIDPTR( pchLocatorName );
-
-			for ( TINT k = 0; k < TARRAYSIZE( aLocators ); k++ )
+			// A negative flag means no collisions
+			if ( pLocators[ i ].iFlags2 < 0 )
 			{
-				if ( !TStringManager::String8CompareNoCase(
-				         aLocators[ k ].szName,
-				         pchLocatorName,
-				         TStringManager::String8Length( aLocators[ k ].szName )
-				     ) )
-				{
-					// This locator is valid, so let's create a tree instance now
-					if ( m_llFreeTreeInstances.IsEmpty() )
-					{
-						TERROR( "ATreeManager::CreateInstances - Failed to create all instances due to not having empty instance slots!\n" );
-						break;
-					}
-
-					TINT  iIndex        = aLocators[ k ].iIndex;
-					TBOOL bHasCollision = TFALSE;
-
-					// TODO: figure out this hell
-					if ( m_bFlag && m_pTrunks[ iIndex ].m_pManagedModel == TNULL )
-					{
-						*pFlag = TTRUE;
-						iNumCollisionObjects += 1;
-					}
-					else if ( pLocators[ i ].iFlags2 < 0 )
-					{
-						*pFlag = TFALSE;
-					}
-					else
-					{
-						*pFlag = TTRUE;
-						iNumCollisionObjects += 1;
-						bHasCollision = TTRUE;
-					}
-
-					// Move cursors
-					pUnk++;
-					pFlag++;
-
-					// Create the instance object
-					TreeInstance* pTreeInstance = m_llFreeTreeInstances.PopFront();
-
-					TMatrix44 matLocatorTransform;
-					pLocators[ i ].GetMatrix( matLocatorTransform );
-
-					TMatrix44 matFinalTransform;
-					matFinalTransform.Multiply( matGlobalTransform, matLocatorTransform );
-
-					// Initialise the instance object
-					pTreeInstance->iTrunkIndex = iIndex;
-
-					// Get flags for this instance
-
-					if ( iIndex == 7 )
-					// force for "fob_pond"
-					{
-						pTreeInstance->iTrunkIndex = 7;
-						pTreeInstance->iColor      = 3;
-					}
-					else
-					// get flags based on the locator name
-					{
-						TINT iLocatorNameLength = TStringManager::String8Length( pchLocatorName );
-
-						if ( iLocatorNameLength >= 4 && pchLocatorName[ iLocatorNameLength - 4 ] == '_' )
-						{
-							if ( pchLocatorName[ iLocatorNameLength - 3 ] == 'b' &&
-							     pchLocatorName[ iLocatorNameLength - 2 ] == 'r' &&
-							     pchLocatorName[ iLocatorNameLength - 1 ] == 'n' )
-							// barn?
-							{
-								pTreeInstance->iColor = 1;
-							}
-							else if ( pchLocatorName[ iLocatorNameLength - 3 ] == 'd' && pchLocatorName[ iLocatorNameLength - 2 ] == 'k' && pchLocatorName[ iLocatorNameLength - 1 ] == 'g' )
-							// dankweed pond and some 'g'?
-							{
-								pTreeInstance->iColor = 2;
-							}
-						}
-					}
-
-					pTreeInstance->uiLocatorId  = TUINT16( i );
-					pTreeInstance->pLocatorList = a_pLocatorList;
-					pTreeInstance->uiUnk3       = 255;
-					m_llUsedTreeInstances.PushBack( pTreeInstance );
-
-					TTODO( "Spawn FOBs, create collisions and probably something else, idk..." );
-
-					break;
-				}
+				aTrunkCollision[ iNumCreated ] = TFALSE;
+			}
+			else
+			{
+				aTrunkCollision[ iNumCreated ] = TTRUE;
+				iNumTrunkCollisions++;
+				bFOBCollision = TTRUE;
 			}
 		}
+		else
+		{
+			aTrunkCollision[ iNumCreated ] = TTRUE;
+			iNumTrunkCollisions++;
+		}
+
+		TreeInstance* pTreeInstance = m_llFreeTreeInstances.PopFront();
+
+		TMatrix44 matLocatorTransform;
+		pLocators[ i ].GetMatrix( matLocatorTransform );
+
+		TMatrix44 matFinalTransform;
+		matFinalTransform.Multiply( matGlobalTransform, matLocatorTransform );
+
+		pTreeInstance->iTrunkIndex = iTrunkIndex;
+
+		if ( iTrunkIndex == 7 )
+		{
+			// fob_pond
+			pTreeInstance->iTrunkIndex = 7;
+			pTreeInstance->iColor      = 3;
+		}
+		else
+		{
+			// The colour comes from the suffix of the name
+			TINT iLocatorNameLength = TStringManager::String8Length( pchLocatorName );
+
+			if ( iLocatorNameLength >= 4 && pchLocatorName[ iLocatorNameLength - 4 ] == '_' )
+			{
+				if ( pchLocatorName[ iLocatorNameLength - 3 ] == 'b' && pchLocatorName[ iLocatorNameLength - 2 ] == 'r' && pchLocatorName[ iLocatorNameLength - 1 ] == 'n' )
+					pTreeInstance->iColor = 1;
+				else if ( pchLocatorName[ iLocatorNameLength - 3 ] == 'd' && pchLocatorName[ iLocatorNameLength - 2 ] == 'k' && pchLocatorName[ iLocatorNameLength - 1 ] == 'g' )
+					pTreeInstance->iColor = 2;
+			}
+		}
+
+		pTreeInstance->uiLocatorId     = TUINT16( i );
+		pTreeInstance->pLocatorList    = a_pLocatorList;
+		pTreeInstance->uiRegrowthGroup = 255;
+		m_llUsedTreeInstances.PushFront( pTreeInstance );
+
+		aLocatorTypes[ iNumCreated++ ] = iType;
+
+		// The fruits of the tree (ARegrowthManager), the type is in the flags of the locator
+		TUINT uiRegrowthType = pLocators[ i ].iFlags2 & 0x7f;
+
+		if ( HASANYFLAG( ARegrowthManager::GetSingleton()->GetFlags(), ARegrowthManager::FLAGS_IN_USE ) && ARegrowthManager::HasTypeFlag( uiRegrowthType, ARegrowthManager::TYPEFLAG_FRUIT ) )
+		{
+			pTreeInstance->uiRegrowthGroup = ARegrowthManager::GetSingleton()->AllocateGroupId();
+
+			Model*     pTrunk    = &m_pTrunks[ pTreeInstance->iTrunkIndex ];
+			TSkeleton* pSkeleton = m_pFOBs[ pTrunk->m_uiID * 2 ].m_pManagedModel->GetModel()->GetSkeleton();
+
+			// The bones of the FOBs are where the fruits grow
+			for ( TINT k = 0; k < m_pTrunks[ pTreeInstance->iTrunkIndex ].m_iNumFOBs; k++ )
+			{
+				TMatrix44 matFOB;
+				matFOB.Multiply( matFinalTransform, m_pTrunks[ pTreeInstance->iTrunkIndex ].m_pFOBMatrices[ k ] );
+
+				ARegrowthManager::GetSingleton()->CreateFromSkeleton( pSkeleton, matFOB, pTreeInstance->uiRegrowthGroup, uiRegrowthType, TFALSE );
+			}
+		}
+
+		// Collisions of the FOBs
+		Model* pTrunk   = &m_pTrunks[ pTreeInstance->iTrunkIndex ];
+		TINT   iNumFOBs = pTrunk->m_iNumFOBs;
+
+		if ( m_bCreateCollision && bFOBCollision && aHasFOBCollision[ iType ] && iNumFOBs > 0 )
+		{
+			pTreeInstance->pSimpleCollisionObjects = new ACollisionObjectSimple[ iNumFOBs ];
+
+			TFLOAT fRadius = 1.3f;
+
+			for ( TINT k = 0; k < iNumFOBs; k++ )
+			{
+				TMatrix44 matFOBLocal = pTrunk->m_pFOBMatrices[ k ];
+
+				if ( pTrunk->m_uiID > 1 )
+				{
+					// One big sphere above the trunk
+					matFOBLocal = TMatrix44::IDENTITY;
+					matFOBLocal.SetTranslation( TVector4( 0.0f * 5.0f, 0.0f * 5.0f, 1.0f * 5.0f, 1.0f * 5.0f ) );
+					fRadius = 2.5f;
+				}
+
+				TMatrix44 matFOB;
+				matFOB.Multiply( matFinalTransform, matFOBLocal );
+
+				pTreeInstance->pSimpleCollisionObjects[ k ].CreateActive( matFOB.GetTranslation(), fRadius, 0.2f, 0.0f, ACollisionObject::TYPE_FOLIAGE, TNULL );
+			}
+		}
+	}
+
+	// Collisions of the trunks
+	delete[] m_pTrunkCollisionObjects;
+	m_pTrunkCollisionObjects = TNULL;
+
+	if ( iNumTrunkCollisions <= 0 )
+		return;
+
+	m_pTrunkCollisionObjects = new ACollisionObjectSimple[ iNumTrunkCollisions ];
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: the original starts at the number of all the used instances, which reads past the
+	// arrays above when instances of other locator lists exist (the list has the newest instances first)
+	TINT iInstance = iNumCreated - 1;
+#else
+	TINT iInstance = -1;
+	T2_FOREACH( m_llUsedTreeInstances, it )
+	iInstance++;
+#endif
+
+	TINT iCollision = iNumTrunkCollisions;
+
+	for ( auto it = m_llUsedTreeInstances.Begin(); it != m_llUsedTreeInstances.End(); it = it->Next(), iInstance-- )
+	{
+		if ( !aTrunkCollision[ iInstance ] )
+			continue;
+
+		const ATerrainLocator* pLocator = it->pLocatorList->GetLocator( it->uiLocatorId );
+		TVector4               vecPosition( pLocator->vecPosition.x, 0.7f - pLocator->vecPosition.z, pLocator->vecPosition.y, 1.0f );
+
+		ACollisionModelInstance* pModelInstance = TNULL;
+		TINT                     iType          = aLocatorTypes[ iInstance ];
+		TINT                     iTrunkIndex    = aTrunkIndices[ iType ];
+
+		if ( m_bCollisionEnabled == TTRUE && m_pTrunks[ iTrunkIndex ].m_pManagedModel )
+		{
+			ACollisionModelSet* pSet = FindCollisionSet( iTrunkIndex );
+			pModelInstance           = new ACollisionModelInstance();
+			pModelInstance->Create( pSet, m_pTrunks[ iTrunkIndex ].m_pSceneObject );
+			it->pTrunkCollision = pModelInstance;
+		}
+
+		TFLOAT fScale = pLocator->GetScale();
+		TFLOAT fRadius;
+		TFLOAT fHeight;
+		TUINT  eType;
+
+		if ( iType == 8 )
+		{
+			// treelittle
+			eType   = ACollisionObject::TYPE_TRUNK;
+			fRadius = 0.3f * fScale;
+			fHeight = fScale * 3.7f;
+		}
+		else if ( iType == 5 )
+		{
+			// busha
+			eType   = ACollisionObject::TYPE_BUSH;
+			fRadius = 1.1f * fScale;
+			vecPosition.y += 0.5f;
+			fHeight = fScale * 0.6f + 0.5f;
+		}
+		else
+		{
+			eType   = ACollisionObject::TYPE_TRUNK;
+			fRadius = 1.3f * fScale;
+			fHeight = fScale * 5.7f;
+		}
+
+		m_pTrunkCollisionObjects[ --iCollision ].CreateActive( vecPosition, fRadius, fHeight, fRadius * 0.5f, eType, pModelInstance );
+
+		if ( iCollision <= 0 )
+			break;
 	}
 }
 
 static constexpr TUINT                      MAX_RENDERED_INSTANCES = 240;
 static ATreeManager::TreeInstanceRenderData s_aInstanceMatrices[ MAX_RENDERED_INSTANCES ];
+
+// $Barnyard: FUNCTION 005ef2b0
+void ATreeManager::DestroyInstances( ATerrainLocatorList* a_pLocatorList )
+{
+	// NOTE: the collisions of the trunks of all the locator lists are destroyed
+	delete[] m_pTrunkCollisionObjects;
+	m_pTrunkCollisionObjects = TNULL;
+
+	for ( auto it = m_llUsedTreeInstances.Begin(); it != m_llUsedTreeInstances.End(); )
+	{
+		TreeInstance* pTreeInstance = it;
+		it                          = it->Next();
+
+		if ( pTreeInstance->pLocatorList != a_pLocatorList )
+			continue;
+
+		// The regrowth objects (fruits) of the tree
+		if ( HASANYFLAG( ARegrowthManager::GetSingleton()->GetFlags(), ARegrowthManager::FLAGS_IN_USE ) &&
+		     pTreeInstance->uiRegrowthGroup != 0xff && pTreeInstance->uiRegrowthGroup != 0 )
+		{
+			ARegrowthManager::GetSingleton()->DestroyGroup( pTreeInstance->uiRegrowthGroup );
+		}
+
+		if ( pTreeInstance->pSimpleCollisionObjects )
+		{
+			delete[] pTreeInstance->pSimpleCollisionObjects;
+			pTreeInstance->pSimpleCollisionObjects = TNULL;
+		}
+
+		// NOTE: the original doesn't delete the collision model instance of the trunk
+		pTreeInstance->pTrunkCollision = TNULL;
+		m_llUsedTreeInstances.Erase( pTreeInstance );
+		m_llFreeTreeInstances.PushFront( pTreeInstance );
+	}
+}
+
+// $Barnyard: FUNCTION 005efc80
+ATreeManager::TreeInstance* ATreeManager::FindTreeInFront( const TVector4& a_rcPosition, const TVector2& a_rcDirection, TFLOAT a_fMaxDistance )
+{
+	TreeInstance* pFound = TNULL;
+
+	T2_FOREACH( m_llUsedTreeInstances, it )
+	{
+		// NOTE: the locators are Z up
+		const ATerrainLocator* pLocator = it->pLocatorList->GetLocator( it->uiLocatorId );
+		TVector2               vecToTree( pLocator->vecPosition.x - a_rcPosition.x, pLocator->vecPosition.y - a_rcPosition.z );
+
+		if ( vecToTree.y * a_rcDirection.y + vecToTree.x * a_rcDirection.x > 0.0f )
+		{
+			TFLOAT fDistance = vecToTree.NormalizeMag();
+
+			if ( fDistance <= a_fMaxDistance && vecToTree.y * a_rcDirection.y + vecToTree.x * a_rcDirection.x > 0.8f )
+			{
+				Model* pTrunk = &m_pTrunks[ it->iTrunkIndex ];
+
+				if ( pTrunk->m_pSceneObject && pTrunk->m_iNumFOBs > 0 )
+				{
+					a_fMaxDistance = fDistance;
+					pFound         = it;
+				}
+			}
+		}
+	}
+
+	return pFound;
+}
+
+// $Barnyard: FUNCTION 005efda0
+ATreeManager::TreeInstance* ATreeManager::FindTreeByCollision( void* a_pCollisionInstance )
+{
+	T2_FOREACH( m_llUsedTreeInstances, it )
+	{
+		if ( it->pTrunkCollision == a_pCollisionInstance )
+			return it;
+	}
+
+	return TNULL;
+}
+
+// $Barnyard: FUNCTION 005edde0
+TINT ATreeManager::GetNumFOBs( const TreeInstance* a_pTree ) const
+{
+	return m_pTrunks[ a_pTree->iTrunkIndex ].m_iNumFOBs;
+}
+
+// $Barnyard: FUNCTION 005ede00
+TVector4 ATreeManager::GetFOBPosition( const TreeInstance* a_pTree, TINT a_iFOB ) const
+{
+	// The locators are Z up
+	TMatrix44 matZUp = {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+
+	TMatrix44 matLocator;
+	a_pTree->pLocatorList->GetLocator( a_pTree->uiLocatorId )->GetMatrix( matLocator );
+
+	TMatrix44 matTree;
+	matTree.Multiply( matZUp, matLocator );
+
+	TMatrix44 matFOB;
+	matFOB.Multiply( matTree, m_pTrunks[ a_pTree->iTrunkIndex ].m_pFOBMatrices[ a_iFOB ] );
+
+	return matFOB.AsBasisVector4( BASISVECTOR_TRANSLATION );
+}
 
 // $Barnyard: FUNCTION 005ef3a0
 void ATreeManager::Render()
@@ -510,9 +815,16 @@ void ATreeManager::Render()
 							TMatrix44 matTransform;
 							matTransform.Multiply( matGlobalTransform, matLocator );
 
-							if ( pTreeInstance->unk )
+							if ( pTreeInstance->pTrunkCollision )
 							{
-								TASSERT( TFALSE && "It's time to implement this" );
+								// Move the trunk's scene object to this tree, so its collision model instance follows it
+								TTransformObject& rTransform = m_pTrunks[ pTreeInstance->iTrunkIndex ].m_pSceneObject->GetTransform();
+
+								matTransform.Scale( fScale );
+								rTransform.SetMatrix( matTransform );
+								rTransform.SetScale( fScale, fScale, fScale );
+
+								pTreeInstance->pTrunkCollision->SetTransformObject( &rTransform );
 							}
 
 							pInstanceRenderData->oMatrix.Multiply( matModelView, matTransform );
@@ -647,7 +959,7 @@ ATreeManager::Model::~Model()
 	if ( m_pManagedModel )
 		delete m_pManagedModel;
 
-	TVALIDPTR( m_pFOBMatrices );
+	// NOTE: the models of the FOBs have no matrices
 	delete[] m_pFOBMatrices;
 }
 

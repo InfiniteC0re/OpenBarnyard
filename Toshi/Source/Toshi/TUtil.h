@@ -88,11 +88,13 @@ public:
 	static const TCHAR* GetTime();
 
 	// $Barnyard: FUNCTION 006bfd10
-	static void  MemSet( void* ptr, TINT value, TSIZE size ) { std::memset( ptr, value, size ); }
+	static void MemSet( void* ptr, TINT value, TSIZE size ) { std::memset( ptr, value, size ); }
+	// $Barnyard: FUNCTION 006bfcc0
 	static void* MemCopy( void* dst, const void* src, TSIZE size ) { return std::memcpy( dst, src, size ); }
 	// $Barnyard: FUNCTION 006bfd50
-	static void  MemClear( void* ptr, TSIZE size ) { std::memset( ptr, 0, size ); }
-	static TINT  MemCompare( const void* ptr1, const void* ptr2, TSIZE size ) { return std::memcmp( ptr1, ptr2, size ); }
+	static void MemClear( void* ptr, TSIZE size ) { std::memset( ptr, 0, size ); }
+	static TINT MemCompare( const void* ptr1, const void* ptr2, TSIZE size ) { return std::memcmp( ptr1, ptr2, size ); }
+	// $Barnyard: FUNCTION 006bfcf0
 	static void* MemMove( void* dst, const void* src, TSIZE size ) { return std::memmove( dst, src, size ); }
 
 	template <class T>
@@ -136,8 +138,10 @@ public:
 private:
 	static void Create();
 	static void CreateKernelInterface();
+	static void DestroyKernelInterface();
 
 	static void LogInitialise();
+	static void LogUninitialise();
 	static void CreateTPStringPool();
 	static void DestroyTPStringPool();
 

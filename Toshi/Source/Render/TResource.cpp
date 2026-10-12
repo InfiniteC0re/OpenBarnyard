@@ -10,6 +10,7 @@
 
 TOSHI_NAMESPACE_START
 
+// NOTE: GetClass 006d8140, CreateObject 006d82f0, CreateObjectInPlace 006d8340
 TDEFINE_CLASS( TResource );
 
 // $Barnyard: FUNCTION 006d8240
@@ -22,6 +23,7 @@ TResource::TResource()
 }
 
 // $Barnyard: FUNCTION 006d8220
+// $Barnyard: FUNCTION 006d8280
 TResource::~TResource()
 {
 	m_State |= TResourceState_Dead;

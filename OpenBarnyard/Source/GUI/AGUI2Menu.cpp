@@ -43,6 +43,7 @@ AGUI2Menu::AGUI2Menu()
 }
 
 // $Barnyard: FUNCTION 0063e410
+// $Barnyard: FUNCTION 0063e5e0
 AGUI2Menu::~AGUI2Menu()
 {
 }
@@ -265,6 +266,36 @@ void AGUI2Menu::AddMenuItem( AGUI2MenuItem& a_rMenuItem )
 	m_iNumMenuItems++;
 }
 
+// $Barnyard: FUNCTION 0063e490
+void AGUI2Menu::RemoveAllItems()
+{
+	AGUI2MenuItem* pMenuItem = m_pLastMenuItem;
+
+	if ( pMenuItem )
+	{
+		while ( TTRUE )
+		{
+			AGUI2MenuItem* pPrevMenuItem = pMenuItem->m_pPrevMenuItem;
+
+			pMenuItem->RemoveSelf();
+			pMenuItem->UnlinkMenuItem();
+
+			if ( pMenuItem == pPrevMenuItem )
+				break;
+
+			pMenuItem = pPrevMenuItem;
+		}
+
+		pMenuItem->RemoveSelf();
+	}
+
+	m_pLastMenuItem    = TNULL;
+	m_pFocusedMenuItem = TNULL;
+	m_eActionFlags     = ACTIONFLAGS_NONE;
+	m_Unk3             = 0;
+	m_Unk4             = 0;
+}
+
 // $Barnyard: FUNCTION 0063e4f0
 void AGUI2Menu::SetFocusAt( AGUI2MenuItem& a_rMenuItem )
 {
@@ -320,6 +351,63 @@ void AGUI2Menu::ReflowChildrenVertically()
 		SetFocusAt( *m_pFocusedMenuItem );
 
 	m_bHorizontalFlow = TFALSE;
+}
+
+// $Barnyard: FUNCTION 0063e730
+void AGUI2Menu::ReflowChildrenHorizontally()
+{
+	TFLOAT         fOffsetX  = 0.0f;
+	AGUI2MenuItem* pMenuItem = m_pLastMenuItem;
+
+	m_fWidth  = 0.0f;
+	m_fHeight = 0.0f;
+
+	if ( pMenuItem )
+	{
+		do
+		{
+			if ( pMenuItem->IsVisible() )
+			{
+				TFLOAT fItemWidth, fItemHeight;
+				pMenuItem->GetDimensions( fItemWidth, fItemHeight );
+
+				TFLOAT fItemPosX = pMenuItem->GetFlowVisualOffset() + fItemWidth * 0.5f + fOffsetX;
+				pMenuItem->GetTransform().SetTranslation( fItemPosX, 0.0f );
+				pMenuItem->SetAttachment( T2GUIATTACHMENT_MIDDLELEFT, T2GUIATTACHMENT_MIDDLECENTER );
+
+				m_fHeight = TMath::Max( m_fHeight, fItemHeight );
+				fOffsetX  = pMenuItem->GetFlowOffset() + fItemWidth * 0.5f + fItemPosX + m_fItemSpacing;
+			}
+
+			pMenuItem = pMenuItem->m_pPrevMenuItem;
+		} while ( pMenuItem != m_pLastMenuItem );
+
+		fOffsetX -= m_fItemSpacing;
+
+		// Focus the last added item
+		if ( m_pLastMenuItem->IsVisible() )
+		{
+			if ( m_pFocusedMenuItem )
+				m_pFocusedMenuItem->OnFocusLost();
+
+			m_pFocusedMenuItem = m_pLastMenuItem;
+			m_pLastMenuItem->OnFocus();
+		}
+	}
+
+	m_fWidth = fOffsetX;
+
+	// Focus the default item if it's specified
+	if ( m_pDefaultFocusElement && m_pDefaultFocusElement->IsVisible() )
+	{
+		if ( m_pFocusedMenuItem )
+			m_pFocusedMenuItem->OnFocusLost();
+
+		m_pFocusedMenuItem = m_pDefaultFocusElement;
+		m_pDefaultFocusElement->OnFocus();
+	}
+
+	m_bHorizontalFlow = TTRUE;
 }
 
 TBOOL AGUI2Menu::TriggerButtonPress( AGUI2MenuItem& a_rMenuItem )

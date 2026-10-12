@@ -81,9 +81,22 @@ class T2GUIElement : public T2GUIElementNode
 public:
 	using t_PostRender = void ( * )();
 
+	using FLAGS = TUINT32;
+	enum FLAGS_ : FLAGS
+	{
+		FLAGS_NONE                   = 0,
+		FLAGS_VISIBLE                = BITFLAG( 0 ),
+		FLAGS_FOCUSED                = BITFLAG( 1 ),
+		FLAGS_XUIELEMENT             = BITFLAG( 2 ), // set by AGUI2XUIElement
+		FLAGS_RENDER_BEFORE_CHILDREN = BITFLAG( 3 ),
+		FLAGS_INFRONT                = BITFLAG( 4 ),
+	};
+
 public:
 	T2GUIElement();
-	virtual ~T2GUIElement() = default;
+	// $Barnyard: FUNCTION 006c2b70
+	// $Barnyard: FUNCTION 006c2c80
+	virtual ~T2GUIElement() {}
 
 	virtual void   Tick( TFLOAT a_fDeltaTime );
 	virtual void   PreRender();
@@ -102,6 +115,11 @@ public:
 	virtual void   SetShadowAlpha( TFLOAT a_fAlpha );
 	virtual void   SetFocus( TBOOL a_bFocused );
 	virtual TBOOL  IsPointInside( TFLOAT a_fX, TFLOAT a_fY );
+#ifdef BARNYARD_LATEST
+	// Offset added to the pivot of elements that have FLAGS_XUIELEMENT, see PreRender
+	// $BarnyardWiiJP: FUNCTION 80154230
+	virtual const TVector2& GetPivot() { return TVector2::VEC_ZERO; } // +0x48
+#endif
 
 	void AnchorPos( TFLOAT& a_rX, TFLOAT& a_rY, TFLOAT a_fWidth, TFLOAT a_fHeight );
 	void PivotPos( TFLOAT& a_rX, TFLOAT& a_rY, TFLOAT a_fWidth, TFLOAT a_fHeight );
@@ -111,14 +129,16 @@ public:
 
 	void Show()
 	{
-		m_eFlags |= 1;
+		m_eFlags |= FLAGS_VISIBLE;
 	}
 
 	void Hide()
 	{
-		m_eFlags &= ~1;
+		m_eFlags &= ~FLAGS_VISIBLE;
 	}
 
+	// NOTE: the out of line copy is also the last slot (+0x50) of the AGUI2Feathers vtable (00739dc0)
+	// $Barnyard: FUNCTION 004048d0
 	void SetVisible( TBOOL a_bVisible )
 	{
 		if ( a_bVisible ) Show();
@@ -128,39 +148,46 @@ public:
 	// $Barnyard: FUNCTION 006c3ad0
 	void SetInFront()
 	{
-		m_eFlags |= 16;
+		m_eFlags |= FLAGS_INFRONT;
+	}
+
+	// $Barnyard: FUNCTION 006c2aa0
+	void SetFlags( FLAGS a_uiFlags )
+	{
+		m_eFlags |= a_uiFlags;
 	}
 
 	void SetRenderBeforeChildren()
 	{
-		m_eFlags |= 8;
+		m_eFlags |= FLAGS_RENDER_BEFORE_CHILDREN;
 	}
 
 	// $Barnyard: FUNCTION 006c2ab0
-	TBOOL HasFlags( TUINT32 a_uiFlags ) const
+	// $BarnyardWiiJP: FUNCTION 8049feb4
+	TBOOL HasFlags( FLAGS a_uiFlags ) const
 	{
-		return ( m_eFlags & a_uiFlags ) == m_eFlags;
+		return ( m_eFlags & a_uiFlags ) == a_uiFlags;
 	}
 
 	// $Barnyard: FUNCTION 00406c80
 	TBOOL IsVisible() const
 	{
-		return ( m_eFlags & 1 ) && ( m_uiVisibilityMask & s_uiVisibilityMask ) != 0;
+		return ( m_eFlags & FLAGS_VISIBLE ) && ( m_uiVisibilityMask & s_uiVisibilityMask ) != 0;
 	}
 
 	TBOOL IsFocused() const
 	{
-		return m_eFlags & 2;
+		return m_eFlags & FLAGS_FOCUSED;
 	}
 
 	TBOOL ShouldRenderBeforeChildren()
 	{
-		return m_eFlags & 8;
+		return m_eFlags & FLAGS_RENDER_BEFORE_CHILDREN;
 	}
 
 	TBOOL IsInFront() const
 	{
-		return m_eFlags & 16;
+		return m_eFlags & FLAGS_INFRONT;
 	}
 
 	TFLOAT GetAlpha() const
@@ -193,6 +220,10 @@ public:
 	{
 		m_oTransform.SetTranslation( a_rTranslation );
 	}
+
+	// NOTE: an instance of it lives in the game code
+	// $Barnyard: FUNCTION 0045a9d0
+	void SetTransform( const T2GUITransform& a_rcTransform ) { m_oTransform = a_rcTransform; }
 
 	// $Barnyard: FUNCTION 006c2590
 	void SetTransform( TFLOAT a_fX, TFLOAT a_fY, float a_fRotAngle = 0.0f )
@@ -252,6 +283,7 @@ public:
 	}
 
 	// Returns previous children or TNULL
+	// $Barnyard: FUNCTION 006c22a0
 	T2GUIElement* GetPrevChild( T2GUIElement* a_pCurrentChild )
 	{
 		if ( a_pCurrentChild->GetPrev() == &m_Children || a_pCurrentChild->GetPrev() == a_pCurrentChild )
@@ -260,6 +292,7 @@ public:
 		return (T2GUIElement*)a_pCurrentChild->GetPrev();
 	}
 
+	// $Barnyard: FUNCTION 004048b0
 	void RemoveSelf()
 	{
 		T2GUIElementNode::Unlink();
@@ -286,7 +319,7 @@ protected:
 	TFLOAT           m_fWidth;
 	TFLOAT           m_fHeight;
 	TUINT32          m_uiColour;
-	TUINT32          m_eFlags;
+	FLAGS            m_eFlags;
 	t_PostRender     m_cbPostRender;
 	TUINT32          m_uiVisibilityMask;
 };

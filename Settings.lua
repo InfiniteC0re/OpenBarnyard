@@ -43,4 +43,15 @@ newoption
 	default = "no"
 }
 
+newoption
+{
+	trigger = "latest",
+	description = "Build the latest version of the game (XUI and stuff). Defines BARNYARD_LATEST",
+	allowed = {
+		{ "no", "PC retail behaviour"},
+		{ "yes", "Latest behaviour"},
+	},
+	default = "no"
+}
+
 outputdir = ("%{cfg.buildcfg}_%{cfg.platform}_%{cfg.architecture}_" .. _OPTIONS["renderer"])

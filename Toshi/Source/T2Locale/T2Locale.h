@@ -39,6 +39,7 @@ public:
 	Lang GetLanguage() const;
 
 	TINT              GetNumStrings() const;
+	void*             GetBuffer() const { return m_pBuffer; }
 	T2LocalisedString GetString( TINT a_iNumString );
 
 protected:

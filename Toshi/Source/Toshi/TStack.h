@@ -9,11 +9,12 @@ public:
 	TStack()  = default;
 	~TStack() = default;
 
+	// TStack<TMatrix44, 20>: 00471520
+	// $Barnyard: FUNCTION 00471520
 	void Push( const T& a_item = T() )
 	{
 		m_iTop++;
-		if ( IsFull() ) return;
-		AtUnsafe( m_iTop ) = a_item;
+		if ( m_iTop < C ) AtUnsafe( m_iTop ) = a_item;
 	}
 
 	T& PushNull()

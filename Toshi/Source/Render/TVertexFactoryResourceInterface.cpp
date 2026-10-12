@@ -19,6 +19,12 @@ TVertexFactoryResourceInterface::TVertexFactoryResourceInterface()
 	m_uiFlags             = 0;
 }
 
+// $Barnyard: FUNCTION 006dc080
+// $Barnyard: FUNCTION 006dc130
+TVertexFactoryResourceInterface::~TVertexFactoryResourceInterface()
+{
+}
+
 // $Barnyard: FUNCTION 006dc090
 TBOOL TVertexFactoryResourceInterface::Create( TVertexFactoryFormat* a_pVertexFormat, TUINT16 a_uiMaxStaticVertices, TUINT32 a_uiFlags )
 {

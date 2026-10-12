@@ -252,6 +252,27 @@ D3DFORMAT TD3DAdapter::Mode::GetBackBufferFormat( TUINT32 a_uiColourDepth )
 	return D3DFORMAT( ( a_uiColourDepth != 32 ) - 1 & 0x16 );
 }
 
+// $Barnyard: FUNCTION 006c67f0
+TD3DAdapter::Mode::Mode()
+{
+}
+
+// $Barnyard: FUNCTION 006d68d0
+TD3DAdapter::Mode::Device::Device()
+{
+	m_eFlags                  = 0;
+	m_pOwnerMode              = TNULL;
+	m_uiDeviceIndex           = 0;
+	m_bIsSoftware             = TFALSE;
+	m_bCanRenderWindowed      = TFALSE;
+	m_bSupportsTransformation = TFALSE;
+	m_bSupportsPureDevice     = TFALSE;
+	m_bSupportsNPatches       = TFALSE;
+
+	for ( TUINT32 i = 0; i < NUMDEPTHSTENCILFORMATS; i++ )
+		m_aSupportedDSFormats[ i ] = TFALSE;
+}
+
 // $Barnyard: FUNCTION 006d6820
 TRenderAdapter::Mode* TD3DAdapter::Mode::Device::GetMode() const
 {

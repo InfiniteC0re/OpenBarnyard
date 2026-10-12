@@ -14,6 +14,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 005f5f70, CreateObject 005f74c0, CreateObjectInPlace 005f6ad0
 TDEFINE_CLASS( AWorldMeshHAL );
 
 // $Barnyard: FUNCTION 005f7450

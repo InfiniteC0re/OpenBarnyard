@@ -9,12 +9,14 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: inlined in the original (see CreateLocaleManager, 00402740)
 ALocaleManager::ALocaleManager()
-    : T2Locale( Lang_NUMOF, 307200, Toshi::GetGlobalAllocator()->Malloc( 307200 ) )
+    : T2Locale( Lang_NUMOF, 307200, Toshi::GetGlobalAllocator()->Malloc( 307200, 4 ) )
 {
 }
 
 // $Barnyard: FUNCTION 00402730
+// $Barnyard: FUNCTION 00402880
 ALocaleManager::~ALocaleManager()
 {
 }

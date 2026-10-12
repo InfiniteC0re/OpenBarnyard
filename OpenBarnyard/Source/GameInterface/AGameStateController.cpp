@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "AGameStateController.h"
+#include "ASleepCycleChooseState.h"
 #include "Tasks/ARootTask.h"
 #include "GUI/AGUI2.h"
 #include "AppBoot.h"
@@ -10,6 +11,14 @@
 #include "Sound/ASoundManager.h"
 #include "Helpers/AGameLoader.h"
 #include "HUD/AHudManager.h"
+#include "GUI/AFadeManager.h"
+#include "AStartMenuState.h"
+#include "AHackedQuickSave.h"
+#include "FSM/AFunctionTable.h"
+#include "FSM/AMethodPointer.h"
+#include "SaveLoadSKU.h"
+#include "Helpers/APlayerProgress.h"
+#include "Quests/AQuestManager.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -19,7 +28,126 @@
 
 TOSHI_NAMESPACE_USING
 
-TDEFINE_CLASS( AGameStateController );
+// NOTE: GetClass 00428b70, CreateObject 004296e0, CreateObjectInPlace 00429740
+TDEFINE_CLASS_INIT( AGameStateController );
+
+// DAT_0078178c
+AFunctionTable AGameStateController::ms_oFunctionTable( &TGetClass( AGameStateController ), TNULL );
+
+// The natives of the table are called on the controller
+// $Barnyard: FUNCTION 00428ba0
+static TObject* __stdcall AGameStateControllerFunctionFallback( AFunctionTable* a_pTable, const AFunctionCaller* a_pCaller )
+{
+	return AGameStateController::GetSingleton();
+}
+
+// $Barnyard: FUNCTION 0042a9d0
+void AGameStateController::InitialiseClass()
+{
+	ms_oFunctionTable.Register( reinterpret_cast<void*>( &AGameStateControllerFunctionFallback ) );
+
+	// NOTE: 00428150 is the compiler's vcall thunk of the virtual TTask::Reset
+	ms_oFunctionTable.AddFunction( AMethodPointer0ArgsRT<TBOOL, AGameStateController>::Create( "Reset", &AGameStateController::Reset ) );
+	ms_oFunctionTable.AddFunction( AMethodPointer1Args<AGameStateController, const TPString8&>::Create( "ResetStackForSingleState", &AGameStateController::RecreateMiniGameState ) );
+	ms_oFunctionTable.AddFunction( AMethodPointer1Args<AGameStateController, TPString8>::Create( "CreateAndPushNamedState", &AGameStateController::CreateAndPushNamedState ) );
+	ms_oFunctionTable.AddFunction( AMethodPointer0Args<AGameStateController>::Create( "PopCurrentState", &AGameStateController::PopCurrentGameState ) );
+	ms_oFunctionTable.AddFunction( AMethodPointer1Args<AGameStateController, TPString8>::Create( "ReturnToNamedState", &AGameStateController::ReturnToNamedState ) );
+	ms_oFunctionTable.AddFunction( AMethodPointer1Args<AGameStateController, const TPString8&>::Create( "CreateAndTransferToNamedState", &AGameStateController::CreateAndTransferToNamedState ) );
+	ms_oFunctionTable.AddFunction( AMethodPointer1Args<AGameStateController, const TPString8&>::Create( "CreateAndAddChildState", &AGameStateController::AddChildStateByName ) );
+	ms_oFunctionTable.AddFunction( AMethodPointer1ArgsRT<TBOOL, AGameStateController, const TPString8&>::Create( "IsStateOnStack", &AGameStateController::IsStateOnStack ) );
+	ms_oFunctionTable.AddFunction( AMethodPointer1Args<AGameStateController, TPString8>::Create( "StartGameState", &AGameStateController::StartGameState ) );
+	ms_oFunctionTable.AddFunction( AMethodPointer0Args<AGameStateController>::Create( "FinishGameState", &AGameStateController::FinishGameState ) );
+	ms_oFunctionTable.AddFunction( AMethodPointer3Args<AGameStateController, TBOOL, TBOOL, TBOOL>::Create( "SaveCurrentGameState", &AGameStateController::SaveCurrentGameState ) );
+}
+
+// $Barnyard: FUNCTION 00428b80
+void AGameStateController::DeinitialiseClass()
+{
+	ms_oFunctionTable.Unregister();
+}
+
+// $Barnyard: FUNCTION 00429b70
+void AGameStateController::StartGameState( TPString8 a_strClassName )
+{
+	AGameState* pCurrentState = GetCurrentState();
+
+	if ( pCurrentState )
+	{
+		pCurrentState->GetHUDParams().SetFlags( 0 );
+		AHudManager::GetSingleton()->OnUpdate( 1.0f / 30.0f );
+	}
+
+	UpdateScreenOverlay();
+	AGameLoader::SetTransitionToGameState( a_strClassName, TTRUE );
+}
+
+// $Barnyard: FUNCTION 00429520
+void AGameStateController::FinishGameState()
+{
+	AGameState* pCurrentState = GetCurrentState();
+
+	if ( pCurrentState )
+	{
+		pCurrentState->GetHUDParams().SetFlags( 0 );
+		AHudManager::GetSingleton()->OnUpdate( 1.0f / 30.0f );
+	}
+
+	UpdateScreenOverlay();
+	AHackedQuickSave::GetSingleton()->SaveTime();
+	AHackedQuickSave::GetSingleton()->SaveProfile();
+	AGameLoader::SetTransitionToMainGame( TFALSE );
+}
+
+// $Barnyard: FUNCTION 0042a7f0
+void AGameStateController::CreateAndPushNamedState( TPString8 a_strClassName )
+{
+	const TClass* pClass = TClass::Find( a_strClassName.GetString8().GetString(), &TGetClass( AGameState ) );
+
+	if ( pClass )
+		PushState( TSTATICCAST( AGameState, pClass->CreateObject() ) );
+}
+
+// $Barnyard: FUNCTION 0042a110
+void AGameStateController::CreateAndTransferToNamedState( const TPString8& a_rcClassName )
+{
+	const TClass* pClass = TClass::Find( a_rcClassName.GetString8().GetString(), &TGetClass( AGameState ) );
+
+	if ( pClass )
+		ReplaceState( TSTATICCAST( AGameState, pClass->CreateObject() ) );
+}
+
+// $Barnyard: FUNCTION 0042a890
+void AGameStateController::ReturnToNamedState( TPString8 a_strClassName )
+{
+	for ( auto it = m_oStates.Begin(); it != m_oStates.End(); it++ )
+	{
+		AGameState* pState = *it;
+
+		if ( TPString8( pState->GetClass()->GetName() ) == a_strClassName )
+		{
+			while ( GetCurrentState() != pState )
+				PopState( GetCurrentState() );
+
+			return;
+		}
+	}
+}
+
+// $Barnyard: FUNCTION 004298f0
+TBOOL AGameStateController::IsStateOnStack( const TPString8& a_rcClassName )
+{
+	for ( auto it = m_oStates.Begin(); it != m_oStates.End(); it++ )
+	{
+		if ( TPString8( ( *it )->GetClass()->GetName() ) == a_rcClassName )
+			return TTRUE;
+	}
+
+	return TFALSE;
+}
+
+TPSTRING8_DECLARE( AAnimalConversationState );
+TPSTRING8_DECLARE( ASimState );
+TPSTRING8_DECLARE( ABarnExploreMinigameState );
 
 // $Barnyard: FUNCTION 00429250
 AGameStateController::AGameStateController()
@@ -31,6 +159,7 @@ AGameStateController::AGameStateController()
 }
 
 // $Barnyard: FUNCTION 004292f0
+// $Barnyard: FUNCTION 00429780
 AGameStateController::~AGameStateController()
 {
 	TASSERT( m_oStates.Size() == 0 );
@@ -55,18 +184,18 @@ TBOOL AGameStateController::OnCreate()
 // $Barnyard: FUNCTION 0042a770
 TBOOL AGameStateController::OnUpdate( TFLOAT a_fDeltaTime )
 {
-	if ( m_eFlagsRaw & FLAGS_UNK4 )
+	if ( m_eFlagsRaw & FLAGS_LEAVE_IMMEDIATELY )
 	{
-		m_eFlagsRaw &= ~FLAGS_UNK4;
+		m_eFlagsRaw &= ~FLAGS_LEAVE_IMMEDIATELY;
 
-		if ( HASANYFLAG( m_eFlagsRaw, FLAGS_UNK12 ) )
+		if ( HASANYFLAG( m_eFlagsRaw, FLAGS_RESTART_MINIGAME ) )
 		{
-			TTODO( "FUN_00424000(TFALSE)" );
+			AGameLoader::RestartMiniGame( TFALSE );
 			return TTRUE;
 		}
 		else
 		{
-			TTODO( "FUN_00423de0((TCHAR *)0x0,TTRUE,(TPooledString8 *)0x0)" );
+			AGameLoader::ReturnToFrontEnd( TNULL, TTRUE, TFALSE );
 			return TTRUE;
 		}
 	}
@@ -196,6 +325,18 @@ void AGameStateController::UpdateScreenOverlay()
 	}
 }
 
+// $Barnyard: FUNCTION 0042a1e0
+void AGameStateController::RecreateMiniGameState( const TPString8& a_rcClassName )
+{
+	m_eFlagsRaw = 0;
+	ResetStack();
+
+	const TClass* pClass = TClass::Find( a_rcClassName.GetString8().GetString(), &TGetClass( AGameState ) );
+
+	if ( pClass )
+		InsertGameState( TSTATICCAST( AGameState, pClass->CreateObject() ) );
+}
+
 // $Barnyard: FUNCTION 0042a150
 void AGameStateController::ResetStack()
 {
@@ -214,21 +355,28 @@ void AGameStateController::ResetStack()
 	}
 }
 
+// $Barnyard: FUNCTION 00429da0
+void AGameStateController::ResetOverlays()
+{
+	for ( auto it = m_oStates.Begin(); it != m_oStates.End(); it++ )
+		( *it )->SetOverlay( AGameState::OVERLAY_1 );
+}
+
 // $Barnyard: FUNCTION 00429580
-void AGameStateController::SetFlags( TUINT16 a_eFlags )
+void AGameStateController::SetFlags( FLAGS a_eFlags )
 {
 	m_eFlagsRaw |= a_eFlags;
 	m_flSoundVolume = 1.0f;
 
-	if ( m_eFlagsRaw & FLAGS_UNK8 )
+	if ( m_eFlagsRaw & FLAGS_KEEP_OVERLAY_ALPHA )
 	{
-		m_eFlagsRaw &= ~FLAGS_UNK8;
+		m_eFlagsRaw &= ~FLAGS_KEEP_OVERLAY_ALPHA;
 		m_flOverlayAlpha = m_flOverlayGoal;
 	}
 	else
 	{
 		m_flOverlayGoal  = 0.0f;
-		m_flOverlayAlpha = ( a_eFlags == 4 ) ? 1.0f : 0.0f;
+		m_flOverlayAlpha = ( a_eFlags == FLAGS_FADING_IN ) ? 1.0f : 0.0f;
 	}
 
 	OverlayData oData;
@@ -240,6 +388,55 @@ void AGameStateController::SetFlags( TUINT16 a_eFlags )
 
 	( *m_oStates.Back() )->SetOverlay( AGameState::OVERLAY_3 );
 	UpdateScreenOverlay();
+}
+
+// $Barnyard: FUNCTION 004299f0
+AGameState* AGameStateController::FindGameStateOnStack( const TPString8& a_rcClassName )
+{
+	for ( auto it = m_oStates.Begin(); it != m_oStates.End(); it++ )
+	{
+		if ( TPString8( ( *it )->GetClass()->GetName() ) == a_rcClassName )
+			return *it;
+	}
+
+	return TNULL;
+}
+
+// $Barnyard: FUNCTION 00429450
+void AGameStateController::AddChildStateByName( const TPString8& a_rcClassName )
+{
+	const TClass* pClass = TClass::Find( a_rcClassName.GetString(), &TGetClass( AGameState ) );
+
+	if ( pClass )
+		GetCurrentState()->AddChildState( TSTATICCAST( AGameState, pClass->CreateObject() ) );
+}
+
+// $Barnyard: FUNCTION 006034b0
+TBOOL AGameStateController::IsBusy()
+{
+	return ( GetSingleton()->m_eFlagsRaw & ( FLAGS_AWAITING_TRANSITION | FLAGS_FADING_IN ) ) ||
+	    ( AFadeManager::IsSingletonCreated() && AFadeManager::GetSingleton()->HasAnyFadesInProgress( TFALSE ) );
+}
+
+// $Barnyard: FUNCTION 004297a0
+void AGameStateController::RenderStates( TFLOAT a_fDeltaTime )
+{
+	for ( auto it = m_oStates.Begin(); it != m_oStates.End(); it++ )
+		( *it )->OnRender( a_fDeltaTime );
+}
+
+// $Barnyard: FUNCTION 00429810
+void AGameStateController::PostRenderStates( TFLOAT a_fDeltaTime )
+{
+	for ( auto it = m_oStates.Begin(); it != m_oStates.End(); it++ )
+		( *it )->OnPostRender( a_fDeltaTime );
+}
+
+// $Barnyard: FUNCTION 00429880
+void AGameStateController::RenderStatesOverlay( TFLOAT a_fDeltaTime )
+{
+	for ( auto it = m_oStates.Begin(); it != m_oStates.End(); it++ )
+		( *it )->OnRenderOverlay( a_fDeltaTime );
 }
 
 // $Barnyard: FUNCTION 004280b0
@@ -268,7 +465,7 @@ TBOOL AGameStateController::UpdateTransition( TFLOAT a_flDeltaTime )
 		m_flOverlayAlpha = a_flDeltaTime + a_flDeltaTime + m_flOverlayAlpha;
 
 		// Update volume if needed
-		if ( m_eFlagsRaw & FLAGS_MUTING )
+		if ( m_eFlagsRaw & FLAGS_FADE_SOUND )
 		{
 			m_flSoundVolume = m_flSoundVolume - ( a_flDeltaTime + a_flDeltaTime );
 			ASoundManager::GetSingleton()->SetGlobalVolume( m_flSoundVolume );
@@ -278,7 +475,7 @@ TBOOL AGameStateController::UpdateTransition( TFLOAT a_flDeltaTime )
 		if ( m_flOverlayAlpha > 1.0 )
 		{
 			// Screen is black, can change game state
-			m_eFlagsRaw &= ~( FLAGS_AWAITING_TRANSITION | FLAGS_MUTING );
+			m_eFlagsRaw &= ~( FLAGS_AWAITING_TRANSITION | FLAGS_FADE_SOUND );
 			m_flOverlayAlpha = 1.0;
 			UpdateScreenOverlay();
 			pCurrentState->m_eOverlayColorIndex = 0;
@@ -292,10 +489,10 @@ TBOOL AGameStateController::UpdateTransition( TFLOAT a_flDeltaTime )
 
 				m_eFlags.bIgnoreInput = TFALSE;
 
-				if ( m_eFlagsRaw & FLAGS_UNK3 )
+				if ( m_eFlagsRaw & FLAGS_RETURN_TO_FRONTEND )
 				{
-					m_eFlagsRaw &= ~FLAGS_UNK3;
-					TASSERT( TFALSE && "FUN_00423de0" );
+					m_eFlagsRaw &= ~FLAGS_RETURN_TO_FRONTEND;
+					AGameLoader::ReturnToFrontEnd( TNULL, TTRUE, TTRUE );
 
 					m_eFlags.UNK10 = TFALSE;
 					return TTRUE;
@@ -310,47 +507,47 @@ TBOOL AGameStateController::UpdateTransition( TFLOAT a_flDeltaTime )
 					return TTRUE;
 				}
 
-				if ( m_eFlagsRaw & FLAGS_UNK7 )
+				if ( m_eFlagsRaw & FLAGS_LEAVE_SCRIPTED_SEQUENCE )
 				{
-					m_eFlagsRaw &= ~FLAGS_UNK7;
-					TASSERT( TFALSE && "FUN_00425410" );
+					m_eFlagsRaw &= ~FLAGS_LEAVE_SCRIPTED_SEQUENCE;
+					AGameLoader::LeaveScriptedSequence( TTRUE );
 
 					m_eFlags.UNK10 = TFALSE;
 					return TTRUE;
 				}
 
-				if ( m_eFlagsRaw & FLAGS_UNK9 )
+				if ( m_eFlagsRaw & FLAGS_LOAD_SAVED_GAME )
 				{
-					m_eFlagsRaw &= ~FLAGS_UNK9;
-					TASSERT( TFALSE && "FUN_00423c70" );
+					m_eFlagsRaw &= ~FLAGS_LOAD_SAVED_GAME;
+					AGameLoader::LoadSavedGame( TTRUE );
 
 					m_eFlags.UNK10 = TFALSE;
 					return TTRUE;
 				}
 
-				if ( m_eFlagsRaw & FLAGS_UNK11 )
+				if ( m_eFlagsRaw & FLAGS_REMOVE_STATE )
 				{
-					m_eFlagsRaw &= ~FLAGS_UNK11;
+					m_eFlagsRaw &= ~FLAGS_REMOVE_STATE;
 					pCurrentState->Remove();
-					TASSERT( TFALSE && "FUN_00429c00" );
+					ShowOverlay( TTRUE, TFALSE, 1.0f, TFALSE );
 
 					m_eFlags.UNK10 = TFALSE;
 					return TTRUE;
 				}
 
-				if ( m_eFlagsRaw & FLAGS_UNK12 )
+				if ( m_eFlagsRaw & FLAGS_RESTART_MINIGAME )
 				{
-					m_eFlagsRaw &= ~FLAGS_UNK12;
-					(*m_oStates.Back())->m_GUIElement.Hide();
+					m_eFlagsRaw &= ~FLAGS_RESTART_MINIGAME;
+					( *m_oStates.Back() )->m_GUIElement.Hide();
 
-					TASSERT( TFALSE && "FUN_00424000" );
+					AGameLoader::RestartMiniGame( TTRUE );
 
 					m_eFlags.UNK10 = TFALSE;
 					return TTRUE;
 				}
 
 				pCurrentState->m_GUIElement.Hide();
-				TASSERT( TFALSE && "FUN_004257f0" );
+				AGameLoader::LeaveMiniGame( TTRUE );
 
 				m_eFlags.UNK10 = TFALSE;
 				return TTRUE;
@@ -358,16 +555,18 @@ TBOOL AGameStateController::UpdateTransition( TFLOAT a_flDeltaTime )
 			else
 			{
 				// Input is not ignored
-				if ( m_eFlagsRaw & FLAGS_UNK5 )
+				if ( m_eFlagsRaw & FLAGS_START_NEW_GAME )
 				{
-					m_eFlagsRaw &= ~FLAGS_UNK5;
-					TASSERT( TFALSE && "FUN_00423910" );
+					m_eFlagsRaw &= ~FLAGS_START_NEW_GAME;
+					AGameLoader::StartNewGame();
 
 					m_eFlags.UNK10 = TFALSE;
 					return TTRUE;
 				}
 			}
 		}
+
+		UpdateOverlayAlpha();
 	}
 	else
 	{
@@ -383,34 +582,111 @@ TBOOL AGameStateController::UpdateTransition( TFLOAT a_flDeltaTime )
 				UpdateScreenOverlay();
 				pCurrentState->m_eOverlayColorIndex = 0;
 
-				TTODO( "Non critical AQuestManager things here" );
+				// The act 3 tier 16 save screen fades in over the sim, which hides its overlay too
+				if ( AQuestManager::IsSingletonCreated() && AQuestManager::GetSingleton()->GetAct() == 3 && AQuestManager::GetSingleton()->GetTier() == 16 &&
+				     pCurrentState->GetClass()->IsA( &TGetClass( SaveLoadSKU ) ) == TTRUE )
+				{
+					AGameState* pSimState = FindGameStateOnStack( TPS8( ASimState ) );
 
-				// 				if ( ( ( AQuestManager::ms_pSingleton != 0 ) &&
-				// 				       ( *(int*)( AQuestManager::ms_pSingleton + 0x1bc ) == 3 ) ) &&
-				// 				     ( *(int*)( AQuestManager::ms_pSingleton + 0x1b8 ) == 0x10 ) )
-				// 				{
-				// 					pTVar9 = &SaveLoadSKU::s_Class;
-				// 					pTVar6 = (TClass*)( *(code*)*pCurrentState->vftable )();
-				// 					bVar5  = Toshi::TClass::IsA( pTVar6, pTVar9 );
-				// 					if ( ( bVar5 ) &&
-				// 					     ( pCurrentState = FindGameStateOnStack( &ASimState ), pCurrentState != (AGameState*)0x0 ) )
-				// 					{
-				// 						pCurrentState->m_eOverlayColorIndex = 0;
-				// 					}
-				// 				}
+					if ( pSimState )
+						pSimState->m_eOverlayColorIndex = 0;
+				}
 			}
+
+			UpdateOverlayAlpha();
 		}
 	}
 
-	// Update overlay color
-	OverlayData oData;
-	oData.uiColorA = TUINT8( m_flOverlayAlpha * 255.0f );
-	oData.uiColorR = 0;
-	oData.uiColorG = 0;
-	oData.uiColorB = 0;
-	SetOverlayParams( 2, oData );
-
 	return TFALSE;
+}
+
+// $Barnyard: FUNCTION 0042a230
+void AGameStateController::SaveCurrentGameState( TBOOL a_bUnused, TBOOL a_bUnk, TBOOL a_bDontSave )
+{
+	if ( a_bDontSave || a_bUnk || AQuestManager::GetSingleton()->GetNumAssignedQuests() == 0 )
+	{
+		SaveLoadSKU* pSaveState = new SaveLoadSKU( APlayerProgress::GetSingleton(), TFALSE, TNULL );
+		pSaveState->StartSave( a_bUnk, a_bDontSave, TTRUE );
+		PushState( pSaveState );
+	}
+	else
+	{
+		// Quests are assigned, the game can't be saved now
+		ASleepCycleChooseState* pChooseState = new ASleepCycleChooseState();
+		pChooseState->SetCannotSave( TTRUE );
+		PushState( pChooseState );
+	}
+}
+
+// $Barnyard: FUNCTION 0042a660
+void AGameStateController::StartMenuIfPossible()
+{
+	if ( AFadeManager::IsSingletonCreated() && AFadeManager::GetSingleton()->HasAnyFadesInProgress( TFALSE ) )
+		return;
+
+	if ( HASANYFLAG( m_eFlagsRaw, FLAGS_AWAITING_TRANSITION | FLAGS_FADING_IN ) )
+		return;
+
+	PushState( new AStartMenuState() );
+}
+
+// $Barnyard: FUNCTION 00429c00
+// $BarnyardWiiJP: FUNCTION 80130f04
+#ifdef BARNYARD_LATEST
+void AGameStateController::ShowOverlay( TBOOL a_bShow, TBOOL a_bResetHUD, TFLOAT a_fAlpha, TBOOL a_bCurrentState, const TCHAR* a_szStateClass )
+#else
+void AGameStateController::ShowOverlay( TBOOL a_bShow, TBOOL a_bResetHUD, TFLOAT a_fAlpha, TBOOL a_bCurrentState )
+#endif
+{
+	if ( a_bResetHUD && GetCurrentState() )
+	{
+		GetCurrentState()->m_HUDParams.SetFlags( 0 );
+		AHudManager::GetSingleton()->OnUpdate( 1.0f / 30.0f );
+	}
+
+	AGameState* pGameState;
+
+	if ( a_bCurrentState )
+	{
+		pGameState = GetCurrentState();
+	}
+#ifdef BARNYARD_LATEST
+	else if ( a_szStateClass )
+	{
+		pGameState = FindGameStateOnStack( TPString8( a_szStateClass ) );
+	}
+#endif
+	else
+	{
+		pGameState = FindGameStateOnStack( TPS8( AAnimalConversationState ) );
+
+		if ( !pGameState )
+			pGameState = FindGameStateOnStack( TPS8( ASimState ) );
+
+		if ( !pGameState )
+			pGameState = FindGameStateOnStack( TPS8( ABarnExploreMinigameState ) );
+	}
+
+	if ( !pGameState )
+		return;
+
+	if ( a_bShow )
+	{
+		pGameState->SetOverlay( AGameState::OVERLAY_3 );
+
+		OverlayData oData;
+		oData.uiColorA = TUINT8( a_fAlpha * 255.0f );
+		oData.uiColorR = 0;
+		oData.uiColorG = 0;
+		oData.uiColorB = 0;
+		SetOverlayParams( AGameState::OVERLAY_3, oData );
+	}
+	else
+	{
+		pGameState->SetOverlay( AGameState::OVERLAY_1 );
+	}
+
+	UpdateScreenOverlay();
 }
 
 // $Barnyard: FUNCTION 004293d0
@@ -423,12 +699,22 @@ TBOOL AGameStateController::ProcessInput( const TInputInterface::InputEvent* a_p
 		return TFALSE;
 	}
 
+	auto pGameState = *m_oStates.Back();
+
 	if ( ACheatActivator::IsSingletonCreated() )
 	{
-		TIMPLEMENT_D( "Cheat code activation" );
-	}
+		ACheatActivator* pCheatActivator = ACheatActivator::GetSingleton();
 
-	auto pGameState = *m_oStates.Back();
+		if ( pCheatActivator->IsCheatKeyDown() )
+		{
+			if ( pCheatActivator->ProcessCheatCodeInput( a_pEvent ) )
+				return TTRUE;
+		}
+		else
+		{
+			pCheatActivator->ResetCheatCodeInput();
+		}
+	}
 
 	if ( pGameState->SendInputCommands( a_pEvent ) )
 	{

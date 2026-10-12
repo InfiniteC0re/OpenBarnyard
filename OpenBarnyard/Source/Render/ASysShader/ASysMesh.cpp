@@ -12,6 +12,12 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_NORUNTIME( ASysMesh );
 
+// $Barnyard: FUNCTION 005f0120
+// $Barnyard: FUNCTION 005f03c0
+ASysMesh::~ASysMesh()
+{
+}
+
 // $Barnyard: FUNCTION 005f00b0
 ASysMesh::ASysMesh()
 {
@@ -56,6 +62,7 @@ void ASysMesh::Invalidate()
 	}
 }
 
+// $Barnyard: FUNCTION 005f0260
 void ASysMesh::DestroyResources()
 {
 	TRenderInterface::GetSingleton()->BeginEndSceneHAL();
@@ -85,7 +92,7 @@ TBOOL ASysMesh::Create( void* a_pUnk, const TCHAR* a_szSomeString )
 }
 
 // $Barnyard: FUNCTION 005f0450
-TBOOL ASysMesh::CreatePools( TUINT32 a_uiResourcesFlags, TUINT16 a_uiMaxVertices, TUINT16 a_uiMaxIndices )
+TBOOL ASysMesh::CreatePools( FLAGS a_uiResourcesFlags, TUINT16 a_uiMaxVertices, TUINT16 a_uiMaxIndices )
 {
 	m_uiFlags       = a_uiResourcesFlags;
 	m_uiMaxVertices = a_uiMaxVertices;
@@ -100,30 +107,31 @@ TBOOL ASysMesh::CreatePools( TUINT32 a_uiResourcesFlags, TUINT16 a_uiMaxVertices
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005f01b0
 TBOOL ASysMesh::CreateResource()
 {
 	auto pVertexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TVertexFactoryResourceInterface>( SYSRESOURCE_VFSYSVNDUV1 );
 	TVALIDPTR( pVertexFactory );
 
-	TUINT16 uiVertexPoolFlags;
+	TUINT16 uiVertexPoolFlags = 0;
 
-	if ( ( m_uiFlags & 1 ) == 0 )
+	if ( ( m_uiFlags & FLAGS_VERTICES_STATIC ) == 0 )
 	{
-		if ( ( m_uiFlags & 2 ) == 0 )
+		if ( ( m_uiFlags & FLAGS_VERTICES_DYNAMIC ) == 0 )
 		{
-			if ( ( m_uiFlags & 4 ) != 0 )
+			if ( ( m_uiFlags & FLAGS_VERTICES_DYNAMIC_APPEND ) != 0 )
 			{
-				uiVertexPoolFlags = 4;
+				uiVertexPoolFlags = TVertexPoolResourceInterface::FLAGS_DYNAMIC_APPEND;
 			}
 		}
 		else
 		{
-			uiVertexPoolFlags = 2;
+			uiVertexPoolFlags = TVertexPoolResourceInterface::FLAGS_DYNAMIC;
 		}
 	}
 	else
 	{
-		uiVertexPoolFlags = 1;
+		uiVertexPoolFlags = TVertexPoolResourceInterface::FLAGS_STATIC;
 	}
 
 	m_pVertexPool = pVertexFactory->CreatePoolResource( m_uiMaxVertices, uiVertexPoolFlags );
@@ -132,29 +140,29 @@ TBOOL ASysMesh::CreateResource()
 	auto pIndexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TIndexFactoryResourceInterface>( SYSRESOURCE_IFSYS );
 	TVALIDPTR( pIndexFactory );
 
-	TUINT16 uiIndexPoolFlags;
+	TUINT16 uiIndexPoolFlags = 0;
 
-	if ( ( m_uiFlags & 8 ) == 0 )
+	if ( ( m_uiFlags & FLAGS_INDICES_STATIC ) == 0 )
 	{
-		if ( ( m_uiFlags & 0x10 ) == 0 )
+		if ( ( m_uiFlags & FLAGS_INDICES_DYNAMIC ) == 0 )
 		{
-			if ( ( m_uiFlags & 0x20 ) != 0 )
+			if ( ( m_uiFlags & FLAGS_INDICES_DYNAMIC_APPEND ) != 0 )
 			{
-				uiIndexPoolFlags = 4;
+				uiIndexPoolFlags = TIndexPoolResourceInterface::FLAGS_DYNAMIC_APPEND;
 			}
 		}
 		else
 		{
-			uiIndexPoolFlags = 2;
+			uiIndexPoolFlags = TIndexPoolResourceInterface::FLAGS_DYNAMIC;
 		}
 	}
 	else
 	{
-		uiIndexPoolFlags = 1;
+		uiIndexPoolFlags = TIndexPoolResourceInterface::FLAGS_STATIC;
 	}
 
 
-	m_pIndexPool = pIndexFactory->CreatePoolResource( m_uiMaxIndices, ( -(TUINT)( ( m_uiFlags & 0x40 ) != 0 ) & 0xfffffff8 ) + 16 | uiIndexPoolFlags );
+	m_pIndexPool = pIndexFactory->CreatePoolResource( m_uiMaxIndices, uiIndexPoolFlags | ( ( m_uiFlags & FLAGS_INDICES_TRISTRIP ) ? TIndexPoolResourceInterface::FLAGS_TRISTRIP : TIndexPoolResourceInterface::FLAGS_TRILIST ) );
 	TVALIDPTR( m_pIndexPool );
 
 	return TTRUE;

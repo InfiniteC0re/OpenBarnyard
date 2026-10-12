@@ -13,7 +13,7 @@
 #include <Math/TVector3.h>
 #include <Math/TVector4.h>
 
-// TODO: replace STL classes with native TOSHI classes
+// NOTE: tool-side code (not in the game), it uses the STL instead of the TOSHI containers
 #include <vector>
 #include <string>
 
@@ -172,7 +172,7 @@ public:
 				m_PtrList.emplace_back(
 				    other.m_PtrList[ i ].Offset,
 				    other.m_PtrList[ i ].DataPtr,
-				    this // TODO: support cross pointers
+				    this // NOTE: every copied pointer is assumed to point into this stream (no pointers into other streams)
 				);
 			}
 		}
@@ -808,11 +808,11 @@ inline void PTRBHeader::Read( Toshi::TTSFI& ttsfi, PTRBSections& sect, Endianess
 		Toshi::TTRB::SecInfo sectionInfo;
 		ttsfi.Read( &sectionInfo );
 
-		sectionInfo.m_Data   = CONVERTENDIANESS( eEndianess, sectionInfo.m_Data );
-		sectionInfo.m_Size   = CONVERTENDIANESS( eEndianess, sectionInfo.m_Size );
-		sectionInfo.m_Unk1   = CONVERTENDIANESS( eEndianess, sectionInfo.m_Unk1 );
-		sectionInfo.m_Unk2   = CONVERTENDIANESS( eEndianess, sectionInfo.m_Unk2 );
-		sectionInfo.m_Unused = CONVERTENDIANESS( eEndianess, sectionInfo.m_Unused );
+		sectionInfo.m_Data      = CONVERTENDIANESS( eEndianess, sectionInfo.m_Data );
+		sectionInfo.m_Size      = CONVERTENDIANESS( eEndianess, sectionInfo.m_Size );
+		sectionInfo.m_Alignment = CONVERTENDIANESS( eEndianess, sectionInfo.m_Alignment );
+		sectionInfo.m_Unk2      = CONVERTENDIANESS( eEndianess, sectionInfo.m_Unk2 );
+		sectionInfo.m_Unused    = CONVERTENDIANESS( eEndianess, sectionInfo.m_Unused );
 
 		auto stack = sect.CreateStream();
 		stack->SetExpectedSize( sectionInfo.m_Size );

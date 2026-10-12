@@ -58,10 +58,11 @@ AObjectHash::CellObject* AObjectHash::AssignHash( AHashedObject* a_pObject )
 	TFLOAT fXMaxRadius = ( rPosition.x + fRadius + m_fNegativeMinX ) * m_fDivideByMaxXOverNumCells;
 	if ( fXMaxRadius < 0.0f ) fXMaxRadius -= 1.0f;
 
-	TFLOAT fYMinRadius = ( rPosition.y - fRadius + m_fNegativeMinY ) * m_fDivideByMaxYOverNumCells;
+	// NOTE: the grid covers the XZ plane, the Y members of the cache are used for the Z axis
+	TFLOAT fYMinRadius = ( rPosition.z - fRadius + m_fNegativeMinY ) * m_fDivideByMaxYOverNumCells;
 	if ( fYMinRadius < 0.0f ) fYMinRadius -= 1.0f;
 
-	TFLOAT fYMaxRadius = ( rPosition.y + fRadius + m_fNegativeMinY ) * m_fDivideByMaxYOverNumCells;
+	TFLOAT fYMaxRadius = ( rPosition.z + fRadius + m_fNegativeMinY ) * m_fDivideByMaxYOverNumCells;
 	if ( fYMaxRadius < 0.0f ) fYMaxRadius -= 1.0f;
 
 	// Loop through the grid and add the object to each cell it contacts
@@ -72,8 +73,8 @@ AObjectHash::CellObject* AObjectHash::AssignHash( AHashedObject* a_pObject )
 
 		for ( TINT iX = TINT( fXMinRadius ); iX < TINT( fXMaxRadius ) + 1; iX++ )
 		{
-			TNodeList<CellObject>* pCellBucket = &m_aCellBuckets[ iY % GRID_SIZE + ( iX % GRID_SIZE ) * GRID_SIZE ];
-			
+			TNodeList<CellObject>* pCellBucket = &m_aCellBuckets[ ( iY & GRID_MASK ) + ( iX & GRID_MASK ) * GRID_SIZE ];
+
 			pCellObject = pPreviousCell;
 
 			if ( !m_FreeList.IsEmpty() )
@@ -165,14 +166,103 @@ void AObjectHash::Debug_DrawUsedBBox()
 // $Barnyard: FUNCTION 0061f040
 void AObjectHash::InitialiseCache( TFLOAT a_fMinX, TFLOAT a_fMinY, TFLOAT a_fMaxX, TFLOAT a_fMaxY, TINT a_iNumCellsX, TINT a_iNumCellsY )
 {
-	m_fNumCellsX               = a_iNumCellsX;
-	m_fNumCellsY               = a_iNumCellsY;
-	m_fTotalX                  = a_fMaxX - a_fMinX;
-	m_fTotalY                  = a_fMaxY - a_fMinY;
-	m_fNegativeMinX            = -a_fMinX;
-	m_fNegativeMinY            = -a_fMinY;
-	m_fMaxXOverNumCells        = a_fMaxX / a_iNumCellsX;
-	m_fMaxYOverNumCells        = a_fMaxY / a_iNumCellsY;
+	m_fNumCellsX                = a_iNumCellsX;
+	m_fNumCellsY                = a_iNumCellsY;
+	m_fTotalX                   = a_fMaxX - a_fMinX;
+	m_fTotalY                   = a_fMaxY - a_fMinY;
+	m_fNegativeMinX             = -a_fMinX;
+	m_fNegativeMinY             = -a_fMinY;
+	m_fMaxXOverNumCells         = a_fMaxX / a_iNumCellsX;
+	m_fMaxYOverNumCells         = a_fMaxY / a_iNumCellsY;
 	m_fDivideByMaxXOverNumCells = 1.0f / ( a_fMaxX / a_iNumCellsX );
 	m_fDivideByMaxYOverNumCells = 1.0f / ( a_fMaxY / a_iNumCellsY );
+}
+
+// $Barnyard: FUNCTION 0061ef30
+TBOOL AObjectHash::AddQueryResult( AHashedObject* a_pObject, const TVector4& a_rcPos, TFLOAT a_fRadius, TBOOL a_b3D, TINT* a_pNumFound, TINT a_iMaxNum )
+{
+	if ( a_pObject->IsNoQuery() || TUINT( TUINTPTR( a_pObject->GetQueryStamp() ) ) == ms_uiQueryStamp )
+		return TTRUE;
+
+	// Don't test this object again during this query
+	a_pObject->SetQueryStamp( (void*)TUINTPTR( ms_uiQueryStamp ) );
+
+	TVector4 vecPosition = a_pObject->GetPosition();
+	TFLOAT   fRadius     = a_pObject->GetRadius();
+
+	TFLOAT fDX = vecPosition.x - a_rcPos.x;
+	TFLOAT fDistanceSq;
+
+	if ( a_b3D )
+	{
+		TFLOAT fDY  = vecPosition.y - a_rcPos.y;
+		TFLOAT fDZ  = vecPosition.z - a_rcPos.z;
+		fDistanceSq = fDY * fDY + fDZ * fDZ + fDX * fDX;
+	}
+	else
+	{
+		TFLOAT fDZ  = vecPosition.z - a_rcPos.z;
+		fDistanceSq = fDZ * fDZ + fDX * fDX;
+	}
+
+	TFLOAT fTotalRadiusSq = ( fRadius + a_fRadius ) * ( fRadius + a_fRadius );
+
+	if ( fDistanceSq >= fTotalRadiusSq )
+		return TTRUE;
+
+	m_aResults[ *a_pNumFound ].fUnk    = fTotalRadiusSq - fRadius * fRadius;
+	m_aResults[ *a_pNumFound ].pObject = a_pObject;
+
+	return ++( *a_pNumFound ) != a_iMaxNum;
+}
+
+// $Barnyard: FUNCTION 0061f0e0
+AObjectHash::QueryResult* AObjectHash::FindObjects( const TVector4& a_rcPos, TFLOAT a_fRadius, TINT* a_pNumFound, TBOOL a_b3D, TINT a_iMaxNum )
+{
+	TUINT uiOldStamp = ms_uiQueryStamp++;
+
+	// The stamp wrapped around
+	if ( uiOldStamp > ms_uiQueryStamp )
+		ms_uiQueryStamp = 1;
+
+	*a_pNumFound = 0;
+
+	T2_FOREACH( m_UsedList, it )
+	{
+		if ( !AddQueryResult( it->pHashedObject, a_rcPos, a_fRadius, a_b3D, a_pNumFound, a_iMaxNum ) )
+			return m_aResults;
+	}
+
+	// Calculate the covered cells
+	TFLOAT fXMin = ( a_rcPos.x - a_fRadius + m_fNegativeMinX ) * m_fDivideByMaxXOverNumCells;
+	if ( fXMin < 0.0f ) fXMin -= 1.0f;
+	TINT iXMin = TINT( fXMin );
+
+	TFLOAT fXMax = ( a_fRadius + a_rcPos.x + m_fNegativeMinX ) * m_fDivideByMaxXOverNumCells;
+	if ( fXMax < 0.0f ) fXMax -= 1.0f;
+	TINT iXMax = TINT( fXMax );
+
+	TFLOAT fZMin = ( a_rcPos.z - a_fRadius + m_fNegativeMinY ) * m_fDivideByMaxYOverNumCells;
+	if ( fZMin < 0.0f ) fZMin -= 1.0f;
+	TINT iZMin = TINT( fZMin );
+
+	TFLOAT fZMax = ( a_fRadius + a_rcPos.z + m_fNegativeMinY ) * m_fDivideByMaxYOverNumCells;
+	if ( fZMax < 0.0f ) fZMax -= 1.0f;
+	TINT iZMax = TINT( fZMax );
+
+	for ( TINT iZ = iZMin; iZ < iZMax + 1; iZ++ )
+	{
+		for ( TINT iX = iXMin; iX < iXMax + 1; iX++ )
+		{
+			TNodeList<CellObject>& rCellBucket = m_aCellBuckets[ ( iX & GRID_MASK ) * GRID_SIZE + ( iZ & GRID_MASK ) ];
+
+			T2_FOREACH( rCellBucket, it )
+			{
+				if ( !AddQueryResult( it->pHashedObject, a_rcPos, a_fRadius, a_b3D, a_pNumFound, a_iMaxNum ) )
+					return m_aResults;
+			}
+		}
+	}
+
+	return m_aResults;
 }

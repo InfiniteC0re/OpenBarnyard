@@ -4,6 +4,8 @@
 class AKeyLibLoaderJob : public AMainThreadJob
 {
 public:
+	AKeyLibLoaderJob();
+
 	virtual void  BeginJob() override;
 	virtual TBOOL RunJob() override;
 

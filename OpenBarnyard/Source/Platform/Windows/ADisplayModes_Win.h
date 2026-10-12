@@ -7,6 +7,7 @@ public:
 	TDECLARE_CLASS( ADisplayModes_Win, Toshi::TObject );
 
 public:
+	~ADisplayModes_Win();
 	struct Mode
 	{
 		TUINT32 m_uiWidth;
@@ -15,7 +16,8 @@ public:
 	};
 
 public:
-	ADisplayModes_Win() = default;
+	// $Barnyard: FUNCTION 00614c40
+	ADisplayModes_Win() {}
 
 	void Initialise();
 

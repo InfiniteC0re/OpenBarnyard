@@ -14,6 +14,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 005f04c0, CreateObject 005f0ec0, CreateObjectInPlace 005f0f40
 TDEFINE_CLASS( ASysMaterialHAL );
 
 ASysMaterialHAL::ASysMaterialHAL()
@@ -26,6 +27,7 @@ ASysMaterialHAL::ASysMaterialHAL()
 }
 
 // $Barnyard: FUNCTION 005f0b60
+// $Barnyard: FUNCTION 005f11f0
 ASysMaterialHAL::~ASysMaterialHAL()
 {
 	auto pRegMat = GetRegMaterial();

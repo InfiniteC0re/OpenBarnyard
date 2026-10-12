@@ -6,6 +6,7 @@
 #include "Assets/AAssetLoader.h"
 #include "Animation/AModel.h"
 #include "Animation/AModelRepos.h"
+#include "Assets/AKeyFrameLibraryManager.h"
 #include "Cameras/ACamera.h"
 #include "Cameras/ACameraManager.h"
 #include "Render/ASysShader/ASysMesh.h"
@@ -35,20 +36,20 @@ ASkyDome::ASkyDome()
 	m_pSkyLibrary       = TNULL;
 	m_pVertexData       = TNULL;
 	m_pStarsInstance    = TNULL;
-	m_eFlags            = 6;
+	m_eFlags            = FLAGS_RENDER | FLAGS_ROTATE;
 	m_iRings            = 0;
 	m_iSides            = 0;
 	m_fRotation         = 1.0f;
-	m_uiUnk174          = 0;
-	m_fUnk178           = 0.05f;
+	m_fRotation2        = 0.0f;
+	m_fRotationSpeed    = 0.05f;
 	m_iTexturedSkyIndex = 0;
 	m_iPrevSkyIndex     = 0;
 	m_fHeight           = 0;
 	m_fRadius           = 0.0f;
-	m_fUnk15c           = 1.0f;
-	m_fUnk160           = 1.0f;
-	m_fUnk164           = 1.0f;
-	m_fUnk168           = 1.0f;
+	m_fTintR            = 1.0f;
+	m_fTintG            = 1.0f;
+	m_fTintB            = 1.0f;
+	m_fTintA            = 1.0f;
 	m_fStarsOpacity     = 1.0f;
 	m_bIsDay            = TFALSE;
 	m_bNeedsUpdate      = TTRUE;
@@ -174,14 +175,14 @@ void ASkyDome::Create( TFLOAT a_fRadius, TFLOAT a_fHeight, TINT a_iSides, TINT a
 // $Barnyard: FUNCTION 0042c670
 void ASkyDome::Render1()
 {
-	if ( ( m_eFlags & 2 ) != 0 )
+	if ( ( m_eFlags & FLAGS_RENDER ) != 0 )
 		Render1_Impl();
 }
 
 // $Barnyard: FUNCTION 0042c680
 void ASkyDome::Render2()
 {
-	if ( ( m_eFlags & 2 ) != 0 )
+	if ( ( m_eFlags & FLAGS_RENDER ) != 0 )
 		Render2_Impl();
 }
 
@@ -213,6 +214,93 @@ void ASkyDome::SetSkyColors( TFLOAT a_fDuration, const TMatrix44* a_pColorMatrix
 		m_oLightMatrix = m_oTargetLightMatrix;
 		m_fBlend       = a_fTargetBlend;
 	}
+}
+
+// $Barnyard: FUNCTION 0042c7a0
+TBOOL ASkyDome::Update( TFLOAT a_fDeltaTime )
+{
+	if ( HASANYFLAG( m_eFlags, FLAGS_ROTATE ) )
+	{
+		// Rotate the clouds
+		TFLOAT fRotation  = m_fRotation - a_fDeltaTime * m_fRotationSpeed;
+		m_fRotation       = fRotation;
+		TFLOAT fRotation2 = m_fRotation2 - 0.6f * m_fRotationSpeed * a_fDeltaTime;
+		m_fRotation2      = fRotation2;
+
+		if ( fRotation < TMath::TWO_PI )
+		{
+			if ( fRotation <= -TMath::TWO_PI )
+				m_fRotation = fRotation + TMath::TWO_PI;
+		}
+		else
+		{
+			m_fRotation = fRotation - TMath::TWO_PI;
+		}
+
+		if ( fRotation2 >= TMath::TWO_PI )
+			m_fRotation2 = fRotation2 - TMath::TWO_PI;
+		else if ( -TMath::TWO_PI >= fRotation2 )
+			m_fRotation2 = fRotation2 + TMath::TWO_PI;
+	}
+
+	if ( !HASANYFLAG( m_eFlags, FLAGS_FROZEN ) && m_bIsDay )
+	{
+		// Advance the colour transition
+		m_fTransitionElapsed += a_fDeltaTime;
+
+		if ( m_fTransitionElapsed >= m_fTransitionDuration )
+		{
+			m_oColorMatrix = m_oTargetColorMatrix;
+			m_oLightMatrix = m_oTargetLightMatrix;
+			m_bIsDay       = TFALSE;
+			m_fBlend       = m_fTargetBlend;
+		}
+	}
+
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 0042df50
+// $Barnyard: FUNCTION 0042c950
+void ASkyDome::LoadStars()
+{
+	TTRB* pStartupTRB = AAssetLoader::GetAssetTRB( AAssetType_Startup );
+
+	AKeyFrameLibraryManager::GetSingleton()->LoadLibrary( TPS8D( "stars" ), pStartupTRB );
+	AMaterialLibraryManager::GetSingleton()->LoadLibrary( TPS8D( "stars" ), pStartupTRB, TFALSE );
+
+	m_pStarsInstance = AModelRepos::GetSingleton()->InstantiateNewModel( TPS8D( "data\\models\\stars" ), pStartupTRB );
+	m_pStarsInstance->SetSkeletonUpdating( TFALSE );
+
+	TMatrix44 mTransform;
+	mTransform.m_f11 = 1.0f;
+	mTransform.m_f12 = 0.0f;
+	mTransform.m_f13 = 0.0f;
+	mTransform.m_f14 = 0.0f;
+	mTransform.m_f21 = 0.0f;
+	mTransform.m_f22 = 0.0f;
+	mTransform.m_f23 = 1.0f;
+	mTransform.m_f24 = 0.0f;
+	mTransform.m_f31 = 0.0f;
+	mTransform.m_f32 = -1.0f;
+	mTransform.m_f33 = 0.0f;
+	mTransform.m_f34 = 0.0f;
+	mTransform.m_f41 = 0.0f;
+	mTransform.m_f42 = 0.0f;
+	mTransform.m_f43 = 0.0f;
+	mTransform.m_f44 = 1.0f;
+	m_pStarsInstance->SetTransform( mTransform );
+}
+
+// $Barnyard: FUNCTION 0042cb00
+void ASkyDome::UnloadStars()
+{
+	AModelRepos::GetSingleton()->DestroyModelInstance( m_pStarsInstance );
+	AModelRepos::GetSingleton()->UnloadUnusedModels();
+	m_pStarsInstance = TNULL;
+
+	AKeyFrameLibraryManager::GetSingleton()->UnrefLibrary( TPS8D( "stars" ) );
+	AMaterialLibraryManager::GetSingleton()->UnrefLibrary( TPS8D( "stars" ), TFALSE );
 }
 
 // $Barnyard: FUNCTION 0042ce20
@@ -310,7 +398,7 @@ void ASkyDome::CreateMesh1()
 		TUINT16 uSides = (TUINT16)m_iSides;
 		TUINT16 uRings = (TUINT16)m_iRings;
 
-		if ( pMesh->CreatePools( 100, ( uSides + 1 ) * (TUINT)uRings + 1, ( uRings - 1 ) * ( uSides + 1 ) * 2 ) )
+		if ( pMesh->CreatePools( ASysMesh::FLAGS_DEFAULT, ( uSides + 1 ) * (TUINT)uRings + 1, ( uRings - 1 ) * ( uSides + 1 ) * 2 ) )
 		{
 			pMesh->SetMaterial( m_apTexturedSkyMaterials[ TEXTURE_DAY ] );
 		}
@@ -736,8 +824,8 @@ void ASkyDome::Render1_Impl()
 	if ( m_pStarsInstance && 0.0f < m_fStarsOpacity )
 	{
 		m_pStarsInstance->SetSkeletonUpdating( TTRUE );
-		m_pStarsInstance->GetSceneObject()->EnableUnknown1();
-		m_pStarsInstance->GetSceneObject()->GetSomeVector2().y = m_fStarsOpacity;
+		m_pStarsInstance->GetSceneObject()->EnableOpacity();
+		m_pStarsInstance->GetSceneObject()->GetFadeParams().y = m_fStarsOpacity;
 
 		ACamera* pCamera = ACameraManager::GetSingleton()->GetCurrentCamera();
 		m_pStarsInstance->GetTransform().SetTranslate( pCamera->GetMatrix().GetTranslation3() );

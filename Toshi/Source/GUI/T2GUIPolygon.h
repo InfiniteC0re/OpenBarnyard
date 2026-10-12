@@ -14,6 +14,7 @@ public:
 	//-----------------------------------------------------------------------------
 	virtual void Render() override;
 	virtual void GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight ) override;
+	virtual void SetDimensions( TFLOAT a_fWidth, TFLOAT a_fHeight ) override {} // +0x28, DOES_NOTHING
 
 	//-----------------------------------------------------------------------------
 	// Own methods

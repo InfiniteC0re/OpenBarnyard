@@ -43,7 +43,7 @@ TSkeletonInstance* TSkeleton::CreateInstance( TBOOL a_bSetBasePose )
 	pInstance->m_iSize                  = iInstanceSize;
 	pInstance->m_iBaseAnimationCount    = 0;
 	pInstance->m_iOverlayAnimationCount = 0;
-	pInstance->m_eFlags                 = 0;
+	pInstance->m_eFlags                 = TSkeletonInstance::FLAGS_NONE;
 	pInstance->m_pBones                 = TREINTERPRETCAST( TSkeletonInstanceBone*, pInstance + 1 );
 	pInstance->m_pAnimations            = TREINTERPRETCAST( TAnimation*, pInstance->m_pBones + iAutoBoneCount );
 	pInstance->m_fTotalWeight           = 0.0f;
@@ -115,7 +115,8 @@ TINT TSkeleton::GetSequenceID( const TCHAR* a_szSequenceName, TUINT32 a_iLength 
 // $Barnyard: FUNCTION 006cb420
 void TSkeletonInstance::UpdateTime( TFLOAT a_fDeltaTime )
 {
-	if ( !m_BaseAnimations.IsEmpty() || ( !m_OverlayAnimations.IsEmpty() && m_iLastUpdateTimeFrame != g_oSystemManager.GetFrameCount() ) )
+	// Advance the animations at most once per frame (several systems call this for the same skeleton)
+	if ( ( !m_BaseAnimations.IsEmpty() || !m_OverlayAnimations.IsEmpty() ) && m_iLastUpdateTimeFrame != g_oSystemManager.GetFrameCount() )
 	{
 		m_iLastUpdateTimeFrame = g_oSystemManager.GetFrameCount();
 		m_fTotalWeight         = 0.0f;
@@ -143,18 +144,28 @@ void TSkeletonInstance::UpdateTime( TFLOAT a_fDeltaTime )
 			pAnim = pNext;
 		}
 
-		if ( HASANYFLAG( m_eFlags, 1 ) )
+		if ( HASANYFLAG( m_eFlags, FLAGS_UPDATE_STATE ) )
 		{
-			m_eFlags &= ~1;
+			m_eFlags &= ~FLAGS_UPDATE_STATE;
 			UpdateState( TFALSE );
 		}
 	}
 }
 
+// $Barnyard: FUNCTION 006c9e00
+void TSkeletonInstance::UpdateStateFrame()
+{
+	m_eFlags &= ~FLAGS_UPDATE_STATE;
+	m_iLastUpdateStateFrame = g_oSystemManager.GetFrameCount();
+}
+
 // $Barnyard: FUNCTION 006ca960
-// Note: the current implementation is taken from de Blob
 void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 {
+	// NOTE: without any animation the bones keep their last state (the last frame of an ended animation)
+	if ( m_BaseAnimations.IsEmpty() && m_OverlayAnimations.IsEmpty() )
+		return;
+
 	if ( ( a_bForceUpdate || m_iLastUpdateStateFrame != g_oSystemManager.GetFrameCount() ) &&
 	     m_pSkeleton->GetKeyLibraryInstance().GetLibrary() != TNULL )
 	{
@@ -172,18 +183,13 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 		{
 			TASSERT( i < TANIMATION_MAXBONES );
 
-			auto& rBoneCache = g_aBonesCaches[ i ];
-			auto  pBone      = m_pSkeleton->GetBone( i );
+			// The animations are blended into the current state of the bone, a bone that no
+			// animation affects keeps its state
+			TSkeletonInstanceBone& rBoneState = m_pBones[ i ];
+			auto                   pBone      = m_pSkeleton->GetBone( i );
 
-			if ( m_BaseAnimations.IsEmpty() )
-			{
-				rBoneCache.Rotation = pBone->GetRotation();
-				rBoneCache.Position = pBone->GetPosition();
-			}
-			else
 			{
 				TFLOAT fWeightTotalRatio = 0.0f;
-				TBOOL  bBoneHasState     = TFALSE;
 
 				T2_FOREACH( m_BaseAnimations, it )
 				{
@@ -209,20 +215,19 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 
 						if ( it == m_BaseAnimations.Head() )
 						{
-							bBoneHasState     = TTRUE;
 							fWeightTotalRatio = fWeightRatio;
-							QInterpFn( rBoneCache.Rotation, *pFromQuat, *pToQuat, fLerpProgress );
+							QInterpFn( rBoneState.m_Rotation, *pFromQuat, *pToQuat, fLerpProgress );
 
 							if ( pSeqBone->IsTranslateAnimated() )
 							{
 								auto pFromTranslation = rKeyLibrary.GetT( pFromKey[ 2 ] );
 								auto pToTranslation   = rKeyLibrary.GetT( pToKey[ 2 ] );
 
-								rBoneCache.Position.Lerp( *pFromTranslation, *pToTranslation, fLerpProgress );
+								rBoneState.m_Position.Lerp( *pFromTranslation, *pToTranslation, fLerpProgress );
 							}
 							else
 							{
-								rBoneCache.Position = pBone->GetPosition();
+								rBoneState.m_Position = pBone->GetPosition();
 							}
 						}
 						else
@@ -241,18 +246,12 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 							}
 
 							fWeightTotalRatio += fWeightRatio;
-							QInterpFn( rBoneCache.Rotation, rBoneCache.Rotation, rotation, fWeightRatio / fWeightTotalRatio );
+							QInterpFn( rBoneState.m_Rotation, rBoneState.m_Rotation, rotation, fWeightRatio / fWeightTotalRatio );
 
 							const TVector3* pLerpToVec = pSeqBone->IsTranslateAnimated() ? &position.AsVector3() : &pBone->GetPosition();
-							rBoneCache.Position.Lerp( *pLerpToVec, fWeightRatio / fWeightTotalRatio );
+							rBoneState.m_Position.Lerp( *pLerpToVec, fWeightRatio / fWeightTotalRatio );
 						}
 					}
-				}
-
-				if ( !bBoneHasState )
-				{
-					rBoneCache.Rotation = pBone->GetRotation();
-					rBoneCache.Position = pBone->GetPosition();
 				}
 			}
 
@@ -281,8 +280,8 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 						TVector4    position;
 						TQuaternion rotation;
 
-						QInterpFn( rotation, rBoneCache.Rotation, *pToQuat, fLerpProgress );
-						QInterpFn( rBoneCache.Rotation, rBoneCache.Rotation, rotation, it->GetWeight() );
+						QInterpFn( rotation, *pFromQuat, *pToQuat, fLerpProgress );
+						QInterpFn( rBoneState.m_Rotation, rBoneState.m_Rotation, rotation, it->GetWeight() );
 
 						const TVector3* pLerpToVec;
 						if ( pSeqBone->IsTranslateAnimated() )
@@ -298,7 +297,7 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 							pLerpToVec = &pBone->GetPosition();
 						}
 
-						rBoneCache.Position.Lerp( *pLerpToVec, it->GetWeight() );
+						rBoneState.m_Position.Lerp( *pLerpToVec, it->GetWeight() );
 					}
 				}
 			}
@@ -310,15 +309,15 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 			if ( iParentBone == TBONE_INVALID )
 			{
 				// No parent bone
-				rMatrix.SetFromQuaternion( rBoneCache.Rotation );
-				rMatrix.SetTranslation( rBoneCache.Position );
+				rMatrix.SetFromQuaternion( rBoneState.m_Rotation );
+				rMatrix.SetTranslation( rBoneState.m_Position );
 			}
 			else
 			{
 				// Has parent bone
 				TMatrix44 boneTransform;
-				boneTransform.SetFromQuaternion( rBoneCache.Rotation );
-				boneTransform.SetTranslation( rBoneCache.Position );
+				boneTransform.SetFromQuaternion( rBoneState.m_Rotation );
+				boneTransform.SetTranslation( rBoneState.m_Position );
 				rMatrix.Multiply( g_aForwardMatrices[ iParentBone ], boneTransform );
 			}
 
@@ -368,11 +367,12 @@ void TSkeletonInstance::RemoveAnimation( TAnimation* a_pAnimation, TFLOAT a_fBle
 	}
 	else if ( a_pAnimation->m_eFlags & TAnimation::Flags_UpdateStateOnRemove )
 	{
+		// Keep the animation for one more state update at full weight, then blend it out
 		a_pAnimation->m_eFlags &= ~TAnimation::Flags_UpdateStateOnRemove;
-		a_pAnimation->m_fDestWeight    = 1.0f;
+		a_pAnimation->m_fWeight        = 1.0f;
 		a_pAnimation->m_fBlendOutSpeed = 1.0f;
 		a_pAnimation->m_eState         = TAnimation::STATE_BLENDING_OUT;
-		m_eFlags |= 1;
+		m_eFlags |= FLAGS_UPDATE_STATE;
 	}
 	else
 	{
@@ -448,14 +448,14 @@ TAnimation* TSkeletonInstance::AddAnimationFull( TUINT16 a_iSequenceIndex, TFLOA
 	TAnimation* pAnimation = TNULL;
 
 	// Check if this animation is already playing as a base animation
-	for ( auto it = m_BaseAnimations.Begin(); pAnimation != TNULL && it != m_BaseAnimations.End(); ++it )
+	for ( auto it = m_BaseAnimations.Begin(); pAnimation == TNULL && it != m_BaseAnimations.End(); ++it )
 	{
 		if ( it->GetSequence() == a_iSequenceIndex )
 			pAnimation = it;
 	}
 
 	// Check if this animation is already playing as an overlay animation
-	for ( auto it = m_BaseAnimations.Begin(); pAnimation != TNULL && it != m_BaseAnimations.End(); ++it )
+	for ( auto it = m_OverlayAnimations.Begin(); pAnimation == TNULL && it != m_OverlayAnimations.End(); ++it )
 	{
 		if ( it->GetSequence() == a_iSequenceIndex )
 			pAnimation = it;
@@ -498,13 +498,13 @@ TAnimation* TSkeletonInstance::AddAnimationFull( TUINT16 a_iSequenceIndex, TFLOA
 		if ( m_pSkeleton->GetSequence( a_iSequenceIndex )->IsBase() )
 		{
 			// Base Animation
-			m_BaseAnimations.PushFront( pAnimation );
+			m_BaseAnimations.Push( pAnimation );
 			m_iBaseAnimationCount++;
 		}
 		else
 		{
 			// Overlay Animation
-			m_OverlayAnimations.PushFront( pAnimation );
+			m_OverlayAnimations.Push( pAnimation );
 			m_iOverlayAnimationCount++;
 		}
 	}
@@ -633,6 +633,73 @@ TFLOAT TSkeletonSequenceBone::GetKeyPair( TINT a_iCurrentAnimTime, TUINT16& a_rC
 	auto iLerpToTime   = *GetKey( a_rLerpToIndex );
 
 	return ( ( a_iCurrentAnimTime - iLerpFromTime ) * ( 1.0f / 65535 ) ) / ( ( iLerpToTime - iLerpFromTime ) * ( 1.0f / 65535 ) );
+}
+
+// Interpolates the rotation (and the translation if it's animated) of the bone between two keys
+// $Barnyard: FUNCTION 006ca130
+static void GetSequenceBoneState( TSkeletonSequenceBone* a_pSeqBone, TKeyframeLibraryInstance& a_rKeyLibrary, TFLOAT a_fProgress, TUINT16& a_rFromKey, TUINT16& a_rToKey, TQuaternion& a_rOutRotation, TVector4& a_rOutPosition )
+{
+	TUINT16* pFromKey = a_pSeqBone->GetKey( a_rFromKey );
+	TUINT16* pToKey   = a_pSeqBone->GetKey( a_rToKey );
+
+	TQuaternion::Slerp( a_rOutRotation, *a_rKeyLibrary.GetQ( pFromKey[ 1 ] ), *a_rKeyLibrary.GetQ( pToKey[ 1 ] ), a_fProgress );
+
+	if ( a_pSeqBone->IsTranslateAnimated() )
+		a_rOutPosition.AsVector3().Lerp( *a_rKeyLibrary.GetT( pFromKey[ 2 ] ), *a_rKeyLibrary.GetT( pToKey[ 2 ] ), a_fProgress );
+}
+
+// $Barnyard: FUNCTION 006ca410
+TUINT16 TSkeleton::GetBoneLocalTransform( TINT a_iBone, TINT a_iSequence, TFLOAT a_fTime, TUINT16 a_uiCurrentKey, TMatrix44& a_rOutTransform )
+{
+	TSkeletonSequence*     pSequence = GetSequence( a_iSequence );
+	TSkeletonSequenceBone* pSeqBone  = pSequence->GetBone( a_iBone );
+	TSkeletonBone*         pBone     = GetBone( a_iBone );
+
+	TUINT16 uiFromKey;
+	TUINT16 uiToKey;
+	TFLOAT  fProgress = pSeqBone->GetKeyPair( TINT( a_fTime / pSequence->GetDuration() * 65535.0f ), a_uiCurrentKey, uiFromKey, uiToKey );
+
+	if ( pSeqBone->GetKeyCount() != 0 )
+	{
+		TQuaternion quatRotation;
+		TVector4    vPosition;
+		GetSequenceBoneState( pSeqBone, m_KeyLibraryInstance, fProgress, uiFromKey, uiToKey, quatRotation, vPosition );
+
+		if ( !pSeqBone->IsTranslateAnimated() )
+			vPosition = TVector4( pBone->GetPosition().x, pBone->GetPosition().y, pBone->GetPosition().z, 1.0f );
+
+		a_rOutTransform.SetFromQuaternion( quatRotation );
+		a_rOutTransform.m_f41 = vPosition.x;
+		a_rOutTransform.m_f42 = vPosition.y;
+		a_rOutTransform.m_f43 = vPosition.z;
+	}
+	else
+	{
+		a_rOutTransform.SetFromQuaternion( pBone->GetRotation() );
+		a_rOutTransform.m_f41 = pBone->GetPosition().x;
+		a_rOutTransform.m_f42 = pBone->GetPosition().y;
+		a_rOutTransform.m_f43 = pBone->GetPosition().z;
+	}
+
+	return a_uiCurrentKey;
+}
+
+// $Barnyard: FUNCTION 006ca550
+void TSkeleton::GetBoneTransform( TINT a_iBone, TINT a_iSequence, TFLOAT a_fTime, TMatrix44& a_rOutTransform )
+{
+	TINT iParentBone = m_pBones[ a_iBone ].GetParentBone();
+
+	if ( iParentBone == -1 )
+	{
+		GetBoneLocalTransform( a_iBone, a_iSequence, a_fTime, 0, a_rOutTransform );
+		return;
+	}
+
+	TMatrix44 matParent;
+	TMatrix44 matLocal;
+	GetBoneTransform( iParentBone, a_iSequence, a_fTime, matParent );
+	GetBoneLocalTransform( a_iBone, a_iSequence, a_fTime, 0, matLocal );
+	a_rOutTransform.Multiply( matParent, matLocal );
 }
 
 TOSHI_NAMESPACE_END

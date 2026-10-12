@@ -19,6 +19,9 @@ public:
 	TFileStreamJob( TSemaphore* semaphore )
 	    : m_pSemaphore( semaphore ), m_bIsProcessed( TTRUE ) {}
 
+	// NOTE: 00401170 is an out of line copy of the destructor (used by AKeyframeLibStreamJob)
+	// $Barnyard: FUNCTION 006d7f90
+	// $Barnyard: FUNCTION 00401170
 	virtual ~TFileStreamJob() = default;
 	virtual void Process()    = 0;
 

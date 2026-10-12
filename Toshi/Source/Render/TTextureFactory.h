@@ -35,7 +35,7 @@ public:
 	constexpr static TUINT32 NUM_LISTS = 1024;
 
 public:
-	TTextureFactory() = default;
+	TTextureFactory();
 	~TTextureFactory();
 
 	virtual void      Dump() const;

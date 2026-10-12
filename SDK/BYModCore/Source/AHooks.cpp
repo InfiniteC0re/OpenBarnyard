@@ -40,8 +40,8 @@ TOSHI_NAMESPACE_USING
 
 extern const T2CommandLine* g_pCommandLine;
 
-TUINT  g_uiWindowWidth  = 0;
-TUINT  g_uiWindowHeight = 0;
+TUINT g_uiWindowWidth  = 0;
+TUINT g_uiWindowHeight = 0;
 
 void ApplyResolutionDependentPatches( TINT a_iWidth, TINT a_iHeight )
 {
@@ -67,7 +67,7 @@ void ApplyResolutionDependentPatches( TINT a_iWidth, TINT a_iHeight )
 #define PAGE_HEAP_VERIFICATION
 
 // Replacing this method since it's all useless now but can crash the game
-HOOK( 0x006b4cb0, TMemory_UnkMethod, TBOOL, TMemory::MemBlock* a_pMemBlock )
+HOOK( 0x006b4cb0, TMemory_TestMemIntegrity, TBOOL, TMemory::MemBlock* a_pMemBlock )
 {
 #ifdef TMEMORY_USE_DLMALLOC
 
@@ -200,27 +200,27 @@ MEMBER_HOOK( 0x006b4a20, TMemory, TMemory_Free, TBOOL, void* a_pMem )
 // HOOK( 0x006b5540, TMalloc1, void*, TUINT a_uiSize, TMemory::MemBlock* a_pMemBlock, const char* a_szUnused1, TINT a_iUnused2 )
 // {
 // 	TPROFILER_SCOPE();
-// 
+//
 // 	( TMemory__FUNC__ = __FUNCSIG__, TMemory__FILE__ = __FILE__, TMemory__LINE__ = (TINT)_ReturnAddress() );
 // 	return CallOriginal( a_uiSize, a_pMemBlock, a_szUnused1, a_iUnused2 );
 // }
-// 
+//
 // HOOK( 0x006b5630, TMalloc2, void*, TUINT a_uiSize )
 // {
 // 	TPROFILER_SCOPE();
-// 
+//
 // 	( TMemory__FUNC__ = __FUNCSIG__, TMemory__FILE__ = __FILE__, TMemory__LINE__ = (TINT)_ReturnAddress() );
 // 	return CallOriginal( a_uiSize );
 // }
-// 
+//
 // HOOK( 0x006b5590, TMemAlign1, void*, TUINT a_uiAlignment, TUINT a_uiSize, TMemory::MemBlock* a_pMemBlock )
 // {
 // 	TPROFILER_SCOPE();
-// 
+//
 // 	( TMemory__FUNC__ = __FUNCSIG__, TMemory__FILE__ = __FILE__, TMemory__LINE__ = (TINT)_ReturnAddress() );
 // 	return CallOriginal( a_uiAlignment, a_uiSize, a_pMemBlock );
 // }
-// 
+//
 // HOOK( 0x006b5670, TMemAlign2, void*, TUINT a_uiSize, TUINT a_uiAlignment )
 // {
 // 	( TMemory__FUNC__ = __FUNCSIG__, TMemory__FILE__ = __FILE__, TMemory__LINE__ = (TINT)_ReturnAddress() );
@@ -349,11 +349,11 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 		TINFO( "User is asking for fullscreen mode.\n" );
 	}
 
-// 	if ( !bResult )
-// 	{
-// 		TERROR( "Unable to get window rect... Using resolution provided by the original game.\n" );
-// 		return TTRUE;
-// 	}
+	// 	if ( !bResult )
+	// 	{
+	// 		TERROR( "Unable to get window rect... Using resolution provided by the original game.\n" );
+	// 		return TTRUE;
+	// 	}
 
 	if ( a_iWidth > windowRect.right || a_iHeight > windowRect.bottom )
 	{
@@ -440,7 +440,7 @@ MEMBER_HOOK( 0x006bb000, TTRB, TTRB_Load, TINT, const char* a_szFileName, TUINT 
 				filepath += pOrigFileName->GetString();
 				bFound = TTRUE;
 				break;
-}
+			}
 		}
 
 		if ( bFound ) break;
@@ -507,7 +507,8 @@ MEMBER_HOOK( 0x006c1d40, TModelManager, TModelRegistry_CreateModel, TModelManage
 	return CallOriginal( a_szFileName, a_rModelRef, ( pFoundAsset ) ? pFoundAsset : a_pAssetTRB );
 }
 
-class AKeyFrameLibraryManager {};
+class AKeyFrameLibraryManager
+{};
 
 MEMBER_HOOK( 0x00607030, AKeyFrameLibraryManager, AKeyFrameLibraryManager_LoadLibrary, TBOOL, void* a1, TTRB* a_pAssetTRB )
 {
@@ -568,7 +569,7 @@ MEMBER_HOOK( 0x006154c0, ARenderer, ARenderer_CreateTRender, TBOOL )
 {
 	TBOOL bResult = CallOriginal();
 
-	TRenderInterface::SetSingletonExplicit(THookedRenderD3DInterface::GetSingleton());
+	TRenderInterface::SetSingletonExplicit( THookedRenderD3DInterface::GetSingleton() );
 
 	AGlobalModLoaderTask::Get()->OnRenderInterfaceReady();
 
@@ -579,7 +580,7 @@ MEMBER_HOOK( 0x0060aee0, ARenderer, ARenderer_FindSuitableDevice, TRenderAdapter
 {
 	// This allows any resolution to be used including 2K or 4K
 	// It does't matter what to return since it's not used for anything but for broken logging
-	a_rDisplayParams.eDepthStencilFormat = 2;
+	a_rDisplayParams.eDepthStencilFormat = TRenderInterface::DEPTHSTENCILFORMAT_D24_X8;
 	return THookedRenderD3DInterface::GetSingleton()->GetAdapterList()->Begin()->GetModeList()->Begin()->GetDevice( 0 );
 }
 
@@ -599,7 +600,7 @@ MEMBER_HOOK( 0x0060c7c0, ARenderer, ARenderer_OnCreate, TBOOL )
 		TINFO( "DXVK transition layer detected\n" );
 	else if ( g_bUsingDX11 )
 		TINFO( "D3D11 API detected\n" );
-	
+
 	if ( !g_pCommandLine->HasParameter( "-noimgui" ) )
 		AImGUI::CreateSingleton();
 
@@ -791,7 +792,7 @@ MEMBER_HOOK( 0x00613b50, AMaterialLibraryManager, AMaterialLibraryManager_Create
 	while ( m_iNumFreeTextures < iNeeded )
 	{
 		if ( s_iNumExtraSlotsUsed >= EXTRA_TEXTURE_SLOTS ) break;
-		AMaterialLibraryManager::TextureSlot* pSlot = ((AMaterialLibraryManager::TextureSlot*)&s_aExtraTextureSlots) + s_iNumExtraSlotsUsed++;
+		AMaterialLibraryManager::TextureSlot* pSlot = ( (AMaterialLibraryManager::TextureSlot*)&s_aExtraTextureSlots ) + s_iNumExtraSlotsUsed++;
 		CALL_THIS( 0x00613b00, AMaterialLibraryManager::TextureSlot*, void, pSlot );
 
 		m_FreeTextures.PushFront( pSlot );
@@ -955,7 +956,7 @@ MEMBER_HOOK( 0x00402860, Toshi::T2Locale, ALocaleManager_GetLanguageFilename, co
 		pFile->Destroy();
 		return s_Path;
 	}
-	
+
 	TERROR( "Trying to override language, but the locale file is missing! (%s)\n", s_Path );
 	return CallOriginal( a_eLang );
 }
@@ -996,8 +997,8 @@ MEMBER_HOOK( 0x005e1e80, AInstanceManager, AInstanceManager_LoadModels, TBOOL, T
 {
 	if ( g_oSettings.bForceAllInstances )
 	{
-		TUINT aIndices[137];
-		for (TINT i = 0; i < 137; i++)
+		TUINT aIndices[ 137 ];
+		for ( TINT i = 0; i < 137; i++ )
 		{
 			aIndices[ i ] = i;
 		}
@@ -1086,7 +1087,7 @@ MEMBER_HOOK( 0x004d04a0, APoolAi, APoolAi_ComputeAimDirection, void*, void* a_pO
 //-----------------------------------------------------------------------------
 MEMBER_HOOK( 0x0060bf70, ARenderer, ARenderer_ScreenToRay, void, ACamera* a_pCamera, const TVector2& a_rcScreenPoint, TVector4& a_rOutOrigin, TVector4& a_rOutDir )
 {
-	if (_ReturnAddress() == (void*)0x00665d13) // AAimedSquirtProjectileLauncher::UpdateAiming
+	if ( _ReturnAddress() == (void*)0x00665d13 ) // AAimedSquirtProjectileLauncher::UpdateAiming
 	{
 		// Set real screen resolution rather than AGUI2 surface resolution
 		auto pRender        = THookedRenderD3DInterface::GetSingleton();
@@ -1094,7 +1095,7 @@ MEMBER_HOOK( 0x0060bf70, ARenderer, ARenderer_ScreenToRay, void, ACamera* a_pCam
 
 		TFLOAT flGUIWidth, flGUIHeight;
 		AGUI2::GetSingleton()->GetDimensions( flGUIWidth, flGUIHeight );
-		
+
 		TVector2 vFixedScreenPoint = {
 			a_rcScreenPoint.x * ( pDisplayParams->uiWidth / flGUIWidth ),
 			a_rcScreenPoint.y * ( pDisplayParams->uiHeight / flGUIHeight ),
@@ -1110,7 +1111,7 @@ MEMBER_HOOK( 0x0060bf70, ARenderer, ARenderer_ScreenToRay, void, ACamera* a_pCam
 void AHooks::Initialise()
 {
 	// Apply other hooks
-	InstallHook<TMemory_UnkMethod>();
+	InstallHook<TMemory_TestMemIntegrity>();
 	InstallHook<TMemory_Initialise>();
 	InstallHook<TMemory_DestroyMemBlock>();
 	InstallHook<TMemory_CreateMemBlock>();
@@ -1180,10 +1181,10 @@ void AHooks::Initialise()
 
 	InstallHook<AKeyFrameLibraryManager_LoadLibrary>();
 
-// 	InstallHook<TMalloc1>();
-// 	InstallHook<TMalloc2>();
-// 	InstallHook<TMemAlign1>();
-// 	InstallHook<TMemAlign2>();
+	// 	InstallHook<TMalloc1>();
+	// 	InstallHook<TMalloc2>();
+	// 	InstallHook<TMemAlign1>();
+	// 	InstallHook<TMemAlign2>();
 
 #ifdef USE_ATOMIC
 	InstallHook<TMutex_Create>();

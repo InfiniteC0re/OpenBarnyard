@@ -12,7 +12,14 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 005f04d0, CreateObject 005f0fb0, CreateObjectInPlace 005f1020
 TDEFINE_CLASS( ASysMeshHAL );
+
+// $Barnyard: FUNCTION 005f0e10
+// $Barnyard: FUNCTION 005f1410
+ASysMeshHAL::~ASysMeshHAL()
+{
+}
 
 ASysMeshHAL::ASysMeshHAL()
 {

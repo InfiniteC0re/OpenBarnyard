@@ -32,6 +32,7 @@ public:
 			return m_pNext != this;
 		}
 
+		// $Barnyard: FUNCTION 006c7e00
 		void InsertAfter( Node* a_pNode )
 		{
 			TASSERT( !IsLinked() );
@@ -138,6 +139,7 @@ public:
 		return pNode;
 	}
 
+	// $Barnyard: FUNCTION 006c7e80
 	Node* Erase( Node* a_pFrom, Node* a_pTo )
 	{
 		Node* pNodeBefore = FindNodeBefore( a_pFrom );
@@ -153,6 +155,7 @@ public:
 		return a_pTo;
 	}
 
+	// $Barnyard: FUNCTION 006c7ec0
 	void Clear()
 	{
 		Node* pNode = Begin();
@@ -179,6 +182,7 @@ public:
 		return uiSize;
 	}
 
+	// $Barnyard: FUNCTION 006c7ee0
 	Node* Transfer( Node* a_pNode, T2GenericSList& a_rList )
 	{
 		Node* pNodeBefore    = FindNodeBefore( a_pNode );
@@ -257,9 +261,15 @@ public:
 	// $Barnyard: FUNCTION 006c7e50
 	Iterator PopFront() { return T2GenericSList::PopFront(); }
 
+	// T2SList<AGoalCollisionUpdateInterface> (node at +4): 00551d40
 	// $Barnyard: FUNCTION 0057d4c0
+	// $Barnyard: FUNCTION 005fbf00
+	// $Barnyard: FUNCTION 00551d40
 	Iterator Erase( Iterator a_Iterator ) { return T2GenericSList::Erase( a_Iterator, a_Iterator.Next() ); }
 	Iterator Erase( Iterator a_From, Iterator a_To ) { return T2GenericSList::Erase( a_From, a_To ); }
+
+	// Shared (identical code folding) by every instantiation: 005313a0
+	// $Barnyard: FUNCTION 005313a0
 	Iterator Transfer( Node* a_pNode, T2GenericSList& a_rList ) { return T2GenericSList::Transfer( a_pNode, a_rList ); }
 };
 
@@ -274,6 +284,8 @@ public:
 
 public:
 	// constructors/destructor
+	// T2SListNodeWrapper<ACollisionModelInstance> 005dfd40 (AInstanceManager, ARegrowthManager)
+	// $Barnyard: FUNCTION 005dfd40
 	constexpr T2SListNodeWrapper() = default;
 
 	constexpr T2SListNodeWrapper( T a_Value )

@@ -16,6 +16,7 @@ public:
 
 public:
 	TVertexFactoryResourceInterface();
+	~TVertexFactoryResourceInterface();
 
 	virtual TBOOL                         Create( TVertexFactoryFormat* a_pVertexFormat, TUINT16 a_uiMaxStaticVertices, TUINT32 a_uiFlags );
 	virtual TVertexPoolResourceInterface* CreatePoolResource( TUINT16 a_uiMaxStaticVertices, TUINT16 a_uiFlags ) = 0;
@@ -26,7 +27,7 @@ public:
 	void AddVertexStream( TUINT16 a_uiVertexSize )
 	{
 		TASSERT( m_VertexFormat.m_uiNumStreams < TVertexFactoryFormat::MAX_NUM_STREAMS );
-		auto& rStream         = m_VertexFormat.m_aStreamFormats[ m_VertexFormat.m_uiNumStreams ];
+		auto& rStream          = m_VertexFormat.m_aStreamFormats[ m_VertexFormat.m_uiNumStreams ];
 		rStream.m_uiVertexSize = a_uiVertexSize;
 		rStream.m_Unk          = 0;
 		m_VertexFormat.m_uiNumStreams++;

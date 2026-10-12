@@ -104,7 +104,7 @@ TBOOL AWorldMesh::CreateResource()
 	auto pVertexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TVertexFactoryResourceInterface>( SYSRESOURCE_VFWORLD );
 	TVALIDPTR( pVertexFactory );
 
-	m_pVertexPool = pVertexFactory->CreatePoolResource( m_uiMaxVertices, 1 );
+	m_pVertexPool = pVertexFactory->CreatePoolResource( m_uiMaxVertices, TVertexPoolResourceInterface::FLAGS_STATIC );
 	m_pSubMeshes  = new SubMesh[ NUM_SUBMESHES ];
 
 	return TTRUE;

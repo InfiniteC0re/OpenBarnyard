@@ -85,6 +85,12 @@ void* TFreeList::New( TUINT a_uiSize )
 // $Barnyard: FUNCTION 006c1880
 void TFreeList::Delete( void* a_Ptr )
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: static objects destroyed after the shutdown would link nodes that are in the freed chunks
+	if ( ms_bDeinitialised )
+		return;
+#endif // BARNYARD_COMMUNITY_PATCH
+
 	Node* pNode = TSTATICCAST( Node, a_Ptr );
 
 	if ( m_LastNode.pNext != TNULL )
@@ -97,6 +103,29 @@ void TFreeList::Delete( void* a_Ptr )
 		m_LastNode.pNext = pNode;
 		pNode->pNext     = TNULL;
 	}
+}
+
+// $Barnyard: FUNCTION 006c1910
+void TFreeList::DeinitialiseAll()
+{
+	for ( TFreeList* pList = ms_pLastList; pList != TNULL; pList = pList->m_pPrevList )
+	{
+		while ( Node* pChunk = pList->m_RootNode.pNext )
+		{
+			pList->m_RootNode.pNext = pChunk->pNext;
+			TFree( pChunk );
+		}
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+		// NOTE: the original keeps the free nodes and the capacity, so the list would hand out freed memory
+		pList->m_LastNode.pNext = TNULL;
+		pList->m_iCapacity      = 0;
+#endif // BARNYARD_COMMUNITY_PATCH
+	}
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	ms_bDeinitialised = TTRUE;
+#endif // BARNYARD_COMMUNITY_PATCH
 }
 
 TOSHI_NAMESPACE_END

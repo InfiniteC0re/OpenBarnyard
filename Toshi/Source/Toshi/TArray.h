@@ -179,6 +179,7 @@ public:
 		}
 	}
 
+	// $Barnyard: FUNCTION 005a2160
 	~TGenericArray()
 	{
 		if ( m_pData )
@@ -187,6 +188,17 @@ public:
 		}
 	}
 
+	// Instantiations: TArray<AGeomContactList::Contact> 0057a130, TArray<TFLOAT> 0057a200 (APrim), TArray<const TClass*> 00410b10 (AMethodPointer signatures)
+	// NOTE: retail allocates the new buffer with new[] when T has a constructor and copies the elements one by one
+	// $Barnyard: FUNCTION 0057a130
+	// $Barnyard: FUNCTION 0057a200
+	// TArray<TUINT16> 0059e720, TArray<ALatchRef> 0059e8f0 (AInteraction)
+	// $Barnyard: FUNCTION 0059e720
+	// $Barnyard: FUNCTION 0059e8f0
+	// $Barnyard: FUNCTION 006d9830
+	// TArray<TPString8> 005a4280 (AInteractionManager::m_aLatchNames)
+	// $Barnyard: FUNCTION 005a4280
+	// $Barnyard: FUNCTION 00410b10
 	void Resize( TINT a_iNewSize )
 	{
 		if ( a_iNewSize != 0 )
@@ -204,11 +216,20 @@ public:
 		}
 		else
 		{
-			if ( m_pData ) TFree( m_pData );
-			m_pData             = TNULL;
-			m_iNumAllocElements = 0;
-			m_iNumElements      = 0;
+			FreeData();
 		}
+	}
+
+	// Frees the buffer and empties the array
+	// NOTE: An out of line part of Resize.
+	// Instantiations: TArray<const TClass*> 00410b80
+	// $Barnyard: FUNCTION 00410b80
+	void FreeData()
+	{
+		if ( m_pData ) TFree( m_pData );
+		m_pData             = TNULL;
+		m_iNumAllocElements = 0;
+		m_iNumElements      = 0;
 	}
 
 	void Clear()
@@ -227,6 +248,8 @@ public:
 		m_iNumElements = 0;
 	}
 
+	// Instantiations: TArray of pointers (folded, used by AFunctionTable, AFSMInstance, AQuest) 005c9f20
+	// $Barnyard: FUNCTION 005c9f20
 	Iterator Begin()
 	{
 		return Iterator( ( m_iNumElements == 0 ) ? -1 : 0, *this );
@@ -237,6 +260,8 @@ public:
 		return Iterator( ( m_iNumElements == 0 ) ? -1 : m_iNumElements - 1, *this );
 	}
 
+	// Instantiations: TArray of pointers (folded, used by AFunctionTable, AFSMInstance, AQuest) 005c9d40
+	// $Barnyard: FUNCTION 005c9d40
 	Iterator End()
 	{
 		return Iterator( -1, *this );
@@ -267,6 +292,13 @@ public:
 		m_iGrowSize = a_iGrowSize;
 	}
 
+	// Instantiations: TArray<AGeomContactList::Contact> 0057a310, TArray<TFLOAT> 0057a920 (APrim)
+	// $Barnyard: FUNCTION 0057a310
+	// $Barnyard: FUNCTION 0057a920
+	// TArray<AInteractionRequirement*> 005a3890 (AInteractionManager)
+	// $Barnyard: FUNCTION 005a3890
+	// TArray<TPString8> 005a54e0 (AInteractionManager::m_aLatchNames)
+	// $Barnyard: FUNCTION 005a54e0
 	T* Push( const T& element = T() )
 	{
 		GrowBy( 1 );
@@ -449,6 +481,8 @@ private:
 		m_iNumElements += a_iCount;
 	}
 
+	// Instantiations: TArray<const TClass*> 00410ad0
+	// $Barnyard: FUNCTION 00410ad0
 	void GrowBy( TINT a_iGrowBy )
 	{
 		if ( m_iNumAllocElements < m_iNumElements + a_iGrowBy )

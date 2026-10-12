@@ -25,6 +25,17 @@ TFile::~TFile()
 {
 }
 
+// $Barnyard: FUNCTION 006bde00
+TINT TFile::CPrintf( const TCHAR* a_szFormat, ... )
+{
+	va_list args;
+	va_start( args, a_szFormat );
+	TINT iResult = VCPrintf( a_szFormat, args );
+	va_end( args );
+
+	return iResult;
+}
+
 // $Barnyard: FUNCTION 006be700
 TFile* TFile::Create( const TString8& filename, TFILEMODE mode )
 {

@@ -15,9 +15,19 @@ public:
 		Matrix
 	};
 
+	using EULERAXIS = TUINT8;
+	enum EULERAXIS_ : EULERAXIS
+	{
+		EULERAXIS_X = 0,
+		EULERAXIS_Y = 1,
+		EULERAXIS_Z = 2,
+	};
+
 public:
 	TTransformObject();
 	~TTransformObject();
+
+	TTransformObject& operator=( const TTransformObject& a_rcOther );
 
 	void Push();
 	void Pop();
@@ -26,12 +36,16 @@ public:
 	void      GetLocalMatrixImp( TMatrix44& a_rOutMatrix );
 
 	void SetEuler( const TVector3& a_rEuler );
-	void SetEulerOrder( TUINT8 a_uiX, TUINT8 a_uiy, TUINT8 a_uiz );
+	void SetEulerOrder( EULERAXIS a_uiX, EULERAXIS a_uiy, EULERAXIS a_uiz );
 	void SetTranslate( const TVector3& a_rTranslation );
 	void SetQuat( const TQuaternion& a_rQuaternion );
 	void SetMatrix( const TMatrix44& a_rMatrix );
+	Mode SetMode( Mode a_eMode );
 	void SetScale( TFLOAT a_flScaleX, TFLOAT a_flScaleY, TFLOAT a_flScaleZ );
 	void SetScale( const TVector3& a_rScale );
+
+	// NOTE: only valid in Mode::Matrix
+	const TMatrix44& GetMatrix() const { return m_Matrix; }
 
 	void ResetChangedState()
 	{
@@ -80,11 +94,11 @@ private:
 		TVector3    m_Euler;
 	};
 
-	Mode     m_eMode;
-	TVector3 m_Translation;
-	TVector3 m_Scale;
-	TUINT8   m_EulerOrder[ 3 ];
-	TBOOL    m_bChanged;
+	Mode      m_eMode;
+	TVector3  m_Translation;
+	TVector3  m_Scale;
+	EULERAXIS m_EulerOrder[ 3 ];
+	TBOOL     m_bChanged;
 };
 
 TOSHI_NAMESPACE_END

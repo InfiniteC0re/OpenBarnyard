@@ -31,11 +31,15 @@ public:
 	class TShaderList
 	{
 	public:
+		using t_EnumerateCallback = void ( * )( TShader* a_pShader );
+
+	public:
 		TShaderList()
 		    : m_pRoot( TNULL ) {}
 
 		void AddShader( TShader* pShader );
 		void RemoveShader( TShader* pShader );
+		void EnumerateShaders( t_EnumerateCallback a_fnCallback );
 
 		TShader* GetRootShader() { return m_pRoot; }
 

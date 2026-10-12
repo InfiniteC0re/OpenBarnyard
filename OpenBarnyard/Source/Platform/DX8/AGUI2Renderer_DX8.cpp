@@ -27,11 +27,13 @@ AGUI2RendererDX8::AGUI2RendererDX8()
 }
 
 // $Barnyard: FUNCTION 0064e670
+// $Barnyard: FUNCTION 0064f460
 AGUI2RendererDX8::~AGUI2RendererDX8()
 {
 	delete[] m_pTransforms;
 }
 
+// $Barnyard: FUNCTION 0064e700
 T2GUIMaterial* AGUI2RendererDX8::CreateMaterial( const TCHAR* a_szTextureName )
 {
 	return CreateMaterial(
@@ -39,6 +41,7 @@ T2GUIMaterial* AGUI2RendererDX8::CreateMaterial( const TCHAR* a_szTextureName )
 	);
 }
 
+// $Barnyard: FUNCTION 0064e690
 T2GUIMaterial* AGUI2RendererDX8::CreateMaterial( Toshi::TTexture* a_pTexture )
 {
 	auto pMaterial = new AGUI2Material;
@@ -291,12 +294,12 @@ void AGUI2RendererDX8::SetMaterial( T2GUIMaterial* a_pMaterial )
 
 		switch ( pMaterial->m_eBlendState )
 		{
-			case 0:
+			case T2GUIMaterial::BLENDSTATE_OPAQUE:
 				pD3DDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, 0 );
 				pD3DDevice->SetRenderState( D3DRS_ALPHAFUNC, 5 );
 				pD3DDevice->SetRenderState( D3DRS_ALPHAREF, 0 );
 				break;
-			case 1:
+			case T2GUIMaterial::BLENDSTATE_ALPHA:
 				pD3DDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, 1 );
 				pD3DDevice->SetRenderState( D3DRS_ALPHAFUNC, 5 );
 				pD3DDevice->SetRenderState( D3DRS_ALPHAREF, 0 );
@@ -305,7 +308,7 @@ void AGUI2RendererDX8::SetMaterial( T2GUIMaterial* a_pMaterial )
 				pD3DDevice->SetRenderState( D3DRS_DESTBLEND, 6 );
 				pD3DDevice->SetRenderState( D3DRS_ZWRITEENABLE, 0 );
 				break;
-			case 2:
+			case T2GUIMaterial::BLENDSTATE_ADDITIVE:
 				pD3DDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, 1 );
 				pD3DDevice->SetRenderState( D3DRS_ALPHAFUNC, 5 );
 				pD3DDevice->SetRenderState( D3DRS_ALPHAREF, 0 );
@@ -314,7 +317,7 @@ void AGUI2RendererDX8::SetMaterial( T2GUIMaterial* a_pMaterial )
 				pD3DDevice->SetRenderState( D3DRS_DESTBLEND, 2 );
 				pD3DDevice->SetRenderState( D3DRS_ZWRITEENABLE, 0 );
 				break;
-			case 3:
+			case T2GUIMaterial::BLENDSTATE_SUBTRACTIVE:
 				pD3DDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, 1 );
 				pD3DDevice->SetRenderState( D3DRS_ALPHAFUNC, 5 );
 				pD3DDevice->SetRenderState( D3DRS_ALPHAREF, 0 );
@@ -323,7 +326,7 @@ void AGUI2RendererDX8::SetMaterial( T2GUIMaterial* a_pMaterial )
 				pD3DDevice->SetRenderState( D3DRS_DESTBLEND, 2 );
 				pD3DDevice->SetRenderState( D3DRS_ZWRITEENABLE, 0 );
 				break;
-			case 4:
+			case T2GUIMaterial::BLENDSTATE_MASK:
 				pD3DDevice->SetRenderState( D3DRS_SRCBLEND, 1 );
 				pD3DDevice->SetRenderState( D3DRS_DESTBLEND, 2 );
 				pD3DDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, 1 );
@@ -345,7 +348,7 @@ void AGUI2RendererDX8::SetMaterial( T2GUIMaterial* a_pMaterial )
 				}
 
 				break;
-			case 5:
+			case T2GUIMaterial::BLENDSTATE_MASKED:
 				pD3DDevice->SetRenderState( D3DRS_ZENABLE, 1 );
 				pD3DDevice->SetRenderState( D3DRS_ZWRITEENABLE, 0 );
 				pD3DDevice->SetRenderState( D3DRS_ZFUNC, 4 );
@@ -363,7 +366,7 @@ void AGUI2RendererDX8::SetMaterial( T2GUIMaterial* a_pMaterial )
 				}
 
 				break;
-			case 6:
+			case T2GUIMaterial::BLENDSTATE_ALPHA_ZWRITE:
 				pD3DDevice->SetRenderState( D3DRS_ALPHATESTENABLE, 0 );
 				pD3DDevice->SetRenderState( D3DRS_ALPHAFUNC, 5 );
 				pD3DDevice->SetRenderState( D3DRS_ALPHAREF, 0 );
@@ -386,12 +389,12 @@ void AGUI2RendererDX8::SetMaterial( T2GUIMaterial* a_pMaterial )
 				break;
 		}
 
-		if ( pMaterial->m_eTextureAddress == 1 )
+		if ( pMaterial->m_eTextureAddress == T2GUIMaterial::TEXTUREADDRESS_CLAMP )
 		{
 			pD3DDevice->SetTextureStageState( 0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP );
 			pD3DDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP );
 		}
-		else if ( pMaterial->m_eTextureAddress == 2 )
+		else if ( pMaterial->m_eTextureAddress == T2GUIMaterial::TEXTUREADDRESS_MIRROR )
 		{
 			pD3DDevice->SetTextureStageState( 0, D3DTSS_ADDRESSU, D3DTADDRESS_MIRROR );
 			pD3DDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, D3DTADDRESS_MIRROR );
@@ -481,7 +484,7 @@ void AGUI2RendererDX8::SetScissor( TFLOAT a_fVal1, TFLOAT a_fVal2, TFLOAT a_fVal
 
 	DWORD iLeft   = TMath::Max( TMath::FloorToInt( transformed1.x ), 0 );
 	DWORD iRight  = TMath::Min( TMath::CeilToInt( transformed2.x ), TINT( pDisplayParams->uiWidth ) );
-	DWORD iTop    = TMath::Max( TMath::FloorToInt( transformed2.y ), 0 );
+	DWORD iTop    = TMath::Max( TMath::CeilToInt( transformed2.y ), 0 );
 	DWORD iBottom = TMath::Min( TMath::FloorToInt( transformed1.y ), TINT( pDisplayParams->uiHeight ) );
 
 	D3DVIEWPORT8 viewport = {
@@ -587,12 +590,37 @@ void AGUI2RendererDX8::RenderRectangle( const Toshi::TVector2& a, const Toshi::T
 }
 
 // $Barnyard: FUNCTION 0064fb90
+// $BarnyardWiiJP: FUNCTION 8040d8c0
 void AGUI2RendererDX8::RenderTriStrip( Toshi::TVector2* vertices, Toshi::TVector2* UV, uint32_t numverts )
 {
 	if ( m_bIsTransformDirty )
 	{
 		UpdateTransform();
 	}
+
+#ifdef BARNYARD_LATEST
+	// The Wii version also draws strips without UVs (the XUI figure strokes), which can have more vertices
+	if ( !UV || numverts > MAX_VERTICES )
+	{
+		TASSERT( numverts <= MAX_LARGE_VERTICES );
+		numverts = TMath::Min( numverts, MAX_LARGE_VERTICES );
+
+		for ( TUINT32 i = 0; i < numverts; i++ )
+		{
+			sm_aLargeVertices[ i ].Position = { vertices[ i ].x, vertices[ i ].y, sm_fZCoordinate };
+			sm_aLargeVertices[ i ].Colour   = m_uiColour;
+			sm_aLargeVertices[ i ].UV       = UV ? TVector2( UV[ i ].x, UV[ i ].y ) : TVector2( 0.0f, 0.0f );
+		}
+
+		if ( numverts >= 3 )
+		{
+			auto pRender = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
+			pRender->GetDirect3DDevice()->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, numverts - 2, sm_aLargeVertices, sizeof( Vertex ) );
+		}
+
+		return;
+	}
+#endif
 
 	for ( TUINT32 i = 0; i < numverts; i++ )
 	{
@@ -605,6 +633,7 @@ void AGUI2RendererDX8::RenderTriStrip( Toshi::TVector2* vertices, Toshi::TVector
 	pRender->GetDirect3DDevice()->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, numverts - 2, sm_Vertices, sizeof( Vertex ) );
 }
 
+// $Barnyard: FUNCTION 0064fdf0
 void AGUI2RendererDX8::RenderLine( const Toshi::TVector2& a, const Toshi::TVector2& b )
 {
 	auto pMaterial = m_pMaterial;
@@ -629,6 +658,7 @@ void AGUI2RendererDX8::RenderLine( const Toshi::TVector2& a, const Toshi::TVecto
 	SetMaterial( pMaterial );
 }
 
+// $Barnyard: FUNCTION 0064fd30
 void AGUI2RendererDX8::RenderLine( TFLOAT x1, TFLOAT y1, TFLOAT x2, TFLOAT y2 )
 {
 	auto pMaterial = m_pMaterial;
@@ -782,6 +812,36 @@ void AGUI2RendererDX8::SetupProjectionMatrix( TMatrix44& a_rOutMatrix, TINT a_iL
 		2.0f / ( a_iRight - a_iLeft ), 0.0f, 0.0f, 0.0f,
 		0.0f, 2.0f / ( a_iBottom - a_iTop ), 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
-		( ( pDisplayParams->uiWidth - a_iLeft ) - a_iRight ) / (TFLOAT)( a_iRight - a_iLeft ), ( ( pDisplayParams->uiHeight - a_iTop ) - a_iBottom ) / (TFLOAT)( a_iTop - a_iBottom ), 0.0f, 1.0f
+		( ( TINT( pDisplayParams->uiWidth ) - a_iLeft ) - a_iRight ) / (TFLOAT)( a_iRight - a_iLeft ), ( ( TINT( pDisplayParams->uiHeight ) - a_iTop ) - a_iBottom ) / (TFLOAT)( a_iTop - a_iBottom ), 0.0f, 1.0f
 	};
 }
+
+#ifdef BARNYARD_LATEST
+
+// $BarnyardWiiJP: FUNCTION 8040dd34
+void AGUI2RendererDX8::RenderIndexedTriList( Toshi::TVector2* a_pVertices, Toshi::TVector2* a_pUVs, TINT* a_pIndices, TUINT32 a_uiNumIndices, TUINT32 a_uiNumVertices, TFLOAT a_fScaleX, TFLOAT a_fScaleY )
+{
+	if ( m_bIsTransformDirty )
+		UpdateTransform();
+
+	// NOTE: the Wii version sends every indexed vertex to the GPU (GX_TRIANGLES); DX8 draws them from a buffer
+	TASSERT( a_uiNumIndices <= MAX_LARGE_VERTICES );
+	TUINT32 uiNumIndices = TMath::Min( a_uiNumIndices, MAX_LARGE_VERTICES );
+
+	for ( TUINT32 i = 0; i < uiNumIndices; i++ )
+	{
+		TINT iIndex = a_pIndices[ i ];
+
+		sm_aLargeVertices[ i ].Position = { a_pVertices[ iIndex ].x * a_fScaleX, a_pVertices[ iIndex ].y * a_fScaleY, sm_fZCoordinate };
+		sm_aLargeVertices[ i ].Colour   = m_uiColour;
+		sm_aLargeVertices[ i ].UV       = a_pUVs ? TVector2( a_pUVs[ iIndex ].x, a_pUVs[ iIndex ].y ) : TVector2( 0.0f, 0.0f );
+	}
+
+	if ( uiNumIndices >= 3 )
+	{
+		auto pRender = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
+		pRender->GetDirect3DDevice()->DrawPrimitiveUP( D3DPT_TRIANGLELIST, uiNumIndices / 3, sm_aLargeVertices, sizeof( Vertex ) );
+	}
+}
+
+#endif // BARNYARD_LATEST

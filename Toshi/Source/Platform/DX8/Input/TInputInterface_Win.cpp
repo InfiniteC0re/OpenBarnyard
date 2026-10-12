@@ -2,7 +2,6 @@
 #include "TInputInterface_Win.h"
 #include "TInputDeviceController_Win.h"
 #include "TInputDeviceMouse_Win.h"
-#include "TInputDeviceController_XInput.h"
 #include "TInputDeviceKeyboard_Win.h"
 
 //-----------------------------------------------------------------------------
@@ -13,6 +12,7 @@
 
 TOSHI_NAMESPACE_START
 
+// NOTE: GetClass 006d7380, CreateObject 006d73b0, CreateObjectInPlace 006d73f0
 TDEFINE_CLASS( TInputDXInterface );
 
 // $Barnyard: FUNCTION 006d7770
@@ -91,195 +91,137 @@ BOOL TInputDXInterface::EnumerateDeviceCallback( LPCDIDEVICEINSTANCEA a_poDevice
 
 	switch ( GET_DIDEVICE_TYPE( a_poDeviceInstance->dwDevType ) )
 	{
-		case DI8DEVTYPE_KEYBOARD:
-		{
-			LPDIRECTINPUTDEVICE8A pInputDevice;
-			HRESULT               hRes = pInputInterface->m_poDirectInput8->CreateDevice( a_poDeviceInstance->guidInstance, &pInputDevice, NULL );
-
-			if ( hRes == DI_OK )
-			{
-				TInputDXDeviceKeyboard* pKeyboard = new TInputDXDeviceKeyboard();
-
-				if ( pKeyboard )
-				{
-					TBOOL bRes = pKeyboard->BindToDIDevice( pInputInterface->GetMainWindow(), a_poDeviceInstance, pInputDevice );
-
-					if ( bRes )
-					{
-						DIPROPDWORD oProperty;
-						oProperty.dwData            = 0x20;
-						oProperty.diph.dwSize       = sizeof( DIPROPDWORD );
-						oProperty.diph.dwHeaderSize = sizeof( DIPROPHEADER );
-						oProperty.diph.dwObj        = 0;
-						oProperty.diph.dwHow        = DIPH_DEVICE;
-
-						HRESULT hRes = pInputDevice->SetProperty( DIPROP_BUFFERSIZE, &oProperty.diph );
-
-						if ( FAILED( hRes ) )
-							return DIENUM_STOP;
-
-						hRes = pInputDevice->SetCooperativeLevel(
-						    pInputInterface->GetMainWindow(),
-						    pInputInterface->GetExclusiveMode() ? ( DISCL_NOWINKEY | DISCL_FOREGROUND | DISCL_EXCLUSIVE ) : ( DISCL_NONEXCLUSIVE | DISCL_BACKGROUND )
-						);
-
-						if ( hRes == DI_OK )
-						{
-							pKeyboard->Initialise();
-							pKeyboard->Acquire();
-							pInputInterface->AddDevice( pKeyboard );
-						}
-						else
-						{
-							delete pKeyboard;
-							return DIENUM_CONTINUE;
-						}
-					}
-				}
-			}
-			break;
-		}
 		case DI8DEVTYPE_MOUSE:
 		{
 			LPDIRECTINPUTDEVICE8A pInputDevice;
-			auto                  pMouse = pInputInterface->GetDeviceByIndex<TInputDXDeviceMouse>( 0 );
-			auto                  hRes   = pInput8->CreateDevice( GUID_SysMouse, &pInputDevice, NULL );
+			auto                  pMouse      = pInputInterface->GetDeviceByIndex<TInputDXDeviceMouse>( 0 );
+			TBOOL                 bIsNewMouse = TFALSE;
 
-			TBOOL bIsNewMouse = TFALSE;
+			if ( pInput8->CreateDevice( GUID_SysMouse, &pInputDevice, NULL ) != DI_OK )
+				return DIENUM_CONTINUE;
 
-			if ( hRes == DI_OK )
+			if ( pMouse == TNULL )
 			{
-				if ( pMouse == TNULL )
-				{
-					pMouse      = new TInputDXDeviceMouse;
-					bIsNewMouse = TTRUE;
+				pMouse = new TInputDXDeviceMouse;
 
-					if ( pMouse == TNULL )
-					{
-						pInputDevice->Release();
-						return DIENUM_CONTINUE;
-					}
-				}
-				else if ( pMouse->GetDeviceInstance().dwDevType & DIDEVTYPE_HID )
+				if ( pMouse == TNULL )
 				{
 					pInputDevice->Release();
 					return DIENUM_CONTINUE;
 				}
 
-				if ( !pMouse->BindToDIDevice( pInputInterface->m_hMainWindow, a_poDeviceInstance, pInputDevice, pInputInterface->m_bExclusive ) )
-				{
-					if ( !bIsNewMouse )
-					{
-						pInputInterface->RemoveDevice( pMouse );
-					}
-
-					delete pMouse;
-					return DIENUM_CONTINUE;
-				}
-
-				DIPROPDWORD oProperty;
-				oProperty.diph.dwSize       = sizeof( DIPROPDWORD );
-				oProperty.diph.dwHeaderSize = sizeof( DIPROPHEADER );
-				oProperty.diph.dwObj        = 0;
-				oProperty.diph.dwHow        = DIPH_DEVICE;
-				oProperty.dwData            = 0x20;
-				hRes                        = pInputDevice->SetProperty( DIPROP_BUFFERSIZE, &oProperty.diph );
-
-				if ( FAILED( hRes ) )
-				{
-					return DIENUM_STOP;
-				}
-
-				if ( bIsNewMouse )
-				{
-					pMouse->Initialise();
-					pMouse->Acquire();
-					pInputInterface->AddDevice( pMouse );
-					return DIENUM_CONTINUE;
-				}
+				bIsNewMouse = TTRUE;
+			}
+			else if ( pMouse->GetDeviceInstance().dwDevType & DIDEVTYPE_HID )
+			{
+				pInputDevice->Release();
+				return DIENUM_CONTINUE;
 			}
 
-			break;
-			/*inputMouse = pInputInterface->GetDeviceByIndex<TInputDXDeviceMouse>();
+			if ( !pMouse->BindToDIDevice( pInputInterface->m_hMainWindow, a_poDeviceInstance, pInputDevice, pInputInterface->m_bExclusive ) )
+			{
+				if ( !bIsNewMouse )
+					pInputInterface->RemoveDevice( pMouse );
 
-			HRESULT hRes = pInputInterface->m_poDirectInput8->CreateDevice(GUID_SysMouse, &inputDevice, NULL);
+				delete pMouse;
+				return DIENUM_CONTINUE;
+			}
 
-			if (hRes != DI_OK)
+			DIPROPDWORD oProperty;
+			oProperty.diph.dwSize       = sizeof( DIPROPDWORD );
+			oProperty.diph.dwHeaderSize = sizeof( DIPROPHEADER );
+			oProperty.diph.dwObj        = 0;
+			oProperty.diph.dwHow        = DIPH_DEVICE;
+			oProperty.dwData            = 0x20;
+
+			if ( FAILED( pInputDevice->SetProperty( DIPROP_BUFFERSIZE, &oProperty.diph ) ) )
+				return DIENUM_STOP;
+
+			if ( bIsNewMouse == TTRUE )
+			{
+				pMouse->Initialise();
+				pMouse->Acquire();
+				pInputInterface->AddDevice( pMouse );
+			}
+
+			return DIENUM_CONTINUE;
+		}
+		case DI8DEVTYPE_KEYBOARD:
+		{
+			LPDIRECTINPUTDEVICE8A pInputDevice;
+
+			if ( pInput8->CreateDevice( a_poDeviceInstance->guidInstance, &pInputDevice, NULL ) != DI_OK )
 				return DIENUM_CONTINUE;
 
-			if (inputMouse == TNULL)
+			TInputDXDeviceKeyboard* pKeyboard = new TInputDXDeviceKeyboard();
+
+			if ( pKeyboard == TNULL )
 			{
-				inputMouse = new TInputDXDeviceMouse();
-				addMouse = TTRUE;
-				TBOOL bRes = inputMouse->BindToDIDevice(pInputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice, pInputInterface->m_bExclusive);
-
-				if (bRes)
-				{
-					DIPROPDWORD oProperty;
-					oProperty.diph.dwSize = sizeof(DIPROPDWORD);
-					oProperty.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-					oProperty.diph.dwObj = 0;
-					oProperty.diph.dwHow = DIPH_DEVICE;
-					oProperty.dwData = TInputDXDeviceMouse::sm_ciMouseBufferSize;
-
-					HRESULT hr = inputDevice->SetProperty(DIPROP_BUFFERSIZE, &oProperty.diph);
-
-					if (FAILED(hr))
-						return DIENUM_STOP;
-
-					if (addMouse)
-					{
-						inputMouse->Initialise();
-						inputMouse->Acquire();
-						pInputInterface->AddDevice(inputMouse);
-					}
-				}
-				if (!addMouse)
-				{
-					pInputInterface->RemoveDevice(inputMouse);
-				}
+				pInputDevice->Release();
+				return DIENUM_CONTINUE;
 			}
-			TIMPLEMENT();
-			break;*/
+
+			if ( !pKeyboard->BindToDIDevice( pInputInterface->GetMainWindow(), a_poDeviceInstance, pInputDevice ) )
+			{
+				delete pKeyboard;
+				return DIENUM_CONTINUE;
+			}
+
+			DIPROPDWORD oProperty;
+			oProperty.diph.dwSize       = sizeof( DIPROPDWORD );
+			oProperty.diph.dwHeaderSize = sizeof( DIPROPHEADER );
+			oProperty.diph.dwObj        = 0;
+			oProperty.diph.dwHow        = DIPH_DEVICE;
+			oProperty.dwData            = 0x20;
+
+			if ( FAILED( pInputDevice->SetProperty( DIPROP_BUFFERSIZE, &oProperty.diph ) ) )
+				return DIENUM_STOP;
+
+			HRESULT hRes = pInputDevice->SetCooperativeLevel(
+			    pInputInterface->GetMainWindow(),
+			    pInputInterface->GetExclusiveMode() == TTRUE ? ( DISCL_NOWINKEY | DISCL_FOREGROUND | DISCL_EXCLUSIVE ) : ( DISCL_NOWINKEY | DISCL_FOREGROUND | DISCL_NONEXCLUSIVE )
+			);
+
+			if ( hRes != DI_OK )
+			{
+				delete pKeyboard;
+				return DIENUM_CONTINUE;
+			}
+
+			pKeyboard->Initialise();
+			pKeyboard->Acquire();
+			pInputInterface->AddDevice( pKeyboard );
+
+			return DIENUM_CONTINUE;
 		}
-		//case DI8DEVTYPE_JOYSTICK:
-		//case DI8DEVTYPE_GAMEPAD:
-		//case DI8DEVTYPE_1STPERSON:
-		//{
-		//	TIMPLEMENT();
+		case DI8DEVTYPE_JOYSTICK:
+		case DI8DEVTYPE_GAMEPAD:
+		{
+			LPDIRECTINPUTDEVICE8A pInputDevice;
 
-		//	TCHAR fmtStr[37];
-		//	Toshi::T2String8::Format(fmtStr, "%08lX-%04hX-%04hX-%02hhX%02hhX-%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX",
-		//		a_poDeviceInstance->guidProduct.Data1, a_poDeviceInstance->guidProduct.Data2,
-		//		a_poDeviceInstance->guidProduct.Data3, a_poDeviceInstance->guidProduct.Data4[0],
-		//		a_poDeviceInstance->guidProduct.Data4[1], a_poDeviceInstance->guidProduct.Data4[2],
-		//		a_poDeviceInstance->guidProduct.Data4[3], a_poDeviceInstance->guidProduct.Data4[4],
-		//		a_poDeviceInstance->guidProduct.Data4[5], a_poDeviceInstance->guidProduct.Data4[6],
-		//		a_poDeviceInstance->guidProduct.Data4[7]);
+			if ( pInput8->CreateDevice( a_poDeviceInstance->guidInstance, &pInputDevice, NULL ) != DI_OK )
+				return DIENUM_CONTINUE;
 
-		//	if (!TInputDXDeviceController::IsDirectInputController(a_poDeviceInstance))
-		//	{
-		//		TUtil::Log("Added XInput Controller: \'%s\' (%s) - NON-PSX", a_poDeviceInstance->tszProductName, fmtStr);
-		//		return DIENUM_CONTINUE;
-		//	}
+			TInputDXDeviceController* pController = new TInputDXDeviceController();
 
-		//	TUtil::Log("Added Direct Input Controller: \'%s\' (%s) - NON-PSX", a_poDeviceInstance->tszProductName, fmtStr);
+			if ( pController == TNULL )
+			{
+				pInputDevice->Release();
+				return DIENUM_CONTINUE;
+			}
 
-		//	inputController = pInputInterface->GetDeviceByIndex<TInputDXDeviceController>();
-		//	HRESULT hRes = pInputInterface->m_poDirectInput8->CreateDevice(a_poDeviceInstance->guidInstance, &inputDevice, NULL);
+			if ( !pController->BindToDIDevice( pInputInterface->m_hMainWindow, a_poDeviceInstance, pInputDevice ) )
+			{
+				delete pController;
+				return DIENUM_CONTINUE;
+			}
 
-		//	if (hRes != DI_OK)
-		//		return DIENUM_CONTINUE;
+			pController->Initialise();
+			pInputInterface->AddDevice( pController );
+			pController->Acquire();
 
-		//	if (inputController == TNULL)
-		//	{
-		//		// new DXController
-		//		//inputController = new TInputDXDeviceController();
-		//		//inputController->BindToDIDevice(pInputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice);
-		//	}
-
-		//	break;
-		//}
+			return DIENUM_CONTINUE;
+		}
 		default:
 			break;
 	}

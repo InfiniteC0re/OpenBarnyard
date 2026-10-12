@@ -14,6 +14,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 0059de70, CreateObject 0059e3c0, CreateObjectInPlace 0059e420
 TDEFINE_CLASS( AGUISystem );
 
 TPSTRING8_DECLARE( Start );
@@ -28,6 +29,13 @@ AGUISystem::AGUISystem()
 	m_pStrings      = new Toshi::TPString8[ 2 ];
 	m_pStrings[ 0 ] = TPS8( ParkManager );
 	m_pStrings[ 1 ] = TPS8( Start );
+}
+
+// $Barnyard: FUNCTION 0059e460
+// $Barnyard: FUNCTION 0059e1d0
+AGUISystem::~AGUISystem()
+{
+	delete[] m_pStrings;
 }
 
 // $Barnyard: FUNCTION 0059df20

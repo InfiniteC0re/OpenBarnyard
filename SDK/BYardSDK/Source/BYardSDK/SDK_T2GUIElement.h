@@ -115,24 +115,35 @@ public:
 
 	static SDK_T2GUIElement* CreateFromEngine();
 
+	using FLAGS = TUINT32;
+	enum FLAGS_ : FLAGS
+	{
+		FLAGS_NONE                   = 0,
+		FLAGS_VISIBLE                = BITFLAG( 0 ),
+		FLAGS_FOCUSED                = BITFLAG( 1 ),
+		FLAGS_XUIELEMENT             = BITFLAG( 2 ),
+		FLAGS_RENDER_BEFORE_CHILDREN = BITFLAG( 3 ),
+		FLAGS_INFRONT                = BITFLAG( 4 ),
+	};
+
 	void Show()
 	{
-		m_eFlags |= 1;
+		m_eFlags |= FLAGS_VISIBLE;
 	}
 
 	void Hide()
 	{
-		m_eFlags &= ~1;
+		m_eFlags &= ~FLAGS_VISIBLE;
 	}
 
 	void SetInFront()
 	{
-		m_eFlags |= 16;
+		m_eFlags |= FLAGS_INFRONT;
 	}
 
 	void IsInFront()
 	{
-		m_eFlags |= 8;
+		m_eFlags |= FLAGS_RENDER_BEFORE_CHILDREN;
 	}
 
 	TBOOL HasFlags( UINT32 a_uiFlags ) const
@@ -142,22 +153,22 @@ public:
 
 	TBOOL IsVisible() const
 	{
-		return m_eFlags & 1;
+		return m_eFlags & FLAGS_VISIBLE;
 	}
 
 	TBOOL IsFocused() const
 	{
-		return m_eFlags & 2;
+		return m_eFlags & FLAGS_FOCUSED;
 	}
 
 	TBOOL ShouldRenderBeforeChildren()
 	{
-		return m_eFlags & 8;
+		return m_eFlags & FLAGS_RENDER_BEFORE_CHILDREN;
 	}
 
 	TBOOL ShoudResetZCoordinate() const
 	{
-		return m_eFlags & 16;
+		return m_eFlags & FLAGS_INFRONT;
 	}
 
 	void AddChildTail( SDK_T2GUIElement& a_rElement )
@@ -211,15 +222,15 @@ public:
 	inline static TUINT32* s_uiVisibilityMask = (TUINT32*)0x0077cf90;
 
 protected:
-	SDK_T2GUIElement*    m_pParent;
-	Toshi::T2GUITransform   m_oTransform;
-	SDK_T2GUIElementNode m_Children;
-	Anchor           m_eAnchor;
-	Pivot            m_ePivot;
-	TFLOAT           m_fWidth;
-	TFLOAT           m_fHeight;
-	TUINT32          m_uiColour;
-	TUINT32          m_eFlags;
-	t_PostRender     m_cbPostRender;
-	TUINT32          m_uiVisibilityMask;
+	SDK_T2GUIElement*     m_pParent;
+	Toshi::T2GUITransform m_oTransform;
+	SDK_T2GUIElementNode  m_Children;
+	Anchor                m_eAnchor;
+	Pivot                 m_ePivot;
+	TFLOAT                m_fWidth;
+	TFLOAT                m_fHeight;
+	TUINT32               m_uiColour;
+	FLAGS                 m_eFlags;
+	t_PostRender          m_cbPostRender;
+	TUINT32               m_uiVisibilityMask;
 };

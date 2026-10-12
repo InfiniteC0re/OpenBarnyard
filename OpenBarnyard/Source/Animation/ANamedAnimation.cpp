@@ -81,6 +81,21 @@ TBOOL ANamedAnimationTransition::IsManaged() const
 	return m_bManaged;
 }
 
+// $Barnyard: FUNCTION 00581c20
+ANamedAnimationTransition::ANamedAnimationTransition( const ANamedAnimationTransition& a_rcOther )
+    : m_strTransitionName( a_rcOther.m_strTransitionName )
+    , m_fBlendOutTime( a_rcOther.m_fBlendOutTime )
+    , m_fBlendInTime( a_rcOther.m_fBlendInTime )
+    , m_strAnimationName( a_rcOther.m_strAnimationName )
+    , m_bAutoTransition( a_rcOther.m_bAutoTransition )
+    , m_bManaged( a_rcOther.m_bManaged )
+{
+}
+
+// Implicit T2Pair<TPString8, ANamedAnimationTransition> members of m_mapTransitions (destructor, copy constructor):
+// $Barnyard: FUNCTION 00581bc0
+// $Barnyard: FUNCTION 00581ce0
+
 // $Barnyard: FUNCTION 00581d90
 ANamedAnimationTransitionSet::ANamedAnimationTransitionSet( ANamedAnimation* a_pNamedAnimation, T2Allocator* a_pAllocator )
     : m_pAnimation( a_pNamedAnimation )
@@ -117,8 +132,8 @@ void ANamedAnimationTransitionSet::AddTransition( ANamedAnimation* a_pAnimation,
 // $Barnyard: FUNCTION 00581ad0
 ANamedAnimationTransition* ANamedAnimationTransitionSet::FindTransition( const TPString8& a_strName )
 {
-	auto it = m_mapTransitions[ a_strName ];
-	return ( it == m_mapTransitions.End() ) ? TNULL : &it.GetValue()->second;
+	auto it = m_mapTransitions.Find( a_strName );
+	return m_mapTransitions.IsValid( it ) ? &it->GetSecond() : TNULL;
 }
 
 // $Barnyard: FUNCTION 00581b10
@@ -169,12 +184,31 @@ ANamedAnimation::FINISHTYPE ANamedAnimation::GetFinishType( const TPString8& a_r
 	return ( !a_rcFinishType.GetString8().IsEmpty() && a_rcFinishType == TPS8( EndOfAnim ) ) ? FINISHTYPE_AUTO : FINISHTYPE_MANUAL;
 }
 
-// $Barnyard: FUNCTION 00580150 TODO
-static AAnimationBreakpoint* CreateBreakpointRuntime( const PBProperties* a_pProperties, TBOOL a_bTimedCall )
-{
-	TIMPLEMENT();
+TPSTRING8_DECLARE( Type );
 
-	return TNULL;
+// $Barnyard: FUNCTION 00580150
+AAnimationBreakpoint* ANamedAnimation::CreateBreakpointRuntime( const PBProperties* a_pProperties, TBOOL a_bTimed )
+{
+	TPString8 strType;
+	a_pProperties->GetOptionalPropertyValue( strType, TPS8( Type ) );
+
+	// Breakpoint classes are named AAnimationBreakpoint<Type>
+	TString8 strClassName;
+	strClassName.Format( "AAnimationBreakpoint%s", strType.GetString8().GetString() );
+
+	const TClass* pClass = TClass::Find( strClassName, &TGetClass( AAnimationBreakpoint ) );
+
+	if ( !pClass )
+		return TNULL;
+
+	AAnimationBreakpoint* pBreakpoint = TSTATICCAST( AAnimationBreakpoint, pClass->CreateObject() );
+
+	if ( !a_bTimed )
+		pBreakpoint->SetUntimed();
+
+	pBreakpoint->Create( a_pProperties );
+
+	return pBreakpoint;
 }
 
 TPSTRING8_DECLARE( Model );
@@ -270,7 +304,9 @@ TBOOL ANamedAnimation::Create( const PBProperties* a_pProperties, TSkeleton* a_p
 	TASSERT( !m_strExportedName.IsEmpty() );
 
 	m_iSequenceId = a_pSkeleton->GetSequenceID( m_strExportedName, 0 );
-	TASSERT( m_iSequenceId != -1 );
+
+	// NOTE: some animation sets of the retail data reference sequences their skeleton doesn't have
+	// (e.g. 'bikeImpact', 'photo_op', 'Resting_Idle'), retail silently skips these animations
 
 	if ( m_iSequenceId != -1 )
 	{
@@ -315,7 +351,7 @@ TBOOL ANamedAnimation::Create( const PBProperties* a_pProperties, TSkeleton* a_p
 	}
 	else
 	{
-		TERROR( "Couldn't get '%s' (Exported Name: '%s') animation from an animation set!", m_strName.GetString(), m_strExportedName.GetString() );
+		TERROR( "Couldn't get '%s' (Exported Name: '%s') animation from an animation set!\n", m_strName.GetString(), m_strExportedName.GetString() );
 		return TFALSE;
 	}
 }
@@ -329,7 +365,7 @@ void ANamedAnimation::Reset()
 	m_strExportedName = TPS8( null );
 
 	m_eFlags &= ~FLAGS_LOOP;
-	m_eFlags &= ~FLAGS_NO_ANIM_REF;
+	m_eFlags |= FLAGS_NO_ANIM_REF;
 	m_fDefaultBlendOutTime = 0.3f;
 	m_fDefaultBlendInTime  = 0.3f;
 	m_fDefaultWeight       = 1.0f;
@@ -341,7 +377,7 @@ void ANamedAnimation::Reset()
 }
 
 // $Barnyard: FUNCTION 00580750
-void ANamedAnimation::AttachBreakpoint( AAnimationBreakpoint* a_pBreakpoint )
+void ANamedAnimation::AttachBreakpoint( AAnimationBreakpoint* a_pBreakpoint, TSkeleton* a_pSkeleton )
 {
 	m_vecBreakpoints.Push( a_pBreakpoint );
 }

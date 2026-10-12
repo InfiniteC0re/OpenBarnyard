@@ -25,6 +25,7 @@ TNativeFileSystem::TNativeFileSystem( const TCHAR* name )
 }
 
 // $Barnyard: FUNCTION 006be2c0
+// $Barnyard: FUNCTION 006dd6b0
 TNativeFileSystem::~TNativeFileSystem()
 {
 	UnmountFileSystem();
@@ -204,7 +205,6 @@ TNativeFile::~TNativeFile()
 // $Barnyard: FUNCTION 006dce20
 TBOOL TNativeFile::LoadBuffer( TUINT32 bufferPos )
 {
-	// FUN_00689ff0
 	DWORD lpNumberOfBytesRead;
 	TASSERT( m_RBuffer != TNULL, "m_RBuffer doesn't exist" );
 
@@ -530,37 +530,34 @@ TINT TNativeFile::PutWChar( TWCHAR a_wcCharacter )
 }
 
 // $Barnyard: FUNCTION 006dd1b0
-TINT TNativeFile::CPrintf( const TCHAR* a_szFormat, ... )
+TINT TNativeFile::VCPrintf( const TCHAR* a_szFormat, va_list a_vargs )
 {
-	va_list args;
-	va_start( args, a_szFormat );
-
 	TCHAR str[ 512 ];
 
-	TINT iResult = T2String8::FormatV( str, TARRAYSIZE( str ), a_szFormat, args );
+	TINT iResult = T2String8::FormatV( str, TARRAYSIZE( str ), a_szFormat, a_vargs );
 
-	va_end( args );
+	if ( iResult < 0 )
+		iResult = TARRAYSIZE( str );
 
-	Write( str, iResult );
-
-	return iResult;
+	return Write( str, iResult );
 }
 
 // $Barnyard: FUNCTION 006dd200
-TINT TNativeFile::WPrintf( const TWCHAR* a_wszFormat, ... )
+TINT TNativeFile::VWPrintf( const TWCHAR* a_wszFormat, va_list a_vargs )
 {
-	va_list args;
-	va_start( args, a_wszFormat );
-
 	TWCHAR str[ 512 ];
 
-	TINT iResult = T2String16::FormatV( str, TARRAYSIZE( str ), a_wszFormat, args );
+	TINT iResult = T2String16::FormatV( str, TARRAYSIZE( str ), a_wszFormat, a_vargs );
 
-	Write( str, iResult * sizeof( TWCHAR ) );
+	if ( iResult < 0 )
+		iResult = TARRAYSIZE( str );
 
-	va_end( args );
+	TINT iWritten = TINT( Write( str, iResult * sizeof( TWCHAR ) ) );
 
-	return iResult;
+	if ( iWritten >= 0 )
+		iWritten /= 2;
+
+	return iWritten;
 }
 
 // $Barnyard: FUNCTION 006dd080
@@ -614,6 +611,13 @@ TBOOL TNativeFile::Open( const TString8& a_FileName, TFILEMODE a_Mode )
 		TWARN( "WARNING: File created with no access mode, assuming WRITEONLY\n" );
 		dwDesiredAccess = GENERIC_WRITE;
 	}
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: retail opens every file exclusively (dwShareMode 0), so loading a data file silently fails
+	// while anything else has it open (another instance, a virus scanner...). Allow other readers for read-only opens.
+	if ( !( dwDesiredAccess & GENERIC_WRITE ) )
+		dwShareMode |= FILE_SHARE_READ;
+#endif // BARNYARD_COMMUNITY_PATCH
 
 	m_Handle = CreateFileA( a_FileName.GetString(), dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, NULL, NULL );
 

@@ -8,6 +8,10 @@ class ASysShaderHAL : public ASysShader
 public:
 	TDECLARE_CLASS( ASysShaderHAL, ASysShader );
 
+public:
+	ASysShaderHAL();
+	~ASysShaderHAL();
+
 	static constexpr TUINT NUM_ORDER_TABLES = 4;
 
 public:

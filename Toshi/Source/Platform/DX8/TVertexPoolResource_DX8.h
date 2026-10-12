@@ -17,6 +17,7 @@ public:
 
 public:
 	TVertexPoolResource();
+	~TVertexPoolResource();
 
 	virtual TBOOL Validate() override;
 	virtual void  Invalidate() override;

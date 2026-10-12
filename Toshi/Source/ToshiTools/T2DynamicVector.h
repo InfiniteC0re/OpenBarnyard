@@ -17,6 +17,7 @@ TOSHI_NAMESPACE_START
 class TOSHI_API T2GenericDynamicVector
 {
 protected:
+	// $Barnyard: FUNCTION 006cbce0
 	T2GenericDynamicVector( T2Allocator* a_pAllocator, TINT a_iInitialSize, TINT a_iGrowSize, TINT a_iElementSize )
 	{
 		m_pAllocator   = a_pAllocator;
@@ -26,6 +27,7 @@ protected:
 		m_poElements   = ( a_iInitialSize > 0 ) ? a_pAllocator->Malloc( a_iInitialSize * a_iElementSize ) : TNULL;
 	}
 
+	// $Barnyard: FUNCTION 006cbd20
 	T2GenericDynamicVector( void* a_poElements, TINT a_iInitialSize, TINT a_iNumElements )
 	{
 		m_pAllocator   = TNULL;
@@ -231,7 +233,9 @@ public:
 	    : T2GenericDynamicVector( a_poElements, a_iInitialSize, a_iNumElements )
 	{}
 
+	// T2DynamicVector<AMiniGame>: 00469fd0
 	// $Barnyard: FUNCTION 0059dce0
+	// $Barnyard: FUNCTION 00469fd0
 	~T2DynamicVector()
 	{
 		FreeMemory();
@@ -253,6 +257,7 @@ public:
 		return Iterator( a_itInsertAfter.Index() + 1, this );
 	}
 
+	// $Barnyard: FUNCTION 006ce330
 	void Clear()
 	{
 		for ( TINT i = 0; i < m_iNumElements; i++ )
@@ -289,6 +294,10 @@ public:
 		return TConstruct<T>( &AtUnsafe( m_iNumElements++ ), std::forward<Args>( args )... );
 	}
 
+	// T2DynamicVector<TPString8> (AGUISlideshow::m_Images) 0059db20
+	// $Barnyard: FUNCTION 0059db20
+	// Instantiations: T2DynamicVector<ACollisionHit> 00616580 (ACollisionManager)
+	// $Barnyard: FUNCTION 00616580
 	T& PushBack( const T& item = T() )
 	{
 		Grow( 1, sizeof( T ) );
@@ -307,6 +316,8 @@ public:
 		AtUnsafe( --m_iNumElements ).~T();
 	}
 
+	// Instantiations: T2DynamicVector<ASSeq*> 0062a0a0 (ASSeqController)
+	// $Barnyard: FUNCTION 0062a0a0
 	Iterator Find( const T& a_rcValue )
 	{
 		for ( auto it = Begin(); it != End(); it++ )
@@ -319,7 +330,11 @@ public:
 	}
 
 	// Erases element preserving order
-	void Erase( const Iterator& a_rIterator )
+	// T2DynamicVector<AInteractionManager::Candidates::Candidate> 005a22a0 (moves the elements with MemMove)
+	// Instantiations: T2DynamicVector<ASSeq*> 0062a110 (ASSeqController)
+	// $Barnyard: FUNCTION 005a22a0
+	// $Barnyard: FUNCTION 0062a110
+	Iterator Erase( const Iterator& a_rIterator )
 	{
 		TINT uiItemIndex = a_rIterator.Index();
 		TASSERT( uiItemIndex < m_iNumElements );
@@ -336,6 +351,7 @@ public:
 		}
 
 		m_iNumElements--;
+		return Iterator( uiItemIndex, this );
 	}
 
 	// Finds and erases element preserving order
@@ -383,6 +399,8 @@ public:
 		return Iterator( 0, this );
 	}
 
+	// NOTE: retail folds every instantiation (005d6a40, AGUISlideshow, ASSeqController, ASoundManager, AInteractionManager...)
+	// $Barnyard: FUNCTION 005d6a40
 	Iterator End()
 	{
 		return Iterator( m_iNumElements, this );
@@ -398,16 +416,37 @@ public:
 		return m_iNumElements;
 	}
 
+	// Destroys the elements in the [a_itFrom; a_itTo) range and moves the rest down
+	// Instances: T2DynamicVector<AInteractionManager::Candidates::Candidate> 005a2250 (trivial element dtor)
+	// $Barnyard: FUNCTION 005a2250
+	// $Barnyard: FUNCTION 006ce1e0
+	Iterator Erase( Iterator a_itFrom, Iterator a_itTo )
+	{
+		TINT iFrom = a_itFrom.Index();
+		TINT iTo   = a_itTo.Index();
+
+		for ( TINT i = iFrom; i < iTo; i++ )
+			AtUnsafe( i ).~T();
+
+		TUtil::MemMove( &AtUnsafe( iFrom ), &AtUnsafe( iTo ), sizeof( T ) * ( m_iNumElements - iTo ) );
+		m_iNumElements += iFrom - iTo;
+
+		return Iterator( iFrom, this );
+	}
+
+	// $Barnyard: FUNCTION 006ce280
 	template <class... Args>
 	void SetSize( TINT a_iNewSize, Args&&... args )
 	{
-		Reserve( a_iNewSize );
+		if ( a_iNewSize < m_iNumElements )
+			Erase( Iterator( a_iNewSize, this ), Iterator( m_iNumElements, this ) );
+		else if ( a_iNewSize > m_iAllocSize )
+			Reallocate( a_iNewSize, sizeof( T ) );
 
-		TINT iOldNumElements = m_iNumElements;
-		m_iNumElements       = a_iNewSize;
-
-		for ( TINT i = iOldNumElements; i < a_iNewSize; i++ )
+		for ( TINT i = m_iNumElements; i < a_iNewSize; i++ )
 			new ( &AtUnsafe( i ) ) T( std::forward<Args>( args )... );
+
+		m_iNumElements = a_iNewSize;
 	}
 
 	TINT Capacity() const
@@ -419,6 +458,9 @@ public:
 	{
 		return Size() == 0;
 	}
+
+	T*       Data() { return TREINTERPRETCAST( T*, m_poElements ); }
+	const T* Data() const { return TREINTERPRETCAST( const T*, m_poElements ); }
 
 	T& At( TINT a_iIndex )
 	{

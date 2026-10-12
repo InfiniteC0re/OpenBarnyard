@@ -24,6 +24,7 @@ TSystemDLLWin::TSystemDLLWin( const TSystemDLLWin& other )
 }
 
 // $Barnyard: FUNCTION 006daa00
+// $Barnyard: FUNCTION 006c7f30
 // $Barnyard: FUNCTION 006daa10
 TSystemDLLWin::~TSystemDLLWin()
 {

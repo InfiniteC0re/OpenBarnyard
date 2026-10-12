@@ -1,5 +1,6 @@
 #pragma once
 #include "THookedSingleton.h"
+#include "AGameTimeManager.h"
 
 #include <Math/TMatrix44.h>
 #include <Math/TPlane.h>
@@ -16,10 +17,10 @@ public:
 		~GlowObject() = default;
 
 		void Setup(
-			const Toshi::TMatrix44& a_rcTransform,
-			const Toshi::TRenderContext::VIEWPORTPARAMS& a_rcViewportParams,
-			const Toshi::TRenderContext::PROJECTIONPARAMS& a_rcProjectionParams,
-			Toshi::TRenderContext::CameraMode              a_eCameraMode
+		    const Toshi::TMatrix44&                        a_rcTransform,
+		    const Toshi::TRenderContext::VIEWPORTPARAMS&   a_rcViewportParams,
+		    const Toshi::TRenderContext::PROJECTIONPARAMS& a_rcProjectionParams,
+		    Toshi::TRenderContext::CameraMode              a_eCameraMode
 		)
 		{
 			m_oViewportParams   = a_rcViewportParams;
@@ -27,7 +28,7 @@ public:
 			m_eCameraMode       = a_eCameraMode;
 
 			Toshi::TMatrix44 oProjection;
-			Toshi::TFrustum oFrustum;
+			Toshi::TFrustum  oFrustum;
 
 			if ( a_eCameraMode == Toshi::TRenderContext::CameraMode_Orthographic )
 			{
@@ -77,7 +78,7 @@ public:
 	~AGlowViewport();
 
 	// Obtains IDs of glow objects that can see the sphere
-	void GetInfluencingLightIDs(const Toshi::TSphere& a_rcSphere, Toshi::TLightIDList& a_rLightIDs)
+	void GetInfluencingLightIDs( const Toshi::TSphere& a_rcSphere, Toshi::TLightIDList& a_rLightIDs )
 	{
 		a_rLightIDs.Reset();
 
@@ -86,7 +87,7 @@ public:
 		{
 			// Check if the object is enabled, visible and affects the sphere
 			if ( pGlowObject->IsEnabled() &&
-			     ( !pGlowObject->IsNightLight() || *(TINT*)( *(TCHAR**)( 0x00783d3c ) + 0x34 ) == 4 ) &&
+			     ( !pGlowObject->IsNightLight() || AGameTimeManager::GetSingleton()->GetCurrentDayPhase() == AGameTimeManager::DAYPHASE_NIGHT ) &&
 			     Toshi::TRenderContext::CullSphereToFrustumSimple( a_rcSphere, pGlowObject->m_oFrustum, 6 ) )
 			{
 				// The object is influencing the specified sphere

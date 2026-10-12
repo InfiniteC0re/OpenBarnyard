@@ -16,6 +16,15 @@ public:
 		Toshi::TVector3 vPosition;
 	};
 
+	using FLAGS = TUINT8;
+	enum FLAGS_ : FLAGS
+	{
+		FLAGS_NONE   = 0,
+		FLAGS_FROZEN = BITFLAG( 0 ), // Colour transitions don't advance
+		FLAGS_RENDER = BITFLAG( 1 ),
+		FLAGS_ROTATE = BITFLAG( 2 ),
+	};
+
 	using TEXTURE = TUINT;
 	enum TEXTURE_ : TEXTURE
 	{
@@ -33,6 +42,31 @@ public:
 	void Render2();
 	void SetSkyColors( TFLOAT a_fDuration, const Toshi::TMatrix44* a_pColorMatrix, const Toshi::TMatrix44* a_pLightMatrix, TFLOAT a_fTargetBlend, TINT a_iNewSkyIndex, TFLOAT a_fElapsed );
 	void SetDirty();
+
+	TBOOL Update( TFLOAT a_fDeltaTime );
+
+	// Loads the stars model (data\models\stars) from the startup library
+	void LoadStars();
+	void UnloadStars();
+
+	// $Barnyard: FUNCTION 0042c940
+	void SetStarsOpacity( TFLOAT a_fOpacity ) { m_fStarsOpacity = a_fOpacity; }
+
+	void SetRotationSpeed( TFLOAT a_fSpeed ) { m_fRotationSpeed = a_fSpeed; }
+	void SetSunDirection( const Toshi::TVector4& a_rcDirection ) { m_vSunDirection = a_rcDirection; }
+	void SetSunMin( TFLOAT a_fSunMin ) { m_fSunMin = a_fSunMin; }
+	void SetSunMax( TFLOAT a_fSunMax ) { m_fSunMax = a_fSunMax; }
+
+	void SetTint( const Toshi::TVector4& a_rcTint )
+	{
+		m_fTintR = a_rcTint.x;
+		m_fTintG = a_rcTint.y;
+		m_fTintB = a_rcTint.z;
+		m_fTintA = a_rcTint.w;
+	}
+
+	FLAGS GetFlags() const { return m_eFlags; }
+	void  SetFlags( FLAGS a_eFlags ) { m_eFlags = a_eFlags; }
 
 private:
 	void GenerateDomeVertices( TFLOAT a_fRadius, TFLOAT a_fHeight );
@@ -72,17 +106,17 @@ private:
 	TFLOAT            m_fTransitionElapsed;
 	TBOOL             m_bIsDay;
 	TBOOL             m_bNeedsUpdate;
-	TFLOAT            m_fUnk15c;
-	TFLOAT            m_fUnk160;
-	TFLOAT            m_fUnk164;
-	TFLOAT            m_fUnk168;
+	TFLOAT            m_fTintR;
+	TFLOAT            m_fTintG;
+	TFLOAT            m_fTintB;
+	TFLOAT            m_fTintA;
 	TFLOAT            m_fStarsOpacity;
 	TFLOAT            m_fRotation;
-	TUINT             m_uiUnk174;
-	TFLOAT            m_fUnk178;
+	TFLOAT            m_fRotation2;
+	TFLOAT            m_fRotationSpeed;
 	Toshi::TVector4   m_vSunDirection;
 	TFLOAT            m_fSunMin;
 	TFLOAT            m_fSunMax;
 	AModelInstance*   m_pStarsInstance;
-	TUINT8            m_eFlags;
+	FLAGS             m_eFlags;
 };

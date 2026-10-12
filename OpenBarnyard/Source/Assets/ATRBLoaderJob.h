@@ -6,6 +6,9 @@
 class ATRBLoaderJob : public AMainThreadJob
 {
 public:
+	ATRBLoaderJob();
+	~ATRBLoaderJob();
+
 	virtual void  BeginJob() override;
 	virtual TBOOL RunJob() override;
 

@@ -21,6 +21,15 @@ public:
 
 	friend TMSWindow;
 
+	using CLEARFLAGS = TUINT8;
+	enum CLEARFLAGS_ : CLEARFLAGS
+	{
+		CLEARFLAGS_NONE    = 0,
+		CLEARFLAGS_TARGET  = BITFLAG( 0 ),
+		CLEARFLAGS_DEPTH   = BITFLAG( 1 ),
+		CLEARFLAGS_STENCIL = BITFLAG( 2 ),
+	};
+
 	using t_DeviceLostCallback  = TBOOL ( * )();
 	using t_DeviceFoundCallback = TBOOL ( * )();
 
@@ -97,7 +106,7 @@ public:
 	 * @param param_6 Fifth parameter
 	 * @param param_7 Sixth parameter
 	 */
-	virtual void RenderIndexPrimitive( TINT param_2, TINT param_3, TINT param_4, TINT param_5, TINT param_6, TINT param_7 ) OVERRIDE;
+	virtual void RenderIndexPrimitive( TINT a_ePrimitiveType, TINT a_iNumVertices, TINT a_iNumPrimitives, TINT a_pIndices, TINT a_pVertices, TINT a_iVertexStride ) OVERRIDE;
 
 	/**
 	 * Gets the pixel aspect ratio
@@ -122,7 +131,7 @@ public:
 	 * @param a_eTextureFormat The texture format to check
 	 * @return True if supported, false otherwise
 	 */
-	virtual TBOOL IsTextureFormatSupported( TINT a_eTextureFormat ) OVERRIDE;
+	virtual TBOOL IsTextureFormatSupported( TTEXTURERESOURCEFORMAT a_eTextureFormat ) OVERRIDE;
 
 	/**
 	 * Checks if 32-bit textures are supported
@@ -324,11 +333,12 @@ public:
 	void GetCurrentColourRamp();
 
 	/**
-	 * Initializes debug text
-	 * @param a_iBufferSize Size of the buffer
+	 * Creates the debug text (Arial 10, bold) of a_pRenderer
+	 * @param a_pRenderer The renderer
+	 * @param a_iBufferSize Size of the text buffer, 0 for the default (5120 bytes)
 	 * @return Pointer to the initialized debug text
 	 */
-	TDebugD3DText* InitDebugText( TINT a_iBufferSize );
+	static TDebugD3DText* InitDebugText( TRenderD3DInterface* a_pRenderer, TINT a_iBufferSize );
 
 	/**
 	 * Sets default device states
@@ -356,7 +366,7 @@ public:
 	 * @param a_fZ Z value
 	 * @param a_uiStencil Stencil value
 	 */
-	void ClearRegion( TINT a_iX, TINT a_iY, TINT a_iWidth, TINT a_iHeight, TUINT8 a_eClearFlags, TUINT8 a_uiColorR, TUINT8 a_uiColorG, TUINT8 a_uiColorB, TFLOAT a_fZ, TUINT a_uiStencil );
+	void ClearRegion( TINT a_iX, TINT a_iY, TINT a_iWidth, TINT a_iHeight, CLEARFLAGS a_eClearFlags, TUINT8 a_uiColorR, TUINT8 a_uiColorG, TUINT8 a_uiColorB, TFLOAT a_fZ, TUINT a_uiStencil );
 
 	// $Barnyard: FUNCTION 006c59f0
 	/**
@@ -393,6 +403,9 @@ public:
 	 * @return Pointer to the Direct3D device
 	 */
 	TFORCEINLINE IDirect3DDevice8* GetDirect3DDevice() const { return m_pDirectDevice; }
+
+	// TTRUE while the device is lost
+	TFORCEINLINE TBOOL IsDeviceLost() const { return m_bFailed; }
 
 	void SetDeviceFoundCallback( t_DeviceFoundCallback a_fnOnDeviceFoundCallback ) { m_fnOnDeviceFoundCallback = a_fnOnDeviceFoundCallback; }
 	void SetDeviceLostCallback( t_DeviceLostCallback a_fnOnDeviceLostCallback ) { m_fnOnDeviceLostCallback = a_fnOnDeviceLostCallback; }

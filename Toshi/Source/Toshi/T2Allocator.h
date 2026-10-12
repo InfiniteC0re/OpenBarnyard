@@ -6,15 +6,21 @@ TOSHI_NAMESPACE_START
 class TOSHI_API T2Allocator
 {
 public:
-	virtual void*  Malloc( size_t size, size_t alignment )    = 0;
-	virtual void*  Malloc( size_t size )                      = 0;
+	// NOTE: MSVC puts overloaded virtuals into the vtable in reverse declaration order. Retail has
+	// Malloc( size, alignment ) at +0x00, Malloc( size ) at +0x04 (same for TryMalloc at +0x10/+0x14).
+	virtual void*  Malloc( size_t size )                      = 0; // +0x04
+	virtual void*  Malloc( size_t size, size_t alignment )    = 0; // +0x00
 	virtual void   Free( void* ptr )                          = 0;
 	virtual TBOOL  CanAllocate( size_t size ) const           = 0;
-	virtual void*  TryMalloc( size_t size, size_t alignment ) = 0;
 	virtual void*  TryMalloc( size_t size )                   = 0;
+	virtual void*  TryMalloc( size_t size, size_t alignment ) = 0;
 	virtual size_t GetUsedSize() const                        = 0;
 	virtual size_t GetCapacity() const                        = 0;
 
+	// NOTE: retail calls Malloc( sizeof( T ) ) without the alignment
+	// $Barnyard: FUNCTION 006bc0d0
+	// New<T2RedBlackTreeNode<T2Pair<TPString8, AInteriorNetwork::LookupList>>> (retail takes the value by copy): 00554550
+	// $Barnyard: FUNCTION 00554550
 	template <class T, class... Args>
 	T* New( Args&&... args )
 	{
@@ -34,12 +40,12 @@ public:
 class TOSHI_API T2GlobalAllocator : public T2Allocator
 {
 public:
-	virtual void*  Malloc( size_t size, size_t alignment ) override;
 	virtual void*  Malloc( size_t size ) override;
+	virtual void*  Malloc( size_t size, size_t alignment ) override;
 	virtual void   Free( void* ptr ) override;
 	virtual TBOOL  CanAllocate( size_t size ) const override;
-	virtual void*  TryMalloc( size_t size, size_t alignment ) override;
 	virtual void*  TryMalloc( size_t size ) override;
+	virtual void*  TryMalloc( size_t size, size_t alignment ) override;
 	virtual size_t GetUsedSize() const override;
 	virtual size_t GetCapacity() const override;
 };

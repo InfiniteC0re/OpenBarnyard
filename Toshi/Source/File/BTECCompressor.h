@@ -13,22 +13,22 @@ public:
 	public:
 		Node() = default;
 		/*{
-                m_Ptr1 = this;
-                m_Ptr2 = this;
+                m_pNext = this;
+                m_pPrev = this;
             }*/
 
 		void Reset()
 		{
-			m_Ptr1 = this;
-			m_Ptr2 = this;
+			m_pNext = this;
+			m_pPrev = this;
 		}
 
 	private:
-		Node*  m_Ptr1;
-		Node*  m_Ptr2;
-		Node*  m_Unk1;
-		Node*  m_Unk2;
-		TBYTE* m_Unk3;
+		Node*  m_pNext;
+		Node*  m_pPrev;
+		Node*  m_pHashNext;
+		Node*  m_pHashPrev;
+		TBYTE* m_pData;
 		void*  m_Unk4;
 	};
 
@@ -39,11 +39,11 @@ public:
 	~BTECCompressor();
 
 	void  Initialize( TBYTE* buffer, size_t bufferSize, TINT maxoffset, TINT unk );
-	void  FUN_0068ae40( size_t dataSize );
-	TBOOL FUN_0068af10( TBYTE* buffer, size_t bufferSize, TBYTE*& offset, size_t& dataSize );
+	void  AdvanceWindow( size_t dataSize );
+	TBOOL FindMatch( TBYTE* buffer, size_t bufferSize, TBYTE*& offset, size_t& dataSize );
 	void  AllocSubstring( TBYTE* buffer );
 
-	static TBOOL FUN_0068b300( TBYTE* buffer, Bucket nodeBucket, size_t bufferSize, Node*& out1, Node*& out2 );
+	static TBOOL FindNodeInBucket( TBYTE* buffer, Bucket nodeBucket, size_t bufferSize, Node*& out1, Node*& out2 );
 
 	static TUINT32 HashData( TBYTE* data, size_t size )
 	{
@@ -64,7 +64,7 @@ private:
 	TBYTE*  m_DataEnd;
 	TBYTE*  m_Buffer2;
 	TBYTE*  m_Buffer3;
-	Node*   m_SomeArray1;
+	Node*   m_pNodes;
 	Node    m_Root1;
 	Node    m_Root2;
 	TBYTE*  m_Offsets[ 256 ];

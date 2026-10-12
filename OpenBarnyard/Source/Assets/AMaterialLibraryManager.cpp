@@ -17,6 +17,9 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: CreateObject 00613e40 and CreateObjectInPlace 00613ea0 of the TClass
+// $Barnyard: FUNCTION 00613e40
+// $Barnyard: FUNCTION 00613ea0
 TDEFINE_CLASS( AMaterialLibraryManager );
 
 // $Barnyard: FUNCTION 00613c10
@@ -35,6 +38,22 @@ AMaterialLibraryManager::AMaterialLibraryManager()
 	}
 }
 
+// $Barnyard: FUNCTION 006146f0
+// $Barnyard: FUNCTION 006147d0
+AMaterialLibraryManager::~AMaterialLibraryManager()
+{
+	DestroyAllLibraries( TFALSE );
+
+	if ( List::IsSingletonCreated() )
+		List::DestroySingleton();
+
+	m_FreeTextures.Clear();
+	m_iNumFreeTextures = 0;
+	m_FreeTextures.Clear();
+	m_UsedTextures.Clear();
+}
+
+// $Barnyard: FUNCTION 00613ee0
 void AMaterialLibraryManager::LoadLibrariesFromProperties( const PBPropertyValue* a_pProperty, TTRB* a_pTRB, TBOOL a_bUpdateGUIMaterials )
 {
 	if ( a_pProperty )
@@ -212,6 +231,29 @@ void AMaterialLibraryManager::DestroyLibrary( LibrariesMap::Iterator& a_rcMateri
 
 	pMaterialLibrary->Destroy();
 	m_LoadedLibraries.Remove( a_rcMaterialLibraryNode );
+
+	TRenderInterface::GetSingleton()->FlushDyingResources();
+	TRenderInterface::GetSingleton()->FlushDyingResources();
+
+	if ( a_bUpdateGUIMaterials && g_pGUISystem )
+	{
+		T2GUITextureSectionManager::UpdateMaterials();
+	}
+}
+
+// $Barnyard: FUNCTION 00614650
+void AMaterialLibraryManager::DestroyAllLibraries( TBOOL a_bUpdateGUIMaterials )
+{
+	for ( auto it = m_LoadedLibraries.Begin(); it != m_LoadedLibraries.End(); )
+	{
+		auto itLibrary = it;
+		it             = it.Next();
+
+		DestroyLibrary( itLibrary, TFALSE );
+	}
+
+	m_LoadedLibraries.Clear();
+	m_NumRefLibraries.Clear();
 
 	TRenderInterface::GetSingleton()->FlushDyingResources();
 	TRenderInterface::GetSingleton()->FlushDyingResources();

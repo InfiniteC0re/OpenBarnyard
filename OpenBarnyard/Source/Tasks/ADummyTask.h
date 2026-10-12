@@ -8,7 +8,16 @@ public:
 	TDECLARE_CLASS( ADummyTask, Toshi::TTask );
 
 public:
-	ADummyTask() = default;
+	// $Barnyard: FUNCTION 00404030
+	ADummyTask() {}
+
+	// $Barnyard: FUNCTION 00404430
+	// $Barnyard: FUNCTION 00404410
+	~ADummyTask() {}
+
+	virtual TBOOL OnCreate() override { return TTRUE; } // +0x18, RETURNS_TRUE 0046cde0
+	// $Barnyard: FUNCTION 00404080
+	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) override { return TTRUE; } // +0x1C, jumps to RETURNS_TRUE 00413920
 
 	void SetName( const TCHAR* a_szName )
 	{

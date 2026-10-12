@@ -7,10 +7,12 @@ public:
 	friend class AAssetStreaming;
 
 public:
-	virtual ~AMainThreadJob() = default;
-	virtual void  BeginJob()  = 0;
-	virtual TBOOL RunJob()    = 0;
-	virtual TBOOL CancelJob() { return TFALSE; }
+	// $Barnyard: FUNCTION 00401290
+	// $Barnyard: FUNCTION 004012a0
+	virtual ~AMainThreadJob() {}                 // +0x00
+	virtual void  BeginJob() = 0;                // +0x04
+	virtual TBOOL RunJob()   = 0;                // +0x08
+	virtual TBOOL CancelJob() { return TFALSE; } // +0x0C, RETURNS_FALSE 00660960
 
 	TBOOL IsFinished() const { return m_bIsFinished; }
 

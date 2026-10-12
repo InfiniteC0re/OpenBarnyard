@@ -26,9 +26,23 @@ public:
 		Clear();
 	}
 
+	// NOTE: retail erases the range [Begin(), End()) of the tree, which deletes every node as well
+	// ANamedAnimationTransitionSet map (T2Map<TPString8, ANamedAnimationTransition>) 00582110
+	// $Barnyard: FUNCTION 00582110
+	// AInputMap (T2Map<Doodad, CommandBinding>) 00596b70, AInputMapManager maps (<Doodad, TPString8> and <AInputCommand, Command>) 0059adc0
+	// $Barnyard: FUNCTION 00596b70
+	// $Barnyard: FUNCTION 0059adc0
+	// Instantiations: T2Map<TPString8, TINT/TSIZE> 005a5c00 (AInteractionManager, ASoundManager), T2Map<TPString8, TUINT> 005d1e70 (AUnitFlagSetsManager)
+	// $Barnyard: FUNCTION 005a5c00
+	// $Barnyard: FUNCTION 005d1e70
+	// Instantiations: T2Map<TPString8, ...> 00607270 (AKeyFrameLibraryManager), T2Map<TPString8, AModel*> 00612ef0 (AModelRepos),
+	// T2Map<TPString8, ...> 00614520 (AMaterialLibraryManager)
+	// $Barnyard: FUNCTION 00607270
+	// $Barnyard: FUNCTION 00612ef0
+	// $Barnyard: FUNCTION 00614520
 	void Clear()
 	{
-		m_RedBlackTree.DeleteAll();
+		m_RedBlackTree.Erase( m_RedBlackTree.Begin().GetNode(), m_RedBlackTree.End().GetNode() );
 	}
 
 	TSIZE Size() const
@@ -44,6 +58,23 @@ public:
 		return &result.GetValue()->GetSecond();
 	}
 
+	// Instantiations: T2Map<TPString8, TINT/TKeyframeLibrary*> 00606ef0 (AKeyFrameLibraryManager, AMaterialLibraryManager)
+	// $Barnyard: FUNCTION 00606ef0
+	// ANamedAnimationSet map (T2Map<TPString8, ANamedAnimation*>) 00581550, ANamedAnimationTransitionSet map (T2Map<TPString8, ANamedAnimationTransition>) 00581f30
+	// $Barnyard: FUNCTION 00581550
+	// $Barnyard: FUNCTION 00581f30
+	// AInputMap (T2Map<Doodad, CommandBinding>) 00596af0, AInputMapManager maps (<Doodad, ActionId>) 00597460
+	// $Barnyard: FUNCTION 00596af0
+	// $Barnyard: FUNCTION 00597460
+	// T2Map<TPString8, TINT/TSIZE> 005a5560 (AInteractionManager, ASoundManager), T2Map<TPString8, TUINT> 005d1c60 (AUnitFlagSetsManager), T2Map<TPString8, AWaveBank*> 005dcd00
+	// $Barnyard: FUNCTION 005a5560
+	// $Barnyard: FUNCTION 005d1c60
+	// $Barnyard: FUNCTION 005dcd00
+	// T2Map<TINT, ASound*/ASoundLegacy*> 005d8120 (ASoundManager)
+	// $Barnyard: FUNCTION 005d8120
+	// T2Map<TPString8, AModel*> 00612a30 (AModelRepos), T2Map<TPString8, ...> 00614970 (AMaterialLibraryManager)
+	// $Barnyard: FUNCTION 00612a30
+	// $Barnyard: FUNCTION 00614970
 	ValueType* Insert( const KeyType& key, const ValueType& value )
 	{
 		Pair     pair{ key, value };

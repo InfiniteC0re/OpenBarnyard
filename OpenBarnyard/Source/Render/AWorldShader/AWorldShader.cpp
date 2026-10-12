@@ -19,6 +19,7 @@ AWorldShader::AWorldShader()
 }
 
 // $Barnyard: FUNCTION 005f5e40
+// $Barnyard: FUNCTION 005f5f30
 AWorldShader::~AWorldShader()
 {
 }

@@ -1,6 +1,7 @@
 #include "ToshiPCH.h"
 #include "TRenderInterface.h"
 #include "File/TFile.h"
+#include "Render/TShader.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -94,7 +95,7 @@ TBOOL TRenderInterface::Destroy()
 	return TTRUE;
 }
 
-void TRenderInterface::RenderIndexPrimitive( TINT param_2, TINT param_3, TINT param_4, TINT param_5, TINT param_6, TINT param_7 )
+void TRenderInterface::RenderIndexPrimitive( TINT a_ePrimitiveType, TINT a_iNumVertices, TINT a_iNumPrimitives, TINT a_pIndices, TINT a_pVertices, TINT a_iVertexStride )
 {
 }
 
@@ -206,32 +207,62 @@ TResource* TRenderInterface::CreateResource( const TClass* pClass, const TCHAR* 
 // $Barnyard: FUNCTION 006becf0
 void TRenderInterface::DumpStats()
 {
-	TIMPLEMENT();
+	static const TCHAR* s_aDepthStencilFormats[] = { "D16_S0", "D15_S1", "D24_S0", "D24_S8", "D32_S0" }; // 0x0077cf68
 
-	TFile* file = TFile::Create( "TRenderInterface.txt", TFILEMODE_CREATENEW );
+	TFile* pFile = TFile::Create( "TRenderInterface.txt", TFILEMODE_CREATENEW );
 
-	if ( file != TNULL )
+	if ( pFile != TNULL )
 	{
-		file->CPrintf( "-\r\n" );
-		TCHAR const* name         = GetClass()->GetName();
-		uint16_t     versionMajor = GetClass()->GetVersionMajor();
-		uint16_t     versionMinor = GetClass()->GetVersionMinor();
-		file->CPrintf( "Toshi rendering interface through object[\"%s\"] Version : %u.%u\r\n", name, versionMajor, versionMinor );
-		file->CPrintf( "-\r\n" );
+		pFile->CPrintf( "-\r\n" );
 
-		for ( auto it = m_AdapterList.Begin(); it != m_AdapterList.End(); it++ )
+		// NOTE: retail passes the minor version before the major one
+		pFile->CPrintf( "Toshi rendering interface through object [\"%s\"] Version : %u.%u\r\n", GetClass()->GetName(), GetClass()->GetVersionMinor(), GetClass()->GetVersionMajor() );
+		pFile->CPrintf( "-\r\n" );
+
+		for ( auto pAdapter = m_AdapterList.Begin(); pAdapter != m_AdapterList.End(); pAdapter++ )
 		{
-			file->CPrintf( "Adapter       : %d\r\n", it->GetAdapterIndex() );
-			file->CPrintf( "  Driver      : %s\r\n", it->GetDriver().GetString() );
-			file->CPrintf( "  Description : %s\r\n", it->GetDriverDescription().GetString() );
-			file->CPrintf( "  Product ID  : %u\r\n", it->GetProductID() );
-			file->CPrintf( "  Version     : %u\r\n", it->GetVersion() );
-			file->CPrintf( "  Sub-version : %u\r\n", it->GetSubVersion() );
-			file->CPrintf( "  Build       : %u\r\n", it->GetBuild() );
-			file->CPrintf( "  Supports %d modes:\r\n", it->GetModeList()->Count() );
+			pFile->CPrintf( "Adapter       : %d\r\n", pAdapter->GetAdapterIndex() );
+			pFile->CPrintf( "  Driver      : %s\r\n", pAdapter->GetDriver().GetString() );
+			pFile->CPrintf( "  Description : %s\r\n", pAdapter->GetDriverDescription().GetString() );
+			pFile->CPrintf( "  Product ID  : %u\r\n", pAdapter->GetProductID() );
+			pFile->CPrintf( "  Version     : %u\r\n", pAdapter->GetVersion() );
+			pFile->CPrintf( "  Sub-version : %u\r\n", pAdapter->GetSubVersion() );
+			pFile->CPrintf( "  Build       : %u\r\n", pAdapter->GetBuild() );
+
+			// NOTE: retail prints the address of Data4 as the last number
+			const GUID* pGUID = TSTATICCAST( const GUID, pAdapter->GetDeviceIdentifier() );
+			pFile->CPrintf( "  GUID        : %u-%u-%u-%u\r\n", pGUID->Data1, pGUID->Data2, pGUID->Data3, pGUID->Data4 );
+
+			pFile->CPrintf( "  Supports %d modes:\r\n", pAdapter->GetModeList()->Count() );
+
+			for ( auto pMode = pAdapter->GetModeList()->Begin(); pMode != pAdapter->GetModeList()->End(); pMode++ )
+			{
+				const TCHAR* sz32Bit = pMode->Is32Bit() == TTRUE ? "Yes" : "No";
+				const TCHAR* sz16Bit = pMode->Is16Bit() == TTRUE ? "Yes" : "No";
+
+				pFile->CPrintf( "    Mode %d: %ux%u , %uhz: 16/32 bit Frame Buffer [%s/%s]\r\n", pMode->GetModeIndex(), pMode->GetWidth(), pMode->GetHeight(), pMode->GetRefreshRate(), sz16Bit, sz32Bit );
+
+				for ( TUINT32 i = 0; i < pAdapter->GetNumSupportedDevices(); i++ )
+				{
+					TRenderAdapter::Mode::Device* pDevice = pMode->GetDevice( i );
+
+					pFile->CPrintf( "      Supported Device [\"%s\"]: \r\n", pDevice->GetTypeString() );
+					pFile->CPrintf( "        Supports Hardware TnL? [\"%s\"]: \r\n", pDevice->SupportsHardwareTransfomations() == TTRUE ? "Yes!" : "No" );
+					pFile->CPrintf( "        Supports Windowed? [\"%s\"]: \r\n", pDevice->CanRenderWindowed() == TTRUE ? "Yes!" : "No" );
+					pFile->CPrintf( "        Supported Depth/Stencil Modes : " );
+
+					for ( TUINT32 k = 0; k < TARRAYSIZE( s_aDepthStencilFormats ); k++ )
+					{
+						if ( pDevice->IsDepthStencilFormatSupported( k ) == TTRUE )
+							pFile->CPrintf( "\"%s\" ", s_aDepthStencilFormats[ k ] );
+					}
+
+					pFile->CPrintf( "\r\n" );
+				}
+			}
 		}
 
-		file->Destroy();
+		pFile->Destroy();
 	}
 }
 
@@ -267,7 +298,7 @@ void TRenderInterface::FlushOrderTables()
 {
 }
 
-TBOOL TRenderInterface::IsTextureFormatSupported( TINT a_eTextureFormat )
+TBOOL TRenderInterface::IsTextureFormatSupported( TTEXTURERESOURCEFORMAT a_eTextureFormat )
 {
 	return TTRUE;
 }
@@ -289,7 +320,7 @@ void TRenderInterface::SetLightColourMatrix( const TMatrix44& a_rMatrix )
 	m_LightColour = a_rMatrix;
 }
 
-void TRenderInterface::Unknown1( TViewport* a_pViewport )
+void TRenderInterface::ConnectDefaultViewportHandlers( TViewport* a_pViewport )
 {
 }
 
@@ -316,59 +347,80 @@ void TRenderInterface::DestroySystemResources()
 // $Barnyard: FUNCTION 006bf230
 void TRenderInterface::DestroyAllShaderResources()
 {
-	TIMPLEMENT();
+	DestroyResourcesOfClassRecurse( &TGetClass( TShader ), m_SystemResources[ SYSRESOURCE_Shaders ] );
+}
+
+// $Barnyard: FUNCTION 006bec60
+void TRenderInterface::DestroyResourcesOfClassRecurse( const TClass* a_pClass, TResource* a_pResource )
+{
+	if ( a_pResource == TNULL )
+		return;
+
+	TResource* pResource = a_pResource;
+
+	while ( TTRUE )
+	{
+		TResource* pNext = pResource->Next();
+
+		if ( pNext == a_pResource )
+			pNext = TNULL;
+
+		if ( pResource->Child() )
+			DestroyResourcesOfClassRecurse( a_pClass, pResource->Child() );
+
+		if ( !pResource->IsDying() && pResource->GetClass()->IsA( a_pClass ) && !pResource->IsDying() )
+		{
+			m_bHasDyingResources = TTRUE;
+			pResource->AddState( TResourceState_Dying );
+			DestroyResourceRecurse( pResource->Child() );
+			pResource->Invalidate();
+		}
+
+		pResource = pNext;
+
+		if ( pNext == TNULL )
+			break;
+	}
 }
 
 // $Barnyard: FUNCTION 006bf750
-void TRenderInterface::DestroyDyingResources( TResource* resources )
+void TRenderInterface::DestroyDyingResources( TResource* a_pResources )
 {
-	// TODO: refactor
-	TResource* pTVar1;
-	TResource* next;
-	TResource* pRes1;
-	TResource* pRes2;
+	// The resources are a circular list of siblings starting at a_pResources
+	TResource* pFirst    = a_pResources;
+	TResource* pResource = a_pResources;
 
-	pRes1 = resources;
-	pRes2 = resources;
-	if ( resources != (TResource*)0x0 )
+	while ( pResource )
 	{
-		do {
-			next = pRes2->Next();
-			if ( next == pRes1 )
+		TResource* pNext = pResource->Next();
+		if ( pNext == pFirst ) pNext = TNULL;
+
+		if ( !pResource->IsDying() )
+		{
+			if ( TResource* pChild = pResource->Child() )
+				DestroyDyingResources( pChild );
+		}
+		else
+		{
+			// The list starts at the next resource once this one is gone
+			if ( pResource == pFirst )
+				pFirst = pNext;
+
+			TResource* pChild = pResource->Child();
+
+			while ( pChild )
 			{
-				next = (TResource*)0x0;
+				TResource* pNextChild = pChild->Next();
+				if ( pNextChild == pChild ) pNextChild = TNULL;
+
+				DeleteResourceAtomic( pChild );
+				pChild = pNextChild;
 			}
-			if ( ( pRes2->m_State & 4 ) == 0 )
-			{
-				pRes2 = pRes2->Child();
-				if ( pRes2 != (TResource*)0x0 )
-				{
-					DestroyDyingResources( pRes2 );
-				}
-			}
-			else
-			{
-				if ( pRes2 == pRes1 )
-				{
-					pRes1     = next;
-					resources = next;
-				}
-				pTVar1 = pRes2->Child();
-				while ( pTVar1 != (TResource*)0x0 )
-				{
-					pRes1 = pTVar1->Next();
-					if ( pRes1 == pTVar1 )
-					{
-						pRes1 = (TResource*)0x0;
-					}
-					DeleteResourceAtomic( pTVar1 );
-					pTVar1 = pRes1;
-					pRes1  = resources;
-				}
-				DeleteResourceAtomic( pRes2 );
-			}
-			pRes2 = next;
-		} while ( next != (TResource*)0x0 );
+
+			DeleteResourceAtomic( pResource );
+		}
+
+		pResource = pNext;
 	}
 }
 
@@ -499,6 +551,20 @@ TRenderAdapter::Mode::Device* TRenderInterface::FindDevice( const DISPLAYPARAMS&
 
 		pAdapter++;
 	}
+}
+
+// $Barnyard: FUNCTION 006be910
+TBOOL TRenderInterface::DestroyDisplay()
+{
+	m_bDisplayCreated = TFALSE;
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 006bf850
+TBOOL TRenderInterface::Update( TFLOAT a_fDeltaTime )
+{
+	FlushDyingResources();
+	return TTRUE;
 }
 
 // $Barnyard: FUNCTION 006bf7d0

@@ -15,7 +15,14 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 005f1790, CreateObject 005f37a0, CreateObjectInPlace 005f3810
 TDEFINE_CLASS( ASkinMeshHAL );
+
+// $Barnyard: FUNCTION 005f3630
+// $Barnyard: FUNCTION 005f3f00
+ASkinMeshHAL::~ASkinMeshHAL()
+{
+}
 
 // $Barnyard: FUNCTION 005f3f20
 TBOOL ASkinMeshHAL::Render()

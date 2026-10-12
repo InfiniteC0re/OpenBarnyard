@@ -19,17 +19,17 @@ AHashedObject::~AHashedObject()
 {
 }
 
-TBOOL AHashedObject::Unknown3()
+TBOOL AHashedObject::IsNoQuery()
 {
 	return TFALSE;
 }
 
-void AHashedObject::SetUnk2( void* a_pUnk )
+void AHashedObject::SetQueryStamp( void* a_pUnk )
 {
-	m_Unk2 = a_pUnk;
+	m_pQueryStamp = a_pUnk;
 }
 
-void* AHashedObject::GetUnk2()
+void* AHashedObject::GetQueryStamp()
 {
-	return m_Unk2;
+	return m_pQueryStamp;
 }

@@ -28,13 +28,17 @@ public:
 	virtual void           SetScissor( TFLOAT a_fVal1, TFLOAT a_fVal2, TFLOAT a_fVal3, TFLOAT a_fVal4 )                          = 0;
 	virtual void           ClearScissor()                                                                                        = 0;
 	virtual void           RenderRectangle( const TVector2& a, const TVector2& b, const TVector2& uv1, const TVector2& uv2 )     = 0;
-	virtual void           RenderTriStrip( TVector2* vertices, TVector2* UV, TUINT32 numverts )                                 = 0;
-	virtual void           RenderLine( const TVector2& a, const TVector2& b )                                                    = 0;
+	virtual void           RenderTriStrip( TVector2* vertices, TVector2* UV, TUINT32 numverts )                                  = 0;
 	virtual void           RenderLine( TFLOAT x1, TFLOAT y1, TFLOAT x2, TFLOAT y2 )                                              = 0;
+	virtual void           RenderLine( const TVector2& a, const TVector2& b )                                                    = 0;
 	virtual void           RenderOutlineRectangle( const TVector2& a, const TVector2& b )                                        = 0;
 	virtual void           RenderFilledRectangle( const TVector2& a, const TVector2& b )                                         = 0;
-	virtual void           ScaleCoords( TFLOAT& x, TFLOAT& y )                                                                   = 0;
-	virtual void           ResetZCoordinate()                                                                                    = 0;
+#ifdef BARNYARD_LATEST
+	// Wii (+0x68): an indexed triangle list, the positions scaled (AGUI2XUIFigure fills). a_pUVs can be TNULL
+	virtual void RenderIndexedTriList( TVector2* a_pVertices, TVector2* a_pUVs, TINT* a_pIndices, TUINT32 a_uiNumIndices, TUINT32 a_uiNumVertices, TFLOAT a_fScaleX, TFLOAT a_fScaleY ) = 0;
+#endif
+	virtual void ScaleCoords( TFLOAT& x, TFLOAT& y ) = 0;
+	virtual void ResetZCoordinate()                  = 0;
 };
 
 TOSHI_NAMESPACE_END

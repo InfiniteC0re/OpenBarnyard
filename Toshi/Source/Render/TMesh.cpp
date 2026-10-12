@@ -19,6 +19,7 @@ TMesh::TMesh()
 }
 
 // $Barnyard: FUNCTION 005f5e80
+// $Barnyard: FUNCTION 005f0340
 TMesh::~TMesh()
 {
 	m_pOwnerShader = TNULL;
@@ -26,6 +27,7 @@ TMesh::~TMesh()
 	m_State        = State_None;
 }
 
+// $Barnyard: FUNCTION 005effd0
 TBOOL TMesh::Validate()
 {
 	m_State |= State_Validated;

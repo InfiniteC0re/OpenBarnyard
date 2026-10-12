@@ -47,12 +47,28 @@ public:
 		FLAG_FOG                    = BITFLAG( 1 ),
 		FLAG_HAS_MODELWORLDMATRIX   = BITFLAG( 2 ),
 		FLAG_HAS_VIEWWORLDMATRIX    = BITFLAG( 3 ),
-		FLAG_UNK3                   = BITFLAG( 4 ),
-		FLAG_UNK4                   = BITFLAG( 5 ),
+		FLAG_UNK4                   = BITFLAG( 4 ),
+		FLAG_UNK5                   = BITFLAG( 5 ),
 		FLAG_HAS_WORLDPLANES        = BITFLAG( 6 ),
-		FLAG_UNK6                   = BITFLAG( 7 ),
+		FLAG_UNK7                   = BITFLAG( 7 ),
 		FLAG_DIRTY_WORLDMODELMATRIX = BITFLAG( 8 ),
 		FLAG_DIRTY_VIEWMODELMATRIX  = BITFLAG( 9 ),
+		FLAG_DISTANCEFADE1          = BITFLAG( 10 ), // closer than the first fade end, see TSceneObject::Render (GetUnk16C().w)
+		FLAG_DISTANCEFADE2          = BITFLAG( 11 ), // closer than the second fade end, see TSceneObject::Render (m_fUnk3AC)
+	};
+
+	// One bit per plane of the frustum (WORLDPLANE) that still has to be tested
+	using CLIPFLAGS = TUINT32;
+	enum CLIPFLAGS_ : CLIPFLAGS
+	{
+		CLIPFLAGS_NONE   = 0,
+		CLIPFLAGS_LEFT   = BITFLAG( WORLDPLANE_LEFT ),
+		CLIPFLAGS_RIGHT  = BITFLAG( WORLDPLANE_RIGHT ),
+		CLIPFLAGS_BOTTOM = BITFLAG( WORLDPLANE_BOTTOM ),
+		CLIPFLAGS_TOP    = BITFLAG( WORLDPLANE_TOP ),
+		CLIPFLAGS_NEAR   = BITFLAG( WORLDPLANE_NEAR ),
+		CLIPFLAGS_FAR    = BITFLAG( WORLDPLANE_FAR ),
+		CLIPFLAGS_ALL    = CLIPFLAGS_LEFT | CLIPFLAGS_RIGHT | CLIPFLAGS_BOTTOM | CLIPFLAGS_TOP | CLIPFLAGS_NEAR | CLIPFLAGS_FAR,
 	};
 
 	typedef TUINT32 CameraMode;
@@ -84,6 +100,8 @@ public:
 
 protected:
 	void SetDirty( TBOOL a_bDirty );
+
+public:
 	void SetFlag( FLAG a_eFlag, TBOOL a_bEnable );
 
 public:
@@ -119,6 +137,7 @@ public:
 	TFLOAT GetHeight() const { return m_oViewportParams.fHeight; }
 
 	TBOOL IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
+	FLAG  GetFlags() const { return m_eFlags; }
 	// $Barnyard: FUNCTION 006ce980
 	TBOOL IsDirty() const { return m_eFlags & FLAG_DIRTY; }
 
@@ -130,6 +149,9 @@ public:
 
 	const TPlane* GetWorldPlanes();
 
+	// Copies the first a_iNumPlanes world planes to a_pOutPlanes
+	void GetWorldPlanes( TPlane* a_pOutPlanes, TINT a_iNumPlanes );
+
 	const TMatrix44& GetViewWorldMatrix();
 	const TMatrix44& GetWorldModelMatrix();
 	const TMatrix44& GetModelWorldMatrix();
@@ -138,6 +160,8 @@ public:
 	TMatrix44&       GetWorldViewMatrix() { return m_oWorldViewMatrix; }
 
 	const TPlane* GetFrustumPlanes() const { return m_aFrustumPlanes1; }
+	const TPlane* GetGuardPlanes() const { return m_aGuardPlanes; }
+	TUINT         GetGuardFlags() const { return m_eGuardFlags; }
 
 	void           SetCameraObject( TCameraObject* a_pCameraObject ) { m_pCurrentCameraObject = a_pCameraObject; }
 	TCameraObject* GetCameraObject() const { return m_pCurrentCameraObject; }
@@ -148,8 +172,16 @@ public:
 	TFLOAT GetShadeCoeff() const { return m_fShadeCoeff; }
 	void   SetShadeCoeff( TFLOAT val ) { m_fShadeCoeff = val; }
 
-	void            SetAmbientColour( const TVector4& a_rcColour ) { m_AmbientColor = a_rcColour; }
+	void SetAmbientColour( const TVector4& a_rcColour ) { m_AmbientColor = a_rcColour; }
+
+	// NOTE: an instance of it lives in the game code
+	// $Barnyard: FUNCTION 0041ce00
+	void SetAmbientColour( TFLOAT a_fRed, TFLOAT a_fGreen, TFLOAT a_fBlue ) { m_AmbientColor.Set( a_fRed, a_fGreen, a_fBlue, 0.0f ); }
+
 	const TVector4& GetAmbientColour() const { return m_AmbientColor; }
+	TVector4&       GetUnk16C() { return m_vUnk16C; }
+	TFLOAT          GetUnk3AC() const { return m_fUnk3AC; }
+	void            SetUnk3AC( TFLOAT a_fValue ) { m_fUnk3AC = a_fValue; }
 
 	static void ComputePerspectiveProjection( TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams );
 	static void ComputeOrthographicProjection( TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams );
@@ -166,8 +198,8 @@ protected:
 
 	TRenderInterface*  m_pRenderer;                // 0x0004
 	FLAG               m_eFlags;                   // 0x0008
-	TUINT              m_eClipFlags;               // 0x000C
-	TUINT              m_Unk;                      // 0x0010
+	CLIPFLAGS          m_eClipFlags;               // 0x000C
+	TUINT              m_eGuardFlags;              // 0x0010
 	CameraMode         m_eCameraMode;              // 0x0014
 	VIEWPORTPARAMS     m_oViewportParams;          // 0x0018
 	PROJECTIONPARAMS   m_oProjParams;              // 0x0030
@@ -178,26 +210,28 @@ protected:
 	TMatrix44          m_oViewWorldMatrix;         // 0x010C
 	TVector4           m_AmbientColor;             // 0x014C
 	TVector4           m_FogColor;                 // 0x015C
-
-	TCHAR PADDING1[ 52 ];
+	TVector4           m_vUnk16C;                  // 0x016C, copied by AGUI2ModelRenderer::CreateFromViewport, w is a distance fade set by TSceneObject::Render (FLAG_DISTANCEFADE1)
+	TVector4           m_vUnk17C;                  // 0x017C
+	TVector3           m_vUnk18C;                  // 0x018C
+	TFLOAT             m_fUnk198;                  // 0x0198
+	TFLOAT             m_fUnk19C;                  // 0x019C
 
 	TFLOAT   m_fFogDistanceStart; // 0x01A0
 	TFLOAT   m_fFogDistanceEnd;   // 0x01A4
 	TFrustum m_aFrustumPlanes1;   // 0x01A8
 	TFrustum m_aWorldPlanes;      // 0x0208
-	TFrustum m_aFrustumPlanes2;   // 0x0268
+	TFrustum m_aGuardPlanes;      // 0x0268, a copy of m_aFrustumPlanes1 on PC
 
 	TCHAR PADDING2[ 96 ];
 
 	TMatrix44 m_oWorldModelMatrix; // 0x0328
 	TMatrix44 m_oViewModelMatrix;  // 0x0368
 	TFLOAT    m_fAlphaBlend;       // 0x03A8
-	
-	TCHAR     PADDING3[ 4 ];
-	
-	TFLOAT    m_fShadeCoeff; // 0x03B0
-	
-	TBOOL     PADDING4;
+	TFLOAT    m_fUnk3AC;           // 0x03AC, distance fade set by TSceneObject::Render (FLAG_DISTANCEFADE2)
+
+	TFLOAT m_fShadeCoeff; // 0x03B0
+
+	TBOOL PADDING4;
 
 	TLightIDList   m_oLightIds;            // 0x03B5
 	TCameraObject* m_pCurrentCameraObject; // 0x03BC

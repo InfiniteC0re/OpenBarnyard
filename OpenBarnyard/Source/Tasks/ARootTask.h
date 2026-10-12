@@ -14,17 +14,24 @@ public:
 
 public:
 	ARootTask();
+	~ARootTask();
 
+	virtual TBOOL Reset() override;
 	virtual TBOOL OnCreate() override;
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) override;
+	virtual void  OnDestroy() override;
 	virtual void  OnChildDied( const Toshi::TClass* a_pClass, Toshi::TTask* a_pDeletedTask ) override;
 	virtual void  OnActivate() override;
 	virtual void  OnDeactivate() override;
+
+	// Detaches the game systems and destroys the level before the engine shuts down
+	void Shutdown();
 
 	void CreateStartupGameStates();
 	void LoadStartupData();
 
 	TBOOL IsPaused() const;
+	void  SetPaused( TBOOL a_bPaused );
 	TBOOL IsGameSystemCreated() const { return m_bGameSystemCreated; }
 
 	void  SetRenderWorld( TBOOL a_bReady ) { m_bRenderWorld = a_bReady; }
@@ -43,12 +50,17 @@ private:
 	TTask*     m_pInputHandler;        // 0x2C
 	ARenderer* m_pRenderer;            // 0x30
 	TTask*     m_pGameStateController; // 0x34
+	TTask*     m_pUnkTask;             // 0x38 NOTE: never assigned in retail, always TNULL
 	TTask*     m_pMoviePlayer;         // 0x3C
 	TTask*     m_pGameSystemManager;   // 0x40
 	TTask*     m_pSoundManager;        // 0x44
+	TBOOL      m_bUnk1;                // 0x48
+	TBOOL      m_bUnk2;                // 0x49
+	TINT       m_iUnk3;                // 0x4C
+	TINT       m_iUnk4;                // 0x50
 	TBOOL      m_bRenderWorld;         // 0x54
 	TBOOL      m_bPaused;              // 0x55
 	TBOOL      m_bIsTransitioning;     // 0x56
 	TBOOL      m_bGameSystemCreated;   // 0x57
-	TBOOL      m_bStartedGame;
+	TBOOL      m_bStartedGame;         // 0x58
 };

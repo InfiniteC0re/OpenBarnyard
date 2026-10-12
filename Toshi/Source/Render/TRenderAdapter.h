@@ -14,7 +14,8 @@ public:
 		class Device : public TNodeList<Device>::TNode
 		{
 		public:
-			Device()          = default;
+			Device() = default;
+			// $Barnyard: FUNCTION 006c6480
 			virtual ~Device() = default;
 
 			virtual Mode*        GetMode() const                                         = 0;
@@ -29,6 +30,7 @@ public:
 	public:
 		Mode() = default;
 
+		// $Barnyard: FUNCTION 006c6460
 		virtual ~Mode() = default;
 
 		virtual TRenderAdapter*               GetAdapter() const             = 0;
@@ -42,10 +44,11 @@ public:
 	};
 
 public:
-	TRenderAdapter()          = default;
+	TRenderAdapter() = default;
+	// NOTE: the deleting destructor deletes the modes (the list at +0x10)
+	// $Barnyard: FUNCTION 006c6f50
 	virtual ~TRenderAdapter() = default;
 
-	// TODO: complete vftable
 	virtual TUINT32         GetAdapterIndex() const        = 0;
 	virtual const TString8& GetDriver() const              = 0;
 	virtual const TString8& GetDriverDescription() const   = 0;

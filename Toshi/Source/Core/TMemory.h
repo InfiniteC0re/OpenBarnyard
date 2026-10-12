@@ -117,7 +117,7 @@ public:
 	struct MemBlockFooter
 	{
 		TUINT     m_Unk1;        ///< Unknown field 1
-		TUINT     m_Unk2;        ///< Unknown field 2
+		TUINT     m_uiSize;      ///< Size slot of the sentinel node: 0 | HOLE_PROCESS, ends node walks
 		MemBlock* m_pBlockOwner; ///< Pointer to the owning block
 		TUINT     m_Unk4;        ///< Unknown field 4
 	};
@@ -268,10 +268,10 @@ private:
 	static TSIZE     GetNodeSize( MemNode* a_pNode ) { return TAlignNumDown( a_pNode->uiSize ); }
 	static MemBlock* GetProcessMemBlock( MemNode* a_pNode ) { return a_pNode->pMemBlock; }
 	static void      ConvertProcessToHole( MemNode* a_pNode ) { a_pNode->uiSize &= ~TMEMORY_FLAGS_MASK; }
-	static int       TestMemIntegrity( MemBlock* a_pMemBlock );
-	static int       DebugTestMemoryBlock( MemBlock* a_pMemBlock );
 
 public:
+	static TBOOL TestMemIntegrity( MemBlock* a_pMemBlock );
+	static int   DebugTestMemoryBlock( MemBlock* a_pMemBlock );
 	static void  GetMemInfo( MemInfo& a_rMemInfo, MemBlock* a_pMemBlock );
 	static void  GetHALMemInfo( HALMemInfo& a_rHALMemInfo );
 	static TBOOL Initialise( TSIZE a_uiHeapSize, TSIZE a_uiReservedSize, TUINT a_uiUnused = 0 );
@@ -358,6 +358,9 @@ public:
 	static void GetMemInfo( MemInfo& a_rMemInfo, MemBlock* a_pMemBlock );
 	static void GetHALMemInfo( HALMemInfo& a_rHALMemInfo );
 
+	// NOTE: dlmalloc has no TMemory nodes to walk, so the integrity test always passes
+	static TBOOL TestMemIntegrity( MemBlock* a_pMemBlock ) { return TTRUE; }
+
 public:
 	TMemoryDL* m_pMemModule;
 	TCHAR      PADDING[ 2092 ];
@@ -395,6 +398,9 @@ void* TMalloc( TSIZE a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum );
  * @return Pointer to allocated memory
  */
 void* TMalloc( TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHAR* a_szFileName = TNULL, TINT a_iLineNum = -1 );
+
+// Reallocation isn't supported, this only reports that the block is out of memory and returns TNULL
+void* TRealloc( void* a_pMem, TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock );
 
 /**
  * Allocates aligned memory

@@ -37,6 +37,7 @@ TBOOL TGenericFifo::Create( TCHAR* a_pBuffer, TINT a_iMaxItems, TINT a_iItemSize
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006bb750
 TBOOL TGenericFifo::Destroy()
 {
 	TPROFILER_SCOPE();
@@ -45,8 +46,8 @@ TBOOL TGenericFifo::Destroy()
 	DeleteCriticalSection( &m_CriticalSection );
 #endif // USE_WIN32_CRITICAL_SECTION
 
-	m_semNumFreeItems.Destroy();
 	m_semNumUsedItems.Destroy();
+	m_semNumFreeItems.Destroy();
 	return TTRUE;
 }
 
@@ -60,7 +61,7 @@ TBOOL TGenericFifo::Push( void* a_pItem, Flags a_iFlags )
 
 #ifdef USE_WIN32_CRITICAL_SECTION
 	EnterCriticalSection( &m_CriticalSection );
-#else // USE_WIN32_CRITICAL_SECTION
+#else  // USE_WIN32_CRITICAL_SECTION
 	m_Mutex.Lock();
 #endif // !USE_WIN32_CRITICAL_SECTION
 
@@ -76,7 +77,7 @@ TBOOL TGenericFifo::Push( void* a_pItem, Flags a_iFlags )
 
 #ifdef USE_WIN32_CRITICAL_SECTION
 	LeaveCriticalSection( &m_CriticalSection );
-#else // USE_WIN32_CRITICAL_SECTION
+#else  // USE_WIN32_CRITICAL_SECTION
 	m_Mutex.Unlock();
 #endif // !USE_WIN32_CRITICAL_SECTION
 

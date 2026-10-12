@@ -76,7 +76,7 @@ TBOOL AGrassMesh::Create( TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices )
 	auto pVertexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TVertexFactoryResourceInterface>( SYSRESOURCE_VFWORLD );
 	TVALIDPTR( pVertexFactory );
 
-	m_pVertexPool = pVertexFactory->CreatePoolResource( m_uiMaxVertices, 1 );
+	m_pVertexPool = pVertexFactory->CreatePoolResource( m_uiMaxVertices, TVertexPoolResourceInterface::FLAGS_STATIC );
 	BaseClass::Create();
 
 	return TTRUE;

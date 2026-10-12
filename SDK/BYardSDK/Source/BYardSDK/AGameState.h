@@ -45,15 +45,15 @@ public:
 	virtual void    Unknown2( void* a_pUnk1 ) {}
 	virtual void    Unknown3( void* a_pUnk1 ) {}
 	virtual void    Unknown4( void* a_pUnk1 ) {}
-	virtual void    Unknown5() {}
-	virtual TBOOL   Unknown6() { return TTRUE; }
+	virtual void    OnLoaded() {}
+	virtual TBOOL   ShouldPlacePlayerAtStartGoal() { return TTRUE; }
 	virtual TUINT32 GetSound() { return -1; }
-	virtual TBOOL   Unknown7() { return TTRUE; }
-	virtual void    Unknown8() {}
+	virtual TBOOL   CanDismissInstructions() { return TTRUE; }
+	virtual void    OnInstructionsShown() {}
 	virtual void    OnStart() {}
 	virtual void    Unknown10() {}
-	virtual void    Unknown11( void* a_pUnk1, void* a_pUnk2 ) {}
-	virtual void    Unknown12( void* a_pUnk1, void* a_pUnk2 ) {}
+	virtual void    OnCollisionModelLoaded( void* a_pCollisionModel, void* a_pGroupId ) {}
+	virtual void    OnVISGroupChanged( void* a_pCurrentSection, void* a_pPreviousSection ) {}
 	virtual TFLOAT  GetFOV();
 	virtual TBOOL   OnUpdate( TFLOAT a_fDeltaTime );
 	virtual void    OnInsertion();
@@ -163,6 +163,6 @@ protected:
 	AGameState*                m_pOwnerState;
 	TBOOL                      m_bWasInserted;
 	TBOOL                      m_bIsActivated;
-	SDK_T2GUIElement               m_GUIElement;
+	SDK_T2GUIElement           m_GUIElement;
 	TFLOAT                     m_fFOV;
 };

@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "AGameTimeManager.h"
+#include "FX/AGameTimeFXManager.h"
+#include "FSM/AMethodPointer.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -9,7 +11,37 @@
 
 TOSHI_NAMESPACE_USING
 
-TDEFINE_CLASS( AGameTimeManager );
+// NOTE: GetClass 00545fe0, CreateObject 00546900, CreateObjectInPlace 00546960
+TDEFINE_CLASS_INIT( AGameTimeManager, 1, 0 );
+
+// 0x00783d90
+AFunctionTable AGameTimeManager::ms_oFunctionTable( &TGetClass( AGameTimeManager ), TNULL );
+
+// FSM fallback: the natives are called on the singleton
+// $Barnyard: FUNCTION 005462b0
+static TObject* __stdcall AGameTimeManagerFunctionFallback( AFunctionTable* a_pTable, const AFunctionCaller* a_pCaller )
+{
+	return AGameTimeManager::GetSingleton();
+}
+
+// $Barnyard: FUNCTION 00546cd0
+void AGameTimeManager::InitialiseClass()
+{
+	ms_oFunctionTable.Register( reinterpret_cast<void*>( &AGameTimeManagerFunctionFallback ) );
+	ms_oFunctionTable.AddFunction( AMethodPointer1ArgsRT<TBOOL, AGameTimeManager, TPString8>::Create( "IsCurPhase", &AGameTimeManager::IsCurPhase ) );
+}
+
+// $Barnyard: FUNCTION 00545ff0
+void AGameTimeManager::DeinitialiseClass()
+{
+	ms_oFunctionTable.Unregister();
+}
+
+// $Barnyard: FUNCTION 00546390
+AFunctionTable* AGameTimeManager::GetFunctionTable()
+{
+	return &ms_oFunctionTable;
+}
 
 // $Barnyard: FUNCTION 005440f0
 AGameTimeManager::DateChangeEvent::DateChangeEvent( DATECHANGETYPE a_eType, DAYPHASE a_eCurrDayPhase, DAYPHASE a_ePrevDayPhase, TINT a_iDay, TINT a_iMonth, TINT a_iYear )
@@ -35,7 +67,7 @@ AGameTimeManager::AGameTimeManager()
 	m_iDateYear          = 1;
 	m_iDateMonth         = 1;
 	m_iDateDay           = 1;
-	m_iDateWeekDay       = 6;
+	m_iDateWeekDay       = WEEKDAY_SUNDAY;
 	m_eDayPhase          = DAYPHASE_DAWN;
 	m_flDayTime          = REAL_TIME_TO_GAME_TIME * DAY_START_SECONDS;
 	m_flSecondTimer      = 0.0f;
@@ -48,6 +80,7 @@ AGameTimeManager::AGameTimeManager()
 }
 
 // $Barnyard: FUNCTION 005469a0
+// $Barnyard: FUNCTION 00546a10
 AGameTimeManager::~AGameTimeManager()
 {
 	if ( m_pDateChangeEmitter )
@@ -59,17 +92,17 @@ AGameTimeManager::~AGameTimeManager()
 // $Barnyard: FUNCTION 00546050
 TBOOL AGameTimeManager::Reset()
 {
-	m_flTotalTime        = 0.0f;
-	m_iDateYear          = 1;
-	m_iDateMonth         = 1;
-	m_iDateDay           = 1;
-	m_eDayPhase          = DAYPHASE_DAWN;
-	m_iDateWeekDay       = 0;
-	m_flSecondTimer      = 0.0f;
-	m_bStopUpdate        = TTRUE;
-	m_bSavedState        = TTRUE;
-	m_flDayTime          = REAL_TIME_TO_GAME_TIME * DAY_START_SECONDS;
-	m_bUpdatePhaseOfDay  = TTRUE;
+	m_flTotalTime       = 0.0f;
+	m_iDateYear         = 1;
+	m_iDateMonth        = 1;
+	m_iDateDay          = 1;
+	m_eDayPhase         = DAYPHASE_DAWN;
+	m_iDateWeekDay      = WEEKDAY_MONDAY;
+	m_flSecondTimer     = 0.0f;
+	m_bStopUpdate       = TTRUE;
+	m_bSavedState       = TTRUE;
+	m_flDayTime         = REAL_TIME_TO_GAME_TIME * DAY_START_SECONDS;
+	m_bUpdatePhaseOfDay = TTRUE;
 
 	return TTask::Reset();
 }
@@ -83,14 +116,14 @@ TBOOL AGameTimeManager::OnUpdate( TFLOAT a_fDeltaTime )
 	if ( m_flSecondTimer >= 1.0f )
 		m_flSecondTimer -= 1.0f;
 
-	m_flSecondTimer      += a_fDeltaTime;
-	m_flTotalTime        += a_fDeltaTime;
-	m_flDayTime          += a_fDeltaTime;
+	m_flSecondTimer += a_fDeltaTime;
+	m_flTotalTime += a_fDeltaTime;
+	m_flDayTime += a_fDeltaTime;
 	m_flCurrentPhaseTime += a_fDeltaTime;
 
 	if ( m_bUpdatePhaseOfDay && m_flCurrentPhaseTime > DAYPHASE_DURATION[ m_eDayPhase ] )
 	{
-		SetPhaseOfDay( ( ( m_eDayPhase + 1 ) % DAYPHASE_NUMOF ), TFALSE, TTRUE );
+		ChangePhaseOfDay( ( ( m_eDayPhase + 1 ) % DAYPHASE_NUMOF ), TFALSE, TTRUE );
 		UpdateDate();
 		return TTRUE;
 	}
@@ -100,15 +133,49 @@ TBOOL AGameTimeManager::OnUpdate( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 00546090
-TBOOL AGameTimeManager::OnSerialize( void* a_pSerializer )
+TBOOL AGameTimeManager::OnSerialize( AHackedQuickSave::Buffer* a_pSerializer )
 {
-	return TFALSE;
+	a_pSerializer->WriteString( "GameTimeManager" );
+	a_pSerializer->WriteFloat( m_flTotalTime );
+	a_pSerializer->WriteInt( m_iDateYear );
+	a_pSerializer->WriteInt( m_iDateMonth );
+	a_pSerializer->WriteInt( m_iDateDay );
+	a_pSerializer->WriteFloat( m_flDayTime );
+	a_pSerializer->WriteFloat( m_flSecondTimer );
+	a_pSerializer->WriteInt( m_eDayPhase );
+	a_pSerializer->WriteInt( m_iDateWeekDay );
+	a_pSerializer->WriteBool( m_bStopUpdate );
+	a_pSerializer->WriteFloat( m_flCurrentPhaseTime );
+	a_pSerializer->WriteBool( m_bSavedState );
+
+	return TTRUE;
 }
 
 // $Barnyard: FUNCTION 00546730
-TBOOL AGameTimeManager::OnDeserialize( void* a_pSerializer )
+TBOOL AGameTimeManager::OnDeserialize( AHackedQuickSave::Buffer* a_pSerializer )
 {
-	return TFALSE;
+	a_pSerializer->CheckString( "GameTimeManager" );
+	a_pSerializer->ReadFloat( m_flTotalTime );
+	a_pSerializer->ReadUInt( *TREINTERPRETCAST( TUINT*, &m_iDateYear ) );
+	a_pSerializer->ReadUInt( *TREINTERPRETCAST( TUINT*, &m_iDateMonth ) );
+	a_pSerializer->ReadUInt( *TREINTERPRETCAST( TUINT*, &m_iDateDay ) );
+	a_pSerializer->ReadFloat( m_flDayTime );
+	a_pSerializer->ReadFloat( m_flSecondTimer );
+
+	TINT iDayPhase = -1;
+	TINT iWeekDay  = -1;
+	a_pSerializer->ReadInt( iDayPhase );
+	m_eDayPhase = iDayPhase;
+	a_pSerializer->ReadInt( iWeekDay );
+	m_iDateWeekDay = iWeekDay;
+
+	a_pSerializer->ReadBool( m_bStopUpdate );
+	a_pSerializer->ReadFloat( m_flCurrentPhaseTime );
+	a_pSerializer->ReadBool( m_bSavedState );
+
+	AGameTimeFXManager::GetSingleton()->SetDayPhase( m_eDayPhase, TTRUE, m_flCurrentPhaseTime );
+
+	return TTRUE;
 }
 
 // $Barnyard: FUNCTION 00546000
@@ -147,7 +214,7 @@ void AGameTimeManager::ToggleUpdateState()
 }
 
 // $Barnyard: FUNCTION 005463a0
-void AGameTimeManager::SetPhaseOfDay( DAYPHASE a_eDayPhase, TBOOL a_bUpdateTime, TBOOL a_bFireEvent )
+void AGameTimeManager::ChangePhaseOfDay( DAYPHASE a_eDayPhase, TBOOL a_bUpdateTime, TBOOL a_bFireEvent )
 {
 	DAYPHASE ePrevDayPhase = m_eDayPhase;
 	m_eDayPhase            = a_eDayPhase;
@@ -246,6 +313,17 @@ void AGameTimeManager::UpdateDate()
 	m_flDayTime = m_flDayTime - DAY_LENGTH_UNITS;
 }
 
+#ifdef BARNYARD_LATEST
+
+// $BarnyardWiiJP: FUNCTION 802a9964
+void AGameTimeManager::SkipToNextDay()
+{
+	m_flDayTime = 1201.0f;
+	UpdateDate();
+}
+
+#endif // BARNYARD_LATEST
+
 // $Barnyard: FUNCTION 00546130
 TBOOL AGameTimeManager::IsDaytime() const
 {
@@ -258,8 +336,64 @@ TBOOL AGameTimeManager::IsItNight() const
 	return m_eDayPhase == DAYPHASE_NIGHT;
 }
 
+TPSTRING8_DECLARE( dawn );
+TPSTRING8_DECLARE( morning );
+TPSTRING8_DECLARE( afternoon );
+TPSTRING8_DECLARE( dusk );
+TPSTRING8_DECLARE( night );
+
+// $Barnyard: FUNCTION 00546ad0
+AGameTimeManager::DAYPHASE AGameTimeManager::GetDayPhaseFromName( TPString8 a_strName ) const
+{
+	// The names of the day phases (0x007741d8)
+	static const TPString8* s_apNames[ DAYPHASE_NUMOF ] = {
+		&TPS8( dawn ),
+		&TPS8( morning ),
+		&TPS8( afternoon ),
+		&TPS8( dusk ),
+		&TPS8( night ),
+	};
+
+	for ( TINT i = 0; i < DAYPHASE_NUMOF; i++ )
+	{
+		if ( *s_apNames[ i ] == a_strName )
+			return i;
+	}
+
+	return -1;
+}
+
+// $Barnyard: FUNCTION 00546c10
+TBOOL AGameTimeManager::IsCurPhase( TPString8 a_strName )
+{
+	return GetDayPhaseFromName( a_strName ) == m_eDayPhase;
+}
+
+// $Barnyard: FUNCTION 005461a0
+TFLOAT AGameTimeManager::GetDayPhaseStartTime( DAYPHASE a_eDayPhase )
+{
+	static TFLOAT s_fDayStart       = DAY_START_SECONDS * REAL_TIME_TO_GAME_TIME;                  // 0x00783d54
+	static TFLOAT s_fDawnStart      = s_fDayStart;                                                 // 0x00783d50
+	static TFLOAT s_fMorningStart   = s_fDawnStart + DAYPHASE_DURATION[ DAYPHASE_DAWN ];           // 0x00783d4c
+	static TFLOAT s_fAfternoonStart = s_fMorningStart + DAYPHASE_DURATION[ DAYPHASE_MORNING ];     // 0x00783d48
+	static TFLOAT s_fDuskStart      = s_fAfternoonStart + DAYPHASE_DURATION[ DAYPHASE_AFTERNOON ]; // 0x00783d44
+	static TFLOAT s_fNightStart     = s_fDuskStart + DAYPHASE_DURATION[ DAYPHASE_DUSK ];           // 0x00783d40
+
+	switch ( a_eDayPhase )
+	{
+		case DAYPHASE_DAWN: return s_fDawnStart;
+		case DAYPHASE_MORNING: return s_fMorningStart;
+		case DAYPHASE_AFTERNOON: return s_fAfternoonStart;
+		case DAYPHASE_DUSK: return s_fDuskStart;
+		case DAYPHASE_NIGHT: return s_fNightStart;
+	}
+
+	// NOTE: retail returns whatever is on the FPU stack
+	return 0.0f;
+}
+
 // $Barnyard: FUNCTION 00546160
-TINT AGameTimeManager::GetWeekDay() const
+AGameTimeManager::WEEKDAY AGameTimeManager::GetWeekDay() const
 {
 	return m_iDateWeekDay;
 }
@@ -275,6 +409,28 @@ TFLOAT AGameTimeManager::GetCurrentPhaseTimeLeft() const
 	return fLeft;
 }
 
+// $Barnyard: FUNCTION 0043ac00
+TINT AGameTimeManager::GetCurrentHour() const
+{
+	TFLOAT fSeconds = GAME_TIME_TO_REAL_TIME * m_flDayTime;
+
+	if ( SECONDS_PER_DAY < fSeconds )
+		fSeconds -= SECONDS_PER_DAY;
+
+	return TUINT( fSeconds ) / SECONDS_PER_HOUR;
+}
+
+// $Barnyard: FUNCTION 0060e3a0
+TINT AGameTimeManager::GetCurrentSecond() const
+{
+	TFLOAT fSeconds = GAME_TIME_TO_REAL_TIME * m_flDayTime;
+
+	if ( SECONDS_PER_DAY < fSeconds )
+		fSeconds -= SECONDS_PER_DAY;
+
+	return TINT( TUINT64( fSeconds ) ) % 60;
+}
+
 // $Barnyard: FUNCTION 0043cd30
 TINT AGameTimeManager::GetCurrentMinute() const
 {
@@ -283,5 +439,5 @@ TINT AGameTimeManager::GetCurrentMinute() const
 	if ( SECONDS_PER_DAY < fSeconds )
 		fSeconds -= SECONDS_PER_DAY;
 
-	return ( SECONDS_PER_DAY % SECONDS_PER_HOUR ) / 60;
+	return ( TUINT( fSeconds ) % SECONDS_PER_HOUR ) / 60;
 }

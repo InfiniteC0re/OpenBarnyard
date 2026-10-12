@@ -11,6 +11,7 @@
 
 TOSHI_NAMESPACE_START
 
+// NOTE: GetClass 006d61e0, CreateObject 006d6380, CreateObjectInPlace 006d63d0
 TDEFINE_CLASS( TVertexPoolResource );
 
 // $Barnyard: FUNCTION 006d63d0
@@ -26,6 +27,11 @@ TVertexPoolResource::TVertexPoolResource()
 	m_apManagedStreams[ 5 ] = TNULL;
 	m_apManagedStreams[ 6 ] = TNULL;
 	m_apManagedStreams[ 7 ] = TNULL;
+}
+
+// $Barnyard: FUNCTION 006d6420
+TVertexPoolResource::~TVertexPoolResource()
+{
 }
 
 // $Barnyard: FUNCTION 006d62d0
@@ -44,27 +50,27 @@ TBOOL TVertexPoolResource::Validate()
 		TUINT32 uiFlags;
 		TUINT16 uiMaxVertices;
 
-		TUINT8 uiUnk1 = m_uiFlags & 7;
+		TUINT8 uiUsage = m_uiFlags & FLAGS_USAGE_MASK;
 
-		if ( uiUnk1 == 1 )
+		if ( uiUsage == FLAGS_STATIC )
 		{
 			uiMaxVertices = pFactory->GetMaxStaticVertices();
-			uiFlags       = 1;
+			uiFlags       = FLAGS_STATIC;
 		}
-		else if ( uiUnk1 == 2 )
+		else if ( uiUsage == FLAGS_DYNAMIC )
 		{
 			uiMaxVertices = GetMaxVertices();
-			uiFlags       = 2;
+			uiFlags       = FLAGS_DYNAMIC;
 		}
 		else
 		{
-			if ( uiUnk1 != 4 )
+			if ( uiUsage != FLAGS_DYNAMIC_APPEND )
 			{
 				return TFALSE;
 			}
 
 			uiMaxVertices = GetMaxVertices();
-			uiFlags       = 4;
+			uiFlags       = FLAGS_DYNAMIC_APPEND;
 		}
 
 		pBlock = pFactory->CreateBlockResource( uiMaxVertices, uiFlags );
@@ -97,7 +103,7 @@ void TVertexPoolResource::Invalidate()
 // $Barnyard: FUNCTION 006d6280
 void TVertexPoolResource::OnDestroy()
 {
-	if ( m_uiFlags & 1 )
+	if ( m_uiFlags & FLAGS_STATIC )
 	{
 		auto& vertexFormat = m_pFactory->GetVertexFormat();
 
@@ -125,9 +131,9 @@ TBOOL TVertexPoolResource::Lock( LockBuffer* a_pLockBuffer )
 
 	if ( uiOldLockCount == 0 )
 	{
-		TUINT8 uiUnk1 = m_uiFlags & 7;
+		TUINT8 uiUsage = m_uiFlags & FLAGS_USAGE_MASK;
 
-		if ( uiUnk1 == 1 )
+		if ( uiUsage == FLAGS_STATIC )
 		{
 			a_pLockBuffer->uiNumStreams = GetFactory()->GetVertexFormat().GetNumStreams();
 
@@ -138,7 +144,7 @@ TBOOL TVertexPoolResource::Lock( LockBuffer* a_pLockBuffer )
 
 			return TTRUE;
 		}
-		else if ( uiUnk1 == 2 )
+		else if ( uiUsage == FLAGS_DYNAMIC )
 		{
 			Validate();
 
@@ -148,7 +154,7 @@ TBOOL TVertexPoolResource::Lock( LockBuffer* a_pLockBuffer )
 				return TTRUE;
 			}
 		}
-		else if ( uiUnk1 == 4 )
+		else if ( uiUsage == FLAGS_DYNAMIC_APPEND )
 		{
 			Validate();
 
@@ -186,11 +192,11 @@ void TVertexPoolResource::Unlock( TUINT16 a_uiNewNumVertices )
 
 		m_uiNumVertices = a_uiNewNumVertices;
 
-		if ( m_uiFlags & 6 )
+		if ( m_uiFlags & ( FLAGS_DYNAMIC | FLAGS_DYNAMIC_APPEND ) )
 		{
 			GetVertexBlock()->Unlock();
 		}
-		else if ( m_uiFlags & 1 )
+		else if ( m_uiFlags & FLAGS_STATIC )
 		{
 			Validate();
 		}
@@ -200,14 +206,14 @@ void TVertexPoolResource::Unlock( TUINT16 a_uiNewNumVertices )
 // $Barnyard: FUNCTION 006d61f0
 TBOOL TVertexPoolResource::Create( TVertexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxVertices, TUINT16 a_uiFlags )
 {
-	if ( a_uiFlags & 4 )
+	if ( a_uiFlags & FLAGS_DYNAMIC_APPEND )
 	{
-		a_uiFlags = a_uiFlags & 0xfffb | 2;
+		a_uiFlags = a_uiFlags & ~FLAGS_DYNAMIC_APPEND | FLAGS_DYNAMIC;
 	}
 
 	if ( TVertexPoolResourceInterface::Create( a_pFactory, a_uiMaxVertices, a_uiFlags ) )
 	{
-		if ( m_uiFlags & 1 )
+		if ( m_uiFlags & FLAGS_STATIC )
 		{
 			auto& vertexFormat = m_pFactory->GetVertexFormat();
 

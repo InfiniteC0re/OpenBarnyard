@@ -25,7 +25,7 @@ AWaveBankFMODFSB::AWaveBankFMODFSB( const Toshi::TPString8& a_strBank, const Tos
 // $Barnyard: FUNCTION 005dcf80
 TBOOL AWaveBankFMODFSB::IsReady() const
 {
-	return FMUSIC_GetOpenState( (FMUSIC_MODULE*)m_FileHandle ) == 0;
+	return FMUSIC_GetOpenState( (FMUSIC_MODULE*)m_FileHandle ) == ASoundManager::OPENSTATE_READY;
 }
 
 // $Barnyard: FUNCTION 005dd000
@@ -75,7 +75,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( LOADFLAGS a_uiFlags, TINT a_iBuffe
 		TVALIDPTR( pModule );
 
 		TINT iOpenState = FMUSIC_GetOpenState( pModule );
-		while ( iOpenState == -2 )
+		while ( iOpenState == ASoundManager::OPENSTATE_OPENING )
 		{
 #ifndef BARNYARD_COMMUNITY_PATCH
 			ThreadSleep( 5 );
@@ -99,7 +99,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( LOADFLAGS a_uiFlags, TINT a_iBuffe
 				FSOUND_SAMPLE* pSample = FMUSIC_GetSample( pModule, i );
 
 				AWave* pWave = &m_pWaves[ i ];
-				pWave->iFlags |= ( 4 | 8 );
+				pWave->iFlags |= ( AWave::FLAGS_UNK2 | AWave::FLAGS_UNK3 );
 				pWave->pSampleHandle = pSample;
 				pWave->iIndex        = i;
 
@@ -129,13 +129,13 @@ AWaveBank::UNLOADRESULT AWaveBankFMODFSB::Unload()
 			AWave* pWave         = &m_pWaves[ i ];
 			pWave->pSampleHandle = TNULL;
 			pWave->iIndex        = -1;
-			pWave->iFlags &= ~( 4 | 8 );
+			pWave->iFlags &= ~( AWave::FLAGS_UNK2 | AWave::FLAGS_UNK3 );
 		}
 
 		FMUSIC_MODULE* pModule = (FMUSIC_MODULE*)m_FileHandle;
 
 		TINT iOpenState = FMUSIC_GetOpenState( pModule );
-		while ( iOpenState == -2 )
+		while ( iOpenState == ASoundManager::OPENSTATE_OPENING )
 		{
 #ifndef BARNYARD_COMMUNITY_PATCH
 			ThreadSleep( 5 );
@@ -148,4 +148,10 @@ AWaveBank::UNLOADRESULT AWaveBankFMODFSB::Unload()
 	}
 
 	return UNLOADRESULT_OK;
+}
+
+// $Barnyard: FUNCTION 005dcf70
+// $Barnyard: FUNCTION 005dcfe0
+AWaveBankFMODFSB::~AWaveBankFMODFSB()
+{
 }

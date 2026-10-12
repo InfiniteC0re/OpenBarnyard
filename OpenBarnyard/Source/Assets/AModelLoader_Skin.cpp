@@ -62,7 +62,7 @@ void AModelLoader::LoadSkinLOD( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi
 				auto pIndexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TIndexFactoryResourceInterface>( SYSRESOURCE_IFSYS );
 				TVALIDPTR( pIndexFactory );
 
-				pSubMesh->pIndexPool = pIndexFactory->CreatePoolResource( pTRBMesh->m_uiNumIndices, 9 );
+				pSubMesh->pIndexPool = pIndexFactory->CreatePoolResource( pTRBMesh->m_uiNumIndices, TIndexPoolResourceInterface::FLAGS_STATIC | TIndexPoolResourceInterface::FLAGS_TRISTRIP );
 			}
 
 			pSubMesh->uiNumBones    = pTRBSubMesh->m_uiNumBones;

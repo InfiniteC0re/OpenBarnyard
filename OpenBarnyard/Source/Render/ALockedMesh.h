@@ -11,5 +11,8 @@ public:
 	ALockedMesh();
 	~ALockedMesh();
 
-public:
+private:
+	TUINT32 m_aUnk[ 17 ]; // 0x04, unknown, all zeroed by the constructor
 };
+
+TSTATICASSERT( sizeof( ALockedMesh ) == 0x48 );

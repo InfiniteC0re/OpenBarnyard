@@ -6,6 +6,8 @@
 class AModelLoaderJob : public ATRBLoaderJob
 {
 public:
+	AModelLoaderJob();
+
 	virtual void  BeginJob() override;
 	virtual TBOOL RunJob() override;
 	virtual TBOOL CancelJob() override;

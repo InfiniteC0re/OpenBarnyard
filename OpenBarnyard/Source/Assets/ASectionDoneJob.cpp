@@ -10,6 +10,11 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 005e8570
+ASectionDoneJob::ASectionDoneJob()
+{
+}
+
 void ASectionDoneJob::BeginJob()
 {
 }
@@ -34,7 +39,7 @@ TBOOL ASectionDoneJob::RunJob()
 			auto pModelNode = m_pSection->m_ppLODModelsData[ m_eLODType ][ i ];
 			ATerrainInterface::GetSingleton()->CreateModelInstance( pModelNode, "", TNULL );
 
-			if ( !ISZERO( m_pSection->m_aLODFlags[ m_eLODType ][ i ] & 1 ) )
+			if ( !ISZERO( m_pSection->m_aLODFlags[ m_eLODType ][ i ] & ATerrainSection::LODFLAGS_GLOW ) )
 			{
 				pModelNode->SetUseLighting( TTRUE );
 				pModelNode->SetGlow( TTRUE );
@@ -44,7 +49,7 @@ TBOOL ASectionDoneJob::RunJob()
 		// Set new state of LOD
 		m_pSection->SetLODLoaded( m_eLODType, TTRUE );
 		m_pSection->SetLODLoading( m_eLODType, TFALSE );
-		m_pSection->SetLODEmpty( m_eLODType, TTRUE );
+		m_pSection->SetLODReady( m_eLODType, TTRUE );
 
 		// Restore memory block
 		g_pMemory->SetGlobalBlock( pOldMemBlock );
@@ -66,7 +71,7 @@ TBOOL ASectionDoneJob::RunJob()
 	// Loading was canceled before it was done
 	m_pSection->SetLODLoading( m_eLODType, TFALSE );
 	m_pSection->SetLODQueued( m_eLODType, TFALSE );
-	m_pSection->SetLODEmpty( m_eLODType, TFALSE );
+	m_pSection->SetLODReady( m_eLODType, TFALSE );
 	m_pSection->DestroyLOD( m_eLODType );
 
 	ATerrainInterface::GetSingleton()->QueueStreamingAssets();

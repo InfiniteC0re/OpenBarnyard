@@ -69,8 +69,19 @@ public:
 	void         operator=( const TQuaternion& other ) { Set( other.x, other.y, other.z, other.w ); }
 	TQuaternion& operator*=( const TQuaternion& a_rQuat );
 
+	// $Barnyard: FUNCTION 006c9290
+	TQuaternion operator*( const TQuaternion& a_rQuat ) const
+	{
+		TQuaternion result = *this;
+		result *= a_rQuat;
+		return result;
+	}
+
 	static void Nlerp( TQuaternion& a_rOut, const TQuaternion& a_rStart, const TQuaternion& a_rEnd, float a_fProgress );
 	static void Slerp( TQuaternion& a_rOut, const TQuaternion& a_rStart, const TQuaternion& a_rEnd, float a_fProgress );
+
+	// Linear interpolation along the shortest path, the result is not normalised
+	static void Lerp( TQuaternion& a_rOut, const TQuaternion& a_rStart, const TQuaternion& a_rEnd, TFLOAT a_fProgress );
 
 public:
 	static const TQuaternion       IDENTITY;

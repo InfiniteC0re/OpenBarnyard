@@ -30,6 +30,9 @@ public:
 public:
 	AMaterialLibrary();
 
+	// $Barnyard: FUNCTION 00615c40
+	~AMaterialLibrary() {}
+
 	TBOOL LoadTTLData( void* a_pTTLData );
 	TBOOL LoadTTLFile( const TCHAR* a_szFilePath );
 	TBOOL LoadTRBFile( Toshi::TTRB* a_pTRB );
@@ -43,6 +46,7 @@ public:
 		return m_iNumTextures;
 	}
 
+	// $Barnyard: FUNCTION 00615f00
 	ATexture* GetTexture( TINT a_uiIndex )
 	{
 		TASSERT( a_uiIndex < m_iNumTextures );

@@ -9,6 +9,11 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// $Barnyard: FUNCTION 006067f0
+AModelLoaderJob::AModelLoaderJob()
+{
+}
+
 // $Barnyard: FUNCTION 00606850
 void AModelLoaderJob::BeginJob()
 {

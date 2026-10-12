@@ -26,6 +26,7 @@ public:
 	TDECLARE_FREELIST_ALLOCATOR( TPooledString8 );
 
 	friend class TPString8;
+	friend class TPString8Pool;
 
 public:
 	TPooledString8( const TCHAR* a_szString, TPString8Pool* a_pPool, T2Allocator* a_pAllocator )
@@ -54,7 +55,16 @@ public:
 	// Initialises strings from TPString8Initialiser
 	TPString8Pool( TINT a_iUnknown1, TINT a_iUnknown2, T2Allocator* a_pAllocator, void* m_pUnknown3 );
 
+	// Releases strings of every TPString8Initialiser and frees every pooled string
+	~TPString8Pool();
+
 	void Get( TPooledString8*& a_pOutString, const TCHAR* a_szString, bool* a_pWasInPool = TNULL );
+
+	// $Barnyard: FUNCTION 006bc4a0
+	void Get( TPooledString8*& a_pOutString, const TString8& a_rcString, bool* a_pWasInPool = TNULL )
+	{
+		Get( a_pOutString, a_rcString.GetString(), a_pWasInPool );
+	}
 
 	// $Barnyard: FUNCTION 006bc320
 	void Remove( TPooledString8* a_pString )
@@ -91,6 +101,8 @@ private:
 class TPString8
 {
 public:
+	friend class TPString8Initialiser;
+
 	struct Comparator
 	{
 		TINT operator()( const TPString8& a, const TPString8& b )
@@ -122,6 +134,7 @@ public:
 		Increment();
 	}
 
+	// $Barnyard: FUNCTION 0040db10
 	TFORCEINLINE TPString8( const TPString8& a_rOther )
 	{
 		m_pPtr = a_rOther.m_pPtr;
@@ -155,6 +168,7 @@ public:
 		return m_pPtr;
 	}
 
+	// $Barnyard: FUNCTION 0040f610
 	TFORCEINLINE TBOOL IsEmpty() const
 	{
 		return m_pPtr == TNULL || m_pPtr->GetString8().Length() == 0;
@@ -180,6 +194,24 @@ public:
 		return m_pPtr == a_pOther->m_pPtr;
 	}
 
+	// Compares the pooled string pointers
+	// NOTE: the name is unknown
+	// $Barnyard: FUNCTION 006bc110
+	TINT Compare( const TPString8& a_rcOther ) const
+	{
+		if ( m_pPtr > a_rcOther.m_pPtr ) return 1;
+		return -( m_pPtr < a_rcOther.m_pPtr );
+	}
+
+	// Compares the strings alphabetically
+	// NOTE: the name is unknown
+	// $Barnyard: FUNCTION 006bc130
+	TINT CompareStrings( const TPString8& a_rcOther ) const
+	{
+		return GetString8().Compare( a_rcOther.GetString8().GetString(), -1 );
+	}
+
+	// $Barnyard: FUNCTION 006bbcd0
 	TFORCEINLINE bool operator==( const TPString8& a_Other ) const
 	{
 		return m_pPtr == a_Other.m_pPtr;
@@ -190,6 +222,7 @@ public:
 		return m_pPtr != a_Other.m_pPtr;
 	}
 
+	// $Barnyard: FUNCTION 00401540
 	TFORCEINLINE TPString8& operator=( TPooledString8* a_pString )
 	{
 		if ( m_pPtr != a_pString )
@@ -202,6 +235,7 @@ public:
 		return *this;
 	}
 
+	// $Barnyard: FUNCTION 0040a240
 	TFORCEINLINE TPString8& operator=( const TPString8& other )
 	{
 		if ( m_pPtr != other.m_pPtr )
@@ -214,6 +248,8 @@ public:
 		return *this;
 	}
 
+	// NOTE: in the original, an out of line copy of operator= that returns the new pointer instead of the string (the callers ignore it)
+	// $Barnyard: FUNCTION 0040a0c0
 	TFORCEINLINE TPString8& operator=( const TPString8* pOther )
 	{
 		if ( m_pPtr != pOther->m_pPtr )
@@ -267,15 +303,34 @@ private:
 
 	TFORCEINLINE void Decrement()
 	{
-		if ( m_pPtr && m_pPtr->DecRefCount() == 0 )
+#ifdef BARNYARD_COMMUNITY_PATCH
+		// NOTE: static strings are destroyed after the pooled strings are freed, don't touch them
+		if ( ms_bPoolDestroyed )
+			return;
+#endif // BARNYARD_COMMUNITY_PATCH
+
+		if ( m_pPtr )
 		{
-			m_pPtr->Delete();
+			// DecRefCount returns the value before decrementing, so this deletes on 1 -> 0
+			if ( m_pPtr->DecRefCount() == 1 )
+				m_pPtr->Delete();
+
+			m_pPtr = TNULL;
 		}
 	}
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+public:
+	// Set once a string pool is destroyed (on shutdown), TPString8 objects don't release their strings after that
+	inline static TBOOL ms_bPoolDestroyed = TFALSE;
+#endif // BARNYARD_COMMUNITY_PATCH
 
 private:
 	TPooledString8* m_pPtr;
 };
+
+// Appends the pooled string to a_rcString
+TString8 operator+( const TString8& a_rcString, const TPString8& a_rcPString );
 
 class TPString8Initialiser
 {
@@ -291,6 +346,9 @@ public:
 	~TPString8Initialiser() = default;
 
 	void Initialise( TPString8Pool* a_pStringPool );
+
+	// Releases the strings, called when the pool is destroyed
+	void Deinitialise();
 
 	StringMap*            GetStringMap() const { return m_pStrings; }
 	TUINT                 GetCount() const { return m_iCount; }

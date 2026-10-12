@@ -13,20 +13,23 @@ AAssetStreaming::AAssetStreaming()
 {
 #ifdef BARNYARD_COMMUNITY_PATCH
 	T2_FOREACH_ARRAY( m_apCurrentJobs, it )
-		m_apCurrentJobs[ it ] = TNULL;
+	m_apCurrentJobs[ it ] = TNULL;
 
 	m_iNumStartedJobs = 0;
-#else // BARNYARD_COMMUNITY_PATCH
+#else  // BARNYARD_COMMUNITY_PATCH
 	m_pCurrentJob = TNULL;
 #endif // !BARNYARD_COMMUNITY_PATCH
 
 	m_Unk   = TNULL;
 	m_bFlag = TTRUE;
-	m_FileStream.Create( 0, Toshi::TThread::THREAD_PRIORITY_NORMAL, 0 );
+	m_FileStream.Create( 0, Toshi::TThread::THREAD_PRIORITY_NORMAL, Toshi::TThread::FLAGS_NONE );
 }
 
+// $Barnyard: FUNCTION 00606760
 AAssetStreaming::~AAssetStreaming()
 {
+	m_FileStream.Destroy();
+	TFree( m_Unk );
 }
 
 // $Barnyard: FUNCTION 00606a90
@@ -64,9 +67,24 @@ void AAssetStreaming::Update()
 			if ( pJob )
 			{
 				if ( !pJob->RunJob() ) break;
-				pJob->m_bIsFinished = TTRUE;
+				pJob->m_bIsFinished  = TTRUE;
 				m_apCurrentJobs[ i ] = TNULL;
 				m_iNumStartedJobs--;
+			}
+		}
+
+		// Keep the started jobs in the order they were queued (the free slots at the end), so that a
+		// job never runs before the ones queued earlier (e.g. ACollisionDoneJob needs the model of the
+		// AModelLoaderJob queued right before it)
+		TINT iNumJobs = 0;
+
+		for ( TINT i = 0; i < TARRAYSIZE( m_apCurrentJobs ); i++ )
+		{
+			if ( m_apCurrentJobs[ i ] )
+			{
+				AMainThreadJob* pJob          = m_apCurrentJobs[ i ];
+				m_apCurrentJobs[ i ]          = TNULL;
+				m_apCurrentJobs[ iNumJobs++ ] = pJob;
 			}
 		}
 	}
@@ -112,7 +130,7 @@ TBOOL AAssetStreaming::HasActiveJobs() const
 {
 #ifdef BARNYARD_COMMUNITY_PATCH
 	return !m_Jobs.IsEmpty() || m_iNumStartedJobs > 0;
-#else // BARNYARD_COMMUNITY_PATCH
+#else  // BARNYARD_COMMUNITY_PATCH
 	return !m_Jobs.IsEmpty() || m_pCurrentJob != TNULL;
 #endif // !BARNYARD_COMMUNITY_PATCH
 }

@@ -19,6 +19,12 @@ ASlideshowState::ASlideshowState( const AGUISlideshow::Params& a_rSlideShowParam
 	m_Slideshow.Setup( &m_HUDParams, a_rSlideShowParams, a_bShouldLocalise );
 }
 
+// $Barnyard: FUNCTION 0042ec30
+// $Barnyard: FUNCTION 0042edd0
+ASlideshowState::~ASlideshowState()
+{
+}
+
 // $Barnyard: FUNCTION 0042ecc0
 TBOOL ASlideshowState::ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent )
 {

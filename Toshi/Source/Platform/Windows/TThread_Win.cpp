@@ -23,7 +23,7 @@ unsigned long __stdcall ThreadEntry( void* userParam )
 }
 
 // $Barnyard: FUNCTION 006bb9a0
-TBOOL TThread::Create( TSIZE a_iStackSize, PRIORITY a_ePriority, TUINT8 a_eFlags )
+TBOOL TThread::Create( TSIZE a_iStackSize, PRIORITY a_ePriority, FLAGS a_eFlags )
 {
 	m_iThreadID  = -1;
 	m_hThreadHnd = CreateThread( NULL, a_iStackSize, ThreadEntry, this, CREATE_SUSPENDED, &m_iThreadID );
@@ -34,7 +34,7 @@ TBOOL TThread::Create( TSIZE a_iStackSize, PRIORITY a_ePriority, TUINT8 a_eFlags
 
 	TThreadManager::GetSingletonSafe()->InsertThread( this );
 
-	if ( ( a_eFlags & 1 ) == 0 )
+	if ( ( a_eFlags & FLAGS_SUSPENDED ) == 0 )
 	{
 		DWORD iResult = ResumeThread( m_hThreadHnd );
 		TASSERT( iResult != -1, "Couldn't resume thread" );
@@ -43,9 +43,13 @@ TBOOL TThread::Create( TSIZE a_iStackSize, PRIORITY a_ePriority, TUINT8 a_eFlags
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006bb8b0
 TBOOL TThread::Destroy()
 {
 	TASSERT( m_iThreadID != GetCurrentThreadId() );
+
+	if ( m_hThreadHnd == NULL )
+		return TFALSE;
 
 	BOOL bResult = TerminateThread( m_hThreadHnd, 0 );
 	TASSERT( bResult != FALSE );

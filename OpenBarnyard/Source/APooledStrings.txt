@@ -1,3 +1,4 @@
+AAnimalConversationState
 AAudioOptionsState
 ABarnExploreMinigameState
 ABarnRewardState
@@ -1608,3 +1609,7 @@ yukobject
 
 # didn't present in the original:
 bkg_fmod
+
+# present in the original (sim loading screen pictures, 0x007733f8):
+Loader_Cow_01
+Loader_Cow_02

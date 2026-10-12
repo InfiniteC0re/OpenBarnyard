@@ -14,6 +14,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 005f1780, CreateObject 005f36b0, CreateObjectInPlace 005f3730
 TDEFINE_CLASS( ASkinMaterialHAL );
 
 ASkinMaterialHAL::ASkinMaterialHAL()
@@ -22,6 +23,7 @@ ASkinMaterialHAL::ASkinMaterialHAL()
 }
 
 // $Barnyard: FUNCTION 005f3510
+// $Barnyard: FUNCTION 005f3a90
 ASkinMaterialHAL::~ASkinMaterialHAL()
 {
 	if ( TNULL != m_pRegMaterial )
@@ -57,7 +59,7 @@ void ASkinMaterialHAL::PreRender()
 	TTextureResourceHAL* pLT0Texture = TNULL;
 	TTextureResourceHAL* pLT1Texture = TNULL;
 
-	ASkinShaderHAL::sm_eRenderStateFlags = 0x1b;
+	ASkinShaderHAL::sm_eRenderStateFlags = ASkinShaderHAL::RENDERSTATE_ALPHABLEND;
 
 	if ( m_bIsHDLighting )
 	{
@@ -117,7 +119,7 @@ void ASkinMaterialHAL::PreRender()
 		pD3DDevice->SetTexture( 0, TNULL );
 	}
 
-	if ( m_eBlendMode == 0 || m_eBlendMode == 1 || m_eBlendMode != 3 )
+	if ( m_eBlendMode == BLENDMODE_DEFAULT || m_eBlendMode == BLENDMODE_ALPHA || m_eBlendMode != BLENDMODE_ADDITIVE )
 	{
 		pD3DDevice->SetRenderState( D3DRS_SRCBLEND, 5 );
 		pD3DDevice->SetRenderState( D3DRS_DESTBLEND, 6 );
@@ -163,11 +165,11 @@ void ASkinMaterialHAL::PostRender()
 
 	if ( m_Flags & FLAGS_NO_CULL )
 	{
-		pD3DDevice->SetRenderState( D3DRS_CULLMODE, pShader->IsEnableRenderEnvMap() ? D3DCULL_CCW : D3DCULL_CW );
+		pD3DDevice->SetRenderState( D3DRS_CULLMODE, pShader->IsEnableRenderEnvMap() == TTRUE ? D3DCULL_CCW : D3DCULL_CW );
 	}
 
 	pD3DDevice->SetRenderState( D3DRS_FOGENABLE, FALSE );
-	ASkinShaderHAL::sm_eRenderStateFlags = 0x1b;
+	ASkinShaderHAL::sm_eRenderStateFlags = ASkinShaderHAL::RENDERSTATE_ALPHABLEND;
 }
 
 TBOOL ASkinMaterialHAL::Create( BLENDMODE a_eBlendMode )
@@ -183,18 +185,18 @@ void ASkinMaterialHAL::SetBlendMode( BLENDMODE a_eBlendMode )
 
 	switch ( a_eBlendMode )
 	{
-		case 0:
+		case BLENDMODE_DEFAULT:
 			SetOrderTable( pShader->GetOrderTable( 0 ) );
 			break;
-		case 1:
+		case BLENDMODE_ALPHA:
 		case 5:
 			SetOrderTable( pShader->GetOrderTable( 1 ) );
 			break;
-		case 2:
+		case BLENDMODE_MODULATE:
 		case 6:
 			SetOrderTable( pShader->GetOrderTable( 1 ) );
 			break;
-		case 3:
+		case BLENDMODE_ADDITIVE:
 		case 4:
 			SetOrderTable( pShader->GetOrderTable( 1 ) );
 			break;

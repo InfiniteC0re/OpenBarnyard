@@ -34,6 +34,9 @@ public:
 	~T2SortedVector() = default;
 
 	// With a help of binary search algorithm, looks for an insertion place of the specified value
+	// $Barnyard: FUNCTION 00580480
+	// AChickenFireMinigameState::DepthSortedVector: 0047f560
+	// $Barnyard: FUNCTION 0047f560
 	Iterator FindInsertionPoint( const T& a_rcValue, TBOOL& a_rbNotUnique )
 	{
 		TINT iSearchStart = 0;
@@ -58,8 +61,9 @@ public:
 			else
 			{
 				// We found an item that is equal to this
-				// Now, skip all equal items to prevent order changes
-				iSearchStart += 1;
+				// Now, skip all equal items after it to prevent order changes
+				// NOTE: continues from the found item like the original (e.g. 004302f0, 0047f560)
+				iSearchStart = iMiddle + 1;
 
 				while ( iSearchStart <= iSearchEnd &&
 				        SortResults()( a_rcValue, Container::At( iSearchStart ) ) == 0 )
@@ -75,6 +79,8 @@ public:
 		return Iterator( iSearchStart, this );
 	}
 
+	// Instantiations: AFunctionTable::FunctionList 005c9850
+	// $Barnyard: FUNCTION 005c9850
 	Iterator Push( const T& a_rValue )
 	{
 		TBOOL bNotUnique;

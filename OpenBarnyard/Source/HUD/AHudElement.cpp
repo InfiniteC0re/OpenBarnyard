@@ -24,11 +24,13 @@ AHudElement::~AHudElement()
 {
 }
 
-void AHudElement::Unknown1()
+// DOES_NOTHING
+void AHudElement::Unknown1( void* a_pUnk1, void* a_pUnk2 )
 {
 }
 
-void AHudElement::Unknown2()
+// DOES_NOTHING
+void AHudElement::GetDimensions( TINT& a_rWidth, TINT& a_rHeight )
 {
 }
 

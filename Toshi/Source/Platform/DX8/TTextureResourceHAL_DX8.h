@@ -20,6 +20,7 @@ public:
 
 private:
 	TTextureResourceHAL();
+	~TTextureResourceHAL();
 
 public:
 	virtual TBOOL Validate() override;
@@ -30,8 +31,8 @@ public:
 	virtual TBOOL Lock( TTexture::LOCKSTATE& a_rLockState ) override;
 	virtual void  Unlock() override;
 	virtual void  CreateFromT2Texture( T2Texture* a_pTexture ) override;
-	virtual TBOOL Create( void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight ) override;
 	virtual TBOOL Create( const TCHAR* a_szFileName, TUINT a_eTextureFlags ) override;
+	virtual TBOOL Create( void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight ) override;
 	virtual TBOOL CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, TUINT a_uiMipMapFlags ) override;
 
 	TBOOL CreateFromFormat();
@@ -58,6 +59,8 @@ public:
 public:
 	static TBOOL IsPPM( const TCHAR* a_szName );
 
+	inline static TINT s_iHALMemoryUsage; // 0x007d339c
+
 protected:
 	TINT                   m_iNumLocks;
 	TBOOL                  m_bLoadFromMemory;
@@ -67,7 +70,7 @@ protected:
 	TUINT                  m_uiWidth;
 	TUINT                  m_uiHeight;
 	TUINT                  m_uiMipLevels;
-	TUINT                  m_uiMipFlags;
+	MIPFLAGS               m_uiMipFlags;
 	TTEXTURERESOURCEFORMAT m_eResourceFormat;
 	IDirect3DTexture8*     m_pD3DTexture;
 	D3DXIMAGE_INFO         m_ImageInfo;

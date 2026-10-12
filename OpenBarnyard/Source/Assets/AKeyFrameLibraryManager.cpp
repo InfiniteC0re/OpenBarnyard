@@ -12,6 +12,9 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: CreateObject 00606c60 and CreateObjectInPlace 00606cc0 of the TClass
+// $Barnyard: FUNCTION 00606c60
+// $Barnyard: FUNCTION 00606cc0
 TDEFINE_CLASS( AKeyFrameLibraryManager );
 
 // $Barnyard: FUNCTION 00606bf0
@@ -21,6 +24,7 @@ AKeyFrameLibraryManager::AKeyFrameLibraryManager()
 }
 
 // $Barnyard: FUNCTION 006074b0
+// $Barnyard: FUNCTION 00607530
 AKeyFrameLibraryManager::~AKeyFrameLibraryManager()
 {
 	UnloadAllLibraries();
@@ -123,7 +127,7 @@ TBOOL AKeyFrameLibraryManager::UnrefLibrary( const Toshi::TPString8& a_rLibraryN
 
 		if ( pRefResultNode != m_LibrariesRefs.End() )
 		{
-			auto& rNumRefs = pResultNode->GetSecond();
+			auto& rNumRefs = pRefResultNode->GetSecond();
 
 			if ( rNumRefs != 0 )
 				rNumRefs--;

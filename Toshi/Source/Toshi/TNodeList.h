@@ -91,6 +91,8 @@ public:
 			return m_pPtr == a_rcIterator.m_pPtr;
 		}
 
+		// TNodeList<AUnitManager::CharacterUnitNode> 0040f7f0
+		// $Barnyard: FUNCTION 0040f7f0
 		Iterator operator++( TINT )
 		{
 			TASSERT( m_pPtr != TNULL );
@@ -126,11 +128,25 @@ public:
 	};
 
 public:
+	// TNodeList<AUnitProxy> 0040d9f0, folded for the types with the node at offset 0 (AUnit, AUnitHash::CellObject...) 0040ea80
+	// $Barnyard: FUNCTION 0040d9f0
+	// $Barnyard: FUNCTION 0040ea80
 	TNodeList()
 	{
 		m_iCount = 0;
 	}
 
+	// $Barnyard: FUNCTION 00678c70
+	// $Barnyard: FUNCTION 006797c0
+	// $Barnyard: FUNCTION 0063aa00
+	// $Barnyard: FUNCTION 006b55e0
+	// $Barnyard: FUNCTION 006d9600
+	// $Barnyard: FUNCTION 006c7f50
+	// 005a39b0: tail jump to the DeleteAll instance 005a3230 (TNodeList<AInteractionSequence>, AUnitManager)
+	// $Barnyard: FUNCTION 005a39b0
+	// TNodeList<AUnitProxy> 0040dca0, TNodeList<AUnitManager::CharacterUnitNode> 00410a90
+	// $Barnyard: FUNCTION 0040dca0
+	// $Barnyard: FUNCTION 00410a90
 	~TNodeList()
 	{
 		DeleteAll();
@@ -158,6 +174,8 @@ public:
 		m_iCount++;
 	}
 
+	// Instantiations: 005a66b0 (used by 005c8720, 005c8bb0)
+	// $Barnyard: FUNCTION 005a66b0
 	T* Remove( T* pNode )
 	{
 		TASSERT( pNode->GetList() == this );
@@ -172,6 +190,9 @@ public:
 	}
 
 	// $Barnyard: FUNCTION 0061f490
+	// $Barnyard: FUNCTION 005c8350
+	// TNodeList<AUnitProxy> 0040da20
+	// $Barnyard: FUNCTION 0040da20
 	void RemoveAll()
 	{
 		while ( !IsEmpty() )
@@ -180,6 +201,7 @@ public:
 		}
 	}
 
+	// $Barnyard: FUNCTION 006b4e30
 	Iterator RemoveHead()
 	{
 		if ( !IsEmpty() )
@@ -204,6 +226,20 @@ public:
 	void DeleteTail() { Delete( Tail() ); }
 
 	// $Barnyard: FUNCTION 005a0190
+	// $Barnyard: FUNCTION 00678290
+	// $Barnyard: FUNCTION 00679770
+	// $Barnyard: FUNCTION 005a3230
+	// $Barnyard: FUNCTION 0063a180
+	// $Barnyard: FUNCTION 0060a830
+	// $Barnyard: FUNCTION 0060a880
+	// $Barnyard: FUNCTION 0060a8d0
+	// $Barnyard: FUNCTION 0060a8e0
+	// $Barnyard: FUNCTION 005f7530
+	// $Barnyard: FUNCTION 005f4690
+	// TNodeList<AUnitProxy> 0040dac0, TNodeList<AUnitType> 0040e320 and TNodeList<AUnitManager::CharacterUnitNode> 004108d0 (their destructors aren't virtual)
+	// $Barnyard: FUNCTION 0040dac0
+	// $Barnyard: FUNCTION 0040e320
+	// $Barnyard: FUNCTION 004108d0
 	void DeleteAll()
 	{
 		while ( !IsEmpty() )
@@ -218,9 +254,37 @@ public:
 		delete pNode;
 	}
 
+	// Moves every node of a_rList to the end of this list
+	// $Barnyard: FUNCTION 00678c80
+	void InsertListTail( TNodeList& a_rList )
+	{
+		if ( a_rList.IsEmpty() )
+			return;
+
+		T* pFirst = a_rList.m_oRoot.m_pNext;
+		T* pLast  = a_rList.m_oRoot.m_pPrev;
+		T* pTail  = m_oRoot.m_pPrev;
+
+		for ( T* pNode = pFirst; pNode != TSTATICCAST( T, &a_rList.m_oRoot ); pNode = pNode->m_pNext )
+			pNode->m_pList = this;
+
+		m_iCount += a_rList.m_iCount;
+
+		pTail->m_pNext  = pFirst;
+		pFirst->m_pPrev = pTail;
+		pLast->m_pNext  = TSTATICCAST( T, &m_oRoot );
+		m_oRoot.m_pPrev = pLast;
+
+		a_rList.m_iCount        = 0;
+		a_rList.m_oRoot.m_pPrev = TSTATICCAST( T, &a_rList.m_oRoot );
+		a_rList.m_oRoot.m_pNext = TSTATICCAST( T, &a_rList.m_oRoot );
+	}
+
 	void InsertHead( T* a_pNode ) { InsertAfter( End(), a_pNode ); }
 	void InsertTail( T* a_pNode ) { InsertBefore( End(), a_pNode ); }
 
+	// Instantiations: 005a66e0 (used by 005c8720, 005c8bb0)
+	// $Barnyard: FUNCTION 005a66e0
 	TBOOL IsEmpty() const { return Begin() == End(); }
 	TBOOL IsValid( const T* a_pNode ) const { return a_pNode != TNULL && a_pNode->m_pList == this; }
 
@@ -229,7 +293,12 @@ public:
 	Iterator Head() const { return m_oRoot.m_pNext; }
 	Iterator Tail() const { return m_oRoot.m_pPrev; }
 
+	// Folded for every type: 0040ea70
+	// $Barnyard: FUNCTION 0040ea70
 	Iterator Begin() const { return m_oRoot.m_pNext; }
+	// $Barnyard: FUNCTION 00639c30
+	// TNodeList<AUnitProxy> 0040d880
+	// $Barnyard: FUNCTION 0040d880
 	Iterator End() const { return TSTATICCAST( T, &m_oRoot ); }
 
 	Iterator RBegin() const { return m_oRoot.m_pPrev; }

@@ -28,31 +28,35 @@ TFileManager::TFileManager()
 
 TFileManager::~TFileManager()
 {
-	Destroy();
+	// NOTE: the file systems are destroyed by TFileManager::Destroy, which deletes the file manager itself
 }
 
 // $Barnyard: FUNCTION 006d9230
 void TFileManager::Destroy()
 {
+	TFileManager* pFileManager = TFileManager::GetSingletonSafe();
+
 	{
-		auto pFileSystem = TFileManager::FindFileSystem( "mem" );
+		auto pFileSystem = pFileManager->FindFileSystem( "mem" );
 		if ( pFileSystem ) delete pFileSystem;
 	}
 
 	{
-		auto pFileSystem = TFileManager::FindFileSystem( "null" );
+		auto pFileSystem = pFileManager->FindFileSystem( "null" );
 		if ( pFileSystem ) delete pFileSystem;
 	}
 
 	{
-		auto pFileSystem = TFileManager::FindFileSystem( "abs" );
+		auto pFileSystem = pFileManager->FindFileSystem( "abs" );
 		if ( pFileSystem ) delete pFileSystem;
 	}
 
 	{
-		auto pFileSystem = TFileManager::FindFileSystem( "local" );
+		auto pFileSystem = pFileManager->FindFileSystem( "local" );
 		if ( pFileSystem ) delete pFileSystem;
 	}
+
+	pFileManager->SetSystemPath( "" );
 
 	DestroyCommon();
 }

@@ -48,6 +48,7 @@ AGUI2MenuGrid::AGUI2MenuGrid()
 }
 
 // $Barnyard: FUNCTION 0063ed30
+// $Barnyard: FUNCTION 0063f170
 AGUI2MenuGrid::~AGUI2MenuGrid()
 {
 	delete[] m_pColumnsData;
@@ -75,6 +76,19 @@ void AGUI2MenuGrid::AddMenuGridItem( AGUI2MenuGridItem& a_rMenuItem )
 		m_vecMaxItemDimensions.y = fItemHeight;
 
 	a_rMenuItem.SetAttachment( T2GUIATTACHMENT_TOPLEFT, T2GUIATTACHMENT_TOPLEFT );
+}
+
+// $Barnyard: FUNCTION 0063f110
+void AGUI2MenuGrid::UpdateMaxItemDimensions( AGUI2MenuGridItem& a_rMenuItem )
+{
+	TFLOAT fItemWidth, fItemHeight;
+	a_rMenuItem.GetDimensions( fItemWidth, fItemHeight );
+
+	if ( fItemWidth > m_vecMaxItemDimensions.x )
+		m_vecMaxItemDimensions.x = fItemWidth;
+
+	if ( fItemHeight > m_vecMaxItemDimensions.y )
+		m_vecMaxItemDimensions.y = fItemHeight;
 }
 
 // $Barnyard: FUNCTION 0063f080
@@ -377,6 +391,8 @@ TBOOL AGUI2MenuGrid::ProcessInputCommand( AInputCommand a_eCommand, const Toshi:
 			if ( m_fnActivateCallback )
 				m_fnActivateCallback( m_pCallbackUserData, m_pFocusedMenuItem );
 		}
+
+		bHandled = TTRUE;
 	}
 	else if ( eCommandResult == AGUI2MenuGridItem::COMMANDRESULT_NONE )
 	{
@@ -429,4 +445,26 @@ TBOOL AGUI2MenuGrid::ProcessInputCommand( AInputCommand a_eCommand, const Toshi:
 
 	m_eActionFlags = ACTIONFLAGS_NONE;
 	return bHandled;
+}
+
+// $Barnyard: FUNCTION 0063f0b0
+void AGUI2MenuGrid::SetItemEnabled( AGUI2MenuGridItem& a_rMenuItem, TBOOL a_bEnabled )
+{
+	if ( !a_bEnabled && &a_rMenuItem == m_pFocusedMenuItem )
+	{
+		if ( &a_rMenuItem == m_pHoveredMenuItem )
+			m_pHoveredMenuItem = TNULL;
+
+		AGUI2MenuGridItem* pNewFocus = a_rMenuItem.m_pRightElement;
+
+		if ( m_pFocusedMenuItem )
+			m_pFocusedMenuItem->OnFocusLost();
+
+		m_pFocusedMenuItem = pNewFocus;
+
+		if ( pNewFocus )
+			pNewFocus->OnFocus();
+	}
+
+	a_rMenuItem.SetEnabled( a_bEnabled );
 }

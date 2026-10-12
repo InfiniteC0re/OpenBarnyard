@@ -19,6 +19,7 @@ TINT T2String8::FormatV( TCHAR* a_pcString, const TCHAR* a_pcFormat, va_list arg
 	return iResult;
 }
 
+// $Barnyard: FUNCTION 006bb1d0
 TINT T2String8::FormatV( TCHAR* a_pcString, TINT size, const TCHAR* a_pcFormat, va_list args )
 {
 	TINT iResult = _vsnprintf( a_pcString, size, a_pcFormat, args );
@@ -27,6 +28,7 @@ TINT T2String8::FormatV( TCHAR* a_pcString, TINT size, const TCHAR* a_pcFormat, 
 	return iResult;
 }
 
+// $Barnyard: FUNCTION 006bb180
 TINT T2String8::Format( TCHAR* a_pcString, const TCHAR* a_pcFormat, ... )
 {
 	va_list args;
@@ -57,6 +59,7 @@ TINT T2String8::Compare( const TCHAR* str1, const TCHAR* str2, TSIZE size )
 	return strcmp( str1, str2 );
 }
 
+// $Barnyard: FUNCTION 006bb0e0
 TINT T2String8::CompareNoCase( const TCHAR* str1, const TCHAR* str2, TSIZE size /*= -1*/ )
 {
 	if ( size != -1 )
@@ -65,6 +68,7 @@ TINT T2String8::CompareNoCase( const TCHAR* str1, const TCHAR* str2, TSIZE size 
 	return _stricmp( str1, str2 );
 }
 
+// $Barnyard: FUNCTION 006bb120
 TCHAR* T2String8::Copy( TCHAR* dst, const TCHAR* src, TSIZE size /*= -1*/ )
 {
 	if ( size != -1 )
@@ -114,6 +118,7 @@ TCHAR* T2String8::FindChar( TCHAR* str, TCHAR character )
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006bb200
 const TCHAR* T2String8::FindString( const TCHAR* str, const TCHAR* substr )
 {
 	return strstr( str, substr );
@@ -124,10 +129,10 @@ TCHAR* T2String8::FindString( TCHAR* str, const TCHAR* substr )
 	return strstr( str, substr );
 }
 
+// $Barnyard: FUNCTION 006bb160
 TSIZE T2String8::Length( const TCHAR* str )
 {
-	if ( str != TNULL ) return strlen( str );
-	return -1;
+	return strlen( str );
 }
 
 TBOOL T2String8::IsLowerCase( const TCHAR* str )
@@ -164,6 +169,7 @@ void T2String8::ToUpperCase( TCHAR* str )
 	}
 }
 
+// $Barnyard: FUNCTION 006bb220
 void T2String8::IntToString( TINT value, TCHAR* dst, TINT radix )
 {
 	_itoa( value, dst, radix );

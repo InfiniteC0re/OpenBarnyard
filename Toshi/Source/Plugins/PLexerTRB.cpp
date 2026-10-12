@@ -86,6 +86,41 @@ TUINT8 PLexerTRB::PeekToken( TINT a_iTokenOffset )
 	return TFileLexer::TOKEN_EOF;
 }
 
+// $Barnyard: FUNCTION 006b44a0
+TBOOL PLexerTRB::PeekToken( Token& a_rOutToken, TINT a_iTokenOffset )
+{
+	a_rOutToken.iLineNumber = 0;
+	a_rOutToken.pString     = TNULL;
+
+	TINT iTokenIdx = m_iTokenCounter + a_iTokenOffset;
+
+	if ( iTokenIdx < 0 || iTokenIdx >= m_pMainHeader->iNumFileTokens )
+	{
+		a_rOutToken.uiTokenType = TFileLexer::TOKEN_EOF;
+		return TFALSE;
+	}
+
+	// Count the tokens with values up to the peeked one
+	TINT iStringIdx = m_iStringCounter;
+	for ( TINT i = m_iTokenCounter; i <= iTokenIdx; i++ )
+	{
+		TUINT uiToken = m_pMainHeader->pTokens[ i ];
+		if ( uiToken >= TFileLexer::TOKEN_IDENT && uiToken <= TFileLexer::TOKEN_INCLUDE )
+			iStringIdx++;
+	}
+
+	TUINT uiToken           = m_pMainHeader->pTokens[ iTokenIdx ];
+	a_rOutToken.uiTokenType = uiToken;
+
+	if ( uiToken >= TFileLexer::TOKEN_IDENT && uiToken <= TFileLexer::TOKEN_INCLUDE )
+		a_rOutToken.uiValue = m_pMainHeader->pTokenValues[ iStringIdx ];
+
+	if ( m_pLineNums )
+		a_rOutToken.iLineNumber = m_pLineNums[ iTokenIdx ];
+
+	return TTRUE;
+}
+
 // $Barnyard: FUNCTION 006b4550
 TBOOL PLexerTRB::GetNextToken( Token& a_rOutToken )
 {
@@ -101,7 +136,7 @@ TBOOL PLexerTRB::GetNextToken( Token& a_rOutToken )
 		return TFALSE;
 	}
 
-	TUINT uiToken       = m_pMainHeader->pTokens[ m_iTokenCounter ];
+	TUINT uiToken           = m_pMainHeader->pTokens[ m_iTokenCounter ];
 	a_rOutToken.uiTokenType = uiToken;
 
 	// Read associated string
@@ -137,7 +172,7 @@ TBOOL PLexerTRB::GetPrevToken( Token& a_rOutToken )
 		return TFALSE;
 	}
 
-	TUINT uiPrevToken   = m_pMainHeader->pTokens[ iPrevTokenIdx ];
+	TUINT uiPrevToken       = m_pMainHeader->pTokens[ iPrevTokenIdx ];
 	a_rOutToken.uiTokenType = uiPrevToken;
 
 	// Get associated string

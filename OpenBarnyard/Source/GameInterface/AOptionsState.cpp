@@ -5,7 +5,12 @@
 #include "GUI/T2GUIFontManager.h"
 #include "Locale/ALocaleManager.h"
 #include "AGameStateController.h"
+#include "AControlOptionsState.h"
 #include "AAudioOptionsState.h"
+#include "ACameraOptionsState.h"
+#include "ADifficultyOptionState.h"
+#include "SaveLoadSKU.h"
+#include "Helpers/APlayerProgress.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -23,6 +28,7 @@ AOptionsState::AOptionsState()
 }
 
 // $Barnyard: FUNCTION 00444f50
+// $Barnyard: FUNCTION 00445170
 AOptionsState::~AOptionsState()
 {
 }
@@ -44,6 +50,7 @@ TBOOL AOptionsState::OnUpdate( TFLOAT a_fDeltaTime )
 TPSTRING8_DECLARE( DialogInputMap );
 
 // $Barnyard: FUNCTION 00444fc0
+// $BarnyardWiiJP: FUNCTION 8015736c
 void AOptionsState::OnInsertion()
 {
 	SetInputMap( TPS8( DialogInputMap ) );
@@ -51,7 +58,19 @@ void AOptionsState::OnInsertion()
 
 	for ( TINT i = 0; i < OPTIONSBUTTON_NUMOF; i++ )
 	{
+#ifdef BARNYARD_LATEST
+		// NOTE: the Wii skips OPTIONSBUTTON_CONTROLS here (no mouse), the PC keeps it
+		const TWCHAR* wszText;
+
+		if ( i == OPTIONSBUTTON_CAMERA )
+			wszText = ACameraOptionsState::GetCameraText();
+		else if ( i == OPTIONSBUTTON_DIFFICULTY )
+			wszText = ADifficultyOptionState::GetText( OPTIONSBUTTON_TEXTS[ i ] );
+		else
+			wszText = g_pLocaleManager->GetString( OPTIONSBUTTON_TEXTS[ i ] );
+#else
 		const TWCHAR* wszText = g_pLocaleManager->GetString( OPTIONSBUTTON_TEXTS[ i ] );
+#endif
 
 		m_aButtons[ i ].Create( pFont, pFont->GetTextWidth( wszText ), wszText, 10.0f );
 		m_aButtons[ i ].SetFocusedColour( AGUI2STYLE_COLOR_FOCUSED );
@@ -99,19 +118,35 @@ void AOptionsState::OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem )
 }
 
 // $Barnyard: FUNCTION 00445190
+// $BarnyardWiiJP: FUNCTION 80157614
 void AOptionsState::OnMenuClose()
 {
-	TIMPLEMENT();
-
-	//if ( m_iActivatedButtonID == -1 )
-	//	AGameState::Remove();
-
-	if ( m_iActivatedButtonID == OPTIONSBUTTON_AUDIO )
+	if ( m_iActivatedButtonID != -1 )
 	{
-		AGameStateController::GetSingleton()->PushState( new AAudioOptionsState() );
+		AGameState* pState = TNULL;
+
+		if ( m_iActivatedButtonID == OPTIONSBUTTON_AUDIO )
+			pState = new AAudioOptionsState();
+		else if ( m_iActivatedButtonID == OPTIONSBUTTON_CONTROLS )
+			pState = new AControlOptionsState();
+#ifdef BARNYARD_LATEST
+		else if ( m_iActivatedButtonID == OPTIONSBUTTON_CAMERA )
+			pState = new ACameraOptionsState();
+		else if ( m_iActivatedButtonID == OPTIONSBUTTON_DIFFICULTY )
+			pState = new ADifficultyOptionState();
+#endif
+
+		AGameStateController::GetSingleton()->PushState( pState );
+		return;
 	}
-	else
+
+	AGameState::Remove();
+
+	if ( ms_bSettingsChanged )
 	{
-		AGameState::Remove();
+		// Save the changed settings
+		AGameStateController::GetSingleton()->SaveCurrentGameState( TFALSE, TFALSE, TTRUE );
+
+		ms_bSettingsChanged = TFALSE;
 	}
 }

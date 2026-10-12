@@ -25,6 +25,11 @@ TBOOL TInputDevice::Flush()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006d9710
+TInputDevice::~TInputDevice()
+{
+}
+
 // $Barnyard: FUNCTION 006d9740
 TINT TInputDevice::ProcessRepeats( EventEmitter& a_rEmitter, TFLOAT a_fDeltaTime )
 {

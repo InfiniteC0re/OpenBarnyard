@@ -95,11 +95,11 @@ void SDK_T2GUIElement::SetFocus( TBOOL a_bFocused )
 {
 	if ( a_bFocused )
 	{
-		m_eFlags |= 2;
+		m_eFlags |= FLAGS_FOCUSED;
 	}
 	else
 	{
-		m_eFlags &= ~2;
+		m_eFlags &= ~FLAGS_FOCUSED;
 	}
 }
 

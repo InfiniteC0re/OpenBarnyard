@@ -75,6 +75,18 @@ void TSystemManager::Destroy()
 	g_oSystemManager.m_pSystemTimer->Quit();
 }
 
+// $Barnyard: FUNCTION 006bbc80
+void TSystemManager::DestroySystemTimer()
+{
+	if ( TScheduler* pScheduler = g_oSystemManager.m_pSystemTimer->GetScheduler() )
+		delete pScheduler;
+
+	if ( g_oSystemManager.m_pSystemTimer )
+		delete g_oSystemManager.m_pSystemTimer;
+
+	g_oSystemManager.m_pSystemTimer = TNULL;
+}
+
 // $Barnyard: FUNCTION 00713e20
 TSystemManager::~TSystemManager()
 {

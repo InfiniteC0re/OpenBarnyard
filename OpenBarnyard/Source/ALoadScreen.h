@@ -28,7 +28,15 @@ public:
 	void Update( TFLOAT a_fDeltaTime = 1.0f, TBOOL a_bRender = TTRUE );
 	void ResetIndicators( TBOOL a_bRender );
 
+	// Shows a_rcPicture as the background of the loading screen (does nothing if it's empty)
+	void SetPicture( const Toshi::TPString8& a_rcPicture, TBOOL a_bRender );
+
 	void Reset();
+
+	// Detaches the elements of the load screen from the GUI
+	void RemoveElements();
+
+	TBOOL IsLoadingScreen() const { return m_bIsLoadingScreen; }
 
 private:
 	void UpdateUI( TBOOL a_bRender );

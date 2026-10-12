@@ -23,6 +23,7 @@ TGenericDList::TNode::~TNode()
 	Remove();
 }
 
+// $Barnyard: FUNCTION 006c8100
 void TGenericDList::TNode::InsertAfter( TNode* a_pNode )
 {
 	TASSERT( !IsLinked(), "TNode::InsertAfter - TNode shouldn't be linked" );
@@ -33,6 +34,7 @@ void TGenericDList::TNode::InsertAfter( TNode* a_pNode )
 	m_pNext->m_pPrev = this;
 }
 
+// $Barnyard: FUNCTION 006c80e0
 void TGenericDList::TNode::InsertBefore( TNode* a_pNode )
 {
 	TASSERT( !IsLinked(), "TNode::InsertBefore - TNode shouldn't be linked" );
@@ -43,6 +45,7 @@ void TGenericDList::TNode::InsertBefore( TNode* a_pNode )
 	m_pPrev->m_pNext = this;
 }
 
+// $Barnyard: FUNCTION 006c8120
 void TGenericDList::TNode::Remove()
 {
 	m_pNext->m_pPrev = m_pPrev;
@@ -104,6 +107,17 @@ void TGenericDList::RemoveAll()
 	{
 		RemoveHead();
 	}
+}
+
+// $Barnyard: FUNCTION 006c8170
+TINT TGenericDList::Count()
+{
+	TINT iCount = 0;
+
+	for ( TNode* pNode = m_oRoot.Next(); pNode != &m_oRoot; pNode = pNode->Next() )
+		iCount++;
+
+	return iCount;
 }
 
 TOSHI_NAMESPACE_END

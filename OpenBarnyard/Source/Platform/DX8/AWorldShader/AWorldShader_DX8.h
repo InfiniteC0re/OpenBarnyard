@@ -4,13 +4,28 @@
 #include <Toshi/TNodeList.h>
 #include <Render/TOrderTable.h>
 
+#include "Platform/DX8/ASkinShader/ASkinLowEnd_DX8.h"
+
 class AWorldShaderHAL : public AWorldShader
 {
 public:
 	TDECLARE_CLASS( AWorldShaderHAL, AWorldShader );
 
-	struct AUnknown : Toshi::TNodeList<AUnknown>::TNode
+	// NOTE: same node type as ASkinShaderHAL, the destructor (005f6a10, releases
+	// the D3D vertex buffer) and DeleteAll (005f7530) are folded in retail
+	using AUnknown = ASkinLowEnd::VertexBuffer;
+
+	// Render states set by the last packet, the material's PreRender sets RENDERSTATE_ALPHABLEND to force them again
+	using RENDERSTATE = TUINT;
+	enum RENDERSTATE_ : RENDERSTATE
 	{
+		RENDERSTATE_NONE       = 0,
+		RENDERSTATE_UNK0       = BITFLAG( 0 ),
+		RENDERSTATE_UNK1       = BITFLAG( 1 ),
+		RENDERSTATE_UNK3       = BITFLAG( 3 ),
+		RENDERSTATE_UNK4       = BITFLAG( 4 ),
+		RENDERSTATE_ALPHAREF   = RENDERSTATE_UNK3 | RENDERSTATE_UNK4,                                       // D3DRS_ALPHAREF is scaled by the packet alpha
+		RENDERSTATE_ALPHABLEND = RENDERSTATE_UNK0 | RENDERSTATE_UNK1 | RENDERSTATE_UNK3 | RENDERSTATE_UNK4, // D3DRS_ALPHABLENDENABLE is on
 	};
 
 	static constexpr TUINT NUM_ORDER_TABLES = 9;
@@ -70,6 +85,9 @@ public:
 
 	void SetColours( const Toshi::TVector4& a_rShadowColour, const Toshi::TVector4 a_rAmbientColour );
 
+	void CheckCPUSupportsSSE();
+	void CheckCPUSupportsSSE2();
+
 	TUINT GetAlphaRef() const { return m_iAlphaRef; }
 	void  SetAlphaRef( TUINT val ) { m_iAlphaRef = val; }
 
@@ -82,7 +100,7 @@ public:
 		return &m_aOrderTables[ a_uiIndex ];
 	}
 
-	inline static TUINT s_RenderStateFlags = 27;
+	inline static RENDERSTATE s_RenderStateFlags = RENDERSTATE_ALPHABLEND;
 
 private:
 	void SetupLowEndMode();
@@ -96,8 +114,8 @@ private:
 	Toshi::TOrderTable         m_aOrderTables[ NUM_ORDER_TABLES ];
 	TBOOL                      m_bIsHighEndMode;
 	TBOOL                      m_bAlphaBlendMaterial;
-	TBOOL                      m_bUnkFlag3;
-	TBOOL                      m_bUnkFlag4;
+	TBOOL                      m_bCPUSupportsSSE;
+	TBOOL                      m_bCPUSupportsSSE2;
 	Toshi::TVector4            m_ShadowColour;
 	Toshi::TVector4            m_AmbientColour;
 };

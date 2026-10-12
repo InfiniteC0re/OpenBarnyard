@@ -17,6 +17,7 @@ TInputDeviceMouse::TInputDeviceMouse()
 }
 
 // $Barnyard: FUNCTION 006c40f0
+// $Barnyard: FUNCTION 006c4210
 TInputDeviceMouse::~TInputDeviceMouse()
 {
 }
@@ -32,16 +33,16 @@ TBOOL TInputDeviceMouse::GetDoodadProperties( Doodad a_iDoodad, TInputDevice::Do
 	switch ( a_iDoodad )
 	{
 		case AXIS_CURSOR:
-			props.m_iUnk  = 2;
-			props.m_bFlag = TFALSE;
+			props.m_iNumAxes = 2;
+			props.m_bFlag    = TFALSE;
 			break;
 		case AXIS_WHEEL:
-			props.m_iUnk  = 1;
-			props.m_bFlag = TFALSE;
+			props.m_iNumAxes = 1;
+			props.m_bFlag    = TFALSE;
 			break;
 		default:
-			props.m_iUnk  = 0;
-			props.m_bFlag = TFALSE;
+			props.m_iNumAxes = 0;
+			props.m_bFlag    = TFALSE;
 	}
 
 	return TTRUE;
@@ -52,29 +53,29 @@ const TCHAR* TInputDeviceMouse::GetButtonFromDoodad( Doodad a_iDoodad ) const
 {
 	switch ( a_iDoodad )
 	{
-		case 0x30001:
+		case BUTTON_1:
 			return "BUTTON_1";
-		case 0x30002:
+		case BUTTON_2:
 			return "BUTTON_2";
-		case 0x30003:
+		case BUTTON_3:
 			return "BUTTON_3";
-		case 0x30004:
+		case BUTTON_4:
 			return "BUTTON_4";
-		case 0x30005:
+		case BUTTON_5:
 			return "BUTTON_5";
-		case 0x30006:
+		case BUTTON_6:
 			return "BUTTON_6";
-		case 0x30007:
+		case BUTTON_7:
 			return "BUTTON_7";
-		case 0x30008:
+		case BUTTON_8:
 			return "BUTTON_8";
-		case 0x30009:
+		case BUTTON_WHEEL_FORWARD:
 			return "BUTTON_WHEEL_FORWARD";
-		case 0x3000A:
+		case BUTTON_WHEEL_BACKWARD:
 			return "BUTTON_WHEEL_BACKWARD";
-		case 0x3000B:
+		case AXIS_CURSOR:
 			return "AXIS_CURSOR";
-		case 0x3000C:
+		case AXIS_WHEEL:
 			return "AXIS_WHEEL";
 		default:
 			return "UNKNOWN";

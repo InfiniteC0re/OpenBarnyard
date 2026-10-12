@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "APlayerSet.h"
+#include "Units/AUnitProxy.h"
+#include "Units/AUnit.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -19,7 +21,6 @@ APlayerSet::APlayerSet()
 // $Barnyard: FUNCTION 00620a90
 APlayerSet::~APlayerSet()
 {
-	
 }
 
 // $Barnyard: FUNCTION 00620b00
@@ -39,17 +40,17 @@ void APlayerSet::Reset()
 // $Barnyard: FUNCTION 00620310
 TINT APlayerSet::AddAIPlayer()
 {
-	if ( GetTotalNumPlayers() < MAX_NUM_PLAYERS )
+	if ( GetTotalPlayerCount() < MAX_NUM_PLAYERS )
 		m_iNumAIPlayers += 1;
 
 	return m_iNumAIPlayers;
 }
 
 // $Barnyard: FUNCTION 00620c50
-APlayerSlot* APlayerSet::AddHumanPlayer( Toshi::TInputDeviceController* a_pController )
+APlayerSlot* APlayerSet::AddHumanPlayer( Toshi::TInputDeviceController* a_pController, TINT a_iUnused )
 {
 	// Adjust number of AI players
-	if ( GetTotalNumPlayers() >= MAX_NUM_PLAYERS )
+	if ( GetTotalPlayerCount() >= MAX_NUM_PLAYERS )
 	{
 		m_iNumAIPlayers -= 1;
 
@@ -77,18 +78,38 @@ APlayerSlot* APlayerSet::AddHumanPlayer( Toshi::TInputDeviceController* a_pContr
 	return &m_vecPlayerSlots[ itInsertBefore.Index() ];
 }
 
+// $Barnyard: FUNCTION 006203a0
 APlayerSlot* APlayerSet::GetPlayerSlot( TINT a_iSlot )
 {
 	TASSERT( a_iSlot < m_vecPlayerSlots.Size() );
 	return &m_vecPlayerSlots[ a_iSlot ];
 }
 
+// $Barnyard: FUNCTION 006203b0
+APlayerSlot* APlayerSet::GetAIPlayerSlot( TINT a_iIndex )
+{
+	TINT iAIIndex = 0;
+
+	for ( TINT i = 0; i < m_vecPlayerSlots.Size(); i++ )
+	{
+		if ( m_vecPlayerSlots[ i ].m_uiFlags & APlayerSlot::FLAGS_AI )
+		{
+			if ( iAIIndex == a_iIndex )
+				return &m_vecPlayerSlots[ i ];
+
+			iAIIndex++;
+		}
+	}
+
+	return TNULL;
+}
+
 // $Barnyard: FUNCTION 006205f0
 void APlayerSet::MakeTeamsFair()
 {
 	if ( m_aPlayerTeams[ 0 ] == APLAYERTEAM_NONE ) return;
-	
-	const TINT iTotalNumPlayers = GetTotalNumPlayers();
+
+	const TINT iTotalNumPlayers = GetTotalPlayerCount();
 	if ( iTotalNumPlayers > 1 )
 	{
 		// Check if there's at least one player in different team
@@ -173,7 +194,7 @@ TBOOL APlayerSet::IsPlayerSlotUsedByAI( TINT a_iSlot ) const
 
 // $Barnyard: FUNCTION 006206d0
 APlayerSlot::APlayerSlot( Toshi::TInputDeviceController* a_pController, FLAGS a_uiFlags )
-    : m_Unk1( 0 )
+    : m_pUnitProxy( TNULL )
     , m_pController( a_pController )
     , m_uiFlags( a_uiFlags )
 {
@@ -182,9 +203,9 @@ APlayerSlot::APlayerSlot( Toshi::TInputDeviceController* a_pController, FLAGS a_
 // $Barnyard: FUNCTION 006206e0
 APlayerSlot::APlayerSlot( const APlayerSlot& a_rcOther )
 {
-	m_Unk1        = a_rcOther.m_Unk1;
+	m_pUnitProxy  = a_rcOther.m_pUnitProxy;
 	m_pController = a_rcOther.m_pController;
-	m_strUnk      = a_rcOther.m_strUnk;
+	m_strUnitType = a_rcOther.m_strUnitType;
 	m_uiFlags     = a_rcOther.m_uiFlags;
 }
 
@@ -199,9 +220,9 @@ APlayerSlot& APlayerSlot::operator=( const APlayerSlot& a_rcOther )
 {
 	Reset();
 
-	m_Unk1        = a_rcOther.m_Unk1;
+	m_pUnitProxy  = a_rcOther.m_pUnitProxy;
 	m_pController = a_rcOther.m_pController;
-	m_strUnk      = a_rcOther.m_strUnk;
+	m_strUnitType = a_rcOther.m_strUnitType;
 	m_uiFlags     = a_rcOther.m_uiFlags;
 
 	return *this;
@@ -209,11 +230,88 @@ APlayerSlot& APlayerSlot::operator=( const APlayerSlot& a_rcOther )
 
 void APlayerSlot::Reset()
 {
-	if ( m_Unk1 ) TASSERT( TFALSE && "Destroy Unk1" );
-	m_strUnk.SetPooledString( TNULL );
+	m_pUnitProxy = TNULL;
+	m_strUnitType.SetPooledString( TNULL );
 }
 
 // T2Vector<APlayerHumanSlot>:
 // $Barnyard: FUNCTION 006208e0
 // $Barnyard: FUNCTION 006209c0
 // $Barnyard: FUNCTION 00620b80
+
+// $Barnyard: FUNCTION 00620370
+TINT APlayerSet::GetPlayerSlotIndexByDevice( TInputDevice* a_pDevice )
+{
+	for ( TINT i = 0; i < m_vecPlayerSlots.Size(); i++ )
+	{
+		if ( m_vecPlayerSlots[ i ].m_pController == a_pDevice )
+			return i;
+	}
+
+	return 0;
+}
+
+// $Barnyard: FUNCTION 00620420
+AUnit* APlayerSet::GetPlayerUnit( TINT a_iSlot )
+{
+	if ( a_iSlot < m_vecPlayerSlots.Size() && m_vecPlayerSlots[ a_iSlot ].m_pUnitProxy )
+		return m_vecPlayerSlots[ a_iSlot ].m_pUnitProxy->GetUnit();
+
+	return TNULL;
+}
+
+// $Barnyard: FUNCTION 00620440
+TBOOL APlayerSet::SetPlayerUnit( AUnit* a_pUnit, TINT a_iSlot )
+{
+	if ( a_iSlot < 0 )
+	{
+		// Find the first slot that has no unit
+		TINT iSlot = 0;
+
+		if ( m_vecPlayerSlots.Size() <= 0 )
+			return TFALSE;
+
+		while ( m_vecPlayerSlots[ iSlot ].m_pUnitProxy && m_vecPlayerSlots[ iSlot ].m_pUnitProxy->GetUnit() )
+		{
+			if ( ++iSlot >= m_vecPlayerSlots.Size() )
+				return TFALSE;
+		}
+
+		m_vecPlayerSlots[ iSlot ].m_pUnitProxy = a_pUnit->GetSelfProxy();
+		return TTRUE;
+	}
+
+	m_vecPlayerSlots[ a_iSlot ].m_pUnitProxy = a_pUnit->GetSelfProxy();
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 00620330
+void APlayerSet::ResetPlayerUnits()
+{
+	for ( TINT i = 0; i < m_vecPlayerSlots.Size(); i++ )
+		m_vecPlayerSlots[ i ].m_pUnitProxy = TNULL;
+}
+
+// $Barnyard: FUNCTION 006205a0
+AUnit* APlayerSet::GetHumanPlayerUnit( TINT a_iIndex )
+{
+	TINT iHumanIndex = 0;
+
+	for ( TINT i = 0; i < m_vecPlayerSlots.Size(); i++ )
+	{
+		if ( m_vecPlayerSlots[ i ].m_uiFlags & APlayerSlot::FLAGS_HUMAN )
+		{
+			if ( iHumanIndex == a_iIndex )
+			{
+				if ( !m_vecPlayerSlots[ i ].m_pUnitProxy )
+					return TNULL;
+
+				return m_vecPlayerSlots[ i ].m_pUnitProxy->GetUnit();
+			}
+
+			iHumanIndex++;
+		}
+	}
+
+	return TNULL;
+}

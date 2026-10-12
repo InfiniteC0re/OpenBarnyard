@@ -11,6 +11,8 @@ public:
 	TDECLARE_CLASS( ASysShader, Toshi::TShader );
 
 public:
+	ASysShader();
+	~ASysShader();
 	virtual ASysMaterial* CreateMaterial( const TCHAR* a_szName ) = 0;
 	virtual ASysMesh*     CreateMesh( const TCHAR* a_szName )     = 0;
 	virtual TBOOL         IsLightScattering();

@@ -40,18 +40,26 @@ public:
 
 	using ActionId = TUINT32;
 
-	enum InputEvent : TUINT32
+	using INPUTEVENT = TUINT32;
+	enum INPUTEVENT_ : INPUTEVENT
 	{
-		InputEvent_None     = 0,
-		InputEvent_GoneDown = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_GONE_DOWN ),
-		InputEvent_GoneUp   = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_GONE_UP ),
-		InputEvent_Repeat   = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_REPEAT ),
-		InputEvent_Virtual  = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_VIRTUAL ),
-		InputEvent_Moved    = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_MOVED ),
+		INPUTEVENT_NONE      = 0,
+		INPUTEVENT_GONE_DOWN = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_GONE_DOWN ),
+		INPUTEVENT_GONE_UP   = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_GONE_UP ),
+		INPUTEVENT_REPEAT    = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_REPEAT ),
+		INPUTEVENT_VIRTUAL   = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_VIRTUAL ),
+		INPUTEVENT_MOVED     = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_MOVED ),
 	};
 
 	struct Command
 	{
+		Command() = default;
+
+		// $Barnyard: FUNCTION 00597110
+		Command( const Toshi::TPString8& a_rcName, TINT32 a_iCode, TINT32 a_iEventType )
+		    : Name( a_rcName ), uiCode( a_iCode ), uiEventType( a_iEventType )
+		{}
+
 		Toshi::TPString8 Name;
 		TINT32           uiCode;
 		TINT32           uiEventType;
@@ -66,6 +74,7 @@ public:
 
 public:
 	AInputMapManager();
+	~AInputMapManager();
 
 	TBOOL ReadControlsData();
 
@@ -77,7 +86,14 @@ public:
 
 	void GetEventCommands( const Toshi::TInputInterface::InputEvent* a_pEvent, AInputCommandArray& a_rCommandArray );
 
-	AInputCommand               GetCommandCode( const Toshi::TPString8& a_rCommandName );
+	AInputCommand GetCommandCode( const Toshi::TPString8& a_rCommandName );
+
+	// Returns TFALSE if a_eCommand isn't registered, a_rwszOutName is TNULL if it has no localised name
+	TBOOL GetCommandLocalisedName( AInputCommand a_eCommand, const TWCHAR*& a_rwszOutName );
+
+	// Return TFALSE and set a_rwszOutName to TNULL if the doodad has no name
+	TBOOL                       GetDoodadCustomName( Toshi::TInputDevice::Doodad a_iDoodad, const TWCHAR*& a_rwszOutName );
+	TBOOL                       GetDoodadLocalisedName( Toshi::TInputDevice::Doodad a_iDoodad, const TWCHAR*& a_rwszOutName );
 	Toshi::TInputDevice::Doodad GetDoodadFromKey( const Toshi::TPString8& a_rKey );
 
 private:
@@ -94,8 +110,9 @@ private:
 	Toshi::T2Map<Toshi::TInputDevice::Doodad, Toshi::TPString8> m_oDoodadToNameMap;
 	Toshi::T2Map<Toshi::TInputDevice::Doodad, ActionId>         m_oKeyMap;
 	Toshi::T2Map<AInputCommand, Command>                        m_oCommandMap;
-	Toshi::T2RedBlackTree<void*>                                m_UnkMap;
-	TINT                                                        m_iNumPushedInputMaps;
+	// NOTE: nothing fills this map in the original, it is only checked by GetDoodadCustomName
+	Toshi::T2Map<Toshi::TInputDevice::Doodad, const TWCHAR*> m_oDoodadToCustomNameMap; // 0xd4
+	TINT                                                     m_iNumPushedInputMaps;
 	// ...
 	AInputMap* m_apPushedInputMaps[ MAX_NUM_INPUT_MAPS ];
 };

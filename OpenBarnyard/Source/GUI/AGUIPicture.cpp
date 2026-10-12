@@ -24,6 +24,8 @@ AGUIPicture::AGUIPicture()
 	m_fUnknown3  = -10.0f;
 }
 
+// NOTE: retail fills split_rules in a dynamic initializer (thunk 0059d520)
+// $Barnyard: FUNCTION 0059d400
 void AGUIPicture::InitialiseClass()
 {
 	constexpr TFLOAT TEX_SIZE = 256.0f;
@@ -63,8 +65,23 @@ void AGUIPicture::InitialiseClass()
 	}
 }
 
+// NOTE: retail resets m_iUnknown1 after m_Name is destroyed
+// $Barnyard: FUNCTION 0059d5e0
+// $Barnyard: FUNCTION 0059d570
+AGUIPicture::~AGUIPicture()
+{
+	m_iUnknown1 = -1;
+}
+
 void AGUIPicture::DeinitialiseClass()
 {
+}
+
+// $Barnyard: FUNCTION 0059d2b0
+void AGUIPicture::Delete()
+{
+	Flush();
+	delete this;
 }
 
 // $Barnyard: FUNCTION 0059d2a0

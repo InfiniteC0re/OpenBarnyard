@@ -16,6 +16,7 @@ public:
 
 public:
 	TIndexFactoryResourceInterface();
+	~TIndexFactoryResourceInterface();
 
 	virtual TBOOL                        Create( TIndexFactoryFormat* a_pIndexFormat, TUINT16 a_uiMaxStaticIndices, TUINT32 a_uiFlags );
 	virtual TIndexPoolResourceInterface* CreatePoolResource( TUINT16 a_uiMaxStaticIndices, TUINT16 a_uiFlags ) = 0;

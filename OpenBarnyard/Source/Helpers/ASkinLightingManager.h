@@ -10,11 +10,12 @@ class ASkinLightingManager
 public:
 	struct SkinLight
 	{
-		// TODO: Figure out which textures are for day and for night
-		const TCHAR*     szTex1;
-		const TCHAR*     szTex2;
-		const TCHAR*     szTex3;
-		const TCHAR*     szTex4;
+		// Day and night lighting textures, e.g. D_bessy_a, D_bessy, N_bessy_a and N_bessy (see Data/MiscTextures/SkinLighting.trb).
+		// ASkinShader uses LT_0/LT_1 (day) at shade coefficient 0 and LT_2/LT_3 (night) at 255.
+		const TCHAR*     szTex1; // day, "_a"
+		const TCHAR*     szTex2; // day
+		const TCHAR*     szTex3; // night, "_a"
+		const TCHAR*     szTex4; // night
 		Toshi::TTexture* pTex1;
 		Toshi::TTexture* pTex2;
 		Toshi::TTexture* pTex3;

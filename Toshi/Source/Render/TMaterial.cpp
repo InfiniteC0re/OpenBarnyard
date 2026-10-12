@@ -32,7 +32,7 @@ TMaterial::~TMaterial()
 // $Barnyard: FUNCTION 006cccc0
 void TMaterial::OnDestroy()
 {
-	TASSERT( TTRUE == IsCreated() );
+	// NOTE: no IsCreated() assert, the game destroys materials it never created (e.g. the ASkyDome materials)
 	m_Flags &= ~FLAGS_CREATED;
 }
 
@@ -108,13 +108,9 @@ void TMaterial::SetName( const TCHAR* a_szName )
 // $Barnyard: FUNCTION 006ccd10
 void TMaterial::SetFlags( Flags flag, TBOOL set /*= TFALSE*/ )
 {
+	// NOTE: retail just sets the bits; it does not clear NO_CULL/BLENDING when setting one of them
 	if ( set )
 	{
-		if ( flag & ( FLAGS_NO_CULL | FLAGS_BLENDING | FLAGS_UNK3 ) )
-		{
-			m_Flags &= ~( FLAGS_NO_CULL | FLAGS_BLENDING | FLAGS_UNK3 );
-		}
-
 		m_Flags |= flag;
 	}
 	else

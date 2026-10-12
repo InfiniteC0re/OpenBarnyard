@@ -12,6 +12,7 @@ TOSHI_NAMESPACE_START
 
 TWCHAR T2String16::ms_aScratchMem[ T2String16::SCRATCH_MEM_SIZE ];
 
+// $Barnyard: FUNCTION 006bb400
 TINT T2String16::FormatV( TWCHAR* a_pcString, TINT size, const TWCHAR* a_pcFormat, va_list args )
 {
 	TINT iResult = _vsnwprintf( a_pcString, size, a_pcFormat, args );
@@ -27,6 +28,7 @@ TINT T2String16::FormatV( TWCHAR* a_pcString, const TWCHAR* a_pcFormat, va_list 
 	return iResult;
 }
 
+// $Barnyard: FUNCTION 006bb3e0
 TINT T2String16::Format( TWCHAR* a_pcString, const TWCHAR* a_pcFormat, ... )
 {
 	va_list args;
@@ -49,6 +51,7 @@ TINT T2String16::Format( TWCHAR* a_pcString, TINT size, const TWCHAR* a_pcFormat
 	return iResult;
 }
 
+// $Barnyard: FUNCTION 006bb2d0
 TINT T2String16::Compare( const TWCHAR* str1, const TWCHAR* str2, TSIZE size )
 {
 	if ( size != -1 )
@@ -67,6 +70,7 @@ TINT T2String16::CompareNoCase( const TWCHAR* str1, const TWCHAR* str2, TSIZE si
 	return _wcsicmp( str1, str2 );
 }
 
+// NOTE: TStringManager::String16Copy (006bb310) is the same plain copy; retail only has that one.
 TWCHAR* T2String16::Copy( TWCHAR* dst, const TWCHAR* src, TSIZE size )
 {
 	if ( size != -1 )
@@ -75,6 +79,31 @@ TWCHAR* T2String16::Copy( TWCHAR* dst, const TWCHAR* src, TSIZE size )
 	return wcscpy( dst, src );
 }
 
+// $Barnyard: FUNCTION 006bb350
+TWCHAR* T2String16::Move( TWCHAR* dst, const TWCHAR* src, TSIZE size )
+{
+	if ( dst >= src )
+	{
+		// Copy backwards so overlapping strings stay intact
+		if ( size == -1 )
+			size = wcslen( src );
+
+		TWCHAR*       pDst = dst + size;
+		const TWCHAR* pSrc = src + size;
+
+		for ( TINT i = TINT( size ); i >= 0; i-- )
+			*pDst-- = *pSrc--;
+
+		return dst;
+	}
+
+	if ( size != -1 )
+		return wcsncpy( dst, src, size );
+
+	return wcscpy( dst, src );
+}
+
+// $Barnyard: FUNCTION 006bb590
 TWCHAR* T2String16::CopySafe( TWCHAR* dst, const TWCHAR* src, TSIZE size )
 {
 	TSIZE srcLen = Length( src );
@@ -130,7 +159,7 @@ TWCHAR* T2String16::FindString( TWCHAR* str, const TWCHAR* substr )
 TSIZE T2String16::Length( const TWCHAR* str )
 {
 	if ( str != TNULL ) return wcslen( str );
-	return -1;
+	return 0;
 }
 
 TBOOL T2String16::IsLowerCase( const TWCHAR* str )
@@ -201,6 +230,12 @@ const TWCHAR* T2String16::SkipSpaces( const TWCHAR* str )
 	while ( T2Char16::IsSpace( *pszCursor ) ) pszCursor++;
 
 	return pszCursor;
+}
+
+// $Barnyard: FUNCTION 006bb430
+TWCHAR T2String16::CharToUpperCase( TUINT8 a_uiChar )
+{
+	return TWCHAR( toupper( a_uiChar ) );
 }
 
 // $Barnyard: FUNCTION 006bb450

@@ -21,6 +21,12 @@ TVertexPoolResourceInterface::TVertexPoolResourceInterface()
 	m_uiLockCount   = 0;
 }
 
+// $Barnyard: FUNCTION 006dab10
+// $Barnyard: FUNCTION 006dab50
+TVertexPoolResourceInterface::~TVertexPoolResourceInterface()
+{
+}
+
 // $Barnyard: FUNCTION 006daa90
 void TVertexPoolResourceInterface::OnDestroy()
 {

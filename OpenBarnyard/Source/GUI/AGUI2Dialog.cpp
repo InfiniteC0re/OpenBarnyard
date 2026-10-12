@@ -20,6 +20,8 @@ AGUI2Dialog::AGUI2Dialog()
 	m_bUseScissor   = TFALSE;
 }
 
+// $Barnyard: FUNCTION 006380a0
+// $Barnyard: FUNCTION 00638730
 AGUI2Dialog::~AGUI2Dialog()
 {
 }
@@ -35,7 +37,7 @@ void AGUI2Dialog::Render()
 		{
 			it->PreRender();
 
-			if ( m_bUseScissor && it != &m_aRectangles[ T2GUIATTACHMENT_MIDDLECENTER ] )
+			if ( m_bUseScissor && it == &m_aRectangles[ T2GUIATTACHMENT_MIDDLECENTER ] )
 			{
 				TFLOAT fWidth, fHeight;
 				it->GetDimensions( fWidth, fHeight );
@@ -48,7 +50,7 @@ void AGUI2Dialog::Render()
 
 			it->Render();
 
-			if ( m_bUseScissor && it != &m_aRectangles[ T2GUIATTACHMENT_MIDDLECENTER ] )
+			if ( m_bUseScissor && it == &m_aRectangles[ T2GUIATTACHMENT_MIDDLECENTER ] )
 				pRenderer->ClearScissor();
 
 			it->PostRender();
@@ -142,4 +144,69 @@ void AGUI2Dialog::SetDialogSize( TFLOAT a_fWidth, TFLOAT a_fHeight )
 
 	T2GUIElement::SetDimensions( a_fWidth, a_fHeight );
 	AddChildHead( m_aRectangles[ T2GUIATTACHMENT_MIDDLECENTER ] );
+}
+
+// $Barnyard: FUNCTION 00638220
+void AGUI2Dialog::SetDialogSize( TFLOAT a_fWidth, TFLOAT a_fHeight, TFLOAT a_fMinBorder )
+{
+	TFLOAT fBorderWidth  = ( m_apTexTiles[ T2GUIATTACHMENT_MIDDLERIGHT ]->GetWidth() + m_apTexTiles[ T2GUIATTACHMENT_MIDDLELEFT ]->GetWidth() ) * 0.5f;
+	TFLOAT fBorderHeight = ( m_apTexTiles[ T2GUIATTACHMENT_BOTTOMCENTER ]->GetHeight() + m_apTexTiles[ T2GUIATTACHMENT_TOPCENTER ]->GetHeight() ) * 0.5f;
+
+	if ( fBorderWidth < a_fMinBorder )
+		fBorderWidth = a_fMinBorder;
+
+	if ( fBorderHeight < a_fMinBorder )
+		fBorderHeight = a_fMinBorder;
+
+	TFLOAT fContentWidth  = a_fWidth - ( fBorderWidth + fBorderWidth );
+	TFLOAT fContentHeight = a_fHeight - ( fBorderHeight + fBorderHeight );
+
+	m_aRectangles[ T2GUIATTACHMENT_TOPLEFT ].SetDimensions( fBorderWidth, fBorderHeight );
+	m_aRectangles[ T2GUIATTACHMENT_TOPCENTER ].SetDimensions( fContentWidth, fBorderHeight );
+	m_aRectangles[ T2GUIATTACHMENT_TOPRIGHT ].SetDimensions( fBorderWidth, fBorderHeight );
+
+	m_aRectangles[ T2GUIATTACHMENT_MIDDLELEFT ].SetDimensions( fBorderWidth, fContentHeight );
+	m_aRectangles[ T2GUIATTACHMENT_MIDDLECENTER ].SetDimensions( fContentWidth, fContentHeight );
+	m_aRectangles[ T2GUIATTACHMENT_MIDDLERIGHT ].SetDimensions( fBorderWidth, fContentHeight );
+
+	m_aRectangles[ T2GUIATTACHMENT_BOTTOMLEFT ].SetDimensions( fBorderWidth, fBorderHeight );
+	m_aRectangles[ T2GUIATTACHMENT_BOTTOMCENTER ].SetDimensions( fContentWidth, fBorderHeight );
+	m_aRectangles[ T2GUIATTACHMENT_BOTTOMRIGHT ].SetDimensions( fBorderWidth, fBorderHeight );
+
+	T2GUIElement::SetDimensions( a_fWidth, a_fHeight );
+}
+
+// $Barnyard: FUNCTION 00638750
+void AGUI2Dialog::Destroy()
+{
+	RemoveSelf();
+	RemoveChildrenRecursive( this );
+}
+
+// $Barnyard: FUNCTION 006386e0
+void AGUI2Dialog::RemoveChildrenRecursive( T2GUIElement* a_pElement )
+{
+	if ( a_pElement )
+	{
+		for ( T2GUIElement* it = a_pElement->ChildRBegin(); it != TNULL; )
+		{
+			RemoveChildrenRecursive( it );
+
+			T2GUIElement* pNext = a_pElement->GetPrevChild( it );
+			it->RemoveSelf();
+			it = pNext;
+		}
+	}
+}
+
+// $Barnyard: FUNCTION 006385b0
+void AGUI2Dialog::GetContentDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight )
+{
+	m_aRectangles[ T2GUIATTACHMENT_MIDDLECENTER ].GetDimensions( a_rWidth, a_rHeight );
+}
+
+// $Barnyard: FUNCTION 00638200
+void AGUI2Dialog::AddChildToRectangle( T2GUIElement* a_pElement, T2GUIATTACHMENT a_eRectangle )
+{
+	m_aRectangles[ a_eRectangle ].AddChildTail( *a_pElement );
 }

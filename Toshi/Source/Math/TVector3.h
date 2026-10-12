@@ -26,7 +26,10 @@ public:
 
 	void RotateX( TFLOAT a_fRotation );
 	void RotateY( TFLOAT a_fRotation );
-	void RotateZ( TFLOAT a_fRotation );
+
+	// Returns the angle (radians, 0..PI) between this vector and a_rcVec
+	TFLOAT GetAngleBetweenVector( const TVector3& a_rcVec ) const;
+	void   RotateZ( TFLOAT a_fRotation );
 
 	void Normalize();
 
@@ -141,12 +144,23 @@ public:
 	constexpr TFLOAT MagnitudeSq() const { return x * x + y * y + z * z; }
 
 	constexpr TVector3 operator+( const TVector3& other ) const { return { x + other.x, y + other.y, z + other.z }; }
+	// Out of line copy in game code: 004610a0
+	// $Barnyard: FUNCTION 004610a0
 	constexpr TVector3 operator-( const TVector3& other ) const { return { x - other.x, y - other.y, z - other.z }; }
 	constexpr TVector3 operator*( const TVector3& other ) const { return { x * other.x, y * other.y, z * other.z }; }
 	constexpr TVector3 operator/( const TVector3& other ) const { return { x / other.x, y / other.y, z / other.z }; }
 
 	constexpr void operator=( const TVector3& other ) { Set( other ); }
 	constexpr void operator+=( const TVector3& other ) { Add( other ); }
+
+	// $Barnyard: FUNCTION 0040f3c0
+	constexpr TVector3& operator-=( const TVector3& other )
+	{
+		x -= other.x;
+		y -= other.y;
+		z -= other.z;
+		return *this;
+	}
 	constexpr void operator/=( const TVector3& other ) { Divide( other ); }
 
 public:

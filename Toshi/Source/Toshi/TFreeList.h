@@ -46,8 +46,25 @@ public:
 
 	void Delete( void* a_Ptr );
 
+	// Frees the memory chunks of every free list
+	static void DeinitialiseAll();
+
+	// Goes through every free list. The loop body (most likely logging) is compiled out of retail
+	// NOTE: the name is unknown
+	// $Barnyard: FUNCTION 006c19c0
+	static void DumpAll()
+	{
+		for ( TFreeList* pList = ms_pLastList; pList != TNULL; pList = pList->m_pPrevList )
+			;
+	}
+
 private:
 	inline static TFreeList* ms_pLastList = TNULL;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Set by DeinitialiseAll, Delete does nothing after that
+	inline static TBOOL ms_bDeinitialised = TFALSE;
+#endif // BARNYARD_COMMUNITY_PATCH
 
 private:
 	TFreeList*         m_pPrevList;

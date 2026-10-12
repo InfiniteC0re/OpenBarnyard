@@ -119,12 +119,12 @@ void ATreeManager2::Render()
 	TASSERT( uiNumSectionsToRender < MAX_SECTIONS );
 
 	// Do culling
-	const TBOOL  bIsPerspective  = pRenderContext->GetCameraMode() == TRenderContext::CameraMode_Perspective;
-	const TFLOAT flFarClipLimit  = bIsPerspective ? pRenderContext->GetProjectionParams().m_fFarClip : FLT_MAX;
-	const TFLOAT flRenderDist    = TMath::Min( m_fRenderDistance, flFarClipLimit );
-	TFLOAT fRenderDistanceSq    = flRenderDist * flRenderDist;
-	TFLOAT fLODSwitchDistanceSq = m_fLODSwitchDistance * m_fLODSwitchDistance;
-	TFLOAT fBlendingFactor      = 1.0f / ( m_fRenderDistance - m_fBlendingDistance );
+	const TBOOL  bIsPerspective       = pRenderContext->GetCameraMode() == TRenderContext::CameraMode_Perspective;
+	const TFLOAT flFarClipLimit       = bIsPerspective ? pRenderContext->GetProjectionParams().m_fFarClip : FLT_MAX;
+	const TFLOAT flRenderDist         = TMath::Min( m_fRenderDistance, flFarClipLimit );
+	TFLOAT       fRenderDistanceSq    = flRenderDist * flRenderDist;
+	TFLOAT       fLODSwitchDistanceSq = m_fLODSwitchDistance * m_fLODSwitchDistance;
+	TFLOAT       fBlendingFactor      = 1.0f / ( m_fRenderDistance - m_fBlendingDistance );
 
 	TMatrix44 matGlobalTransform;
 	matGlobalTransform.m_f11 = 1.0f;
@@ -148,10 +148,10 @@ void ATreeManager2::Render()
 
 	struct LocatorRenderData
 	{
-		TUINT8              uiFlags;
-		TUINT8              uiUnused;
-		TINT8               uiLightIds[4];
-		TINT8               oStaticLightIds[ MAX_CELL_STATIC_LIGHTS ];
+		TUINT8 uiFlags;
+		TUINT8 uiUnused;
+		TINT8  uiLightIds[ 4 ];
+		TINT8  oStaticLightIds[ MAX_CELL_STATIC_LIGHTS ];
 	} aLocatorRenderData[ MAX_RENDERED_INSTANCES ];
 
 	if ( !m_llUsedTreeInstances.IsEmpty() )
@@ -220,7 +220,7 @@ void ATreeManager2::Render()
 							TMatrix44 matTransform;
 							matTransform.Multiply( matGlobalTransform, matLocator );
 
-							if ( pTreeInstance->unk )
+							if ( pTreeInstance->pTrunkCollision )
 							{
 								TASSERT( TFALSE && "It's time to implement this" );
 							}

@@ -14,6 +14,20 @@ class ASound
 public:
 	friend class ASoundManager;
 
+	// The "flags" of the sound bank, also copied to the play events and the channels
+	using FLAGS = TINT32;
+	enum FLAGS_ : FLAGS
+	{
+		FLAGS_NONE           = 0,
+		FLAGS_PAUSED         = BITFLAG( 0 ), // channel: paused (PauseCue), cue: starts paused (PlayCueEx)
+		FLAGS_LOOP           = BITFLAG( 1 ), // FSOUND_LOOP_NORMAL, set for the looping tracks
+		FLAGS_3D             = BITFLAG( 2 ), // FSOUND_HW3D, the samples are 3D
+		FLAGS_UNK3           = BITFLAG( 3 ), // plays a single random sample of the track
+		FLAGS_STREAM         = BITFLAG( 4 ),
+		FLAGS_STARTED        = BITFLAG( 5 ), // the FMOD channel has been started
+		FLAGS_STREAM_OPENING = BITFLAG( 6 ), // waiting for FSOUND_Stream_GetOpenState
+	};
+
 	struct Sample
 	{
 		AWaveBank* pWaveBank            = TNULL;
@@ -32,6 +46,7 @@ public:
 
 public:
 	ASound();
+	~ASound();
 
 	TINT GetFirstWaveForTrack( TINT a_iTrack ) const;
 
@@ -41,8 +56,10 @@ public:
 
 	Toshi::T2DynamicVector<Sample>& GetSamples() { return m_vecSamples; }
 
+	TINT GetId() const { return m_iId; }
+
 private:
-	TINT                           m_iFlags;
+	FLAGS                          m_iFlags;
 	TINT                           m_iId;
 	TINT                           m_uiCategoryIndex;
 	TUINT8                         m_ui8Priority;

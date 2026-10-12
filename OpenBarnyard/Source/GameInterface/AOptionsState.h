@@ -11,12 +11,22 @@ public:
 	{
 		OPTIONSBUTTON_AUDIO,
 		OPTIONSBUTTON_CONTROLS,
+#ifdef BARNYARD_LATEST
+		// NOTE: the latest version (Wii) hides the controls button and adds this one
+		OPTIONSBUTTON_CAMERA,
+		// NOTE: not in the latest version either, the Wii asks for the difficulty when a new game starts
+		OPTIONSBUTTON_DIFFICULTY,
+#endif
 		OPTIONSBUTTON_NUMOF
 	};
 
 	inline constexpr static TINT OPTIONSBUTTON_TEXTS[ OPTIONSBUTTON_NUMOF ] = {
 		282,
-		281
+		281,
+#ifdef BARNYARD_LATEST
+		3482, // ACameraOptionsState::CAMERA_SPEED_TEXT (the button shows ACameraOptionsState::GetCameraText)
+		3476, // ADifficultyOptionState::TITLE_TEXT (the button shows ADifficultyOptionState::GetText)
+#endif
 	};
 
 public:
@@ -37,6 +47,11 @@ public:
 	//-----------------------------------------------------------------------------
 	virtual void OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem ) OVERRIDE;
 	virtual void OnMenuClose() OVERRIDE;
+
+public:
+	// Set by the audio/control option screens once a setting was changed,
+	// closing the options menu then pushes the save state to store them
+	inline static TBOOL ms_bSettingsChanged = TFALSE; // 0x00781ca0
 
 private:
 	AGUI2Button m_aButtons[ OPTIONSBUTTON_NUMOF ];

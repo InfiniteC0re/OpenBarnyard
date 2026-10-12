@@ -274,16 +274,16 @@ public:
 		AllocType_Symbols,
 	};
 
-	using t_MemoryFuncAlloc   = void*(__stdcall*)( AllocType alloctype, TUINT32 size, TINT16 unk1, TUINT32 unk2, void* userData );
-	using t_MemoryFuncDealloc = void( __stdcall* )( AllocType alloctype, void* ptr, TINT16 unk1, TUINT32 unk2, void* userData );
+	using t_MemoryFuncAlloc   = void*(__stdcall*)( AllocType alloctype, TUINT32 size, TINT16 alignment, TUINT32 unk2, void* userData );
+	using t_MemoryFuncDealloc = void( __stdcall* )( AllocType alloctype, void* ptr, TINT16 alignment, TUINT32 unk2, void* userData );
 
 	struct SecInfo
 	{
-		TINT16  m_Unused; // 0x0 (padding)
-		TINT16  m_Unk1;   // 0x2
-		TUINT32 m_Size;   // 0x4
-		void*   m_Data;   // 0x8
-		TUINT32 m_Unk2;   // 0xC
+		TINT16  m_Unused;    // 0x0 (padding)
+		TINT16  m_Alignment; // 0x2, 0 means 16
+		TUINT32 m_Size;      // 0x4
+		void*   m_Data;      // 0x8
+		TUINT32 m_Unk2;      // 0xC
 	};
 
 	struct Header

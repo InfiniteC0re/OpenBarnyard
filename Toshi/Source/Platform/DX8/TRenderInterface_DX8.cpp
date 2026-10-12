@@ -10,7 +10,12 @@
 #include "TTextureFactoryHAL_DX8.h"
 #include "TTextureResourceHAL_DX8.h"
 
+#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
+#  include "TDevScreenshot_DX8.h"
+#endif
+
 #include "Render/TShader.h"
+#include "Input/TInputInterface.h"
 
 #include <dxerr8.h>
 #pragma comment( lib, "DxErr8.lib" )
@@ -23,6 +28,7 @@
 
 TOSHI_NAMESPACE_START
 
+// NOTE: GetClass 006c57d0, CreateObject 006c6d60, CreateObjectInPlace 006c6d80
 TDEFINE_CLASS( TRenderD3DInterface );
 
 // $Barnyard: FUNCTION 006c58e0
@@ -49,7 +55,7 @@ TRenderD3DInterface::TRenderD3DInterface()
 	m_oDisplayParams.uiWidth             = 640; // Default width
 	m_oDisplayParams.uiHeight            = 480; // Default height
 	m_oDisplayParams.uiColourDepth       = 32;  // Default color depth
-	m_oDisplayParams.eDepthStencilFormat = 0;
+	m_oDisplayParams.eDepthStencilFormat = DEPTHSTENCILFORMAT_D16;
 	m_oDisplayParams.bWindowed           = TTRUE;
 	m_fBrightness                        = 0.5f; // Default brightness
 	m_fSaturate                          = 0.5f; // Default saturation
@@ -192,10 +198,14 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 		pSurface->Release();
 
 		// Set cursor position to center of window
-		SetCursorPos(
-		    uiWindowPosX + pDisplayParams->uiWidth / 2,
-		    uiWindowPosY + pDisplayParams->uiHeight / 2
-		);
+#ifdef BARNYARD_COMMUNITY_PATCH
+		// Background test runs leave the user's mouse cursor alone
+		if ( !TMSWindow::IsBackgroundMode() )
+#endif
+			SetCursorPos(
+			    uiWindowPosX + pDisplayParams->uiWidth / 2,
+			    uiWindowPosY + pDisplayParams->uiHeight / 2
+			);
 
 		m_pDirectDevice->ShowCursor( TRUE );
 
@@ -207,7 +217,7 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 		}
 
 		auto pTextureFactory = GetSystemResource<TTextureFactoryHAL>( SYSRESOURCE_TEXTUREFACTORY );
-		m_pInvalidTexture    = pTextureFactory->CreateTextureFromMemory( invalidTextureData, sizeof( invalidTextureData ), 0x11, 8, 8 );
+		m_pInvalidTexture    = pTextureFactory->CreateTextureFromMemory( invalidTextureData, sizeof( invalidTextureData ), TTexture::TEXTUREFLAGS_UNK0 | TTexture::TEXTUREFLAGS_LAYOUT_4444, 8, 8 );
 
 		// Enable color correction and mark display as created
 		EnableColourCorrection( TTRUE );
@@ -231,10 +241,10 @@ TBOOL TRenderD3DInterface::DestroyDisplay()
 		if ( m_pDirectDevice )
 		{
 			m_pDirectDevice->Release();
+			m_pDirectDevice = TNULL;
 		}
 
-		m_bDisplayCreated = TFALSE;
-		return TTRUE;
+		return TRenderInterface::DestroyDisplay();
 	}
 	else
 	{
@@ -245,7 +255,7 @@ TBOOL TRenderD3DInterface::DestroyDisplay()
 // $Barnyard: FUNCTION 006c6560
 TBOOL TRenderD3DInterface::Update( TFLOAT a_fDeltaTime )
 {
-	FlushDyingResources();
+	TRenderInterface::Update( a_fDeltaTime );
 	m_Window.Update( a_fDeltaTime );
 
 	return !m_bExited;
@@ -301,6 +311,11 @@ TBOOL TRenderD3DInterface::EndScene()
 
 		if ( SUCCEEDED( hRes ) )
 		{
+#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
+			// Development: "-devshot" saves the finished frame (GUI included) before it's presented
+			TDevScreenshot::Update( m_pDirectDevice );
+#endif
+
 			HRESULT hPresentRes = m_pDirectDevice->Present( NULL, NULL, NULL, NULL );
 
 			if ( hPresentRes == D3DERR_DEVICELOST )
@@ -430,8 +445,7 @@ void TRenderD3DInterface::PrintError( TINT32 a_eError, const TCHAR* a_szInfo )
 // $Barnyard: FUNCTION 006c64a0
 TBOOL TRenderD3DInterface::Destroy()
 {
-	TASSERT( TTRUE == IsCreated() );
-
+	// NOTE: no IsCreated() assert, the destructor calls this again after ARenderer destroyed the renderer
 	if ( IsCreated() )
 	{
 		FlushDyingResources();
@@ -458,10 +472,55 @@ TBOOL TRenderD3DInterface::Destroy()
 	}
 }
 
-// $Barnyard: FUNCTION 006c5f10 TODO
-void TRenderD3DInterface::RenderIndexPrimitive( TINT param_2, TINT param_3, TINT param_4, TINT param_5, TINT param_6, TINT param_7 )
+// $Barnyard: FUNCTION 006c5f10
+void TRenderD3DInterface::RenderIndexPrimitive( TINT a_ePrimitiveType, TINT a_iNumVertices, TINT a_iNumPrimitives, TINT a_pIndices, TINT a_pVertices, TINT a_iVertexStride )
 {
-	TIMPLEMENT();
+	// Position and colour
+	static const DWORD s_aDeclaration[] = {
+		D3DVSD_STREAM( 0 ),
+		D3DVSD_REG( D3DVSDE_POSITION, D3DVSDT_FLOAT3 ),
+		D3DVSD_REG( D3DVSDE_DIFFUSE, D3DVSDT_D3DCOLOR ),
+		D3DVSD_END()
+	};
+
+	static const D3DPRIMITIVETYPE s_aPrimitiveTypes[] = {
+		D3DPT_POINTLIST,
+		D3DPT_LINELIST,
+		D3DPT_LINESTRIP,
+		D3DPT_TRIANGLELIST,
+		D3DPT_TRIANGLESTRIP,
+		D3DPT_TRIANGLEFAN
+	};
+
+	static DWORD s_hVertexShader = DWORD( -1 ); // 0x0077cfd0
+
+	if ( s_hVertexShader == DWORD( -1 ) )
+	{
+		TBOOL bHardwareTransformations = GetCurrentDevice()->SupportsHardwareTransfomations();
+		m_pDirectDevice->CreateVertexShader( s_aDeclaration, TNULL, &s_hVertexShader, bHardwareTransformations ? 0 : D3DUSAGE_SOFTWAREPROCESSING );
+
+		if ( s_hVertexShader == DWORD( -1 ) )
+			return;
+	}
+
+	TRenderContextD3D* pContext = TRenderContextD3D::Upcast( GetCurrentContext() );
+
+	static TMatrix44 s_oIdentity = TMatrix44::IDENTITY;
+
+	m_pDirectDevice->SetTransform( D3DTS_VIEW, TREINTERPRETCAST( const D3DMATRIX*, &s_oIdentity ) );
+	m_pDirectDevice->SetTransform( D3DTS_PROJECTION, TREINTERPRETCAST( const D3DMATRIX*, &pContext->GetProjectionMatrix() ) );
+	m_pDirectDevice->SetTransform( D3DTS_WORLD, TREINTERPRETCAST( const D3DMATRIX*, &pContext->GetModelViewMatrix() ) );
+	m_pDirectDevice->SetVertexShader( s_hVertexShader );
+	m_pDirectDevice->DrawIndexedPrimitiveUP(
+	    s_aPrimitiveTypes[ a_ePrimitiveType ],
+	    0,
+	    a_iNumVertices,
+	    a_iNumPrimitives,
+	    TREINTERPRETCAST( const void*, a_pIndices ),
+	    D3DFMT_INDEX16,
+	    TREINTERPRETCAST( const void*, a_pVertices ),
+	    TUINT16( a_iVertexStride )
+	);
 }
 
 // $Barnyard: FUNCTION 006c57e0
@@ -503,7 +562,7 @@ TRenderCapture* TRenderD3DInterface::CreateCapture()
 // $Barnyard: FUNCTION 006c6260
 void TRenderD3DInterface::DestroyCapture( TRenderCapture* a_pRenderCapture )
 {
-	TTODO( "a_pRenderCapture->vftable + 8" );
+	a_pRenderCapture->Destroy();
 	delete a_pRenderCapture;
 }
 
@@ -567,7 +626,7 @@ TModel* TRenderD3DInterface::CreateModelTRB( const TCHAR* a_szFilePath, TBOOL a_
 // $Barnyard: FUNCTION 006c6420
 TDebugText* TRenderD3DInterface::CreateDebugText()
 {
-	m_pDebugText = InitDebugText( 0 );
+	m_pDebugText = InitDebugText( this, 0 );
 	return m_pDebugText;
 }
 
@@ -576,8 +635,12 @@ void TRenderD3DInterface::DestroyDebugText()
 {
 	if ( m_pDebugText )
 	{
-		delete m_pDebugText;
+		m_pDebugText->Destroy();
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+		// Retail doesn't clear the pointer
 		m_pDebugText = TNULL;
+#endif
 	}
 }
 
@@ -675,7 +738,7 @@ TBOOL TRenderD3DInterface::IsCapableColourCorrection()
 	{
 		D3DCAPS8 caps;
 		HRESULT  hRes              = m_pDirectDevice->GetDeviceCaps( &caps );
-		m_bCapableColourCorrection = SUCCEEDED( hRes ) && HASANYFLAG( caps.AdapterOrdinal, 0x20000 );
+		m_bCapableColourCorrection = SUCCEEDED( hRes ) && HASANYFLAG( caps.Caps2, D3DCAPS2_FULLSCREENGAMMA );
 	}
 
 	return m_bCapableColourCorrection;
@@ -699,34 +762,196 @@ TBOOL TRenderD3DInterface::IsColourCorrection()
 	return m_bEnableColourCorrection;
 }
 
-// $Barnyard: FUNCTION 006c6de0 TODO
+// $Barnyard: FUNCTION 006c6de0
 void TRenderD3DInterface::OnD3DDeviceLost()
 {
-	TIMPLEMENT();
+	g_oSystemManager.Pause( TTRUE );
+
+	if ( TInputInterface* pInputInterface = TInputInterface::GetSingleton() )
+	{
+		pInputInterface->UnacquireAll();
+		pInputInterface->FlushAll();
+		pInputInterface->StopAllRepeats();
+	}
+
+	if ( m_bFailed )
+		return;
+
+	m_bFailed = TTRUE;
+
+	// Release everything that lives in the default pool
+	// $Barnyard: FUNCTION 006c5910
+	TResource::Recurse( []( TResource* a_pResource, void* a_pUserData ) {
+		a_pResource->TryInvalidate();
+		return TTRUE;
+	},
+	                    m_Resources.GetRoot()->Child(), TTRUE, TNULL );
+
+	if ( m_pDebugText )
+		TSTATICCAST( TDebugD3DText, m_pDebugText )->OnDeviceLost();
+
+	// $Barnyard: FUNCTION 006c5920
+	for ( TShader* pShader = TShader::sm_oShaderList.GetRootShader(); pShader != TNULL; pShader = pShader->GetNextShader() )
+		pShader->TryInvalidate();
+
+	if ( m_fnOnDeviceLostCallback )
+		m_fnOnDeviceLostCallback();
+
+	FlushDyingResources();
+	g_oSystemManager.Pause( TTRUE );
 }
 
-// $Barnyard: FUNCTION 006c6e80 TODO
+// $Barnyard: FUNCTION 006c6e80
 void TRenderD3DInterface::OnD3DDeviceFound()
 {
-	TIMPLEMENT();
+	if ( m_bFailed == TTRUE )
+	{
+		HRESULT hRes = m_pDirectDevice->Reset( &m_PresentParams );
+
+		if ( FAILED( hRes ) )
+			PrintError( hRes, "D3D Reset FAILED!!!" );
+
+		if ( hRes == D3D_OK )
+		{
+			// $Barnyard: FUNCTION 006c5930
+			TResource::Recurse( []( TResource* a_pResource, void* a_pUserData ) {
+				a_pResource->TryValidate();
+				return TTRUE;
+			},
+			                    m_Resources.GetRoot()->Child(), TTRUE, TNULL );
+
+			if ( m_pDebugText )
+				TSTATICCAST( TDebugD3DText, m_pDebugText )->OnDeviceFound();
+
+			// $Barnyard: FUNCTION 006c5940
+			for ( TShader* pShader = TShader::sm_oShaderList.GetRootShader(); pShader != TNULL; pShader = pShader->GetNextShader() )
+				pShader->TryValidate();
+
+			if ( m_fnOnDeviceFoundCallback )
+				m_fnOnDeviceFoundCallback();
+
+			SetDeviceDefaultStates();
+			g_oSystemManager.Pause( TFALSE );
+			m_bFailed = TFALSE;
+		}
+	}
+
+	if ( TInputInterface* pInputInterface = TInputInterface::GetSingleton() )
+	{
+		pInputInterface->UnacquireAll();
+		pInputInterface->FlushAll();
+		pInputInterface->StopAllRepeats();
+	}
+
+	g_oSystemManager.Pause( TFALSE );
 }
 
-// $Barnyard: FUNCTION 006c5b60 TODO
+// Applies the gamma setting (0.5 is neutral) to a_fValue
+// $Barnyard: FUNCTION 006c5ac0
+static TFLOAT ApplyGamma( TFLOAT a_fGamma, TFLOAT a_fValue )
+{
+	if ( a_fGamma > 0.5f )
+	{
+		TFLOAT fAmount = ( a_fGamma - 0.5f ) + ( a_fGamma - 0.5f );
+		return TMath::Pow( a_fValue, 1.0f / ( 1.0f - fAmount + fAmount * 6.0f ) );
+	}
+
+	if ( a_fGamma < 0.5f )
+	{
+		TFLOAT fAmount = ( a_fGamma - 0.5f ) * -2.0f;
+		return TMath::Pow( a_fValue, 1.0f / ( 1.0f - fAmount + fAmount * 0.5f ) );
+	}
+
+	return a_fValue;
+}
+
+// Converts a float to an integer rounding towards zero
+// $Barnyard: FUNCTION 006b6970
+static TINT FloatToIntTruncate( TFLOAT a_fValue )
+{
+	return TINT( a_fValue );
+}
+
+// $Barnyard: FUNCTION 006c5b60
 void TRenderD3DInterface::GetCurrentColourRamp()
 {
-	TIMPLEMENT();
+	if ( m_bChangedColourSettings != TTRUE )
+		return;
 
-	if ( m_bChangedColourSettings )
+	m_bChangedColourSettings = TFALSE;
+
+	TFLOAT aRamps[ 3 ][ 256 ];
+
+	for ( TUINT i = 0; i < 256; i++ )
 	{
-		m_bChangedColourSettings = TFALSE;
+		TFLOAT fValue    = i * ( 1.0f / 255.0f );
+		aRamps[ 0 ][ i ] = fValue;
+		aRamps[ 1 ][ i ] = fValue;
+		aRamps[ 2 ][ i ] = fValue;
+	}
+
+	// Gamma
+	for ( TUINT i = 0; i < 256; i++ )
+	{
+		for ( TINT k = 0; k < 3; k++ )
+			aRamps[ k ][ i ] = ApplyGamma( m_fGamma, aRamps[ k ][ i ] );
+	}
+
+	// Contrast (0.5 is neutral)
+	for ( TUINT i = 0; i < 256; i++ )
+	{
+		for ( TINT k = 0; k < 3; k++ )
+		{
+			TFLOAT fValue = aRamps[ k ][ i ];
+
+			if ( m_fContrast < 0.5f )
+				aRamps[ k ][ i ] = m_fContrast * ( fValue - 0.5f ) + m_fContrast * ( fValue - 0.5f ) + 0.5f;
+			else if ( m_fContrast > 0.5f )
+				aRamps[ k ][ i ] = TMath::Gain( m_fContrast, fValue );
+		}
+	}
+
+	// Brightness (0.5 is neutral)
+	for ( TUINT i = 0; i < 256; i++ )
+	{
+		for ( TINT k = 0; k < 3; k++ )
+		{
+			TFLOAT fValue = aRamps[ k ][ i ] + m_fBrightness - 0.5f;
+			TMath::Clip( fValue, 0.0f, 1.0f );
+			aRamps[ k ][ i ] = fValue;
+		}
+	}
+
+	for ( TUINT i = 0; i < 256; i++ )
+	{
+		m_GammaRamp.red[ i ]   = WORD( FloatToIntTruncate( aRamps[ 0 ][ i ] * 65535.0f ) );
+		m_GammaRamp.green[ i ] = WORD( FloatToIntTruncate( aRamps[ 1 ][ i ] * 65535.0f ) );
+		m_GammaRamp.blue[ i ]  = WORD( FloatToIntTruncate( aRamps[ 2 ][ i ] * 65535.0f ) );
 	}
 }
 
-// $Barnyard: FUNCTION 006d9fd0 TODO
-TDebugD3DText* TRenderD3DInterface::InitDebugText( TINT a_iBufferSize )
+// $Barnyard: FUNCTION 006d9fd0
+TDebugD3DText* TRenderD3DInterface::InitDebugText( TRenderD3DInterface* a_pRenderer, TINT a_iBufferSize )
 {
-	TIMPLEMENT();
-	return TNULL;
+	if ( a_iBufferSize == 0 )
+		a_iBufferSize = 5120;
+
+	// The text buffer follows the object
+	void* pMem = TMalloc( a_iBufferSize + 28 );
+
+	if ( !pMem )
+		return TNULL;
+
+	TDebugD3DText* pDebugText = new ( pMem ) TDebugD3DText();
+	pDebugText->m_pRenderer   = a_pRenderer;
+	pDebugText->m_iBufferSize = a_iBufferSize;
+	pDebugText->Reset();
+
+	pDebugText->m_pFont = new CD3DFont( "Arial", 10, CD3DFont::D3DFONT_BOLD );
+	pDebugText->m_pFont->InitDeviceObjects( a_pRenderer->m_pDirectDevice );
+	pDebugText->m_pFont->RestoreDeviceObjects();
+
+	return pDebugText;
 }
 
 // $Barnyard: FUNCTION 006c66e0
@@ -789,18 +1014,18 @@ void TRenderD3DInterface::SetTextureAddress( TINT a_iStage, ADDRESSINGMODE a_eAd
 
 // $Barnyard: FUNCTION 006c6070
 // Clears a region of the screen with specified color, depth, and stencil values
-void TRenderD3DInterface::ClearRegion( TINT a_iX, TINT a_iY, TINT a_iWidth, TINT a_iHeight, TUINT8 a_eClearFlags, TUINT8 a_uiColorR, TUINT8 a_uiColorG, TUINT8 a_uiColorB, TFLOAT a_fZ, TUINT a_uiStencil )
+void TRenderD3DInterface::ClearRegion( TINT a_iX, TINT a_iY, TINT a_iWidth, TINT a_iHeight, CLEARFLAGS a_eClearFlags, TUINT8 a_uiColorR, TUINT8 a_uiColorG, TUINT8 a_uiColorB, TFLOAT a_fZ, TUINT a_uiStencil )
 {
 	// Build clear flags based on parameters
-	DWORD eFlags = ( a_eClearFlags & 1 ) ? D3DCLEAR_TARGET : 0;
+	DWORD eFlags = ( a_eClearFlags & CLEARFLAGS_TARGET ) ? D3DCLEAR_TARGET : 0;
 
-	if ( a_eClearFlags & 2 )
+	if ( a_eClearFlags & CLEARFLAGS_DEPTH )
 	{
 		eFlags = eFlags | D3DCLEAR_ZBUFFER;
 		TMath::Clip( a_fZ, 0.0f, 1.0f );
 	}
 
-	if ( a_eClearFlags & 4 )
+	if ( a_eClearFlags & CLEARFLAGS_STENCIL )
 	{
 		eFlags = eFlags | D3DCLEAR_STENCIL;
 	}
@@ -817,17 +1042,17 @@ void TRenderD3DInterface::ClearRegion( TINT a_iX, TINT a_iY, TINT a_iWidth, TINT
 }
 
 // $Barnyard: FUNCTION 006c6760
-TBOOL TRenderD3DInterface::IsTextureFormatSupported( TINT a_eTextureFormat )
+TBOOL TRenderD3DInterface::IsTextureFormatSupported( TTEXTURERESOURCEFORMAT a_eTextureFormat )
 {
 	switch ( a_eTextureFormat )
 	{
-		case 1:
+		case TTEXTURERESOURCEFORMAT::R8G8B8A8:
 			return IsTextureFormatSupportedImpl( D3DFMT_A8R8G8B8 );
-		case 2:
+		case TTEXTURERESOURCEFORMAT::R8G8B8:
 			return IsTextureFormatSupportedImpl( D3DFMT_X8R8G8B8 );
-		case 3:
+		case TTEXTURERESOURCEFORMAT::R5G5B5A1:
 			return IsTextureFormatSupportedImpl( D3DFMT_A1R5G5B5 );
-		case 4:
+		case TTEXTURERESOURCEFORMAT::DDS:
 			return TTRUE;
 		default:
 			return TFALSE;
@@ -842,7 +1067,7 @@ TBOOL TRenderD3DInterface::IsTextureFormatSupportedImpl( D3DFORMAT a_eFormat )
 	return SUCCEEDED(
 	    m_pDirect3D->CheckDeviceFormat(
 	        pDevice->GetMode()->GetAdapter()->GetAdapterIndex(),
-	        TD3DAdapter::Mode::Device::DEVICETYPES[ pDevice->GetDeviceIndex() ],
+	        TD3DAdapter::Mode::Device::GetD3DDeviceType( pDevice->GetDeviceIndex() ),
 	        m_PresentParams.BackBufferFormat,
 	        0,
 	        D3DRTYPE_TEXTURE,
@@ -854,7 +1079,7 @@ TBOOL TRenderD3DInterface::IsTextureFormatSupportedImpl( D3DFORMAT a_eFormat )
 // $Barnyard: FUNCTION 006c63f0
 TBOOL TRenderD3DInterface::Supports32BitTextures()
 {
-	return IsTextureFormatSupported( 1 ) && IsTextureFormatSupported( 2 );
+	return IsTextureFormatSupported( TTEXTURERESOURCEFORMAT::R8G8B8A8 ) && IsTextureFormatSupported( TTEXTURERESOURCEFORMAT::R8G8B8 );
 }
 
 // $Barnyard: FUNCTION 006c5800

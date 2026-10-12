@@ -10,6 +10,7 @@ public:
 
 public:
 	ASlideshowState( const AGUISlideshow::Params& a_rSlideShowParams, AGameState* a_pNextGameState, TBOOL a_bShouldLocalise );
+	~ASlideshowState();
 
 	//-----------------------------------------------------------------------------
 	// AGameState

@@ -23,6 +23,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 005f7be0, CreateObject 005f8270, CreateObjectInPlace 005f82d0
 TDEFINE_CLASS( AGrassShaderHAL );
 
 TTextureResourceHAL* g_pGrassShaderTerrainTexture = TNULL;
@@ -231,9 +232,9 @@ void AGrassShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 		pD3DDevice->SetVertexShaderConstant( 7, &vecOffset, 1 );
 		pD3DDevice->SetTexture( 0, g_pGrassShaderTerrainTexture->GetD3DTexture() );
 		pD3DDevice->DrawIndexedPrimitive( D3DPT_TRIANGLESTRIP, 0, pVertexPool->GetNumVertices(), oIndexBuffer.uiIndexOffset, pIndexPool->GetNumIndices() - 2 );
-	
-		ACamera* pCamera         = ACameraManager::GetSingleton()->GetCurrentCamera();
-		TVector4 vecCamPos       = pCamera->GetMatrix().GetTranslation();
+
+		ACamera* pCamera   = ACameraManager::GetSingleton()->GetCurrentCamera();
+		TVector4 vecCamPos = pCamera->GetMatrix().GetTranslation();
 
 		// Transform coordinates to the actual world position, since they are exported rotated
 		TVector4 vecMeshBounding;
@@ -241,7 +242,7 @@ void AGrassShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 		vecMeshBounding.y = -pMesh->GetCellMeshSphere()->m_BoundingSphere.AsVector4().z;
 		vecMeshBounding.z = pMesh->GetCellMeshSphere()->m_BoundingSphere.AsVector4().y;
 		vecMeshBounding.w = pMesh->GetCellMeshSphere()->m_BoundingSphere.GetRadius();
-		
+
 		TFLOAT fDistanceToCamera = TVector4::DistanceXZ( vecMeshBounding, vecCamPos ) - vecMeshBounding.w;
 
 		if ( fDistanceToCamera <= 100.0f )

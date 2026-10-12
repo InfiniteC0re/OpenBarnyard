@@ -121,6 +121,14 @@ public:
 	TFORCEINLINE constexpr TVector3&       AsNormal() { return m_Normal; }
 	TFORCEINLINE constexpr const TVector3& AsNormal() const { return m_Normal; }
 
+	// Projects a_rcPoint onto the plane (w of the result is 1.0f)
+	// $Barnyard: FUNCTION 004a6b30
+	TVector4 ProjectPoint( const TVector4& a_rcPoint ) const
+	{
+		TFLOAT fDistance = m_Normal.x * a_rcPoint.x + m_Normal.z * a_rcPoint.z + m_Normal.y * a_rcPoint.y - m_fDistance;
+		return TVector4( a_rcPoint.x - fDistance * m_Normal.x, a_rcPoint.y - fDistance * m_Normal.y, a_rcPoint.z - fDistance * m_Normal.z, 1.0f );
+	}
+
 	TFORCEINLINE TVector4&       AsVector4() { return *TREINTERPRETCAST( TVector4*, this ); }
 	TFORCEINLINE const TVector4& AsVector4() const { return *TREINTERPRETCAST( const TVector4*, this ); }
 

@@ -104,7 +104,7 @@ TBOOL T2NamedPipeServer::Start( const TCHAR* a_szName, TUINT a_uiSendInterval, T
 	TASSERT( INVALID_HANDLE_VALUE != m_hPipe );
 
 	m_pThread  = new T2NamedPipeServerThread( this );
-	m_bStarted = m_pThread->Create( 0, TThread::THREAD_PRIORITY_LOWEST, 0 );
+	m_bStarted = m_pThread->Create( 0, TThread::THREAD_PRIORITY_LOWEST, TThread::FLAGS_NONE );
 
 	TTRACE( "Started named pipe '%s'\n", m_szName );
 

@@ -180,6 +180,26 @@ public:
 	void SetVirtStickDoodads( TINT a_iMapID, Doodad a_iDoodad1, Doodad a_iDoodad2, Doodad a_iDoodad3, Doodad a_iDoodad4 );
 	void GetVirtStickDoodads( TINT a_iMapID, Doodad& a_rDoodad1, Doodad& a_rDoodad2, Doodad& a_rDoodad3, Doodad& a_rDoodad4 );
 
+#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
+	// Development: queues a key change that the platform keyboard handles as if it came from
+	// the device, so unattended runs exercise the whole input path (see -devkeys)
+	static void  Dev_QueueKey( Doodad a_iDoodad, TBOOL a_bDown );
+	static TBOOL Dev_HasInjectedKeys() { return ms_bDevKeys; }
+
+protected:
+	struct DevKey
+	{
+		Doodad iDoodad;
+		TBOOL  bDown;
+	};
+
+	inline static constexpr TINT DEV_MAX_QUEUED_KEYS = 32;
+
+	inline static DevKey ms_aDevKeys[ DEV_MAX_QUEUED_KEYS ];
+	inline static TINT   ms_iNumDevKeys = 0;
+	inline static TBOOL  ms_bDevKeys    = TFALSE; // set once any key got queued
+#endif
+
 protected:
 	void UpdateVirtualButtons();
 

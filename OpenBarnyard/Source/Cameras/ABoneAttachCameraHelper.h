@@ -34,7 +34,7 @@ public:
 	virtual TBOOL Unk2( void* ) OVERRIDE;
 
 	// Unknown override method (purpose not documented).
-	virtual TBOOL Unk3( void*, void* ) OVERRIDE;
+	virtual TBOOL ProcessInputCommand( void*, void* ) OVERRIDE;
 
 	// Called when the helper is created.
 	virtual void OnCreate() OVERRIDE;
@@ -59,6 +59,24 @@ public:
 
 	// Sets the animation sequence for the attached model.
 	void SetAnimation( const TCHAR* a_szSeqName );
+
+	// Removes the animation and forgets the model and the bone (the model instance itself is kept).
+	void Reset();
+
+	// Sets the speed of the camera animation
+	// $Barnyard: FUNCTION 0045fad0
+	void SetAnimationSpeed( TFLOAT a_fSpeed )
+	{
+		if ( m_pAnimation )
+			m_pAnimation->SetSpeed( a_fSpeed );
+	}
+
+	// TTRUE while the camera animation hasn't reached its end
+	// $Barnyard: FUNCTION 0045faf0
+	TBOOL IsAnimationPlaying() const
+	{
+		return m_pAnimation && m_pAnimation->GetTotalTime() <= m_pAnimation->GetSeqTime();
+	}
 
 private:
 	// Handles animation start events for the attached model.

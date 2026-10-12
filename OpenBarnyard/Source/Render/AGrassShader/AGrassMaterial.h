@@ -11,6 +11,13 @@ public:
 	TDECLARE_CLASS( AGrassMaterial, Toshi::TMaterial );
 
 	using BLENDMODE = TINT;
+	enum BLENDMODE_ : BLENDMODE
+	{
+		BLENDMODE_DEFAULT  = 0,
+		BLENDMODE_ALPHA    = 1, // alpha blended
+		BLENDMODE_MODULATE = 2, // the colour multiplies the destination
+		BLENDMODE_ADDITIVE = 3, // the colour (times alpha) is added to the destination
+	};
 
 public:
 	AGrassMaterial();

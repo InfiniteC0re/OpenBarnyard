@@ -32,6 +32,7 @@ T2Locale::T2Locale( TINT langCount, TSIZE bufferSize, void* buffer )
 }
 
 // $Barnyard: FUNCTION 006be710
+// $Barnyard: FUNCTION 006be890
 T2Locale::~T2Locale()
 {
 	m_Locale.Close();

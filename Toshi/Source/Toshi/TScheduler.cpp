@@ -14,7 +14,7 @@ TOSHI_NAMESPACE_START
 TDEFINE_CLASS_NORUNTIME( TScheduler );
 
 TFLOAT TScheduler::s_MaxTimeDeltaAllowed          = 0.25f;
-TFLOAT TScheduler::s_DebugSlowMaxTimeDeltaAllowed = 1.0f;
+TFLOAT TScheduler::s_DebugSlowMaxTimeDeltaAllowed = 0.005f;
 
 // $Barnyard: FUNCTION 006bccd0
 TScheduler::TScheduler()
@@ -30,6 +30,8 @@ TScheduler::TScheduler()
 	m_DebugDeltaTimeMult    = 1.0f;
 }
 
+// $Barnyard: FUNCTION 006bcdf0
+// $Barnyard: FUNCTION 006bce40
 TScheduler::~TScheduler()
 {
 	DestroyAllTasks();
@@ -43,7 +45,7 @@ TTask* TScheduler::CreateTask( TClass* pClass, TTask* pParent )
 	TTask* pTask = static_cast<TTask*>( pClass->CreateObject() );
 	TASSERT( pTask != TNULL );
 
-	m_TaskTree.InsertAtRoot( pTask );
+	m_TaskTree.InsertAtRootHead( pTask );
 
 	if ( pParent != TNULL )
 	{
@@ -98,6 +100,7 @@ void TScheduler::Update()
 	UpdateActiveTasks( m_TaskTree.ChildOfRoot() );
 }
 
+// $Barnyard: FUNCTION 006bcb40
 void TScheduler::DeleteTaskAtomic( TTask* task )
 {
 	if ( task != TNULL )
@@ -117,14 +120,7 @@ void TScheduler::DeleteTaskAtomic( TTask* task )
 
 		if ( task->Child() != TNULL )
 		{
-			TTask* node = task->Child()->Child();
-
-			while ( node != TNULL )
-			{
-				auto next = ( node->Prev() != node ) ? node->Prev() : TNULL;
-				DeleteTaskAtomic( node );
-				node = next;
-			}
+			DeleteTaskRecurse( task->Child() );
 		}
 
 		const TClass* pClass = task->GetClass();
@@ -148,7 +144,8 @@ void TScheduler::DestroyDyingTasks( TTask* task )
 
 		while ( currentTask != TNULL )
 		{
-			TTask* nextTask = ( currentTask->Prev() != task ) ? currentTask->Prev() : TNULL;
+			// Go from the last task to the first one (task)
+			TTask* nextTask = ( currentTask != task ) ? currentTask->Prev() : TNULL;
 
 			if ( !currentTask->IsDying() )
 			{
@@ -177,7 +174,7 @@ void TScheduler::UpdateActiveTasks( TTask* task )
 		TTask* nextTask = ( currentTask->Next() != task ) ? currentTask->Next() : TNULL;
 
 		TBOOL recurse = TTRUE;
-		if ( task->IsCreated() && task->IsActive() )
+		if ( currentTask->IsCreated() && currentTask->IsActive() )
 		{
 			recurse = currentTask->OnUpdate( m_DeltaTime );
 		}

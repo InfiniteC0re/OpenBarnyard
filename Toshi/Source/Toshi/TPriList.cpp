@@ -31,6 +31,7 @@ void TGenericPriList::TNode::InsertBefore( TNode* a_pNode )
 	m_pPrev->m_pNext = this;
 }
 
+// $Barnyard: FUNCTION 006c9c20
 void TGenericPriList::Insert( TNode* a_pNode )
 {
 	TINT iPriority = a_pNode->m_iPriority;

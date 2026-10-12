@@ -12,12 +12,12 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 005f7c00, CreateObject 005f8990, CreateObjectInPlace 005f8a10
 TDEFINE_CLASS( AGrassMeshHAL );
 
 AGrassMeshHAL::AGrassMeshHAL()
     : m_pUnk1( TNULL )
 {
-	
 }
 
 // $Barnyard: FUNCTION 005f8840

@@ -15,7 +15,7 @@ public:
 	enum FOV_SCALING_TYPE : TINT
 	{
 		FOV_SCALING_TYPE_HORIZONTAL = 0,
-		FOV_SCALING_TYPE_VERTICAL = 1
+		FOV_SCALING_TYPE_VERTICAL   = 1
 	};
 
 public:
@@ -66,6 +66,9 @@ public:
 	{
 		return m_fFar;
 	}
+
+	TFLOAT GetProjectionCentreX() const { return m_fCentreX; }
+	TFLOAT GetProjectionCentreY() const { return m_fCentreY; }
 
 	TFLOAT GetFOV() const
 	{

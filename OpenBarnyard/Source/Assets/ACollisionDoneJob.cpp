@@ -10,6 +10,11 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 005e85b0
+ACollisionDoneJob::ACollisionDoneJob()
+{
+}
+
 void ACollisionDoneJob::BeginJob()
 {
 }

@@ -39,8 +39,14 @@ public:
 	void AddMenuGridItem( AGUI2MenuGridItem& a_rMenuItem );
 	void SetFocusAt( AGUI2MenuGridItem* a_pMenuItem );
 
+	// Enables or disables a_rMenuItem, moving the focus to the item on its right if it's disabled while focused
+	void SetItemEnabled( AGUI2MenuGridItem& a_rMenuItem, TBOOL a_bEnabled );
+
 	// Reflows elements and calculates dimensions
 	void ReflowChildren();
+
+	// Grows m_vecMaxItemDimensions to the dimensions of a_rMenuItem
+	void UpdateMaxItemDimensions( AGUI2MenuGridItem& a_rMenuItem );
 
 	TBOOL TriggerButtonPress( AGUI2MenuGridItem& a_rMenuItem );
 
@@ -60,6 +66,16 @@ public:
 	void SetBackSound( ASoundId a_eSound ) { m_eBackSound = a_eSound; }
 
 	void BlockActivation( TBOOL a_bBlock ) { m_bBlockActivation = a_bBlock; }
+
+	// Relative width of a_iColumn (1.0 by default), multiplies the widest item
+	void SetColumnWidth( TINT a_iColumn, TFLOAT a_fWidth ) { m_pColumnsData[ a_iColumn ] = a_fWidth; }
+	void SetPaddingLeft( TFLOAT a_fPadding ) { m_fPaddingLeft = a_fPadding; }
+
+	// Width of the columns, the widest item is used when it isn't positive
+	void   SetMaxItemWidth( TFLOAT a_fWidth ) { m_fMaxItemWidth = a_fWidth; }
+	TFLOAT GetMaxItemWidth() const { return m_fMaxItemWidth; }
+
+	const Toshi::TVector2& GetMaxItemDimensions() const { return m_vecMaxItemDimensions; }
 
 private:
 	TFLOAT             m_fItemSpacing;

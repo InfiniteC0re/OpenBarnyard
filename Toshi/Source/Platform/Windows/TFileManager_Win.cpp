@@ -1,5 +1,7 @@
 #include "ToshiPCH.h"
 #include "TNativeFile_Win.h"
+#include "File/TNullFile.h"
+#include "File/TMemFile.h"
 
 #include <windows.h>
 
@@ -23,7 +25,8 @@ TBOOL TFileManager::Create()
 
 	( new TNativeFileSystem( "local" ) )->SetPrefix( currentDir );
 	( new TNativeFileSystem( "abs" ) )->SetPrefix( "" );
-	( new TNativeFileSystem( "null" ) )->SetPrefix( "" );
+	new TNullFileSystem( "null" );
+	new TMemFileSystem( "mem" );
 
 	fileManager->SetSystemPath( "local" );
 

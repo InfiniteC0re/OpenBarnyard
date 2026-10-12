@@ -5,6 +5,9 @@
 class AMatLibLoaderJob : public ATRBLoaderJob
 {
 public:
+	AMatLibLoaderJob();
+	~AMatLibLoaderJob();
+
 	virtual void  BeginJob() override;
 	virtual TBOOL RunJob() override;
 	virtual TBOOL CancelJob() override;

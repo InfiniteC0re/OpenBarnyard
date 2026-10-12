@@ -13,6 +13,13 @@ AFade::AFade()
 {
 }
 
+// $Barnyard: FUNCTION 0045c720
+// $Barnyard: FUNCTION 0045ca80
+AFade::~AFade()
+{
+	m_Overlay.RemoveSelf();
+}
+
 void AFade::SetFadeTime( TFLOAT a_fFadeTime )
 {
 	m_fFadeTime = a_fFadeTime;

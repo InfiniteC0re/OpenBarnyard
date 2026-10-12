@@ -21,6 +21,12 @@ TIndexPoolResourceInterface::TIndexPoolResourceInterface()
 	m_uiLockCount  = 0;
 }
 
+// $Barnyard: FUNCTION 006daa80
+// $Barnyard: FUNCTION 006daaa0
+TIndexPoolResourceInterface::~TIndexPoolResourceInterface()
+{
+}
+
 void TIndexPoolResourceInterface::OnDestroy()
 {
 	TASSERT( 0 == m_uiLockCount );

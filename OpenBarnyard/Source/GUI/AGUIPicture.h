@@ -38,7 +38,16 @@ public:
 
 public:
 	AGUIPicture();
+	~AGUIPicture();
 
+	//-----------------------------------------------------------------------------
+	// Toshi::TObject
+	//-----------------------------------------------------------------------------
+	virtual void Delete() override; // +0x04
+
+	//-----------------------------------------------------------------------------
+	// Own methods
+	//-----------------------------------------------------------------------------
 	virtual void SetFlag();
 	virtual void Render();
 	virtual void Flush()                                   = 0;
@@ -50,6 +59,12 @@ public:
 
 	// $Barnyard: FUNCTION 0059e080
 	const Toshi::TPString8& GetName() const { return m_Name; }
+
+	// Number of images (and rectangles) a picture is split into
+	TINT GetNumImages() const { return TARRAYSIZE( split_rules ); }
+
+	// $Barnyard: FUNCTION 0059d300
+	static const SplitRule* GetSplitRule( TINT a_iIndex ) { return &split_rules[ a_iIndex ]; }
 
 protected:
 	inline static SplitRule split_rules[ 6 ];

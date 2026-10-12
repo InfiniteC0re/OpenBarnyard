@@ -26,11 +26,12 @@ public:
 	TString8( const TString8& src, T2Allocator* allocator = TNULL );
 	TString8( const TString16& src, T2Allocator* allocator = TNULL );
 	TString8( const TCHAR* src, T2Allocator* allocator = TNULL );
+	TString8( const TWCHAR* src, T2Allocator* allocator = TNULL );
 	TString8( TINT size, T2Allocator* allocator = TNULL );
 	// $Barnyard: FUNCTION 006bd140
 	~TString8() { FreeBuffer(); }
 
-	void Copy( const TString8& src, TINT size = -1 ) { Copy( src.m_pBuffer, size ); }
+	void Copy( const TString8& src, TINT size = -1 );
 	void Copy( const TString16& src, TINT size = -1 );
 	void Copy( const TCHAR* src, TINT size = -1 );
 	void Copy( const TWCHAR* src, TINT size = -1 );
@@ -64,7 +65,7 @@ public:
 	// Returns string starting from specified a_iIndex. Use only if you are sure about what you do!
 	TCHAR* GetStringUnsafe( TINT a_iIndex = 0 );
 
-	TString8& Concat( const TString8& str, TINT size = -1 ) { return Concat( str.m_pBuffer, size ); };
+	TString8& Concat( const TString8& str, TINT size = -1 );
 	TString8& Concat( const TString16& src, TINT size = -1 );
 	TString8& Concat( const TCHAR* src, TINT size = -1 );
 
@@ -75,6 +76,10 @@ public:
 
 	// Returns a substring contained in a [a_iFirst; a_iFirst + a_iCount] range
 	TString8 Mid( TINT a_iFirst, TINT a_iCount ) const;
+
+	// Returns the first a_iCount characters
+	// $Barnyard: FUNCTION 0060ac20
+	TString8 Left( TINT a_iCount ) const { return Mid( 0, a_iCount ); }
 
 	// Returns a substring contained in a [a_iFrom; end of the string] range
 	TString8 Right( TINT a_iFrom ) const;
@@ -107,18 +112,16 @@ public:
 	TBOOL IsUnicode() const { return TFALSE; } // Who would have known?
 
 public:
-	TString8 operator+( const TCHAR* cstr ) const
-	{
-		TString8 str = TString8( *this );
-		return std::move( str.Concat( cstr ) );
-	}
+	TString8 operator+( const TCHAR* cstr ) const;
 
+	// $Barnyard: FUNCTION 006bd6e0
 	TString8* operator+=( const TCHAR* cstr )
 	{
 		Concat( cstr, -1 );
 		return this;
 	}
 
+	// $Barnyard: FUNCTION 006bd6c0
 	TString8* operator+=( TString8& str )
 	{
 		Concat( str, -1 );
@@ -132,8 +135,10 @@ public:
 	operator const TBOOL() const { return !IsEmpty(); }
 
 	TBOOL operator!() { return m_iStrLen == 0; }
-	TBOOL operator==( const TCHAR* cstr ) const { return Compare( cstr, -1 ) == 0; }
-	TBOOL operator==( const TString8& str ) const { return Compare( str.m_pBuffer, -1 ) == 0; }
+	// $Barnyard: FUNCTION 006bd040
+	TBOOL operator==( const TCHAR* cstr ) const { return strcmp( m_pBuffer, cstr ) == 0; }
+	// $Barnyard: FUNCTION 006bcff0
+	TBOOL operator==( const TString8& str ) const { return strcmp( m_pBuffer, str.m_pBuffer ) == 0; }
 	TBOOL operator!=( const TCHAR* cstr ) const { return Compare( cstr, -1 ) != 0; }
 	TBOOL operator!=( const TString8& str ) const { return Compare( str.m_pBuffer, -1 ) != 0; }
 	TBOOL operator<( const TCHAR* cstr ) const { return Compare( cstr, -1 ) > -1; }
@@ -141,6 +146,7 @@ public:
 	TBOOL operator<=( const TCHAR* cstr ) const { return Compare( cstr, -1 ) > 0; }
 	TBOOL operator<=( const TString8& str ) const { return Compare( str.m_pBuffer, -1 ) > 0; }
 
+	// $Barnyard: FUNCTION 006bd6a0
 	TString8& operator=( const TCHAR* cstr )
 	{
 		Copy( cstr, -1 );
@@ -153,6 +159,7 @@ public:
 		return *this;
 	}
 
+	// $Barnyard: FUNCTION 006bd680
 	TString8& operator=( const TString8& str )
 	{
 		Copy( str, -1 );
@@ -207,5 +214,13 @@ private:
 	TUINT32      m_iExcessLen : 8; // 0x5
 	T2Allocator* m_pAllocator;     // 0x8
 };
+
+// $Barnyard: FUNCTION 006bd090
+inline TBOOL operator==( const TCHAR* a_pcString, const TString8& a_rcString )
+{
+	return strcmp( a_rcString, a_pcString ) == 0;
+}
+
+TString8 operator+( const TCHAR* a_pcString, const TString8& a_rcString );
 
 TOSHI_NAMESPACE_END

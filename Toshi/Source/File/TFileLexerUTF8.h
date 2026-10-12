@@ -5,6 +5,7 @@
 
 TOSHI_NAMESPACE_START
 
+// NOTE: this class isn't in the Barnyard binary (it comes from other TOSHI 2.0 games) and isn't used by the game
 class TFileLexerUTF8 : public TObject
 {
 public:
@@ -32,15 +33,27 @@ public:
 
 		static LookaheadTokens* Allocate( TINT a_iCount = 1 )
 		{
-			return TREINTERPRETCAST(
+			LookaheadTokens* pTokens = TREINTERPRETCAST(
 			    LookaheadTokens*,
 			    TMalloc( sizeof( LookaheadTokens ) + sizeof( Token ) * a_iCount )
 			);
+
+			pTokens->m_iCount = a_iCount;
+
+			for ( TINT i = 0; i < a_iCount; i++ )
+				new ( &pTokens->GetTokens()[ i ] ) Token();
+
+			return pTokens;
 		}
 
 		static void Free( Token* a_pHeadToken )
 		{
-			TFree( FromToken( a_pHeadToken ) );
+			LookaheadTokens* pTokens = FromToken( a_pHeadToken );
+
+			for ( TINT i = 0; i < pTokens->m_iCount; i++ )
+				a_pHeadToken[ i ].~Token();
+
+			TFree( pTokens );
 		}
 
 		static LookaheadTokens* FromToken( Token* a_pHeadToken )

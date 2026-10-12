@@ -18,6 +18,9 @@ public:
 	class List : public Toshi::TSingleton<List>
 	{
 	public:
+		// $Barnyard: FUNCTION 006158e0
+		List() {}
+
 		AMaterialLibrary* CreateLibraryFromTRB( Toshi::TTRB* a_pTRB, const TCHAR* a_szFilePath );
 		AMaterialLibrary* CreateLibraryFromAsset( const TCHAR* a_szFilePath, Toshi::TTRB* a_pTRB );
 		void              DestroyLibrary( AMaterialLibrary* a_pLibrary );
@@ -30,7 +33,11 @@ public:
 	class TextureSlot : public Toshi::T2SList<TextureSlot>::Node
 	{
 	public:
-		TextureSlot() = default;
+		// $Barnyard: FUNCTION 00613b00
+		TextureSlot() {}
+
+		// $Barnyard: FUNCTION 00613ae0
+		~TextureSlot() {}
 
 		void SetTexture( Toshi::TTexture* a_pTexture )
 		{
@@ -80,6 +87,7 @@ public:
 
 public:
 	AMaterialLibraryManager();
+	~AMaterialLibraryManager();
 
 	void LoadLibrariesFromProperties( const PBPropertyValue* a_pProperty, Toshi::TTRB* a_pTRB, TBOOL a_bUpdateGUIMaterials );
 	void UnloadLibrariesFromProperties( const PBPropertyValue* a_pProperty, TBOOL a_bUpdateGUIMaterials );
@@ -94,6 +102,9 @@ public:
 	TINT             GetNumFreeTextures() const { return m_iNumFreeTextures; }
 
 	void UnloadTexturesOfLibrary( AMaterialLibrary* a_pMaterialLibrary );
+
+	// Destroys every loaded library and forgets their reference counts
+	void DestroyAllLibraries( TBOOL a_bUpdateGUIMaterials );
 
 private:
 	void DestroyLibrary( LibrariesMap::Iterator& a_rcMaterialLibraryNode, TBOOL a_bUpdateGUIMaterials );

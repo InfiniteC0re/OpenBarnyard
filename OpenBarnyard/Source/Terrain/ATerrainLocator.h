@@ -66,5 +66,5 @@ private:
 	ATerrainLocatorTRBHeader*    m_pLocatorsHeader;
 	ATerrainLocatorVISTRBHeader* m_pLocatorVISHeader;
 	Toshi::TTransformObject      m_oWorldTransform;
-	TBOOL                        m_bCreatedGrowings;
+	TUINT8                       m_uiRegrowthGroup; // 0x6c, the group of the objects ARegrowthManager created from the locators
 };

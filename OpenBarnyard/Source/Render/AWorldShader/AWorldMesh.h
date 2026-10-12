@@ -10,6 +10,8 @@ public:
 
 	struct SubMesh
 	{
+		// $Barnyard: FUNCTION 005f5c20
+		SubMesh() {}
 		~SubMesh();
 
 		TMesh*                              pAssociatedMesh = 0;
@@ -29,7 +31,7 @@ public:
 	//-----------------------------------------------------------------------------
 	virtual TBOOL Validate() override;
 	virtual void  Invalidate() override;
-	virtual TBOOL Render() = 0;
+	virtual TBOOL Render() override { return TTRUE; } // RETURNS_TRUE
 	virtual void  OnDestroy() override;
 
 	//-----------------------------------------------------------------------------

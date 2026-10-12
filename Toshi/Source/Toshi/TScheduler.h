@@ -30,14 +30,18 @@ public:
 
 	void Update();
 
+	void SetDeltaTimeCalculator( t_DeltaTimeCalculator a_fnCalculator ) { m_fnDeltaTimeCalculator = a_fnCalculator; }
+
 	TFLOAT& GetDebugDeltaTime() { return m_DebugDeltaTime; }
 	TFLOAT  GetDebugDeltaTime() const { return m_DebugDeltaTime; }
 
 	TFLOAT& GetDebugDeltaTimeMult() { return m_DebugDeltaTimeMult; }
 	TFLOAT  GetDebugDeltaTimeMult() const { return m_DebugDeltaTimeMult; }
+	TBOOL   IsDebugDeltaTimeMultUsed() const { return m_UseDebugDeltaTimeMult; }
 
 	void SetDebugDeltaTimeMult( TBOOL useDebugDeltaTimeMult, TFLOAT debugDeltaTimeMult = 1.0f );
 
+	// $Barnyard: FUNCTION 006bc9e0
 	void SetDebugDeltaTime( TBOOL useDebugDeltaTime, TFLOAT debugDeltaTime = 0.0f )
 	{
 		m_UseDebugDeltaTime = useDebugDeltaTime;
@@ -54,6 +58,7 @@ public:
 		m_UseDebugDeltaTime = pause;
 	}
 
+	// $Barnyard: FUNCTION 006bc9c0
 	void SetDebugSlowTime( TBOOL slowTime )
 	{
 		m_MaxDeltaTime = slowTime ? s_DebugSlowMaxTimeDeltaAllowed : s_MaxTimeDeltaAllowed;
@@ -79,6 +84,7 @@ public:
 		return &m_TaskTree;
 	}
 
+	// $Barnyard: FUNCTION 006bcc30
 	void DeleteTask( TTask* a_pTask )
 	{
 		a_pTask->OnPreDestroy();
@@ -96,21 +102,25 @@ public:
 	}
 
 private:
+	// $Barnyard: FUNCTION 006bca80
 	static void DestroyTaskRecurse( TTask* task )
 	{
 		TTask* currentTask = task;
 
-		while ( currentTask != TNULL && currentTask != task )
+		if ( currentTask == TNULL )
+			return;
+
+		do
 		{
 			currentTask->GetFlags() |= TTask::State_Dying;
 
 			if ( currentTask->Child() != TNULL )
 			{
-				DestroyTaskRecurse( currentTask );
+				DestroyTaskRecurse( currentTask->Child() );
 			}
 
 			currentTask = currentTask->Next();
-		}
+		} while ( currentTask != task && currentTask != TNULL );
 	}
 
 	void DeleteTaskAtomic( TTask* task );
@@ -124,13 +134,16 @@ private:
 
 			while ( currentTask != TNULL )
 			{
-				TTask* nextTask = ( currentTask->Prev() != task ) ? currentTask->Prev() : TNULL;
+				// Deleting the tasks removes them from the list, stop once the last one is deleted
+				TTask* nextTask = ( currentTask->Prev() != currentTask ) ? currentTask->Prev() : TNULL;
 				DeleteTaskAtomic( currentTask );
 				currentTask = nextTask;
 			}
 		}
 	}
 
+public:
+	// $Barnyard: FUNCTION 006bcd20
 	void DestroyAllTasks()
 	{
 		if ( m_TaskTree.ChildOfRoot() != TNULL )
@@ -140,6 +153,7 @@ private:
 		}
 	}
 
+private:
 	// Destroys all the dying tasks from the first one to the last one
 	void DestroyDyingTasks( TTask* task );
 

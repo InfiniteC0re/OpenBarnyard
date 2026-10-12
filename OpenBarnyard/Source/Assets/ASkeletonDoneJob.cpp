@@ -7,6 +7,11 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// $Barnyard: FUNCTION 005e8590
+ASkeletonDoneJob::ASkeletonDoneJob()
+{
+}
+
 void ASkeletonDoneJob::BeginJob()
 {
 }

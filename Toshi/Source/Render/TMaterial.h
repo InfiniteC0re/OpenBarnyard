@@ -23,9 +23,9 @@ public:
 		FLAGS_NONE          = 0,
 		FLAGS_NO_CULL       = BITFLAG( 0 ),
 		FLAGS_BLENDING      = BITFLAG( 1 ),
-		FLAGS_UNK3          = BITFLAG( 2 ),
+		FLAGS_CREATED       = BITFLAG( 2 ), // retail Create/OnDestroy set/clear 0x4
 		FLAGS_GLOW          = BITFLAG( 3 ),
-		FLAGS_CREATED       = BITFLAG( 4 ),
+		FLAGS_UNK4          = BITFLAG( 4 ),
 		FLAGS_NO_DEPTH_TEST = BITFLAG( 27 ),
 		FLAGS_ALPHAUPDATE   = BITFLAG( 28 ),
 		FLAGS_ALPHATEXTURE  = BITFLAG( 31 ),

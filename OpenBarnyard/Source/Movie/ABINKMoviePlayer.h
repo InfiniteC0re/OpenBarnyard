@@ -14,6 +14,9 @@ class ABINKMoviePlayer : public AMoviePlayer
 public:
 	TDECLARE_CLASS( ABINKMoviePlayer, AMoviePlayer );
 
+public:
+	~ABINKMoviePlayer();
+
 private:
 	struct Rect
 	{
@@ -29,6 +32,8 @@ private:
 		Toshi::TTexture*      pTexture  = TNULL;
 		TUINT8*               pData     = TNULL;
 
+		// $Barnyard: FUNCTION 00605820
+		Rect() {}
 		~Rect();
 
 		TBOOL Create( int a_iPosX, int a_iPosY, int a_iWidth, int a_iHeight, TFLOAT a_iRenderPos1X, TFLOAT a_iRenderPos1Y, TFLOAT a_iRenderWidth, TFLOAT a_iRenderHeight, Toshi::TTEXTURERESOURCEFORMAT a_eFormat );
@@ -41,7 +46,7 @@ public:
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) override;
 	virtual void  OnDestroy() override;
 
-	virtual TBOOL PlayMovie( const TCHAR* a_szFileName, TUINT32 a_Unk ) override;
+	virtual TBOOL PlayMovie( const TCHAR* a_szFileName, PLAYFLAGS a_eFlags ) override;
 	virtual void  StopMovie() override;
 	virtual void  PauseMovie( TBOOL a_bPause ) override;
 	virtual TBOOL IsMoviePlaying() override;

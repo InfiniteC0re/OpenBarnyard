@@ -18,6 +18,7 @@ void TQuaternion::SetFromEulerYX( const TFLOAT* fVal )
 	*this *= quat;
 }
 
+// $Barnyard: FUNCTION 006c9a30
 void TQuaternion::SetFromEulerRollPitchYaw( TFLOAT a_fRoll, TFLOAT a_fPitch, TFLOAT a_fYaw )
 {
 	TFLOAT fCosRoll  = cos( a_fRoll * 0.5f );
@@ -82,12 +83,18 @@ void TQuaternion::SetVectorDirection( const TVector3& a_rVec3, const TVector3& a
 		SetIdentity();
 		RotateAroundAxis( vec, TMath::PI * 0.0055555557f * 180.0f );
 	}
+	else
+	{
+		// Same direction (or a zero vector): no rotation
+		SetIdentity();
+	}
 }
 
+// $Barnyard: FUNCTION 006c9650
 void TQuaternion::RotateVector( TVector3& param_1, const TQuaternion& param_2, const TVector3 param_3 )
 {
 	TQuaternion quat = param_2;
-	quat.Negate();
+	quat.SetConjugate();
 	TQuaternion quat2 = TQuaternion( param_3.x, param_3.y, param_3.z, 0.0f );
 	TQuaternion quat3 = param_2;
 	quat3 *= quat2;
@@ -157,6 +164,21 @@ void TQuaternion::Nlerp( TQuaternion& a_rOut, const TQuaternion& a_rStart, const
 
 		a_rOut.AsVector4().Normalise4();
 	}
+}
+
+// $Barnyard: FUNCTION 006c9590
+void TQuaternion::Lerp( TQuaternion& a_rOut, const TQuaternion& a_rStart, const TQuaternion& a_rEnd, TFLOAT a_fProgress )
+{
+	TQuaternion quatEnd = a_rEnd;
+
+	if ( TVector4::DotProduct4( a_rStart.AsVector4(), a_rEnd.AsVector4() ) < 0.0f )
+		quatEnd.Set( -a_rEnd.x, -a_rEnd.y, -a_rEnd.z, -a_rEnd.w );
+
+	TFLOAT fStart = 1.0f - a_fProgress;
+	a_rOut.x      = fStart * a_rStart.x + quatEnd.x * a_fProgress;
+	a_rOut.y      = fStart * a_rStart.y + quatEnd.y * a_fProgress;
+	a_rOut.z      = fStart * a_rStart.z + quatEnd.z * a_fProgress;
+	a_rOut.w      = fStart * a_rStart.w + quatEnd.w * a_fProgress;
 }
 
 // $Barnyard: FUNCTION 006c9400

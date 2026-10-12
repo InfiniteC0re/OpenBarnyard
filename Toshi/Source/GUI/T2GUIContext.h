@@ -9,6 +9,7 @@ class T2GUIContext
 {
 public:
 	T2GUIContext();
+	~T2GUIContext();
 
 	void Tick( TFLOAT a_fDeltaTime );
 	void Render();
@@ -16,6 +17,7 @@ public:
 	T2GUIRenderer* GetRenderer() const { return m_pRenderer; }
 	T2GUIElement*  GetRootElement() const { return m_pRootElement; }
 	T2GUIElement*  GetDebugCanvas() const { return m_pDebugCanvas; }
+	T2GUIElement*  GetCreatedRootElement() const { return m_pCreatedRootElement; }
 
 	void SetRenderer( T2GUIRenderer* a_pRenderer ) { m_pRenderer = a_pRenderer; }
 	void SetRootElement( T2GUIElement* a_pElement ) { m_pRootElement = a_pElement; }

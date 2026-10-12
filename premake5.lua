@@ -55,6 +55,9 @@ workspace "OpenBarnyard"
 
 	filter "options:dlmalloc=yes"
 		defines { "TMEMORY_USE_DLMALLOC" }
+
+	filter "options:latest=yes"
+		defines { "BARNYARD_LATEST" } -- Code from the latest version of the game
 		
 	--filter "options:arch=x64"
 	--	architecture "x64"

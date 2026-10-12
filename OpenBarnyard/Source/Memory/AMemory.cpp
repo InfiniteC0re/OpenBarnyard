@@ -29,6 +29,18 @@ void AMemory::CreatePool( POOL a_ePool )
 	s_AllocatorList.aAllocators[ a_ePool ].SetMemBlock( s_aMemBlocks[ a_ePool ] );
 }
 
+// $Barnyard: FUNCTION 00402970
+void AMemory::DestroyPool( POOL a_ePool )
+{
+	TASSERT( a_ePool >= POOL_None && a_ePool < POOL_NUMOF );
+
+	g_pMemory->DestroyMemBlock( s_aMemBlocks[ a_ePool ] );
+
+	// NOTE: retail stores the result of a stub that returns 1 here, which is never used as a memory block
+	s_aMemBlocks[ a_ePool ] = TNULL;
+	s_AllocatorList.aAllocators[ a_ePool ].SetMemBlock( TNULL );
+}
+
 T2Allocator* AMemory::GetAllocator( POOL a_ePool )
 {
 	TASSERT( a_ePool >= POOL_None && a_ePool < POOL_NUMOF );

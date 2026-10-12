@@ -41,10 +41,12 @@ public:
 		return End();
 	}
 
+	// Instantiations: ASoundManager::SoundEventList 005d7a10, ASoundManager::m_QueuedSortedEventLists 005d7a80
+	// $Barnyard: FUNCTION 005d7a10
+	// $Barnyard: FUNCTION 005d7a80
 	Iterator Push( T& a_rValue )
 	{
-		a_rValue.InsertBefore( FindInsertionPoint( a_rValue ) );
-		return &a_rValue;
+		return Container::InsertBefore( FindInsertionPoint( a_rValue ), &a_rValue );
 	}
 
 	Iterator Push( T* a_pValue ) { return Push( *a_pValue ); }

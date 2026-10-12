@@ -4,7 +4,8 @@
 #include "Toshi/TError.h"
 #include "Toshi/T2String.h"
 #include "File/TLogFile.h"
-#include "Render/TModelManager.h"
+#include "Toshi/TFreeList.h"
+#include "File/TFile.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -46,6 +47,26 @@ void TUtil::LogInitialise()
 #endif // TOSHI_NO_LOGS
 }
 
+// $Barnyard: FUNCTION 006bff50
+void TUtil::LogUninitialise()
+{
+	TUtil* pUtil = TUtil::GetSingleton();
+
+	if ( pUtil->m_pCurrentLogFile )
+		pUtil->m_pCurrentLogFile->Close();
+
+	if ( pUtil->m_pDefaultLogFile )
+	{
+		delete pUtil->m_pDefaultLogFile;
+		pUtil->m_pDefaultLogFile = TNULL;
+	}
+
+	pUtil->m_pCurrentLogFile = TNULL;
+
+	if ( TUtil::IsSingletonCreated() )
+		delete TUtil::GetSingleton();
+}
+
 // $Barnyard: FUNCTION 006bb560
 void TUtil::CreateTPStringPool()
 {
@@ -64,8 +85,10 @@ void TUtil::DestroyTPStringPool()
 	}
 }
 
+// $Barnyard: FUNCTION 006bfe50
 void TUtil::Log( const TCHAR* a_szFormat, ... )
 {
+	// NOTE: like retail, the formatted message is passed to TLogFile::Log as a format string, so a '%' in it is expanded again
 	if ( IsSingletonCreated() && GetCurrentLogFile() )
 	{
 		auto pLogFile = GetCurrentLogFile();
@@ -168,11 +191,22 @@ void TUtil::CreateKernelInterface()
 	TKernelInterface::CreateSingleton();
 }
 
-// $Barnyard: FUNCTION 004042c0
+// $Barnyard: FUNCTION 006c80b0
+void TUtil::DestroyKernelInterface()
+{
+	if ( TKernelInterface::IsSingletonCreated() )
+		TKernelInterface::DestroySingleton();
+}
+
+// $Barnyard: FUNCTION 006bffb0
 void TUtil::ToshiDestroy()
 {
-	TIMPLEMENT();
-	TModelManager::Uninitialise();
+	TFreeList::DeinitialiseAll();
+	LogUninitialise();
+	DestroyTPStringPool();
+	DestroyKernelInterface();
+	TFileManager::Destroy();
+	TSystemManager::DestroySystemTimer();
 }
 
 // $Barnyard: FUNCTION 006bfee0

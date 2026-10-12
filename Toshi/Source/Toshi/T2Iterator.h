@@ -37,6 +37,10 @@ public:
 		m_pPtr = TSTATICCAST( K, pPtr );
 	}
 
+	// T2DList<AVeggiePatchVeggie> (node at +0xdc, retail stores the node pointer): 004c6230
+	// T2DList<AChasingChicksHotSpot> / T2DList<AChickenCoopDefenderHotSpot> (node at +0): 0050d520
+	// $Barnyard: FUNCTION 004c6230
+	// $Barnyard: FUNCTION 0050d520
 	T2Iterator( K* pPtr )
 	{
 		m_pPtr = pPtr;
@@ -101,6 +105,8 @@ public:
 		return TSTATICCAST( K, m_pPtr );
 	}
 
+	// NOTE: retail folds every T2DList instantiation (005d6a10, used by ASoundManager::StopAllCues)
+	// $Barnyard: FUNCTION 005d6a10
 	T2Iterator operator++( TINT )
 	{
 		TASSERT( m_pPtr != TNULL );

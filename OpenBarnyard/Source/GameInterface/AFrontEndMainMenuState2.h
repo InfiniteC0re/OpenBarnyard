@@ -3,6 +3,7 @@
 #include "Helpers/AWindmillHelper.h"
 #include "GUI/AGUI2Button.h"
 #include "GUI/AFade.h"
+#include "AMessagePopupState.h"
 
 class AFrontEndMainMenuState2 : public ABYardMenuState
 {
@@ -49,28 +50,25 @@ public:
 	// ABYardMenuState
 	//-----------------------------------------------------------------------------
 	virtual void OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem ) OVERRIDE;
+	virtual void OnMenuItemFocused( AGUI2MenuItem& a_rOldFocus, AGUI2MenuItem& a_rNewFocus ) OVERRIDE {} // +0x70, DOES_NOTHING
 	virtual void OnMenuClose() OVERRIDE;
 
 private:
-	void UpdateMenuButtons( TFLOAT a_fDeltaTime );
-	void UpdateFocusedButton( TFLOAT a_fDeltaTime );
+	// Quits the game if Yes was chosen in the quit popup
+	static TBOOL __stdcall OnQuitPopupResponse( AFrontEndMainMenuState2* a_pState, AMessagePopupState* a_pPopup, AMessagePopupState::ResponseEvent* a_pEvent );
 
 public:
-	inline static TBOOL  ms_bIsInserted                = TFALSE;
-	inline static TFLOAT ms_fPlayIntroAFKTime          = 30.0f;
-	inline static TFLOAT ms_fFocusedButtonMaxOffset    = 3.0f;
-	inline static TFLOAT ms_fFocusedButtonMaxScale     = 1.25f;
-	inline static TFLOAT ms_fFocusedButtonTextMaxScale = 1.25f;
-	inline static TFLOAT ms_fFocusedButtonAnimSpeed    = 20.0f;
+	inline static TBOOL  ms_bIsInserted       = TFALSE;
+	inline static TFLOAT ms_fPlayIntroAFKTime = 30.0f;
 
 private:
-	AGUI2Button                                             m_aButtons[ FRONTENDBUTTON_NUMOF ];
-	TINT                                                    m_iActivatedButtonID;
-	Toshi::T2GUIRectangle                                   m_Rectangle1;
-	Toshi::T2GUIRectangle                                   m_Rectangle2;
-	Toshi::TGenericListener                                 m_oUnkListener;
-	AWindmillHelper*                                        m_pWindmillHelper;
-	TBOOL                                                   m_bFlag;
-	TFLOAT                                                  m_fAFKTime;
-	Toshi::TListener<AFade, TBOOL, AFrontEndMainMenuState2> m_oFadeOverListener;
+	AGUI2Button                                                                                      m_aButtons[ FRONTENDBUTTON_NUMOF ];
+	TINT                                                                                             m_iActivatedButtonID;
+	Toshi::T2GUIRectangle                                                                            m_Rectangle1;
+	Toshi::T2GUIRectangle                                                                            m_Rectangle2;
+	Toshi::TListener<AMessagePopupState, AMessagePopupState::ResponseEvent, AFrontEndMainMenuState2> m_oQuitPopupListener;
+	AWindmillHelper*                                                                                 m_pWindmillHelper;
+	TBOOL                                                                                            m_bFlag;
+	TFLOAT                                                                                           m_fAFKTime;
+	Toshi::TListener<AFade, TBOOL, AFrontEndMainMenuState2>                                          m_oFadeOverListener;
 };

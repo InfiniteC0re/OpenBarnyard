@@ -47,13 +47,19 @@ public:
 	~TClass();
 
 	void           Initialize();
+	void           Deinitialize();
 	void           RecurseTree( RecurseTreeBaseBeginCb_t fBaseBegin, RecurseTreeBaseEndCb_t fBaseEnd, RecurseTreeCheck_t fCheck, void* custom );
 	void           RecurseTree2( RecurseTreeBaseBeginCb_t fBaseBegin, RecurseTreeBaseEndCb_t fBaseEnd, RecurseTreeCheck_t fCheck, void* custom );
 	class TObject* CreateObject() const;
 
-	TBOOL         IsA( const TClass* pClass ) const;
-	TBOOL         IsExactly( const TClass* toCompare ) const { return this == toCompare; }
+	// $Barnyard: FUNCTION 006bbcf0
+	class TObject* CreateObjectInPlace( void* a_pPtr ) const { return m_fnCreateInPlace ? m_fnCreateInPlace( a_pPtr ) : TNULL; }
+
+	TBOOL IsA( const TClass* pClass ) const;
+	TBOOL IsExactly( const TClass* toCompare ) const { return this == toCompare; }
+	// $Barnyard: FUNCTION 006bbda0
 	TBOOL         IsInitialized() const { return m_bInitialised; }
+	TUINT32       GetClassSize() const { return m_uiClassSize; }
 	const TClass* GetParent() { return static_cast<const TClass*>( m_pParent ); }
 	const TCHAR*  GetName() const { return m_szName; }
 	// $Barnyard: FUNCTION 006bbd50

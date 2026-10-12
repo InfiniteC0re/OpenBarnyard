@@ -8,6 +8,9 @@ class AKeyframeLibStreamJob : public Toshi::TFileStreamJob
 {
 public:
 	AKeyframeLibStreamJob();
+	// $Barnyard: FUNCTION 006065b0
+	virtual ~AKeyframeLibStreamJob() = default;
+
 	virtual void Process() override;
 
 	void Init( const TCHAR* a_szFileName );

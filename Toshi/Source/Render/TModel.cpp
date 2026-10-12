@@ -45,11 +45,8 @@ TBOOL TModel::LoadTRB()
 		m_pSkeleton                = TSTATICCAST( TSkeleton, GetSymbol( "Skeleton" ) );
 		TKeyframeLibrary* pLibrary = TRenderInterface::GetSingleton()->GetKeyframeLibraryManager().GetLibrary( pSkeletonHeader->m_szTKLName );
 
-		if ( !pLibrary )
-		{
-			TERROR( "TModel: loading a model without required keyframe library: %s\n", pSkeletonHeader->m_szTKLName );
-		}
-
+		// NOTE: the library can legitimately be missing, retail passes TNULL on silently. E.g. the gate models
+		// (AGateManager) reference 'sim_gates', which lib_frontend doesn't list in its keylibs.
 		m_pSkeleton->GetKeyLibraryInstance().CreateEx(
 		    pLibrary,
 		    pSkeletonHeader->m_iTKeyCount,
@@ -91,7 +88,7 @@ TBOOL TModel::LoadTRB()
 			collisionMesh.m_vecCollGroups[ k ].uiUnk1     = collisionMeshHeader.m_pCollGroups[ k ].iUnk3;
 			collisionMesh.m_vecCollGroups[ k ].uiNumFaces = collisionMeshHeader.m_pCollGroups[ k ].uiNumFaces;
 
-			// TODO: figure out what it is
+			// NOTE: pairs of 16-bit values per group, copied like retail does; nothing in the game reads them
 			collisionMesh.m_vecCollGroups[ k ].vecS1.SetSize( collisionMeshHeader.m_pCollGroups[ k ].iSomeCount );
 			collisionMesh.m_vecCollGroups[ k ].uiUnk3     = 0;
 			collisionMesh.m_vecCollGroups[ k ].eCollGroup = TCollisionCommon::TOSHICGROUP_SUPPORT;
@@ -246,7 +243,8 @@ TBOOL TModel::GetSkeletonAssetSymbolName( const TCHAR* a_szFileName, const TCHAR
 	auto iFileNamePos    = iFilePathLength - 1;
 	a_rNameLen           = iFilePathLength;
 
-	while ( a_szFileName[ iFileNamePos ] != '\\' && a_szFileName[ iFileNamePos ] != '/' )
+	// NOTE: a name without a folder starts at 0 (like the original)
+	while ( iFileNamePos >= 0 && a_szFileName[ iFileNamePos ] != '\\' && a_szFileName[ iFileNamePos ] != '/' )
 		iFileNamePos--;
 
 	iFileNamePos++;
@@ -270,7 +268,7 @@ TBOOL TModel::GetSkeletonAssetSymbolName( const TCHAR* a_szFileName, const TCHAR
 		a_rSymbolName = a_pTRB->GetSymbolName( pSymbol );
 		return TTRUE;
 	}
-	
+
 	return TFALSE;
 }
 
@@ -296,9 +294,11 @@ void TModelInstance::Update( TFLOAT a_fDeltaTime )
 // $Barnyard: FUNCTION 006ce090
 void TModelInstance::Render()
 {
+	// The pre-render callback renders the instance itself
 	if ( m_fnPreRenderCb )
 	{
 		m_fnPreRenderCb( this );
+		return;
 	}
 
 	if ( !m_fnCustomRenderCb )

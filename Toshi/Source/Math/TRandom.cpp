@@ -105,45 +105,12 @@ void TRandom::RandInit()
 		mix( a, b, c, d, e, f, g, h );
 	}
 
+	// NOTE: the original is randinit() without a seed array (flag FALSE): one pass filling m[] from the mixed seed,
+	// m_pRandrsl is not used
 	TUINT32* m = m_pRandmem;
-	TUINT32* r = m_pRandrsl;
 
-	/* initialize using the contents of r[] as the seed */
 	for ( i = 0; i < RANDSIZ; i += 8 )
 	{
-		a += r[ i ];
-		b += r[ i + 1 ];
-		c += r[ i + 2 ];
-		d += r[ i + 3 ];
-		e += r[ i + 4 ];
-		f += r[ i + 5 ];
-		g += r[ i + 6 ];
-		h += r[ i + 7 ];
-
-		mix( a, b, c, d, e, f, g, h );
-
-		m[ i ]     = a;
-		m[ i + 1 ] = b;
-		m[ i + 2 ] = c;
-		m[ i + 3 ] = d;
-		m[ i + 4 ] = e;
-		m[ i + 5 ] = f;
-		m[ i + 6 ] = g;
-		m[ i + 7 ] = h;
-	}
-
-	/* do a second pass to make all of the seed affect all of m */
-	for ( i = 0; i < RANDSIZ; i += 8 )
-	{
-		a += m[ i ];
-		b += m[ i + 1 ];
-		c += m[ i + 2 ];
-		d += m[ i + 3 ];
-		e += m[ i + 4 ];
-		f += m[ i + 5 ];
-		g += m[ i + 6 ];
-		h += m[ i + 7 ];
-
 		mix( a, b, c, d, e, f, g, h );
 
 		m[ i ]     = a;
@@ -180,6 +147,7 @@ TINT TRandom::GetInt()
 	return RandRaw();
 }
 
+// $Barnyard: FUNCTION 00401030
 TFLOAT TRandom::GetFloat()
 {
 	return ( RandRaw() >> 1 ) * 4.6566129E-10f;
@@ -191,9 +159,11 @@ TFLOAT TRandom::GetFloatMinMax( TFLOAT a_fLower, TFLOAT a_fUpper )
 	return (TFLOAT)( RandRaw() >> 1 ) * 4.6566129E-10f * ( a_fUpper - a_fLower ) + a_fLower;
 }
 
+// Returns a random number from -1 to 1
+// $Barnyard: FUNCTION 00608c90
 TFLOAT TRandom::GetFloat2()
 {
-	return ( RandRaw() >> 1 ) * 9.3132257E-10f * -1.0f;
+	return ( RandRaw() >> 1 ) * 9.3132257E-10f - 1.0f;
 }
 
 void TRandom::SetSeed( TUINT a_uiSeed )
@@ -202,6 +172,7 @@ void TRandom::SetSeed( TUINT a_uiSeed )
 	RandInit();
 }
 
+// $Barnyard: FUNCTION 00608c60
 TUINT32 TRandom::RandRaw()
 {
 	if ( ( m_uiRndCnt-- ) != 0 )

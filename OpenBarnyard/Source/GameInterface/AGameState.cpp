@@ -1,9 +1,12 @@
 #include "pch.h"
 #include "AGameState.h"
+#include "Helpers/AGameLoader.h"
 #include "Input/AInputHandler.h"
 #include "Tasks/ARootTask.h"
 #include "Cameras/ACamera.h"
+#include "Cameras/ACameraManager.h"
 #include "GUI/AGUI2.h"
+#include "GUI/AGUISystem.h"
 #include "AppBoot.h"
 #include "AGameStateController.h"
 
@@ -17,6 +20,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 00428060, CreateObject 004285e0, CreateObjectInPlace 00428640
 TDEFINE_CLASS( AGameState );
 
 // $Barnyard: FUNCTION 00428170
@@ -37,8 +41,20 @@ AGameState::AGameState()
 }
 
 // $Barnyard: FUNCTION 00428250
+// $Barnyard: FUNCTION 00428680
 AGameState::~AGameState()
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: a state can be destroyed with child states still attached (Destroy only calls their OnRemoval),
+	// e.g. AAnticGameOverState with AAnticTrophyState when the minigame is left or restarted. Retail leaks them
+	// (the list destructor does nothing). They're detached and leaked here too: one of them is usually still
+	// running (the caller of AGameLoader::LeaveMiniGame/RestartMiniGame), so it can't be deleted.
+	while ( !m_ChildStates.IsEmpty() )
+	{
+		AGameState* pChild    = m_ChildStates.PopFront();
+		pChild->m_pOwnerState = TNULL;
+	}
+#endif
 }
 
 // $Barnyard: FUNCTION 00428700
@@ -63,23 +79,26 @@ TBOOL AGameState::Unknown1( void* a_pUnk1, void* a_pUnk2 )
 	return Bind_CallForOneChild( this, &AGameState::Unknown1 )( a_pUnk1, a_pUnk2 );
 }
 
-void AGameState::Unknown2( void* a_pUnk1 )
+// DOES_NOTHING
+void AGameState::OnRender( TFLOAT a_fDeltaTime )
 {
 }
 
-void AGameState::Unknown3( void* a_pUnk1 )
+// DOES_NOTHING
+void AGameState::OnPostRender( TFLOAT a_fDeltaTime )
 {
 }
 
-void AGameState::Unknown4( void* a_pUnk1 )
+// DOES_NOTHING
+void AGameState::OnRenderOverlay( TFLOAT a_fDeltaTime )
 {
 }
 
-void AGameState::Unknown5()
+void AGameState::OnLoaded()
 {
 }
 
-TBOOL AGameState::Unknown6()
+TBOOL AGameState::ShouldPlacePlayerAtStartGoal()
 {
 	return TTRUE;
 }
@@ -90,12 +109,12 @@ ASoundId AGameState::GetSound()
 	return ASOUNDID_INVALID;
 }
 
-TBOOL AGameState::Unknown7()
+TBOOL AGameState::CanDismissInstructions()
 {
 	return TTRUE;
 }
 
-void AGameState::Unknown8()
+void AGameState::OnInstructionsShown()
 {
 }
 
@@ -107,11 +126,11 @@ void AGameState::OnPause()
 {
 }
 
-void AGameState::Unknown11( void* a_pUnk1, void* a_pUnk2 )
+void AGameState::OnCollisionModelLoaded( void* a_pCollisionModel, void* a_pGroupId )
 {
 }
 
-void AGameState::Unknown12( void* a_pUnk1, void* a_pUnk2 )
+void AGameState::OnVISGroupChanged( void* a_pCurrentSection, void* a_pPreviousSection )
 {
 }
 
@@ -133,12 +152,14 @@ void AGameState::OnInsertion()
 {
 	m_bWasInserted = TTRUE;
 	Bind_CallForAllChild( this, &AGameState::OnInsertion )();
+	m_HUDParams.Apply();
 }
 
 // $Barnyard: FUNCTION 004288d0
 void AGameState::OnRemoval()
 {
 	Bind_CallForAllChild( this, &AGameState::OnRemoval )();
+	m_HUDParams.Remove();
 }
 
 // $Barnyard: FUNCTION 00428920
@@ -151,6 +172,51 @@ void AGameState::OnSuspend()
 void AGameState::OnResume( AGameState* a_pPreviousState )
 {
 	Bind_CallForAllChild( this, &AGameState::OnResume )( a_pPreviousState );
+	m_HUDParams.Apply();
+}
+
+// $Barnyard: FUNCTION 0059ca60
+void AGameState::HUDParams::Apply()
+{
+	AGUISystem::GetSingleton()->ApplyHUDParams();
+}
+
+// $Barnyard: FUNCTION 00428940
+void AGameState::AddChildState( AGameState* a_pChildState )
+{
+	a_pChildState->m_pOwnerState = this;
+	m_ChildStates.PushBack( a_pChildState );
+
+	if ( m_bWasInserted )
+	{
+		a_pChildState->OnInsertion();
+
+		if ( m_bIsActivated )
+			a_pChildState->OnActivate();
+	}
+}
+
+// $Barnyard: FUNCTION 00428af0
+void AGameState::ReplaceChildState( AGameState* a_pOldChildState, AGameState* a_pNewChildState )
+{
+	a_pOldChildState->Node::Remove();
+
+	if ( m_bIsActivated )
+		a_pOldChildState->OnDeactivate();
+
+	a_pOldChildState->OnRemoval();
+	delete a_pOldChildState;
+
+	a_pNewChildState->m_pOwnerState = this;
+	m_ChildStates.PushBack( a_pNewChildState );
+
+	if ( m_bWasInserted )
+	{
+		a_pNewChildState->OnInsertion();
+
+		if ( m_bIsActivated )
+			a_pNewChildState->OnActivate();
+	}
 }
 
 // $Barnyard: FUNCTION 004289c0
@@ -188,9 +254,6 @@ void AGameState::Destroy( TBOOL a_bDeactivate )
 	delete this;
 }
 
-// Bind_CallForAllChild for GetHUDMaskImpl:
-// $Barnyard: FUNCTION 00428500
-
 // $Barnyard: FUNCTION 00428990
 TUINT32 AGameState::GetHUDMask()
 {
@@ -198,6 +261,26 @@ TUINT32 AGameState::GetHUDMask()
 	Bind_CallForAllChild( this, &AGameState::GetHUDMaskImpl )( uiMask );
 
 	return uiMask;
+}
+
+// $Barnyard: FUNCTION 00428340
+void AGameState::SaveCameraFOV()
+{
+	if ( ACameraManager::IsSingletonCreated() )
+	{
+		if ( ACamera* pCamera = ACameraManager::GetSingleton()->GetCurrentCamera() )
+			m_fFOV = pCamera->GetFOV();
+	}
+}
+
+// $Barnyard: FUNCTION 00428370
+void AGameState::RestoreCameraFOV()
+{
+	if ( ACameraManager::IsSingletonCreated() )
+	{
+		if ( ACamera* pCamera = ACameraManager::GetSingleton()->GetCurrentCamera() )
+			pCamera->SetFOV( m_fFOV );
+	}
 }
 
 // $Barnyard: FUNCTION 00428a00
@@ -217,7 +300,7 @@ TBOOL AGameState::FindChildStateImpl( TClass* a_pClass, AGameState*& a_rOutput )
 		a_rOutput = this;
 		return TTRUE;
 	}
-	
+
 	// Look through other children states
 	AGameState* pResult = TNULL;
 	Bind_CallForOneChild( this, &AGameState::FindChildStateImpl )( a_pClass, pResult );
@@ -250,7 +333,7 @@ TBOOL AGameState::SendInputCommands( const TInputInterface::InputEvent* a_pEvent
 	if ( a_pEvent->GetDoodad() == TInputDeviceKeyboard::KEY_F4 && pInputHandler->GetKeyboardDevice()->IsAltDown() )
 	{
 		// Quit app if Alt + F4 was pressed
-		TTODO( "FUN_00425980" );
+		AGameLoader::UnloadForExit();
 		g_oTheApp.Destroy();
 	}
 	else

@@ -8,6 +8,18 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// $Barnyard: FUNCTION 00606a40
+ATRBLoaderJob::ATRBLoaderJob()
+{
+}
+
+// NOTE: folded with the destructors of AKeyLibLoaderJob and AModelLoaderJob
+// $Barnyard: FUNCTION 005e83d0
+// $Barnyard: FUNCTION 00606b90
+ATRBLoaderJob::~ATRBLoaderJob()
+{
+}
+
 // $Barnyard: FUNCTION 00606a20
 void ATRBLoaderJob::BeginJob()
 {

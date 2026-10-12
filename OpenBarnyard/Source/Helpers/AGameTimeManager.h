@@ -2,6 +2,10 @@
 #include <Toshi/TTask.h>
 #include <Toshi/TSingleton.h>
 #include <Toshi/TEvent.h>
+#include <Toshi/TPString8.h>
+
+#include "GameInterface/AHackedQuickSave.h"
+#include "FSM/AFunctionTable.h"
 
 class AGameTimeFXManager;
 
@@ -31,6 +35,20 @@ public:
 		DAYPHASE_DUSK      = 3,
 		DAYPHASE_NIGHT     = 4,
 		DAYPHASE_NUMOF     = 5,
+	};
+
+	// The day of the week (see the names in AGUI2DayOfWeek::Show)
+	using WEEKDAY = TINT;
+	enum WEEKDAY_ : WEEKDAY
+	{
+		WEEKDAY_MONDAY    = 0,
+		WEEKDAY_TUESDAY   = 1,
+		WEEKDAY_WEDNESDAY = 2,
+		WEEKDAY_THURSDAY  = 3,
+		WEEKDAY_FRIDAY    = 4,
+		WEEKDAY_SATURDAY  = 5,
+		WEEKDAY_SUNDAY    = 6,
+		WEEKDAY_NUMOF     = 7,
 	};
 
 	static constexpr TFLOAT DAYPHASE_DURATION[ AGameTimeManager::DAYPHASE_NUMOF ] = {
@@ -80,40 +98,72 @@ public:
 	//-----------------------------------------------------------------------------
 	// Own methods
 	//-----------------------------------------------------------------------------
-	TBOOL OnSerialize( void* a_pSerializer );
-	TBOOL OnDeserialize( void* a_pSerializer );
+	virtual AFunctionTable* GetFunctionTable(); // +0x38
+
+	TBOOL OnSerialize( AHackedQuickSave::Buffer* a_pSerializer );
+	TBOOL OnDeserialize( AHackedQuickSave::Buffer* a_pSerializer );
 
 	void PushUpdateState();
 	void PopUpdateState();
 	void ToggleUpdateState();
 
-	void SetPhaseOfDay( DAYPHASE a_eDayPhase, TBOOL a_bUpdateTime, TBOOL a_bFireEvent );
+	void ChangePhaseOfDay( DAYPHASE a_eDayPhase, TBOOL a_bUpdateTime, TBOOL a_bFireEvent );
 	void SetTime( TUINT8 a_ui8Hour, TUINT8 a_ui8Minute, TUINT8 a_ui8ExtraMinutes, TBOOL a_bKeepDayPhase, TBOOL a_bFireEvent );
 	void UpdateDate();
+
+#ifdef BARNYARD_LATEST
+	// Wii: ends the current day, the date moves on to the next one
+	void SkipToNextDay();
+#endif
 
 	TBOOL IsDaytime() const;
 	TBOOL IsItNight() const;
 
-	TINT   GetWeekDay() const;
-	TFLOAT GetCurrentPhaseTimeLeft() const;
-	TINT   GetCurrentMinute() const;
+	WEEKDAY GetWeekDay() const;
+	TFLOAT  GetCurrentPhaseTimeLeft() const;
+	TINT    GetCurrentHour() const;
+	TINT    GetCurrentMinute() const;
+	TINT    GetCurrentSecond() const;
 
 	DAYPHASE GetCurrentDayPhase() const { return m_eDayPhase; }
+	TINT     GetYear() const { return m_iDateYear; }
+	TINT     GetMonth() const { return m_iDateMonth; }
+	TINT     GetDay() const { return m_iDateDay; }
+	TFLOAT   GetDayTime() const { return m_flDayTime; }
+	TFLOAT   GetTotalTime() const { return m_flTotalTime; }
+	TBOOL    IsUpdateStopped() const { return m_bStopUpdate; }
+
+	// While TFALSE the day phase doesn't change by itself (ASleepCycleState changes it)
+	void SetUpdatePhaseOfDay( TBOOL a_bUpdate ) { m_bUpdatePhaseOfDay = a_bUpdate; }
+
+	// Game time (0-1200) the day phase a_eDayPhase starts at
+	static TFLOAT GetDayPhaseStartTime( DAYPHASE a_eDayPhase );
+
+	// Returns the day phase named a_strName ("dawn", "morning", ...), -1 if there's none
+	DAYPHASE GetDayPhaseFromName( Toshi::TPString8 a_strName ) const;
+
+	// FSM "IsCurPhase": TRUE if the current day phase is named a_strName
+	TBOOL IsCurPhase( Toshi::TPString8 a_strName );
+
+public:
+	static AFunctionTable ms_oFunctionTable;
+
+	DateChangeEmitter* GetDateChangeEmitter() const { return m_pDateChangeEmitter; }
 
 private:
-	TFLOAT             m_flTotalTime;
-	TINT               m_iDateYear;
-	TINT               m_iDateMonth;
-	TINT               m_iDateDay;
-	TINT               m_iDateWeekDay;
-	DAYPHASE           m_eDayPhase;
-	TFLOAT             m_flDayTime;
-	TFLOAT             m_flSecondTimer;
-	TBOOL              m_bStopUpdate;
-	TFLOAT             m_flCurrentPhaseTime;
-	TBOOL              m_bSavedState;
-	TBOOL              m_bUpdatePhaseOfDay;
-	DateChangeEmitter* m_pDateChangeEmitter;
+	TFLOAT             m_flTotalTime;        // 0x20
+	TINT               m_iDateYear;          // 0x24
+	TINT               m_iDateMonth;         // 0x28
+	TINT               m_iDateDay;           // 0x2c
+	WEEKDAY            m_iDateWeekDay;       // 0x30
+	DAYPHASE           m_eDayPhase;          // 0x34
+	TFLOAT             m_flDayTime;          // 0x38
+	DateChangeEmitter* m_pDateChangeEmitter; // 0x3c
+	TFLOAT             m_flSecondTimer;      // 0x40
+	TBOOL              m_bStopUpdate;        // 0x44
+	TFLOAT             m_flCurrentPhaseTime; // 0x48
+	TBOOL              m_bSavedState;        // 0x4c
+	TBOOL              m_bUpdatePhaseOfDay;  // 0x4d
 };
 
 TSINGLETON_DECLARE_ALIAS( AGameTimeManager, GameTimeMngr );

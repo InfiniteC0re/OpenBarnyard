@@ -87,7 +87,11 @@ TFileLexerUTF8::TFileLexerUTF8( TFile* a_pInputStream, TINT a_iTokenLookaheadSiz
 
 TFileLexerUTF8::~TFileLexerUTF8()
 {
-	TIMPLEMENT();
+	if ( m_piCharLookahead )
+	{
+		delete[] m_piCharLookahead;
+		m_piCharLookahead = TNULL;
+	}
 
 	LookaheadTokens::Free( m_LookaheadTokens );
 }
@@ -157,7 +161,9 @@ void TFileLexerUTF8::Define( const TCHAR* a_szDefinition )
 
 void TFileLexerUTF8::Token::assign( const Token& token )
 {
-	TIMPLEMENT();
+	m_type    = token.m_type;
+	m_unknown = token.m_unknown;
+	m_value   = token.m_value;
 }
 
 TOSHI_NAMESPACE_END

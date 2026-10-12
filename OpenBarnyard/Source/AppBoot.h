@@ -8,10 +8,16 @@
 class AApplication : public Toshi::TApplication
 {
 public:
-	AApplication() = default;
+	// $Barnyard: FUNCTION 00403ff0
+	AApplication() {}
 	~AApplication();
 
 	virtual TBOOL OnCreate( int argc, TCHAR** argv ) OVERRIDE;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: the original doesn't override OnUpdate. The community patch uses it to limit the frame rate (see AppBoot.cpp)
+	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) OVERRIDE;
+#endif
 
 public:
 	ARootTask*  m_pRootTask;

@@ -43,7 +43,10 @@ public:
 		InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TFLOAT a_fMagnitude1 );
 		InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TFLOAT a_fMagnitude1, TFLOAT a_fMagnitude2 );
 
-		TBOOL StartRepeat( TFLOAT a_fFirstRepeatTime = 0.5f, TFLOAT a_fRepeatTime = 0.1f ) const;
+		TBOOL StartRepeat( TFLOAT a_fFirstRepeatTime, TFLOAT a_fRepeatTime ) const;
+
+		// Starts repeating the event right away, every frame
+		TBOOL StartRepeat() const;
 
 		TINT   GetMagnitudeInt( TINT a_iAxis ) const;
 		TFLOAT GetMagnitudeFloat( TINT a_iAxis ) const;
@@ -73,6 +76,26 @@ public:
 
 	using EventEmitter = TEmitter<TInputInterface, TInputInterface::InputEvent>;
 
+	// Thrown through the device status emitter when a device gets connected or disconnected
+	// (the DX controller does it when polling starts failing or succeeding again, 006d4aa0)
+	enum DEVICESTATUS
+	{
+		DEVICESTATUS_CONNECTED,
+		DEVICESTATUS_DISCONNECTED,
+	};
+
+	struct DeviceStatusEvent
+	{
+		// $Barnyard: FUNCTION 006c3b80
+		DeviceStatusEvent( TInputDevice* a_pDevice, DEVICESTATUS a_eStatus )
+		    : pDevice( a_pDevice ), eStatus( a_eStatus ) {}
+
+		TInputDevice* pDevice; // 0x0
+		DEVICESTATUS  eStatus; // 0x4
+	};
+
+	using DeviceStatusEmitter = TEmitter<TInputInterface, DeviceStatusEvent>;
+
 public:
 	TInputInterface();
 	~TInputInterface();
@@ -92,9 +115,14 @@ public:
 
 	void ReleaseAllDevices();
 
+	// Throws an event of a_pSource through the input event emitter like the device itself would
+	void SendEvent( TInputDevice* a_pSource, TINT a_iDoodad, EVENT_TYPE a_eEventType );
+
 	TInputDevice* GetDeviceByIndex( const TClass* a_pClass, TUINT a_uiIndex );
 
-	EventEmitter& GetInputEventEmitter() { return m_InputEventEmitter; }
+	EventEmitter&            GetInputEventEmitter() { return m_InputEventEmitter; }
+	DeviceStatusEmitter&     GetDeviceStatusEmitter() { return m_DeviceStatusEmitter; }
+	TNodeList<TInputDevice>& GetDeviceList() { return m_DeviceList; }
 
 	template <class C>
 	C* GetDeviceByIndex( TUINT a_uiIndex = 0 )
@@ -105,10 +133,10 @@ public:
 	}
 
 private:
-	TBOOL                   m_bIsExclusiveMode;  // 0x04
-	TNodeList<TInputDevice> m_DeviceList;        // 0x08
-	EventEmitter            m_InputEventEmitter; // 0x18
-	TGenericEmitter         m_Emitter2;          // 0x24
+	TBOOL                   m_bIsExclusiveMode;    // 0x04
+	TNodeList<TInputDevice> m_DeviceList;          // 0x08
+	EventEmitter            m_InputEventEmitter;   // 0x18
+	DeviceStatusEmitter     m_DeviceStatusEmitter; // 0x24
 };
 
 class TInputDevice : public TObject
@@ -126,7 +154,7 @@ public:
 
 	struct DoodadProperties
 	{
-		TINT  m_iUnk;
+		TINT  m_iNumAxes; // 0 for buttons and keys, 1 for the mouse wheel, 2 for sticks and the cursor
 		TBOOL m_bFlag;
 	};
 
@@ -139,7 +167,7 @@ public:
 
 public:
 	TInputDevice();
-	~TInputDevice() = default;
+	~TInputDevice();
 
 	virtual TBOOL        Acquire()                  = 0;
 	virtual TBOOL        Unacquire()                = 0;

@@ -41,7 +41,7 @@ TBOOL TIndexBlockResource::AttachPool( TIndexPoolResource* a_pPool )
 	m_uiIndicesUsed += a_pPool->GetNumIndices();
 	a_pPool->SetParent( this );
 
-	if ( m_uiFlags & 1 )
+	if ( m_uiFlags & TIndexPoolResourceInterface::FLAGS_STATIC )
 	{
 		Invalidate();
 	}
@@ -78,7 +78,7 @@ TBOOL TIndexBlockResource::Validate()
 		return TFALSE;
 	}
 
-	if ( m_uiFlags & 1 )
+	if ( m_uiFlags & TIndexPoolResourceInterface::FLAGS_STATIC )
 	{
 		using Pair = T2Pair<TIndexBlockResource*, TIndexPoolResourceInterface::LockBuffer>;
 		Pair pair;
@@ -94,7 +94,7 @@ TBOOL TIndexBlockResource::Validate()
 					    auto pPool = TSTATICCAST( TIndexPoolResource, a_pResource );
 					    auto pPair = TSTATICCAST( Pair, a_pUserData );
 
-					    if ( pPool->m_uiFlags & 1 )
+					    if ( pPool->m_uiFlags & TIndexPoolResourceInterface::FLAGS_STATIC )
 					    {
 						    pPool->m_uiIndexOffset = pPair->second.uiOffset;
 						    pPair->second.uiOffset += pPool->GetNumIndices();
@@ -132,9 +132,10 @@ void TIndexBlockResource::Invalidate()
 	}
 }
 
+// NOTE: folded with TVertexBlockResource::TryInvalidate (006c0190)
 TBOOL TIndexBlockResource::TryInvalidate()
 {
-	if ( m_uiFlags & 1 )
+	if ( !( m_uiFlags & TIndexPoolResourceInterface::FLAGS_STATIC ) )
 	{
 		Invalidate();
 	}
@@ -142,9 +143,10 @@ TBOOL TIndexBlockResource::TryInvalidate()
 	return TTRUE;
 }
 
+// NOTE: folded with TVertexBlockResource::TryValidate (006c01a0)
 TBOOL TIndexBlockResource::TryValidate()
 {
-	if ( m_uiFlags & 1 )
+	if ( !( m_uiFlags & TIndexPoolResourceInterface::FLAGS_STATIC ) )
 	{
 		Validate();
 	}
@@ -163,7 +165,7 @@ TBOOL TIndexBlockResource::CreateHAL()
 	auto  pRenderer = TRenderD3DInterface::Interface();
 	DWORD usage     = D3DUSAGE_WRITEONLY;
 
-	if ( ISZERO( m_uiFlags & 1 ) )
+	if ( ISZERO( m_uiFlags & TIndexPoolResourceInterface::FLAGS_STATIC ) )
 	{
 		usage      = D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY;
 		m_uiOffset = 0;
@@ -178,7 +180,7 @@ TBOOL TIndexBlockResource::CreateHAL()
 	    m_uiMaxIndices * sizeof( TIndexType ),
 	    usage,
 	    D3DFMT_INDEX16,
-	    ( m_uiFlags & 1 ) ? D3DPOOL_MANAGED : D3DPOOL_DEFAULT,
+	    ( m_uiFlags & TIndexPoolResourceInterface::FLAGS_STATIC ) ? D3DPOOL_MANAGED : D3DPOOL_DEFAULT,
 	    &m_HALBuffer.pIndexBuffer
 	);
 
@@ -217,18 +219,18 @@ TBOOL TIndexBlockResource::Lock( TIndexPoolResourceInterface::LockBuffer* a_pLoc
 
 	DWORD uiFlags;
 	TUINT uiNumIndices = 0;
-	TUINT uiUnk1       = m_uiFlags & 7;
+	TUINT uiUsage      = m_uiFlags & TIndexPoolResourceInterface::FLAGS_USAGE_MASK;
 
-	if ( uiUnk1 == 1 )
+	if ( uiUsage == TIndexPoolResourceInterface::FLAGS_STATIC )
 	{
 		uiFlags                 = D3DLOCK_NOSYSLOCK;
 		a_pLockBuffer->uiOffset = 0;
 	}
 	else
 	{
-		if ( uiUnk1 != 2 )
+		if ( uiUsage != TIndexPoolResourceInterface::FLAGS_DYNAMIC )
 		{
-			if ( uiUnk1 != 4 )
+			if ( uiUsage != TIndexPoolResourceInterface::FLAGS_DYNAMIC_APPEND )
 			{
 				return TFALSE;
 			}
@@ -302,14 +304,14 @@ TBOOL TIndexBlockResource::Create( TIndexFactoryResourceInterface* a_pFactory, T
 // $Barnyard: FUNCTION 006c0150
 TBOOL TIndexBlockResource::CanFit( TIndexPoolResource* a_pPoolResource ) const
 {
-	if ( !HASANYFLAG( m_uiFlags, 1 ) )
+	if ( !HASANYFLAG( m_uiFlags, TIndexPoolResourceInterface::FLAGS_STATIC ) )
 	{
-		if ( HASANYFLAG( m_uiFlags, 4 ) && HASANYFLAG( a_pPoolResource->m_uiFlags, 4 ) )
+		if ( HASANYFLAG( m_uiFlags, TIndexPoolResourceInterface::FLAGS_DYNAMIC_APPEND ) && HASANYFLAG( a_pPoolResource->m_uiFlags, TIndexPoolResourceInterface::FLAGS_DYNAMIC_APPEND ) )
 		{
 			return TTRUE;
 		}
 	}
-	else if ( HASANYFLAG( a_pPoolResource->m_uiFlags, 1 ) )
+	else if ( HASANYFLAG( a_pPoolResource->m_uiFlags, TIndexPoolResourceInterface::FLAGS_STATIC ) )
 	{
 		return m_uiMaxIndices > a_pPoolResource->GetNumIndices() + m_uiIndicesUsed;
 	}

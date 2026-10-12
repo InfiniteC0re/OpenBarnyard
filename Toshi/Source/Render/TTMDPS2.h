@@ -11,8 +11,8 @@ namespace TTMDPS2
 
 struct TRBLODHeader
 {
-	TINT    m_iMeshCount1;
-	TINT    m_iMeshCount2;
+	TINT m_iMeshCount1;
+	TINT m_iMeshCount2;
 
 	// TTMDBase::SHADERTYPE, but it is only 2 bytes on PS2!
 	TUINT16 m_eShader;
@@ -39,10 +39,10 @@ namespace StaticInstance
 
 static constexpr TFLOAT POSITION_SCALE     = 1.0f / 128.0f;
 static constexpr TFLOAT UV_SCALE           = 1.0f / 4096.0f;
-static constexpr TINT   POSITIONS_HDR_SIZE = 48; // TODO: VIF packet header bytes before position data
-static constexpr TINT   UV_HDR_SIZE        = 12; // TODO: header bytes before UV data
-static constexpr TINT   INDEX_HDR_SIZE     = 4;  // TODO: header bytes before index data
-static constexpr TINT   COLOR_HDR_SIZE     = 4;  // TODO: header bytes before color data
+static constexpr TINT   POSITIONS_HDR_SIZE = 48; // VIF packet header bytes before the position data
+static constexpr TINT   UV_HDR_SIZE        = 12; // header bytes before the UV data
+static constexpr TINT   INDEX_HDR_SIZE     = 4;  // header bytes before the index data
+static constexpr TINT   COLOR_HDR_SIZE     = 4;  // header bytes before the color data
 
 struct SubMesh
 {

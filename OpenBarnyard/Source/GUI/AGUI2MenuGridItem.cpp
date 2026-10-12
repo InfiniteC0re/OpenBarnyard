@@ -22,6 +22,7 @@ AGUI2MenuGridItem::AGUI2MenuGridItem()
 }
 
 // $Barnyard: FUNCTION 0063f6d0
+// $Barnyard: FUNCTION 0063f740
 AGUI2MenuGridItem::~AGUI2MenuGridItem()
 {
 }
@@ -38,6 +39,7 @@ void AGUI2MenuGridItem::OnUpdate( TFLOAT a_fDeltaTime )
 {
 }
 
+// NOTE: folded with AGUI2MenuItem::OnInputCommand (0063ffa0) in retail
 AGUI2MenuGridItem::COMMANDRESULT AGUI2MenuGridItem::OnInputCommand( AGUI2MenuGrid::ACTIONFLAGS& a_rActionFlags )
 {
 	if ( a_rActionFlags & AGUI2MenuGrid::ACTIONFLAGS_CANCEL )

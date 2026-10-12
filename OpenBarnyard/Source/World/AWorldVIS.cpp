@@ -122,6 +122,8 @@ void AWorldVis::Build( const Toshi::TMatrix44& a_rModelView, const Toshi::TMatri
 	}
 }
 
+// NOTE: retail ignores the cull box and the matrix too
+// $Barnyard: FUNCTION 006d4e70
 static void CreatePortalFrustum( Frustum& a_rFrustum, CullBox& a_rCullBox, TMatrix44& a_rMatrix )
 {
 	auto pRenderContext = TRenderInterface::GetSingleton()->GetCurrentContext();
@@ -301,7 +303,7 @@ void AWorldVis::RenderLeafNodeIntersect( CellSphereTreeBranchNode* a_pNode, Rend
 		CellMeshSphere* pMeshSphere      = a_pRenderData->pCell->ppCellMeshSpheres[ a_pNode->GetLeafNode()->GetMeshIndex( i ) ];
 		TINT            iIntersectResult = a_pRenderData->pFrustum->IntersectSphereReduce( pMeshSphere->m_BoundingSphere );
 
-		if ( iIntersectResult != 1 )
+		if ( iIntersectResult != FISR_NOT_VISIBLE )
 		{
 			m_pfnRenderCallback( pMeshSphere, a_pRenderData );
 		}

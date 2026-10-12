@@ -2,6 +2,7 @@
 #include "ASkinShader_DX8.h"
 #include "ASkinMesh_DX8.h"
 #include "ASkinMaterial_DX8.h"
+#include "ASkinLowEnd_DX8.h"
 
 #include <Platform/DX8/TRenderContext_DX8.h>
 #include <Platform/DX8/TRenderInterface_DX8.h>
@@ -12,6 +13,8 @@
 #include <Platform/DX8/TIndexBlockResource_DX8.h>
 #include <Platform/DX8/TIndexPoolResource_DX8.h>
 
+#include <intrin.h>
+
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!
@@ -20,6 +23,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 005f1770, CreateObject 005f5180, CreateObjectInPlace 005f51e0
 TDEFINE_CLASS( ASkinShaderHAL );
 
 #define USE_ONE_TEXTURE_LIGHTING     TFALSE
@@ -35,16 +39,19 @@ ASkinShaderHAL::ASkinShaderHAL()
     , m_iAlphaRef( 128 )
     , m_bIsAlphaBlendMaterial( TFALSE )
     , m_fAMDPatch1( 0.0f )
-    , m_bCPUSupportsFeature1( TFALSE )
-    , m_bCPUSupportsFeature2( TFALSE )
+    , m_bCPUSupportsSSE( TFALSE )
+    , m_bCPUSupportsSSE2( TFALSE )
     , m_bUnkFlag( TFALSE )
     , m_bHighEndSkinning( TTRUE )
     , m_bLightScattering( TTRUE )
     , m_fAMDPatch2( 1.0f )
 {
+	// NOTE: retail leaves it uninitialised and always tests it with == 1 (see AFXShader_DX8.cpp)
+	m_bRenderEnvMap = TFALSE;
 }
 
 // $Barnyard: FUNCTION 005f47b0
+// $Barnyard: FUNCTION 005f5220
 ASkinShaderHAL::~ASkinShaderHAL()
 {
 }
@@ -77,7 +84,7 @@ void ASkinShaderHAL::Flush()
 			pDevice->SetTextureStageState( 1, D3DTSS_COLOROP, 1 );
 			pDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP, 1 );
 
-			pDevice->SetRenderState( D3DRS_CULLMODE, m_bRenderEnvMap ? 3 : 2 );
+			pDevice->SetRenderState( D3DRS_CULLMODE, m_bRenderEnvMap == TTRUE ? 3 : 2 );
 			m_aOrderTables[ 0 ].Render();
 
 			pDevice->SetRenderState( D3DRS_SPECULARENABLE, bWasSpecularEnabled );
@@ -123,7 +130,7 @@ void ASkinShaderHAL::StartFlush()
 			pDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, 0 );
 			pDevice->SetTextureStageState( 1, D3DTSS_COLOROP, 1 );
 			pDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP, 1 );
-			pDevice->SetRenderState( D3DRS_CULLMODE, m_bRenderEnvMap ? 3 : 2 );
+			pDevice->SetRenderState( D3DRS_CULLMODE, m_bRenderEnvMap == TTRUE ? 3 : 2 );
 		}
 		else
 		{
@@ -153,6 +160,7 @@ TBOOL ASkinShaderHAL::Create()
 	return BaseClass::Create();
 }
 
+// $Barnyard: FUNCTION 005f1880
 static TBOOL CreateSkinVertexShader( const char* a_szFileName, const DWORD* a_pFunction, DWORD* a_pOutVertexShader )
 {
 	static constexpr DWORD s_ShaderDeclaration[] = {
@@ -198,8 +206,8 @@ TBOOL ASkinShaderHAL::Validate()
 			}
 
 			ApplyGPUSpecificPatches();
-			CheckCPUFeature1();
-			CheckCPUFeature2();
+			CheckCPUSupportsSSE();
+			CheckCPUSupportsSSE2();
 
 			return BaseClass::Validate();
 		}
@@ -213,8 +221,8 @@ TBOOL ASkinShaderHAL::Validate()
 		// Low end mode
 
 		ApplyGPUSpecificPatches();
-		CheckCPUFeature1();
-		CheckCPUFeature2();
+		CheckCPUSupportsSSE();
+		CheckCPUSupportsSSE2();
 
 		return BaseClass::Validate();
 	}
@@ -311,7 +319,7 @@ void ASkinShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 				pD3DDevice->SetVertexShaderConstant( 94, &upVector, 1 );
 
 				TUINT  ui8ShadeCoeff = a_pRenderPacket->GetShadeCoeff();
-				TFLOAT fShadeCoeff   = a_pRenderPacket->GetShadeCoeff() * ( 1.0f / 255.0f );
+				TFLOAT fShadeCoeff   = a_pRenderPacket->GetShadeCoeff() * ( 1.0f / 256.0f );
 
 				auto pDevice = TSTATICCAST( TD3DAdapter::Mode::Device, pRenderInterface->GetCurrentDevice() );
 
@@ -474,18 +482,18 @@ void ASkinShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 			if ( m_iAlphaRef < iAlpha ) iAlpha = m_iAlphaRef;
 			pD3DDevice->SetRenderState( D3DRS_ALPHAREF, iAlpha );
 
-			if ( pMaterial->GetBlendMode() != 0 || a_pRenderPacket->GetAlpha() < 1.0f )
+			if ( pMaterial->GetBlendMode() != ASkinMaterial::BLENDMODE_DEFAULT || a_pRenderPacket->GetAlpha() < 1.0f )
 			{
-				if ( ISZERO( sm_eRenderStateFlags & 0x1b ) )
+				if ( ISZERO( sm_eRenderStateFlags & RENDERSTATE_ALPHABLEND ) )
 				{
 					pD3DDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-					sm_eRenderStateFlags |= 0x1b;
+					sm_eRenderStateFlags |= RENDERSTATE_ALPHABLEND;
 				}
 			}
-			else if ( !ISZERO( sm_eRenderStateFlags & 0x1b ) )
+			else if ( !ISZERO( sm_eRenderStateFlags & RENDERSTATE_ALPHABLEND ) )
 			{
 				pD3DDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, FALSE );
-				sm_eRenderStateFlags &= ~0x1b;
+				sm_eRenderStateFlags &= ~RENDERSTATE_ALPHABLEND;
 			}
 
 			auto pVertexPool = TSTATICCAST( TVertexPoolResource, pMesh->GetVertexPool() );
@@ -550,6 +558,12 @@ TBOOL ASkinShaderHAL::IsHighEndSkinning()
 void ASkinShaderHAL::EnableHighEndSkinning( TBOOL a_bEnable )
 {
 	m_bHighEndSkinning = a_bEnable && IsCapableHighEndSkinning();
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Development: "-devlowendskin" forces the low end (CPU skinning, fixed function) path
+	if ( TStringManager::String8FindString( GetCommandLineA(), "-devlowendskin" ) )
+		m_bHighEndSkinning = TFALSE;
+#endif
 }
 
 // $Barnyard: FUNCTION 005f1810
@@ -689,10 +703,33 @@ void ASkinShaderHAL::SetAlphaRef( TINT a_iAlphaRef )
 	m_iAlphaRef = a_iAlphaRef;
 }
 
+// DAT_007788f0
+static D3DMATERIAL8 s_oLowEndMaterial = ASkinLowEnd::DEFAULT_MATERIAL;
+
+// DAT_00778938
+static D3DLIGHT8 s_oLowEndLight = ASkinLowEnd::DEFAULT_LIGHT;
+
+// FLOAT_0079a5d0, never written (the w of the normals)
+static TFLOAT s_fNormalW = 0.0f;
+
 // $Barnyard: FUNCTION 005f40f0
 void ASkinShaderHAL::RenderLowEnd( Toshi::TRenderPacket* a_pRenderPacket )
 {
-	TASSERT( !"Hello there" );
+	ASkinLowEnd::Render<ASkinShaderHAL, ASkinMeshHAL>( this, a_pRenderPacket, m_SomeList, s_oLowEndMaterial, s_oLowEndLight, sm_oWorldViewMatrix, m_Unk4 != 0 );
+}
+
+// Skins every vertex of the mesh with up to 4 bones
+// $Barnyard: FUNCTION 005f1ce0
+void ASkinShaderHAL::SkinVerticesCPU( Toshi::TRenderPacket* a_pRenderPacket, const TBYTE* a_pSrcVertices, TBYTE* a_pDstVertices )
+{
+	ASkinLowEnd::SkinVertices<ASkinMeshHAL>( a_pRenderPacket, a_pSrcVertices, a_pDstVertices, m_bCPUSupportsSSE, s_fNormalW );
+}
+
+// Transforms every vertex by the first bone it's attached to
+// $Barnyard: FUNCTION 005f3060
+void ASkinShaderHAL::TransformVerticesRigid( Toshi::TRenderPacket* a_pRenderPacket, const TBYTE* a_pSrcVertices, TBYTE* a_pDstVertices )
+{
+	ASkinLowEnd::TransformVerticesRigid<ASkinMeshHAL>( a_pRenderPacket, a_pSrcVertices, a_pDstVertices, s_fNormalW );
 }
 
 // $Barnyard: FUNCTION 005f1b10
@@ -725,7 +762,7 @@ void ASkinShaderHAL::SetupLowEndMode()
 	pDevice->SetTextureStageState( 1, D3DTSS_COLOROP, 1 );
 	pDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP, 1 );
 
-	pDevice->SetRenderState( D3DRS_CULLMODE, m_bRenderEnvMap ? 3 : 2 );
+	pDevice->SetRenderState( D3DRS_CULLMODE, m_bRenderEnvMap == TTRUE ? 3 : 2 );
 
 	static TMatrix44 s_IdentityMatrix = TMatrix44::IDENTITY;
 
@@ -753,15 +790,21 @@ void ASkinShaderHAL::ApplyGPUSpecificPatches()
 }
 
 // $Barnyard: FUNCTION 005f18e0
-void ASkinShaderHAL::CheckCPUFeature1()
+void ASkinShaderHAL::CheckCPUSupportsSSE()
 {
-	TIMPLEMENT();
-	m_bCPUSupportsFeature1 = TTRUE;
+	TINT aCPUInfo[ 4 ];
+	__cpuid( aCPUInfo, 1 );
+
+	// EDX bit 25
+	m_bCPUSupportsSSE = ( aCPUInfo[ 3 ] & BITFLAG( 25 ) ) != 0;
 }
 
 // $Barnyard: FUNCTION 005f19d0
-void ASkinShaderHAL::CheckCPUFeature2()
+void ASkinShaderHAL::CheckCPUSupportsSSE2()
 {
-	TIMPLEMENT();
-	m_bCPUSupportsFeature2 = TTRUE;
+	TINT aCPUInfo[ 4 ];
+	__cpuid( aCPUInfo, 1 );
+
+	// EDX bit 26
+	m_bCPUSupportsSSE2 = ( aCPUInfo[ 3 ] & BITFLAG( 26 ) ) != 0;
 }

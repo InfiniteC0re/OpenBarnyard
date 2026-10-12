@@ -35,6 +35,12 @@ public:
 	AWorldMaterialHAL* GetAlphaBlendMaterial() const { return m_pAlphaBlendMaterial; }
 	void               SetAlphaBlendMaterial( AWorldMaterialHAL* val ) { m_pAlphaBlendMaterial = val; }
 
+	void SetHasUVOffset( TUINT a_uiTextureIndex, TBOOL a_bHasOffset )
+	{
+		TASSERT( a_uiTextureIndex < MAX_TEXTURES );
+		m_aHasUVOffsets[ a_uiTextureIndex ] = a_bHasOffset;
+	}
+
 	TFLOAT GetUVOffsetX( TUINT a_uiTextureIndex )
 	{
 		TASSERT( a_uiTextureIndex < MAX_TEXTURES );

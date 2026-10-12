@@ -90,9 +90,17 @@ public:
 			return &Value();
 		}
 
+		// $Barnyard: FUNCTION 0051bce0
 		TBOOL operator==( const Iterator& a_rOther ) const noexcept
 		{
 			return a_rOther.m_pVector == m_pVector && a_rOther.m_iIndex == m_iIndex;
+		}
+
+		// Shared (identical code folding) by the instantiations: 00513e50
+		// $Barnyard: FUNCTION 00513e50
+		TBOOL operator!=( const Iterator& a_rOther ) const noexcept
+		{
+			return m_iIndex != a_rOther.m_iIndex || m_pVector != a_rOther.m_pVector;
 		}
 
 		TBOOL operator>( const Iterator& a_rOther ) const noexcept
@@ -141,10 +149,16 @@ public:
 			return *this;
 		}
 
+		// Shared (identical code folding) by the instantiations: 00479c20
+		// $Barnyard: FUNCTION 00479c20
 		constexpr Iterator& operator=( const Iterator& a_rOther ) noexcept
 		{
-			m_iIndex  = a_rOther.m_iIndex;
-			m_pVector = a_rOther.m_pVector;
+			if ( this != &a_rOther )
+			{
+				m_pVector = a_rOther.m_pVector;
+				m_iIndex  = a_rOther.m_iIndex;
+			}
+
 			return *this;
 		}
 
@@ -193,9 +207,10 @@ public:
 		Clear();
 	}
 
-	Iterator InsertBefore( Iterator a_itInsertBefore, const T& a_rcItem = T() )
+	// $Barnyard: FUNCTION 005ddb60
+	Iterator InsertBefore( Iterator a_itInsertBefore, const T& a_rcItem = T(), TBOOL a_bUseMemMove = TTRUE )
 	{
-		InsertGap( a_itInsertBefore.Index(), 1 );
+		InsertGap( a_itInsertBefore.Index(), 1, a_bUseMemMove );
 		TConstruct<T>( &AtUnsafe( a_itInsertBefore.Index() ), a_rcItem );
 
 		return Iterator( a_itInsertBefore.Index(), this );
@@ -218,6 +233,7 @@ public:
 		return Iterator( m_iNumElements - 1, this );
 	}
 
+	// $Barnyard: FUNCTION 00573510
 	Iterator PushBack( const T& item = T() )
 	{
 		TASSERT( m_iNumElements < CAPACITY );
@@ -226,6 +242,8 @@ public:
 		return Iterator( m_iNumElements - 1, this );
 	}
 
+	// $Barnyard: FUNCTION 00517bb0
+	// $Barnyard: FUNCTION 0057cf00
 	void PopBack()
 	{
 		TASSERT( m_iNumElements > 0 );
@@ -238,6 +256,9 @@ public:
 		Erase( Begin() );
 	}
 
+	// $Barnyard: FUNCTION 00517c20
+	// $Barnyard: FUNCTION 0057cf70
+	// $Barnyard: FUNCTION 0057eca0
 	void Clear()
 	{
 		for ( TINT i = 0; i < Size(); i++ )
@@ -265,6 +286,9 @@ public:
 		m_iNumElements = a_rcCopyFrom.Size();
 	}
 
+	// $Barnyard: FUNCTION 0062fba0
+	// T2Vector<TVector4, 6>: 004a5430
+	// $Barnyard: FUNCTION 004a5430
 	Iterator Find( const T& a_rValue )
 	{
 		for ( auto it = Begin(); it != End(); it++ )
@@ -277,7 +301,11 @@ public:
 	}
 
 	// Erases element preserving order
-	void Erase( const Iterator& a_rIterator )
+	// $Barnyard: FUNCTION 005141e0
+	// $Barnyard: FUNCTION 0051c230
+	// $Barnyard: FUNCTION 0062fb60
+	// $Barnyard: FUNCTION 005ddba0
+	Iterator Erase( const Iterator& a_rIterator )
 	{
 		TINT uiItemIndex = a_rIterator.Index();
 		TASSERT( uiItemIndex < m_iNumElements );
@@ -294,9 +322,23 @@ public:
 		}
 
 		m_iNumElements--;
+		return Iterator( uiItemIndex, this );
+	}
+
+	// Returns the item if it's stored in the vector or TNULL otherwise (for pointer types)
+	// $Barnyard: FUNCTION 00573600
+	T FindItem( T a_Item )
+	{
+		auto it = Find( a_Item );
+
+		if ( it == End() )
+			return TNULL;
+
+		return it.Value();
 	}
 
 	// Finds and erases element preserving order
+	// $Barnyard: FUNCTION 005735a0
 	void FindAndErase( const T& a_rcItem )
 	{
 		auto it = Find( a_rcItem );
@@ -351,11 +393,25 @@ public:
 		return Iterator( m_iNumElements - 1, this );
 	}
 
+	// T2Vector<AGameState*, 10> (calls the folded Begin 004ab160): 00429680
+	// $Barnyard: FUNCTION 00429680
 	constexpr Iterator Begin()
 	{
 		return Iterator( this );
 	}
 
+	// Returns an iterator to the element at a_iIndex
+	// NOTE: Retail folds it with the same helper of the other index based containers and
+	// calls it e.g. from T2SortedVector::FindInsertionPoint and ACollisionModel::CollideRay (inlined in our code)
+	// $Barnyard: FUNCTION 0061a720
+	Iterator GetIterator( TINT a_iIndex )
+	{
+		return Iterator( a_iIndex, this );
+	}
+
+	// $Barnyard: FUNCTION 00575090
+	// T2Vector<AGameState*, 10> (calls the folded End 00575090): 004296a0
+	// $Barnyard: FUNCTION 004296a0
 	constexpr Iterator End()
 	{
 		return Iterator( m_iNumElements, this );
@@ -394,6 +450,9 @@ private:
 		return *( (T*)( m_aBuffer ) + a_iIndex );
 	}
 
+	// $Barnyard: FUNCTION 00639ba0
+	// Instantiations: T2Vector<AGateManager::OpeningGate, 8> 005dd9d0
+	// $Barnyard: FUNCTION 005dd9d0
 	void InsertGap( TINT a_iGapAt, TINT a_iGapSize, TBOOL a_bUseMemMove = TTRUE )
 	{
 		TASSERT( m_iNumElements + a_iGapSize <= CAPACITY );

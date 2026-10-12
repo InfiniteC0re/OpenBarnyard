@@ -28,9 +28,10 @@ public:
 	// Removes reference to the library and unloads it if no references left
 	TBOOL UnrefLibrary( const Toshi::TPString8& a_rLibraryName );
 
+	void UnloadAllLibraries();
+
 private:
 	void UnloadLibrary( LibraryMap::Iterator& a_rLibrary );
-	void UnloadAllLibraries();
 
 private:
 	LibraryMap                                                         m_Libraries;

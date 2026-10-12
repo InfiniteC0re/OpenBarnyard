@@ -10,6 +10,17 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 006068b0
+AMatLibLoaderJob::AMatLibLoaderJob()
+{
+}
+
+// $Barnyard: FUNCTION 00606920
+// $Barnyard: FUNCTION 00606bb0
+AMatLibLoaderJob::~AMatLibLoaderJob()
+{
+}
+
 // $Barnyard: FUNCTION 00606970
 void AMatLibLoaderJob::BeginJob()
 {

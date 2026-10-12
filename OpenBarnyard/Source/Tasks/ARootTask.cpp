@@ -16,15 +16,22 @@
 #include "GameInterface/ASlideshowState.h"
 #include "GameInterface/AMovieState.h"
 #include "GameInterface/SaveLoadSKU.h"
+#include "Helpers/AGameLoader.h"
 #include "GameInterface/AMessagePopupState.h"
 #include "GameInterface/AFrontEndMainMenuState2.h"
 #include "Sound/ASoundManager.h"
 #include "Movie/ABINKMoviePlayer.h"
 #include "ALoadScreen.h"
+#include "FSM/AFSMManager.h"
 #include "Terrain/ATerrainInterface.h"
 #include "Physics/ACollisionManager.h"
 #include "Helpers/APlayerProgress.h"
+#include "ACheatActivator.h"
 #include "Helpers/AInstanceManager.h"
+#include "Helpers/AGameTimeManager.h"
+#include "FX/AGameTimeFXManager.h"
+#include "Units/AUnitManager.h"
+#include "Units/AInteractionManager.h"
 
 #include "SoundBank/music.h"
 #include "SoundBank/ui.h"
@@ -41,58 +48,147 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 00402b10, CreateObject 004039e0, CreateObjectInPlace 00403a40
 TDEFINE_CLASS( ARootTask );
+
+// Set when the engine starts shutting down (written only)
+static TBOOL s_bShuttingDown = TFALSE;
 
 // $Barnyard: FUNCTION 004031e0
 ARootTask::ARootTask()
 {
-	TIMPLEMENT();
-
-	m_bStartedGame       = TFALSE;
-	m_bRenderWorld       = TFALSE;
-	m_bPaused            = TFALSE;
-	m_bIsTransitioning   = TFALSE;
-	m_bGameSystemCreated = TFALSE;
-	m_pOptions           = AOptions::CreateSingleton();
+	m_pOptions             = TNULL;
+	m_pGUISystem           = TNULL;
+	m_pGUI2                = TNULL;
+	m_pInputHandler        = TNULL;
+	m_pRenderer            = TNULL;
+	m_pGameStateController = TNULL;
+	m_pUnkTask             = TNULL;
+	m_pMoviePlayer         = TNULL;
+	m_pGameSystemManager   = TNULL;
+	m_pSoundManager        = TNULL;
+	m_bUnk1                = TFALSE;
+	m_bUnk2                = TFALSE;
+	m_iUnk3                = 0;
+	m_iUnk4                = 0;
+	m_bStartedGame         = TFALSE;
+	m_bRenderWorld         = TFALSE;
+	m_bPaused              = TFALSE;
+	m_bIsTransitioning     = TFALSE;
+	m_bGameSystemCreated   = TFALSE;
+	m_pOptions             = AOptions::CreateSingleton();
 	AMemory::CreatePool( AMemory::POOL_Sound );
 
 	auto pScheduler = g_oSystemManager.GetScheduler();
 
-	m_pGUISystem           = pScheduler->CreateTask<AGUISystem>( this );
-	m_pGUI2                = pScheduler->CreateTask<AGUI2>( this );
-	m_pRenderer            = pScheduler->CreateTask<ARenderer>( this );
+	m_pGUISystem = pScheduler->CreateTask<AGUISystem>( this );
+	m_pGUI2      = pScheduler->CreateTask<AGUI2>( this );
+	m_pRenderer  = pScheduler->CreateTask<ARenderer>( this );
+	pScheduler->CreateTask<AFSMManager>( this );
 	m_pInputHandler        = pScheduler->CreateTask<AInputHandler>( this );
 	m_pGameStateController = pScheduler->CreateTask<AGameStateController>( this );
 	m_pSoundManager        = pScheduler->CreateTask<ASoundManager>( this );
 	m_pMoviePlayer         = pScheduler->CreateTask<ABINKMoviePlayer>( this );
-	m_bGameSystemCreated   = TFALSE;
+
+	// NOTE: the wave bank info isn't loaded yet, SetCategoryVolume registers Music/VO/Ingame with the next free indices
+	AOptions::GetSingleton()->ApplySettings();
+}
+
+// $Barnyard: FUNCTION 00403380
+// $Barnyard: FUNCTION 00402bd0
+ARootTask::~ARootTask()
+{
+	if ( m_pOptions )
+		delete m_pOptions;
+}
+
+// $Barnyard: FUNCTION 00402dd0
+TBOOL ARootTask::Reset()
+{
+	AUnitManager::GetSingleton()->RemoveAllUnits();
+	ASoundManager::GetSingleton()->Reset();
+	m_pGameSystemManager->Reset();
+
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 00402c40
+void ARootTask::OnDestroy()
+{
+	AAssetLoader::Close( AAssetType_Startup );
+
+	if ( AInputMapManager::IsSingletonCreated() )
+		AInputMapManager::GetSingleton()->Delete();
+
+	AMemory::DestroyPool( AMemory::POOL_Viewport );
+	AMemory::DestroyPool( AMemory::POOL_Misc );
+	AMemory::DestroyPool( AMemory::POOL_Collision );
+	AMemory::DestroyPool( AMemory::POOL_Sound );
+
+	if ( ARandom::IsSingletonCreated() )
+		delete ARandom::GetSingleton();
+
+	if ( APlayerProgress::IsSingletonCreated() )
+		delete APlayerProgress::GetSingleton();
+}
+
+// Moves the task to the end of its parent's children
+static void ReattachTask( TTask* a_pTask )
+{
+	if ( a_pTask )
+		a_pTask->SetParent( a_pTask->Parent() );
+}
+
+// $Barnyard: FUNCTION 004033a0
+void ARootTask::Shutdown()
+{
+	s_bShuttingDown = TTRUE;
+
+	ReattachTask( m_pRenderer );
+	ReattachTask( AFSMManager::IsSingletonCreated() ? AFSMManager::GetSingleton() : TNULL );
+	ReattachTask( m_pInputHandler );
+	ReattachTask( m_pMoviePlayer );
+	ReattachTask( m_pGUISystem );
+	ReattachTask( m_pGUI2 );
+	ReattachTask( m_pGameStateController );
+	ReattachTask( m_pGameSystemManager );
+	ReattachTask( m_pUnkTask );
+
+	if ( AGameStateController::IsSingletonCreated() )
+		AGameStateController::GetSingleton()->ResetStack();
+
+	if ( AUnitManager::IsSingletonCreated() )
+		AUnitManager::GetSingleton()->RemoveAllUnits();
+
+	if ( AInteractionManager::IsSingletonCreated() )
+		AInteractionManager::GetSingleton()->Reset();
+
+	if ( AGUISystem::IsSingletonCreated() )
+		AGUISystem::GetSingleton()->ResetPicture();
+
+	AGameLoader::DestroyLevel();
+}
+
+// $Barnyard: FUNCTION 00402b20
+static TBOOL InitialiseClassCallback( TClass* a_pClass, void* a_pUserData )
+{
+	if ( !a_pClass->IsInitialized() )
+		a_pClass->Initialize();
+
+	return TTRUE;
 }
 
 // $Barnyard: FUNCTION 00403cf0
 TBOOL ARootTask::OnCreate()
 {
-	TIMPLEMENT();
-
 	AMemory::CreatePool( AMemory::POOL_Viewport );
 	AMemory::CreatePool( AMemory::POOL_Misc );
 	AMemory::CreatePool( AMemory::POOL_Collision );
 
-	// Initialise all classes
-	TGetClass( TObject ).RecurseTree(
-	    TNULL,
-	    TNULL,
-	    []( TClass* a_pClass, void* ) {
-		    if ( !a_pClass->IsInitialized() )
-		    {
-			    a_pClass->Initialize();
-		    }
-
-		    return TTRUE;
-	    },
-	    TNULL
-	);
-
 	AAssetLoader::Load( "data\\assets\\lib_startup.trb", AAssetType_Startup, TTRUE );
+
+	// Initialise all classes
+	TGetClass( TObject ).RecurseTree( TNULL, TNULL, InitialiseClassCallback, TNULL );
 
 	if ( m_pRenderer )
 	{
@@ -157,11 +253,21 @@ TBOOL ARootTask::OnUpdate( TFLOAT a_fDeltaTime )
 		}
 	}
 
-	// Update transition task
+#ifdef BARNYARD_COMMUNITY_PATCH
+	if ( IsGameSystemCreated() )
+	{
+		AGameLoader::Dev_UpdateMiniGameRequest();
+		AGameLoader::Dev_UpdateSimStateRequest();
+		AGameLoader::Dev_UpdateDevTierSequence();
+		ACheatActivator::Dev_Update();
+	}
+#endif
+
+	// Keep updating the transition until it reports it's done
 	if ( IsTransitioning() )
 	{
 		SetTransitioning(
-		    AGameLoader::UpdateTransitionTask()
+		    !AGameLoader::UpdateTransitionTask()
 		);
 	}
 
@@ -196,7 +302,9 @@ void ARootTask::OnActivate()
 
 	if ( m_bGameSystemCreated )
 	{
-		TTODO( "Activate three more tasks" );
+		if ( m_pUnkTask ) m_pUnkTask->Activate( TTRUE );
+		if ( AFSMManager::IsSingletonCreated() ) AFSMManager::GetSingleton()->Activate( TTRUE );
+		if ( m_pGameSystemManager ) m_pGameSystemManager->Activate( TTRUE );
 	}
 }
 
@@ -208,9 +316,9 @@ void ARootTask::OnDeactivate()
 	if ( m_pRenderer ) m_pRenderer->Activate( TFALSE );
 	if ( m_pInputHandler ) m_pInputHandler->Activate( TFALSE );
 	if ( m_pGameStateController ) m_pGameStateController->Activate( TFALSE );
+	if ( m_pUnkTask ) m_pUnkTask->Activate( TFALSE );
 	if ( m_pMoviePlayer ) m_pMoviePlayer->Activate( TFALSE );
-
-	TTODO( "Deactivate two more tasks" );
+	if ( AFSMManager::IsSingletonCreated() ) AFSMManager::GetSingleton()->Activate( TFALSE );
 }
 
 TPSTRING8_DECLARE( bkg_by_legal1 );
@@ -221,10 +329,32 @@ TPSTRING8_DECLARE( bkg_fmod );
 // $Barnyard: FUNCTION 00402e70
 void ARootTask::CreateStartupGameStates()
 {
-	TIMPLEMENT();
-
 	// Create main object for storing info about the current story progress
 	APlayerProgress::CreateSingleton( 1, 4, 0, 0 );
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Development: skip the startup screens when a minigame or the sim is requested on the command line
+#  ifndef TOSHI_FINAL
+	if ( AGameLoader::Dev_IsMiniGameRequested() || AGameLoader::Dev_IsSimStateRequested() ||
+	     TStringManager::String8FindString( GetCommandLineA(), "-devkeys " ) )
+#  else
+	if ( AGameLoader::Dev_IsMiniGameRequested() || AGameLoader::Dev_IsSimStateRequested() )
+#  endif
+	{
+		m_bStartedGame = TTRUE;
+
+		// Load the dev save file like the startup does, so saving (leaving the options with changes writes the file
+		// too) keeps the slots that are in it
+		if ( AGameLoader::Dev_SetupSaveFileAtBoot() )
+		{
+			SaveLoadSKU* pSaveLoad = new SaveLoadSKU( APlayerProgress::GetSingleton(), TFALSE, TNULL );
+			pSaveLoad->StartLoad();
+			AGameStateController::GetSingleton()->PushState( pSaveLoad );
+		}
+
+		return;
+	}
+#endif
 
 	auto attractMovie    = new AMovieState( "Attract", TFALSE, TNULL, TFALSE );
 	auto bluetongueMovie = new AMovieState( "BTE", TFALSE, attractMovie, TFALSE );
@@ -232,31 +362,46 @@ void ARootTask::CreateStartupGameStates()
 	auto nickmovsMovie   = new AMovieState( "NickMovs", TFALSE, thqMovie, TFALSE );
 
 	AGUISlideshow::Params slideshowSettings = {
-		.iUnk1           = 0,
+		.iUnk1 = 0,
+#ifdef BARNYARD_COMMUNITY_PATCH
 		.bSlideSkippable = TTRUE,
-		.bUnk2           = TFALSE,
-		.bInstaSkippable = TFALSE,
-		.bHasFadeIn      = TTRUE,
-		.bHasFadeOut     = TTRUE,
-		.bRepeat         = TFALSE,
-		.bDelayAppear    = TFALSE,
-		.fDuration       = 2.0f,
-		.fFadeInTime     = 1.0f,
-		.fFadeOutTime    = 0.5f,
-		.fUnk5           = -1.0f,
+#else
+		.bSlideSkippable = TFALSE,
+#endif
+		.bCancelSkippable = TFALSE,
+		.bInstaSkippable  = TFALSE,
+		.bHasFadeIn       = TTRUE,
+		.bHasFadeOut      = TTRUE,
+		.bRepeat          = TFALSE,
+		.bDelayAppear     = TFALSE,
+		.fDuration        = 2.0f,
+		.fFadeInTime      = 1.0f,
+		.fFadeOutTime     = 0.5f,
+		.fMaxTotalTime    = -1.0f,
 	};
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: retail has no FMOD slide (bkg_fmod isn't in BYard.exe) and its slides can't be skipped
 	auto fmodSlide = new ASlideshowState( slideshowSettings, nickmovsMovie, TFALSE );
 	fmodSlide->AddSlide( TPS8( bkg_fmod ) );
 
 	auto binkSlide = new ASlideshowState( slideshowSettings, fmodSlide, TFALSE );
+#else
+	auto binkSlide = new ASlideshowState( slideshowSettings, nickmovsMovie, TFALSE );
+#endif
 	binkSlide->AddSlide( TPS8( bkg_Bink_Big ) );
 
 	slideshowSettings.fDuration = 5.0f;
 	auto legalSlide             = new ASlideshowState( slideshowSettings, binkSlide, TTRUE );
 	legalSlide->AddSlide( TPS8( bkg_by_legal1 ) );
 
-	AGameStateController::GetSingleton()->PushState( legalSlide );
+	// Load the save data first
+#ifdef BARNYARD_COMMUNITY_PATCH
+	AGameLoader::Dev_SetupSaveFileAtBoot();
+#endif
+	SaveLoadSKU* pSaveLoad = new SaveLoadSKU( APlayerProgress::GetSingleton(), TTRUE, legalSlide );
+	pSaveLoad->StartLoad();
+	AGameStateController::GetSingleton()->PushState( pSaveLoad );
 
 	m_bStartedGame = TTRUE;
 }
@@ -307,17 +452,49 @@ TBOOL ARootTask::IsPaused() const
 	return m_bPaused || g_oSystemManager.IsPaused();
 }
 
+// $Barnyard: FUNCTION 00402e00
+void ARootTask::SetPaused( TBOOL a_bPaused )
+{
+	if ( a_bPaused == m_bPaused )
+		return;
+
+	m_bPaused = a_bPaused;
+
+	if ( a_bPaused )
+	{
+		if ( AGameTimeManager::IsSingletonCreated() )
+			AGameTimeManager::GetSingleton()->PushUpdateState();
+
+		if ( AGameTimeFXManager::IsSingletonCreated() )
+			AGameTimeFXManager::GetSingleton()->Pause( TFALSE );
+	}
+	else
+	{
+		if ( AGameTimeManager::IsSingletonCreated() )
+			AGameTimeManager::GetSingleton()->ToggleUpdateState();
+
+		if ( AGameTimeFXManager::IsSingletonCreated() )
+			AGameTimeFXManager::GetSingleton()->RestorePause();
+	}
+
+	if ( AGameSystemManager::IsSingletonCreated() )
+		AGameSystemManager::GetSingleton()->ActivateSystemTasks( !a_bPaused );
+}
+
 // $Barnyard: FUNCTION 00403690
 void ARootTask::CreateGameSystem()
 {
-	TIMPLEMENT();
 
 	AFadeManager::GetSingleton()->StopAllFades();
 	g_oLoadScreen.StartLoading( 9, TTRUE );
 
 	ASoundManager::GetSingleton()->LoadWaveBanksInfo( "soundmetadata" );
 
-	// ...
+	// Load the FSM scripts
+	AFSMManager::GetSingleton()->Create();
+	g_oLoadScreen.Update( 1.0f, TTRUE );
+	g_oLoadScreen.Update( 1.0f, TTRUE );
+
 	m_pGameSystemManager = g_oSystemManager.GetScheduler()->CreateTask<AGameSystemManager>( this );
 	m_pGameSystemManager->Create();
 
@@ -346,7 +523,23 @@ void ARootTask::CreateGameSystem()
 		m_pGameStateController->SetParent( m_pGameStateController->Parent() );
 	}
 
-	// ...
+	// The world (AAnimatableObjectManager...) updates after the game states, the FSMs and the
+	// sounds after the world. The game states see the animations that ended during the last
+	// render (TAnimation::STATE_BLENDING_OUT) before AToshiAnimationInterface removes them.
+	if ( m_pGameSystemManager )
+	{
+		m_pGameSystemManager->SetParent( m_pGameSystemManager->Parent() );
+	}
+
+	if ( AFSMManager::IsSingletonCreated() )
+	{
+		AFSMManager::GetSingleton()->SetParent( AFSMManager::GetSingleton()->Parent() );
+	}
+
+	if ( m_pSoundManager )
+	{
+		m_pSoundManager->SetParent( m_pSoundManager->Parent() );
+	}
 
 	if ( m_pRenderer )
 	{

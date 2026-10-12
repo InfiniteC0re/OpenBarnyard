@@ -37,6 +37,7 @@ public:
 	    : m_f11( a_rMatrix.m_f11 ), m_f12( a_rMatrix.m_f12 ), m_f13( a_rMatrix.m_f13 ), m_f14( a_rMatrix.m_f14 ), m_f21( a_rMatrix.m_f21 ), m_f22( a_rMatrix.m_f22 ), m_f23( a_rMatrix.m_f23 ), m_f24( a_rMatrix.m_f24 ), m_f31( a_rMatrix.m_f31 ), m_f32( a_rMatrix.m_f32 ), m_f33( a_rMatrix.m_f33 ), m_f34( a_rMatrix.m_f34 ), m_f41( a_rMatrix.m_f41 ), m_f42( a_rMatrix.m_f42 ), m_f43( a_rMatrix.m_f43 ), m_f44( a_rMatrix.m_f44 )
 	{}
 
+	// $Barnyard: FUNCTION 0041fab0
 	constexpr TMatrix44(
 	    TFLOAT a_f11,
 	    TFLOAT a_f12,
@@ -106,7 +107,10 @@ public:
 		);
 	}
 
+	// NOTE: 006c8520 copies a static that is never written (all zeros) instead of the identity; its callers
+	// overwrite or ignore the result
 	// $Barnyard: FUNCTION 006c8500
+	// $Barnyard: FUNCTION 006c8520
 	constexpr void Identity()
 	{
 		Set( IDENTITY );
@@ -162,6 +166,27 @@ public:
 	const TVector4& GetTranslation() const
 	{
 		return AsBasisVector4( BASISVECTOR_TRANSLATION );
+	}
+
+	// NOTE: an instance of it lives in the game code
+	// $Barnyard: FUNCTION 0045d950
+	void SetBasisVector4( BASISVECTOR a_iIndex, const TVector4& a_rcVector )
+	{
+		AsBasisVector4( a_iIndex ) = a_rcVector;
+	}
+
+	// NOTE: an instance of it lives in the game code
+	// $Barnyard: FUNCTION 00420450
+	void GetTranslation( TVector4& a_rOutTranslation ) const
+	{
+		a_rOutTranslation = AsBasisVector4( BASISVECTOR_TRANSLATION );
+	}
+
+	// NOTE: an instance of it lives in the game code
+	// $Barnyard: FUNCTION 00415a20
+	void GetBasisVector4( BASISVECTOR a_iIndex, TVector4& a_rOutVector ) const
+	{
+		a_rOutVector = AsBasisVector4( a_iIndex );
 	}
 
 	void SetTranslation( const TVector4& a_rTranslation )
@@ -233,8 +258,35 @@ public:
 		return !( ( ( 0.01 <= fVar6 * fVar6 + fVar2 * fVar2 + fVar1 * fVar1 + fVar4 * fVar4 + fVar5 * fVar5 + fVar3 * fVar3 ) || ( m_f14 != 0.0 ) ) || ( m_f24 != 0.0 ) ) || ( ( m_f34 != 0.0 || ( m_f44 != 1.0 ) ) );
 	}
 
+	// $Barnyard: FUNCTION 006c8540
+	void Transpose( const TMatrix44& a_rcMatrix )
+	{
+		TFLOAT f14 = a_rcMatrix.m_f41, f24 = a_rcMatrix.m_f42, f34 = a_rcMatrix.m_f43, f44 = a_rcMatrix.m_f44;
+		TFLOAT f13 = a_rcMatrix.m_f31, f23 = a_rcMatrix.m_f32, f33 = a_rcMatrix.m_f33, f43 = a_rcMatrix.m_f34;
+		TFLOAT f12 = a_rcMatrix.m_f21, f22 = a_rcMatrix.m_f22, f32 = a_rcMatrix.m_f23, f42 = a_rcMatrix.m_f24;
+		TFLOAT f11 = a_rcMatrix.m_f11, f21 = a_rcMatrix.m_f12, f31 = a_rcMatrix.m_f13, f41 = a_rcMatrix.m_f14;
+		Set( f11, f12, f13, f14, f21, f22, f23, f24, f31, f32, f33, f34, f41, f42, f43, f44 );
+	}
+
 	void Multiply( const TMatrix44& a_rLeft, const TMatrix44& a_rRight );
 	void Multiply( const TMatrix44& a_rRight );
+
+	// this = a_rcLeft * this
+	// NOTE: the name is invented
+	// $Barnyard: FUNCTION 00466830
+	void PreMultiply( const TMatrix44& a_rcLeft )
+	{
+		TMatrix44 matCopy = *this;
+		Multiply( a_rcLeft, matCopy );
+	}
+
+	// $Barnyard: FUNCTION 0046cca0
+	TMatrix44 operator*( const TMatrix44& a_rcRight ) const
+	{
+		TMatrix44 matResult;
+		matResult.Multiply( *this, a_rcRight );
+		return matResult;
+	}
 
 	TBOOL Invert( const TMatrix44& a_rRight );
 
@@ -249,8 +301,17 @@ public:
 	void RotateY( TFLOAT a_fAngle );
 	void RotateZ( TFLOAT a_fAngle );
 
+	// $Barnyard: FUNCTION 006c9160
+	void Rotate( TFLOAT a_fAngleX, TFLOAT a_fAngleY, TFLOAT a_fAngleZ )
+	{
+		RotateX( a_fAngleX );
+		RotateY( a_fAngleY );
+		RotateZ( a_fAngleZ );
+	}
+
 	void GetEulerXYZ( TVector3& a_rOutVec ) const;
 
+	// $Barnyard: FUNCTION 006c8c20
 	static void MatToQuat( TQuaternion& a_rOutQuat, const TMatrix44& a_rMatrix )
 	{
 		TFLOAT fVar1;
@@ -265,9 +326,9 @@ public:
 
 		if ( 0.0f < fVar4 )
 		{
-			fVar1 = TMath::Sqrt( 1.0f + fVar4 ) * 0.5f;
+			fVar1        = TMath::Sqrt( 1.0f + fVar4 ) * 0.5f;
 			a_rOutQuat.w = fVar1;
-			fVar1 = 0.25f / fVar1;
+			fVar1        = 0.25f / fVar1;
 			a_rOutQuat.x = ( a_rMatrix.m_f23 - a_rMatrix.m_f32 ) * fVar1;
 			a_rOutQuat.y = ( a_rMatrix.m_f31 - a_rMatrix.m_f13 ) * fVar1;
 			a_rOutQuat.z = ( a_rMatrix.m_f12 - a_rMatrix.m_f21 ) * fVar1;
@@ -277,9 +338,9 @@ public:
 		{
 			if ( fVar3 < fVar1 )
 			{
-				fVar1 = TMath::Sqrt( ( ( 1.0f + fVar1 ) - fVar2 ) - fVar3 ) * 0.5f;
+				fVar1        = TMath::Sqrt( ( ( 1.0f + fVar1 ) - fVar2 ) - fVar3 ) * 0.5f;
 				a_rOutQuat.x = fVar1;
-				fVar1 = 0.25f / fVar1;
+				fVar1        = 0.25f / fVar1;
 				a_rOutQuat.w = ( a_rMatrix.m_f23 - a_rMatrix.m_f32 ) * fVar1;
 				a_rOutQuat.y = ( a_rMatrix.m_f12 + a_rMatrix.m_f21 ) * fVar1;
 				a_rOutQuat.z = ( a_rMatrix.m_f13 + a_rMatrix.m_f31 ) * fVar1;
@@ -288,19 +349,19 @@ public:
 		}
 		else if ( fVar3 <= fVar2 )
 		{
-			fVar1 = TMath::Sqrt( ( ( 1.0f + fVar2 ) - fVar3 ) - fVar1 ) * 0.5f;
+			fVar1        = TMath::Sqrt( ( ( 1.0f + fVar2 ) - fVar3 ) - fVar1 ) * 0.5f;
 			a_rOutQuat.y = fVar1;
-			fVar1 = 0.25f / fVar1;
+			fVar1        = 0.25f / fVar1;
 			a_rOutQuat.w = ( a_rMatrix.m_f31 - a_rMatrix.m_f13 ) * fVar1;
 			a_rOutQuat.z = ( a_rMatrix.m_f23 + a_rMatrix.m_f32 ) * fVar1;
 			a_rOutQuat.x = ( a_rMatrix.m_f21 + a_rMatrix.m_f12 ) * fVar1;
 			return;
 		}
 
-		fVar1 = TMath::Sqrt( ( ( 1.0f + fVar3 ) - fVar1 ) - fVar2 ) * 0.5f;
+		fVar1        = TMath::Sqrt( ( ( 1.0f + fVar3 ) - fVar1 ) - fVar2 ) * 0.5f;
 		a_rOutQuat.z = fVar1;
 
-		fVar1 = 0.25f / fVar1;
+		fVar1        = 0.25f / fVar1;
 		a_rOutQuat.w = ( a_rMatrix.m_f12 - a_rMatrix.m_f21 ) * fVar1;
 		a_rOutQuat.x = ( a_rMatrix.m_f31 + a_rMatrix.m_f13 ) * fVar1;
 		a_rOutQuat.y = ( a_rMatrix.m_f32 + a_rMatrix.m_f23 ) * fVar1;
@@ -317,6 +378,17 @@ public:
 		        a_rOutPlane.AsVector4(), a_rMatrix.AsBasisVector4( BASISVECTOR_TRANSLATION )
 		    )
 		);
+	}
+
+	// $Barnyard: FUNCTION 006c8b20
+	constexpr static void RotateVector( TVector3& a_rOutVector, const TMatrix44& a_rMatrix, const TVector3& a_rVector )
+	{
+		TFLOAT fY = a_rMatrix.m_f32 * a_rVector.z + a_rMatrix.m_f12 * a_rVector.x + a_rMatrix.m_f22 * a_rVector.y;
+		TFLOAT fZ = a_rMatrix.m_f33 * a_rVector.z + a_rMatrix.m_f13 * a_rVector.x + a_rMatrix.m_f23 * a_rVector.y;
+
+		a_rOutVector.x = a_rMatrix.m_f31 * a_rVector.z + a_rMatrix.m_f21 * a_rVector.y + a_rMatrix.m_f11 * a_rVector.x;
+		a_rOutVector.y = fY;
+		a_rOutVector.z = fZ;
 	}
 
 	// $Barnyard: FUNCTION 006c8b80
@@ -402,7 +474,9 @@ public:
 		a_rOutVector.z = fVar15 * fVar16 + fVar13 * fVar14 + fVar11 * fVar12 + fVar9 * fVar10;
 	}
 
-	constexpr void operator=( const TMatrix44& a_rcMatrix )
+	// Out of line copy used by AGameTimeFX::operator=: 004928a0
+	// $Barnyard: FUNCTION 004928a0
+	constexpr TMatrix44& operator=( const TMatrix44& a_rcMatrix )
 	{
 		Set(
 		    a_rcMatrix.m_f11, a_rcMatrix.m_f12, a_rcMatrix.m_f13, a_rcMatrix.m_f14,
@@ -410,6 +484,8 @@ public:
 		    a_rcMatrix.m_f31, a_rcMatrix.m_f32, a_rcMatrix.m_f33, a_rcMatrix.m_f34,
 		    a_rcMatrix.m_f41, a_rcMatrix.m_f42, a_rcMatrix.m_f43, a_rcMatrix.m_f44
 		);
+
+		return *this;
 	}
 
 #ifdef TRENDERINTERFACE_DX8

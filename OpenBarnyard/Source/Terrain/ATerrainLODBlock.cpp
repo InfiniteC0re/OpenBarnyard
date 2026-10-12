@@ -42,21 +42,26 @@ ATerrainLODBlock::~ATerrainLODBlock()
 	m_pUnk2          = &s_Unk2AfterDestroy;
 }
 
+// TTRB allocation callback used by SetupTRB
+// $Barnyard: FUNCTION 005ecb50
+void* __stdcall ATerrainLODBlock::TRBAlloc( TTRB::AllocType alloctype, TUINT32 size, TINT16 unk1, TUINT32 unk2, void* userData )
+{
+	auto pBlock = TSTATICCAST( ATerrainLODBlock, userData );
+
+	if ( pBlock->m_pAllocatedSize )
+	{
+		*pBlock->m_pAllocatedSize += size;
+	}
+
+	return TMemalign( 128, size, pBlock->m_pNext->m_pCreatedMemBlock );
+}
+
 // $Barnyard: FUNCTION 005ecc80 +
 void ATerrainLODBlock::SetupTRB( TTRB* a_pTRB, ATerrainLODBlock* a_pOther )
 {
 	a_pOther->m_pNext = this;
 	a_pTRB->SetMemoryFunctions(
-	    []( TTRB::AllocType alloctype, TUINT32 size, TINT16 unk1, TUINT32 unk2, void* userData ) -> void* {
-		    auto pBlock = TSTATICCAST( ATerrainLODBlock, userData );
-
-		    if ( pBlock->m_pAllocatedSize )
-		    {
-			    *pBlock->m_pAllocatedSize += size;
-		    }
-
-		    return TMemalign( 128, size, pBlock->m_pNext->m_pCreatedMemBlock );
-	    },
+	    TRBAlloc,
 	    []( TTRB::AllocType alloctype, void* ptr, TINT16 unk1, TUINT32 unk2, void* userData ) {
 		    TFree( ptr );
 	    },

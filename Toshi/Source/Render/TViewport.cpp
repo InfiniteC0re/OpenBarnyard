@@ -29,10 +29,11 @@ TViewport::TViewport( TBOOL a_bFlag )
 
 	if ( a_bFlag )
 	{
-		TRenderInterface::GetSingleton()->Unknown1( this );
+		TRenderInterface::GetSingleton()->ConnectDefaultViewportHandlers( this );
 	}
 }
 
+// $Barnyard: FUNCTION 006cd330
 // $Barnyard: FUNCTION 006cd860
 TViewport::~TViewport()
 {
@@ -203,21 +204,25 @@ void TViewport::Begin()
 	BeginSKU();
 }
 
+// $Barnyard: FUNCTION 006cd710
 TFLOAT TViewport::GetHeight() const
 {
 	return m_pRenderCtx->GetHeight();
 }
 
+// $Barnyard: FUNCTION 006cd700
 TFLOAT TViewport::GetWidth() const
 {
 	return m_pRenderCtx->GetWidth();
 }
 
+// $Barnyard: FUNCTION 006cd6f0
 TFLOAT TViewport::GetY() const
 {
 	return m_pRenderCtx->GetY();
 }
 
+// $Barnyard: FUNCTION 006cd6e0
 TFLOAT TViewport::GetX() const
 {
 	return m_pRenderCtx->GetX();

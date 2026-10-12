@@ -11,9 +11,9 @@ struct AGUI2FontDefCharacterData
 	TUINT16 ui16PosY;
 	TUINT8  ui8CharWidth;
 	TUINT8  ui8CharHeight;
-	TINT8   Unk3;
-	TINT8   Unk4;
-	TINT8   Unk5;
+	TINT8   iLeftPadding;
+	TINT8   iRightPadding;
+	TINT8   iYOffset;
 	TINT8   Unk6;
 };
 
@@ -21,7 +21,7 @@ struct SDK_T2GUIFontDef
 {
 	void*                      Unk1;
 	const char*                szTextureNames;
-	TINT8                      Unk2;
+	TINT8                      iLetterSpacing;
 	TUINT8                     uiLinesMargin;
 	TUINT8                     uiLineHeight;
 	TUINT8                     uiNumMaterials;

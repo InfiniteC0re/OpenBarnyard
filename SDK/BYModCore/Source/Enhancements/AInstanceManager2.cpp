@@ -5,6 +5,7 @@
 
 #include <BYardSDK/AGlowViewport.h>
 #include <BYardSDK/ATerrainInterface.h>
+#include <BYardSDK/ABarnExploreMinigameState.h>
 
 #include <Render/TRenderInterface.h>
 
@@ -158,17 +159,17 @@ TBOOL AInstanceManager2::Render()
 
 void AInstanceManager2::FillRenderList_All( const Toshi::T2SList<StaticInstanceEntry>& a_rcInstanceList, const Toshi::TMatrix44& a_rcWorldTransform, RenderListEntry* a_pOutRenderData, TINT& a_rNumInstances, TBOOL a_bDynamic )
 {
-	TRenderContext*  pRenderContext    = g_pRender->GetCurrentContext();
+	TRenderContext* pRenderContext = g_pRender->GetCurrentContext();
 	// For perspective shadow passes (glow lights), clamp to the projection far clip = light radius.
 	// For orthographic passes (CSM), m_fFarClip is light-space Z extent, not world distance -- skip.
-	const TBOOL  bIsPerspective      = pRenderContext->GetCameraMode() == TRenderContext::CameraMode_Perspective;
-	const TFLOAT flFarClipLimit      = bIsPerspective ? pRenderContext->GetProjectionParams().m_fFarClip : FLT_MAX;
-	const TFLOAT flMaxRenderDist     = TMath::Min( m_flVisibilityDistanceBlendEnd, flFarClipLimit );
-	const TFLOAT flLOD0DistanceSq    = m_flLOD0Distance * m_flLOD0Distance;
+	const TBOOL  bIsPerspective        = pRenderContext->GetCameraMode() == TRenderContext::CameraMode_Perspective;
+	const TFLOAT flFarClipLimit        = bIsPerspective ? pRenderContext->GetProjectionParams().m_fFarClip : FLT_MAX;
+	const TFLOAT flMaxRenderDist       = TMath::Min( m_flVisibilityDistanceBlendEnd, flFarClipLimit );
+	const TFLOAT flLOD0DistanceSq      = m_flLOD0Distance * m_flLOD0Distance;
 	const TFLOAT flMaxRenderDistanceSq = flMaxRenderDist * flMaxRenderDist;
 
-	const TMatrix44& matViewWorld   = pRenderContext->GetViewWorldMatrix();
-	TVector4         vecCameraPos   = matViewWorld.GetTranslation();
+	const TMatrix44& matViewWorld = pRenderContext->GetViewWorldMatrix();
+	TVector4         vecCameraPos = matViewWorld.GetTranslation();
 
 	T2_FOREACH( a_rcInstanceList, it )
 	{
@@ -184,12 +185,12 @@ void AInstanceManager2::FillRenderList_All( const Toshi::T2SList<StaticInstanceE
 
 		const TFLOAT flInstanceDistanceSq = TVector4::DistanceSq( vecInstanceBounding.AsVector4(), vecCameraPos );
 
-		const TINT& DAT_00773a64 = *(TINT*)0x00773a64;
+		const ABarnExploreMinigameState::FLOOR eBarnFloor = ABarnExploreMinigameState::GetFloor();
 
-		// There's some odd hack I don't currently understand
+		// Only the instances of the barn floor the player is on (the loft is above y = 3.246)
 		if ( flInstanceDistanceSq < flMaxRenderDistanceSq &&
-		     ( vecInstanceBounding.GetOrigin().y <= 3.246f || DAT_00773a64 == 0 ) &&
-		     ( vecInstanceBounding.GetOrigin().y >= 3.246f || DAT_00773a64 == 1 || DAT_00773a64 == 2 ) )
+		     ( vecInstanceBounding.GetOrigin().y <= 3.246f || eBarnFloor == ABarnExploreMinigameState::FLOOR_LOFT ) &&
+		     ( vecInstanceBounding.GetOrigin().y >= 3.246f || eBarnFloor == ABarnExploreMinigameState::FLOOR_GROUND || eBarnFloor == ABarnExploreMinigameState::FLOOR_BASEMENT ) )
 		{
 			TINT iLODIndex = flInstanceDistanceSq >= flLOD0DistanceSq ? 1 : 0;
 
@@ -198,7 +199,7 @@ void AInstanceManager2::FillRenderList_All( const Toshi::T2SList<StaticInstanceE
 			{
 				TMatrix44 matLocatorLocalTransform;
 
-				if (a_bDynamic)
+				if ( a_bDynamic )
 				{
 					matLocatorLocalTransform = *(TMatrix44*)( (TCHAR*)it.Get() + 0xC );
 				}
@@ -214,8 +215,8 @@ void AInstanceManager2::FillRenderList_All( const Toshi::T2SList<StaticInstanceE
 				AGlowViewport::GetSingleton()->GetInfluencingLightIDs( vecInstanceBounding, oLightList );
 
 				// Store data about the instance
-				s_aInstanceVisMasks[ a_rNumInstances ] = TTRUE;
-				s_aInstanceFlags[ a_rNumInstances ]    = it->uiPackedScaleYaw >> 4;
+				s_aInstanceVisMasks[ a_rNumInstances ]      = TTRUE;
+				s_aInstanceFlags[ a_rNumInstances ]         = it->uiPackedScaleYaw >> 4;
 				s_aInstanceLightIDs[ a_rNumInstances ][ 0 ] = oLightList[ 0 ];
 				s_aInstanceLightIDs[ a_rNumInstances ][ 1 ] = oLightList[ 1 ];
 				s_aInstanceLightIDs[ a_rNumInstances ][ 2 ] = oLightList[ 2 ];
@@ -321,15 +322,15 @@ void AInstanceManager2::FillRenderList_Visible( const Toshi::T2SList<StaticInsta
 	// 2. Fill the render list
 	//-----------------------------------------------------------------------------
 
-	TRenderContext*  pRenderContext    = g_pRender->GetCurrentContext();
-	const TBOOL  bIsPerspective      = pRenderContext->GetCameraMode() == TRenderContext::CameraMode_Perspective;
-	const TFLOAT flFarClipLimit      = bIsPerspective ? pRenderContext->GetProjectionParams().m_fFarClip : FLT_MAX;
-	const TFLOAT flMaxRenderDist     = TMath::Min( m_flVisibilityDistanceBlendEnd, flFarClipLimit );
-	const TFLOAT flLOD0DistanceSq    = m_flLOD0Distance * m_flLOD0Distance;
-	const TFLOAT flMaxRenderDistanceSq = flMaxRenderDist * flMaxRenderDist;
+	TRenderContext* pRenderContext        = g_pRender->GetCurrentContext();
+	const TBOOL     bIsPerspective        = pRenderContext->GetCameraMode() == TRenderContext::CameraMode_Perspective;
+	const TFLOAT    flFarClipLimit        = bIsPerspective ? pRenderContext->GetProjectionParams().m_fFarClip : FLT_MAX;
+	const TFLOAT    flMaxRenderDist       = TMath::Min( m_flVisibilityDistanceBlendEnd, flFarClipLimit );
+	const TFLOAT    flLOD0DistanceSq      = m_flLOD0Distance * m_flLOD0Distance;
+	const TFLOAT    flMaxRenderDistanceSq = flMaxRenderDist * flMaxRenderDist;
 
-	const TMatrix44& matViewWorld   = pRenderContext->GetViewWorldMatrix();
-	TVector4         vecCameraPos   = matViewWorld.GetTranslation();
+	const TMatrix44& matViewWorld = pRenderContext->GetViewWorldMatrix();
+	TVector4         vecCameraPos = matViewWorld.GetTranslation();
 
 	T2_FOREACH( a_rcInstanceList, it )
 	{
@@ -382,8 +383,8 @@ void AInstanceManager2::FillRenderList_Visible( const Toshi::T2SList<StaticInsta
 						AGlowViewport::GetSingleton()->GetInfluencingLightIDs( vecInstanceBounding, oLightList );
 
 						// Store data about the instance
-						s_aInstanceVisMasks[ a_rNumInstances ] = TTRUE;
-						s_aInstanceFlags[ a_rNumInstances ]    = it->uiPackedScaleYaw >> 4;
+						s_aInstanceVisMasks[ a_rNumInstances ]      = TTRUE;
+						s_aInstanceFlags[ a_rNumInstances ]         = it->uiPackedScaleYaw >> 4;
 						s_aInstanceLightIDs[ a_rNumInstances ][ 0 ] = oLightList[ 0 ];
 						s_aInstanceLightIDs[ a_rNumInstances ][ 1 ] = oLightList[ 1 ];
 						s_aInstanceLightIDs[ a_rNumInstances ][ 2 ] = oLightList[ 2 ];

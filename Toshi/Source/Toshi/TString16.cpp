@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TString16.h"
+#include "TString8.h"
 
 #include "Toshi/TSystem.h"
 
@@ -11,16 +12,19 @@
 
 TOSHI_NAMESPACE_START
 
+// NOTE: inline in the original, an instance of it lives in the game code
+// $Barnyard: FUNCTION 0042b530
 TString16::TString16()
+    : TString16( GetAllocator() )
 {
-	Reset();
-	m_pAllocator = GetAllocator();
 }
 
+// $Barnyard: FUNCTION 006cc820
 TString16::TString16( T2Allocator* allocator )
 {
 	Reset();
 	m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
+	AllocBuffer( 0, TTRUE );
 }
 
 TString16::TString16( TString16&& src ) noexcept
@@ -46,13 +50,43 @@ TString16::TString16( TINT size, T2Allocator* allocator )
 	AllocBuffer( size );
 }
 
+// $Barnyard: FUNCTION 006cc880
 TString16::TString16( const TWCHAR* src, T2Allocator* allocator )
 {
 	Reset();
 	m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
-	Copy( src );
+	*this        = src;
 }
 
+// $Barnyard: FUNCTION 006cc8f0
+TString16::TString16( const TString8& src, T2Allocator* allocator )
+{
+	Reset();
+	m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
+	*this        = src;
+}
+
+// $Barnyard: FUNCTION 006cc130
+void TString16::Copy( const TString16& src, TINT size )
+{
+	// NOTE: retail doesn't check for copying a string into itself: the first character is cleared before wcsncpy, so the string ends up empty
+	if ( size < 0 || size > src.Length() )
+		size = src.Length();
+
+	AllocBuffer( size, TTRUE );
+
+	if ( size != 0 )
+	{
+		wcsncpy( m_pBuffer, src.m_pBuffer, size );
+		m_pBuffer[ size ] = L'\0';
+	}
+	else
+	{
+		m_pBuffer[ 0 ] = L'\0';
+	}
+}
+
+// $Barnyard: FUNCTION 006cc0c0
 void TString16::Copy( const TWCHAR* src, TINT size )
 {
 	if ( src != m_pBuffer )
@@ -72,6 +106,7 @@ void TString16::Copy( const TWCHAR* src, TINT size )
 	}
 }
 
+// $Barnyard: FUNCTION 006cca50
 TINT TString16::Find( TWCHAR character, TINT pos ) const
 {
 	if ( !IsIndexValid( pos ) ) return -1;
@@ -82,6 +117,7 @@ TINT TString16::Find( TWCHAR character, TINT pos ) const
 	return (TINT)( foundAt - m_pBuffer );
 }
 
+// $Barnyard: FUNCTION 006cc9f0
 TINT TString16::Find( const TWCHAR* substr, TINT pos ) const
 {
 	if ( !IsIndexValid( pos ) ) return -1;
@@ -92,6 +128,7 @@ TINT TString16::Find( const TWCHAR* substr, TINT pos ) const
 	return (TINT)( foundAt - m_pBuffer );
 }
 
+// $Barnyard: FUNCTION 006cbfe0
 TBOOL TString16::AllocBuffer( TINT a_iLength, TBOOL freeMemory )
 {
 	TBOOL hasChanged    = TFALSE;
@@ -141,19 +178,33 @@ TBOOL TString16::AllocBuffer( TINT a_iLength, TBOOL freeMemory )
 	return hasChanged;
 }
 
-TString16 TString16::Format( const TWCHAR* a_pcFormat, ... )
+// $Barnyard: FUNCTION 006cc1a0
+TString16& TString16::Format( const TWCHAR* a_pcFormat, ... )
 {
-	TWCHAR    buffer[ 0x400 ];
-	TString16 buffer2;
-	va_list   args;
+	TWCHAR  buffer[ 0x400 ];
+	va_list args;
 
 	va_start( args, a_pcFormat );
 
-	TINT iResult = _vsnwprintf( buffer, sizeof( buffer ), a_pcFormat, args );
+	TINT iResult = _vsnwprintf( buffer, TARRAYSIZE( buffer ), a_pcFormat, args );
 	TASSERT( iResult != -1, "PS2/GC/X360 do not correctly support _vsnprintf, this code will cause memory to be clobbered on those platforms! Increase the size of the destination string to avoid this problem" );
-	buffer2.Copy( buffer, -1 );
+	Copy( buffer, -1 );
 
-	return buffer2;
+	va_end( args );
+	return *this;
+}
+
+// $Barnyard: FUNCTION 006cc7d0
+TString16& TString16::operator=( const TCHAR* a_szStr )
+{
+	TINT iLength = a_szStr ? TINT( TStringManager::String8Length( a_szStr ) ) : 0;
+	AllocBuffer( iLength, TTRUE );
+
+	if ( iLength != 0 )
+		TStringManager::StringCharToUnicode( m_pBuffer, a_szStr, iLength );
+
+	m_pBuffer[ iLength ] = L'\0';
+	return *this;
 }
 
 TString16& TString16::VFormat( const TWCHAR* a_pcFormat, va_list a_vargs )
@@ -229,12 +280,14 @@ void TString16::Truncate( TINT length )
 	}
 }
 
+// $Barnyard: FUNCTION 006ccab0
 void TString16::FreeBuffer()
 {
-	if ( Length() != 0 ) m_pAllocator->Free( m_pBuffer );
+	if ( Length() > 0 ) m_pAllocator->Free( m_pBuffer );
 	Reset();
 }
 
+// $Barnyard: FUNCTION 006cc950
 const TWCHAR* TString16::GetString( TINT a_iIndex ) const
 {
 	TASSERT( a_iIndex >= 0 && a_iIndex <= m_iStrLen );
@@ -249,6 +302,7 @@ TWCHAR* TString16::GetStringUnsafe( TINT a_iIndex )
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006cc320
 TString16& TString16::Concat( const TWCHAR* str, TINT size )
 {
 	TINT len = (TINT)TStringManager::String16Length( str );
@@ -283,38 +337,131 @@ TString16& TString16::Concat( const TWCHAR* str, TINT size )
 	return *this;
 }
 
-TINT TString16::Compare( const TWCHAR* a_pcString, TINT param_2 ) const
+// $Barnyard: FUNCTION 006cc210
+TString16& TString16::Concat( const TString16& str, TINT size )
 {
-	TASSERT( a_pcString != TNULL, "TCString::CompareNoCase - Passed string cannot be TNULL" );
-	TASSERT( IsIndexValid( 0 ), "TCString::CompareNoCase - Index 0 is not valid" );
-	TASSERT( GetString() != TNULL, "TCString::CompareNoCase - String cannot be TNULL" );
-
-	if ( param_2 != -1 )
+	if ( ( str.Length() < size ) || ( size == -1 ) )
 	{
-		return wcsncmp( GetString(), a_pcString, param_2 );
+		size = str.Length();
 	}
 
-	const TWCHAR* str   = GetString();
-	TWCHAR        bVar1 = 0;
-	TWCHAR        bVar4 = 0;
-	while ( TTRUE )
+	TINT    oldLength = m_iStrLen;
+	TWCHAR* oldString = m_pBuffer;
+
+	TBOOL allocated = AllocBuffer( m_iStrLen + size, TFALSE );
+
+	if ( allocated )
+		TStringManager::String16Copy( m_pBuffer, oldString, -1 );
+
+	TStringManager::String16Copy( m_pBuffer + oldLength, str.m_pBuffer, size );
+	m_pBuffer[ m_iStrLen ] = 0;
+
+	if ( allocated && oldLength > 0 )
+		m_pAllocator->Free( oldString );
+
+	return *this;
+}
+
+// $Barnyard: FUNCTION 006cc430
+TString16& TString16::Insert( const TWCHAR* a_wszString, TINT a_iPos, TINT a_iCount )
+{
+	TINT iStrLength = (TINT)TStringManager::String16Length( a_wszString );
+
+	if ( a_iCount > iStrLength || a_iCount == -1 )
+		a_iCount = iStrLength;
+
+	TINT    iOldLength = m_iStrLen;
+	TWCHAR* pOldString = m_pBuffer;
+
+	TBOOL bAllocated = AllocBuffer( iOldLength + a_iCount, TFALSE );
+
+	if ( bAllocated )
 	{
-		bVar1 = *str;
-		bVar4 = bVar1 < *a_pcString;
-
-		if ( bVar1 != *a_pcString ) break;
-		if ( bVar1 == 0 ) return 0;
-
-		bVar1 = str[ 1 ];
-		bVar4 = bVar1 < a_pcString[ 1 ];
-
-		if ( bVar1 != a_pcString[ 1 ] ) break;
-		if ( bVar1 == 0 ) return 0;
-
-		str += 2;
-		a_pcString += 2;
+		// Copy the parts before and after the insertion point into the new buffer
+		TStringManager::String16Copy( m_pBuffer, pOldString, a_iPos );
+		TStringManager::String16Copy( m_pBuffer + a_iPos + a_iCount, pOldString + a_iPos, iOldLength - a_iPos );
 	}
-	return bVar4 | 1;
+	else
+	{
+		// Shift the tail (and the terminator) to make room
+		T2String16::Move( m_pBuffer + a_iPos + a_iCount, m_pBuffer + a_iPos, iOldLength - a_iPos );
+	}
+
+	TStringManager::String16Copy( m_pBuffer + a_iPos, a_wszString, a_iCount );
+	m_pBuffer[ m_iStrLen ] = 0;
+
+	if ( bAllocated && iOldLength > 0 )
+		m_pAllocator->Free( pOldString );
+
+	return *this;
+}
+
+// $Barnyard: FUNCTION 006cc5b0
+TString16& TString16::Delete( TINT a_iPos, TINT a_iCount )
+{
+	TINT    iOldLength = m_iStrLen;
+	TWCHAR* pOldString = m_pBuffer;
+
+	TBOOL bAllocated = AllocBuffer( iOldLength - a_iCount, TFALSE );
+
+	if ( bAllocated )
+	{
+		TStringManager::String16Copy( m_pBuffer, pOldString, a_iPos );
+		TStringManager::String16Copy( m_pBuffer + a_iPos, pOldString + a_iPos + a_iCount, iOldLength - a_iPos - a_iCount );
+	}
+	else
+	{
+		TStringManager::String16Copy( m_pBuffer + a_iPos, m_pBuffer + a_iPos + a_iCount, iOldLength - a_iPos - a_iCount );
+	}
+
+	m_pBuffer[ m_iStrLen ] = 0;
+
+	if ( bAllocated && iOldLength > 0 )
+		m_pAllocator->Free( pOldString );
+
+	return *this;
+}
+
+// $Barnyard: FUNCTION 006cc740
+TString16& TString16::operator=( const TString8& a_rcStr )
+{
+	TINT iLength = a_rcStr.Length();
+	AllocBuffer( iLength, TTRUE );
+
+	if ( iLength != 0 )
+		TStringManager::StringCharToUnicode( m_pBuffer, a_rcStr.GetString(), iLength );
+
+	m_pBuffer[ iLength ] = L'\0';
+	return *this;
+}
+
+// $Barnyard: FUNCTION 006cc780
+TString16& TString16::operator=( const TWCHAR* a_wszStr )
+{
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: retail doesn't check for self-assignment, which would clear the string
+	if ( a_wszStr == m_pBuffer ) return *this;
+#endif
+
+	TINT iLength = a_wszStr ? TINT( wcslen( a_wszStr ) ) : 0;
+	AllocBuffer( iLength, TTRUE );
+
+	if ( iLength != 0 )
+		wcsncpy( m_pBuffer, a_wszStr, iLength );
+
+	m_pBuffer[ iLength ] = L'\0';
+	return *this;
+}
+
+// $Barnyard: FUNCTION 006cc980
+TINT TString16::Compare( const TWCHAR* a_pcString, TINT a_iLength ) const
+{
+	TASSERT( a_pcString != TNULL, "TWString::Compare - Passed string cannot be TNULL" );
+
+	if ( a_iLength == -1 )
+		return wcscmp( GetString(), a_pcString );
+
+	return wcsncmp( GetString(), a_pcString, a_iLength );
 }
 
 TString16& TString16::Reserve( TINT size )

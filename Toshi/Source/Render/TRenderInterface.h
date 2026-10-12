@@ -47,13 +47,24 @@ public:
 		ASPECT_RATIO_16_9,
 	};
 
+	// Index of the format in TD3DAdapter::Mode::Device::DEPTHSTENCILFORMATS
+	using DEPTHSTENCILFORMAT = TUINT32;
+	enum DEPTHSTENCILFORMAT_ : DEPTHSTENCILFORMAT
+	{
+		DEPTHSTENCILFORMAT_D16    = 0,
+		DEPTHSTENCILFORMAT_D15_S1 = 1,
+		DEPTHSTENCILFORMAT_D24_X8 = 2,
+		DEPTHSTENCILFORMAT_D24_S8 = 3,
+		DEPTHSTENCILFORMAT_D32    = 4,
+	};
+
 	struct DISPLAYPARAMS
 	{
-		TUINT32 uiWidth;
-		TUINT32 uiHeight;
-		TUINT32 uiColourDepth;
-		TUINT32 eDepthStencilFormat;
-		TBOOL   bWindowed;
+		TUINT32            uiWidth;
+		TUINT32            uiHeight;
+		TUINT32            uiColourDepth;
+		DEPTHSTENCILFORMAT eDepthStencilFormat;
+		TBOOL              bWindowed;
 	};
 
 public:
@@ -61,15 +72,15 @@ public:
 	virtual ~TRenderInterface();
 
 	virtual TBOOL                         CreateDisplay( const DISPLAYPARAMS& a_rParams );
-	virtual TBOOL                         DestroyDisplay()              = 0;
-	virtual TBOOL                         Update( TFLOAT a_fDeltaTime ) = 0;
+	virtual TBOOL                         DestroyDisplay();
+	virtual TBOOL                         Update( TFLOAT a_fDeltaTime );
 	virtual TBOOL                         BeginScene();
 	virtual TBOOL                         EndScene()                = 0;
 	virtual TRenderAdapter::Mode::Device* GetCurrentDevice()        = 0;
 	virtual DISPLAYPARAMS*                GetCurrentDisplayParams() = 0;
 	virtual TBOOL                         Create();
 	virtual TBOOL                         Destroy();
-	virtual void                          RenderIndexPrimitive( TINT param_2, TINT param_3, TINT param_4, TINT param_5, TINT param_6, TINT param_7 );
+	virtual void                          RenderIndexPrimitive( TINT a_ePrimitiveType, TINT a_iNumVertices, TINT a_iNumPrimitives, TINT a_pIndices, TINT a_pVertices, TINT a_iVertexStride );
 	virtual void                          DumpStats();
 	virtual void                          GetScreenOffset( TVector2& a_rVec );
 	virtual void                          SetScreenOffset( const TVector2& a_rVec );
@@ -77,14 +88,14 @@ public:
 	virtual TFLOAT                        GetPixelAspectRatio();
 	virtual TBOOL                         SetPixelAspectRatio( TFLOAT a_fPixelAspectRatio );
 	virtual void                          FlushOrderTables();
-	virtual TBOOL                         IsTextureFormatSupported( TINT a_eTextureFormat );
+	virtual TBOOL                         IsTextureFormatSupported( TTEXTURERESOURCEFORMAT a_eTextureFormat );
 	virtual TBOOL                         Supports32BitTextures();
 	virtual TRenderContext*               CreateRenderContext()                              = 0;
 	virtual TRenderCapture*               CreateCapture()                                    = 0;
 	virtual void                          DestroyCapture( TRenderCapture* a_pRenderCapture ) = 0;
 	virtual void                          SetLightDirectionMatrix( const TMatrix44& a_rMatrix );
 	virtual void                          SetLightColourMatrix( const TMatrix44& a_rMatrix );
-	virtual void                          Unknown1( TViewport* a_pViewport );
+	virtual void                          ConnectDefaultViewportHandlers( TViewport* a_pViewport );
 	virtual void*                         CreateUnknown( const TCHAR* a_szName, TINT a_iUnk1, TINT a_iUnk2, TINT a_iUnk3 )                       = 0;
 	virtual TModel*                       CreateModelTMD( TTMD* a_pTMD, TBOOL a_bLoad )                                                          = 0;
 	virtual TModel*                       CreateModelTMDFile( const TCHAR* a_szFilePath, TBOOL a_bLoad )                                         = 0;
@@ -140,6 +151,8 @@ public:
 	const TMatrix44& GetLightColour() const { return m_LightColour; }
 
 	TRenderContext* GetCurrentContext() const { return m_pCurrentContext; }
+	TRenderContext* GetCreatedContext() const { return m_pCreatedContext; }
+	TUINT32         GetFrameCount() const { return m_iFrameCount; }
 	// $Barnyard: FUNCTION 006be950
 	TNodeList<TRenderAdapter>* GetAdapterList() { return &m_AdapterList; }
 	TKeyframeLibraryManager&   GetKeyframeLibraryManager() { return m_KeyframeManager; }
@@ -147,6 +160,9 @@ public:
 	TTexture*                  GetInvalidTexture() { return m_pInvalidTexture; }
 
 	void DestroyAllShaderResources();
+
+	// Destroys every resource of a_pClass (or derived) in the tree that starts at a_pResource, including their children.
+	void DestroyResourcesOfClassRecurse( const TClass* a_pClass, TResource* a_pResource );
 
 	void FlushDyingResources();
 	void DestroyDyingResources( TResource* resources );

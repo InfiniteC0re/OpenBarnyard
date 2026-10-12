@@ -21,6 +21,7 @@ TTexture::TTexture()
 }
 
 // $Barnyard: FUNCTION 006d9390
+// $Barnyard: FUNCTION 006d93c0
 TTexture::~TTexture()
 {
 	TTextureFactory* pTexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>( SYSRESOURCE_TEXTUREFACTORY );

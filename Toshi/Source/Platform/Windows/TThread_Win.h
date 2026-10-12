@@ -33,11 +33,18 @@ public:
 		THREAD_PRIORITY_TIME_CRITICAL = 15
 	};
 
+	using FLAGS = TUINT8;
+	enum FLAGS_ : FLAGS
+	{
+		FLAGS_NONE      = 0,
+		FLAGS_SUSPENDED = BITFLAG( 0 ), // don't resume the thread after creating it
+	};
+
 public:
 	virtual void Main() = 0;
 	virtual ~TThread(){};
 
-	TBOOL Create( size_t a_iStackSize, PRIORITY a_ePriority, TUINT8 a_eFlags );
+	TBOOL Create( size_t a_iStackSize, PRIORITY a_ePriority, FLAGS a_eFlags );
 	TBOOL Destroy();
 
 	static TBOOL GetPriority( void* a_hThreadHnd, PRIORITY& a_ePriority );

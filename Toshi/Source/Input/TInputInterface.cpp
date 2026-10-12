@@ -49,6 +49,12 @@ void TInputInterface::AddDevice( TInputDevice* device )
 	}
 }
 
+// $Barnyard: FUNCTION 006c3d10
+void TInputInterface::SendEvent( TInputDevice* a_pSource, TINT a_iDoodad, EVENT_TYPE a_eEventType )
+{
+	m_InputEventEmitter.Throw( InputEvent( a_pSource, a_iDoodad, a_eEventType ) );
+}
+
 // $Barnyard: FUNCTION 006c3d50
 void TInputInterface::RemoveDevice( TInputDevice* device )
 {
@@ -125,7 +131,12 @@ TINT TInputInterface::ProcessEvents( TFLOAT a_fDeltaTime )
 
 	for ( auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it )
 	{
+#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
+		// Development: keys injected with -devkeys come in while the keyboard isn't acquired (unfocused runs)
+		if ( it->IsAcquired() || ( TInputDeviceKeyboard::Dev_HasInjectedKeys() && it->IsA( &TGetClass( TInputDeviceKeyboard ) ) ) )
+#else
 		if ( it->IsAcquired() )
+#endif
 		{
 			iNumProcessed += it->ProcessEvents( m_InputEventEmitter, a_fDeltaTime );
 		}
@@ -146,18 +157,23 @@ void TInputInterface::StopAllRepeats()
 // $Barnyard: FUNCTION 006c3d90
 void TInputInterface::ReleaseAllDevices()
 {
-	for ( auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it )
+	for ( auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); )
 	{
-		it->Unacquire();
-		it->Release();
-		it->Remove();
-		delete it.Get();
+		// Take the next device before this one gets deleted
+		auto pDevice = it.Get();
+		++it;
+
+		pDevice->Unacquire();
+		pDevice->Release();
+		pDevice->Remove();
+		delete pDevice;
 	}
 }
 
 // $Barnyard: FUNCTION 006c4030
 TInputInterface::TInputInterface()
     : m_InputEventEmitter( this )
+    , m_DeviceStatusEmitter( this )
 {
 	m_bIsExclusiveMode = TFALSE;
 }
@@ -178,6 +194,7 @@ TInputInterface::InputEvent::InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad
 	m_wszString[ 0 ]    = L'\0';
 }
 
+// $Barnyard: FUNCTION 006c3bd0
 TInputInterface::InputEvent::InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TWCHAR* a_wszString )
 {
 	m_pSource           = a_pDevice;
@@ -273,6 +290,12 @@ TFLOAT TInputInterface::InputEvent::GetMagnitudeFloat( TINT a_iAxis ) const
 TBOOL TInputInterface::InputEvent::StartRepeat( TFLOAT a_fFirstRepeatTime, TFLOAT a_fRepeatTime ) const
 {
 	return m_pSource->StartRepeat( m_iDoodad, a_fFirstRepeatTime, a_fRepeatTime );
+}
+
+// $Barnyard: FUNCTION 006c3cf0
+TBOOL TInputInterface::InputEvent::StartRepeat() const
+{
+	return m_pSource->StartRepeat( m_iDoodad, 0.0f, 0.0f );
 }
 
 TOSHI_NAMESPACE_END

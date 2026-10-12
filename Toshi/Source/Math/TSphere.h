@@ -108,6 +108,11 @@ public:
 		return m_fRadius;
 	}
 
+	constexpr TFORCEINLINE TFLOAT& GetRadius()
+	{
+		return m_fRadius;
+	}
+
 	TFORCEINLINE TVector4&       AsVector4() { return *TREINTERPRETCAST( TVector4*, this ); }
 	TFORCEINLINE const TVector4& AsVector4() const { return *TREINTERPRETCAST( const TVector4*, this ); }
 

@@ -41,16 +41,32 @@ void AWaveBank::ResetWave( TINT a_iWaveIndex )
 }
 
 // $Barnyard: FUNCTION 005dce30
+// $Barnyard: FUNCTION 005dcf20
 AWaveBank::~AWaveBank()
 {
 	ASoundManager::ms_WaveBanks.FindAndRemove( m_strBank );
 	delete[] m_pWaves;
 }
 
+// $Barnyard: FUNCTION 005dc260
 AWave* AWaveBank::GetWave( TINT a_iWaveIndex )
 {
 	TASSERT( a_iWaveIndex < m_iNumWaves );
 	return &m_pWaves[ a_iWaveIndex ];
+}
+
+// $Barnyard: FUNCTION 005dc130
+AWaveSampleHandle AWaveBank::GetWaveSampleHandle( TINT a_iWaveIndex )
+{
+	TASSERT( a_iWaveIndex < m_iNumWaves );
+	return m_pWaves[ a_iWaveIndex ].pSampleHandle;
+}
+
+// $Barnyard: FUNCTION 005dc1e0
+TFLOAT AWaveBank::GetWaveLength( TINT a_iWaveIndex )
+{
+	TASSERT( a_iWaveIndex < m_iNumWaves );
+	return m_pWaves[ a_iWaveIndex ].fLength;
 }
 
 // $Barnyard: FUNCTION 005dc1a0
@@ -84,16 +100,37 @@ AWaveSampleHandle AWaveBank::CreateWaveSample( TINT a_iWaveIndex, TINT a_iUnused
 void AWaveBank::SetWaveFlag1( TINT a_iWaveIndex )
 {
 	TASSERT( a_iWaveIndex < m_iNumWaves );
-	m_pWaves[ a_iWaveIndex ].iFlags &= ~2;
-	m_pWaves[ a_iWaveIndex ].iFlags |= 1;
+	m_pWaves[ a_iWaveIndex ].iFlags &= ~AWave::FLAGS_3D;
+	m_pWaves[ a_iWaveIndex ].iFlags |= AWave::FLAGS_2D;
 }
 
 // $Barnyard: FUNCTION 005dc240
 void AWaveBank::SetWaveFlag2( TINT a_iWaveIndex )
 {
 	TASSERT( a_iWaveIndex < m_iNumWaves );
-	m_pWaves[ a_iWaveIndex ].iFlags &= ~1;
-	m_pWaves[ a_iWaveIndex ].iFlags |= 2;
+	m_pWaves[ a_iWaveIndex ].iFlags &= ~AWave::FLAGS_2D;
+	m_pWaves[ a_iWaveIndex ].iFlags |= AWave::FLAGS_3D;
+}
+
+// $Barnyard: FUNCTION 005dc300
+void AWaveBank::DestroyAll()
+{
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: retail iterates the map while ~AWaveBank removes the bank from it (reads the successor of a freed node), take the first one instead
+	while ( ASoundManager::ms_WaveBanks.Size() != 0 )
+	{
+		AWaveBank* pWaveBank = ASoundManager::ms_WaveBanks.Begin()->GetSecond();
+		pWaveBank->Unload();
+		delete pWaveBank;
+	}
+#else
+	for ( auto it = ASoundManager::ms_WaveBanks.Begin(); it != ASoundManager::ms_WaveBanks.End(); it++ )
+	{
+		AWaveBank* pWaveBank = it->GetSecond();
+		pWaveBank->Unload();
+		delete pWaveBank;
+	}
+#endif
 }
 
 // $Barnyard: FUNCTION 005dc390

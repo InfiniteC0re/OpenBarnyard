@@ -51,7 +51,7 @@ void SDK_T2GUIFont::DrawTextWrapped( const wchar_t* a_wszText, TFLOAT a_fX, TFLO
 						if ( iCharIndex >= 0 )
 						{
 							auto& pCharData = pFontDef->pCharactersData[ iCharIndex ];
-							fWidth1 += ( pFontDef->Unk2 + pCharData.Unk4 + pCharData.Unk3 + pCharData.ui8CharWidth ) * a_fScale;
+							fWidth1 += ( pFontDef->iLetterSpacing + pCharData.iRightPadding + pCharData.iLeftPadding + pCharData.ui8CharWidth ) * a_fScale;
 						}
 					}
 
@@ -101,10 +101,10 @@ void SDK_T2GUIFont::DrawTextSingleLine( const wchar_t* a_wszText, TINT a_iTextLe
 	auto pRenderer = AGUI2::GetRenderer();
 	pRenderer->SetColour( a_uiColour );
 
-	TFLOAT         fOffsetX      = 0.0f;
-	TFLOAT         fOffsetY      = 0.0f;
-	TFLOAT         fXToUV        = 0.0f;
-	TFLOAT         fYToUV        = 0.0f;
+	TFLOAT             fOffsetX      = 0.0f;
+	TFLOAT             fOffsetY      = 0.0f;
+	TFLOAT             fXToUV        = 0.0f;
+	TFLOAT             fYToUV        = 0.0f;
 	SDK_T2GUIMaterial* pPrevMaterial = TNULL;
 
 	for ( TINT i = 0; i < a_iTextLength; i++ )
@@ -119,7 +119,7 @@ void SDK_T2GUIFont::DrawTextSingleLine( const wchar_t* a_wszText, TINT a_iTextLe
 			if ( iCharIndex >= 0 )
 			{
 				auto&  pCharData = pFontDef->pCharactersData[ iCharIndex ];
-				TFLOAT fPos1X    = pCharData.Unk3 * a_fScale + a_fX;
+				TFLOAT fPos1X    = pCharData.iLeftPadding * a_fScale + a_fX;
 
 				if ( pCharData.ui8CharWidth != 0 && pCharData.ui8CharHeight != 0 )
 				{
@@ -137,7 +137,7 @@ void SDK_T2GUIFont::DrawTextSingleLine( const wchar_t* a_wszText, TINT a_iTextLe
 
 					TFIXME( "Call a_fnCallback(i, fOffsetX, fOffsetY)" );
 
-					TFLOAT fPos1Y = ( ( pFontDef->uiLineHeight + pCharData.Unk5 ) - pCharData.ui8CharHeight ) * a_fScale + a_fY;
+					TFLOAT fPos1Y = ( ( pFontDef->uiLineHeight + pCharData.iYOffset ) - pCharData.ui8CharHeight ) * a_fScale + a_fY;
 					TFLOAT fPos2Y = ( pCharData.ui8CharHeight + 1 ) * a_fScale + fPos1Y;
 					TFLOAT fPos2X = ( pCharData.ui8CharWidth + 1 ) * a_fScale + fPos1X;
 
@@ -149,7 +149,7 @@ void SDK_T2GUIFont::DrawTextSingleLine( const wchar_t* a_wszText, TINT a_iTextLe
 					);
 				}
 
-				TFLOAT fPos2X = TFLOAT( pFontDef->Unk2 + pCharData.Unk4 + pCharData.ui8CharWidth );
+				TFLOAT fPos2X = TFLOAT( pFontDef->iLetterSpacing + pCharData.iRightPadding + pCharData.ui8CharWidth );
 				a_fX          = fPos2X * a_fScale + fPos1X;
 			}
 		}
@@ -198,7 +198,7 @@ TFLOAT SDK_T2GUIFont::GetTextHeightWrapped( const wchar_t* a_wszText, TFLOAT a_f
 						if ( iCharIndex >= 0 )
 						{
 							auto& pCharData = pFontDef->pCharactersData[ iCharIndex ];
-							fWidth1 += ( pFontDef->Unk2 + pCharData.Unk4 + pCharData.Unk3 + pCharData.ui8CharWidth ) * a_fScale;
+							fWidth1 += ( pFontDef->iLetterSpacing + pCharData.iRightPadding + pCharData.iLeftPadding + pCharData.ui8CharWidth ) * a_fScale;
 						}
 					}
 
@@ -270,7 +270,7 @@ TFLOAT SDK_T2GUIFont::GetTextWidth( const wchar_t* a_wszText, TINT a_iTextLength
 			if ( iCharIndex >= 0 )
 			{
 				auto& pCharData = pFontDef->pCharactersData[ iCharIndex ];
-				iWidth += pFontDef->Unk2 + pCharData.Unk4 + pCharData.Unk3 + pCharData.ui8CharWidth;
+				iWidth += pFontDef->iLetterSpacing + pCharData.iRightPadding + pCharData.iLeftPadding + pCharData.ui8CharWidth;
 			}
 		}
 	}

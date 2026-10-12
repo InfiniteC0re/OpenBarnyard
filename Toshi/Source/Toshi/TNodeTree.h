@@ -57,6 +57,7 @@ public:
 	}
 
 	// $Barnyard: FUNCTION 00403980
+	// $Barnyard: FUNCTION 006beb10
 	/**
 		* Inserts node as a child of another node.
 		* 
@@ -106,6 +107,38 @@ public:
 		Insert( GetRoot(), sourceNode );
 	}
 
+	// $Barnyard: FUNCTION 00645fa0
+	/**
+		* Inserts node as the first child of the root.
+		*
+		* @param sourceNode Pointer to the node you want to insert.
+		*/
+	void InsertAtRootHead( T* sourceNode )
+	{
+		T* pRoot = GetRoot();
+
+		Remove( *sourceNode, TFALSE );
+
+		T* firstAttached = pRoot->Child();
+
+		if ( firstAttached != TNULL )
+		{
+			T* lastAttached = firstAttached->Prev();
+
+			sourceNode->m_Tree = this;
+			sourceNode->m_Next = firstAttached;
+			sourceNode->m_Prev = lastAttached;
+
+			lastAttached->m_Next  = sourceNode;
+			firstAttached->m_Prev = sourceNode;
+		}
+
+		m_Count += 1;
+		sourceNode->m_Parent = pRoot;
+		pRoot->m_Child       = sourceNode;
+		sourceNode->m_Tree   = this;
+	}
+
 	// $Barnyard: FUNCTION 004030d0
 	/**
 		 * Tries to remove sourceNode from the tree and inserts it to the parentNode or to the root
@@ -126,9 +159,11 @@ public:
 		Insert( parentNode, sourceNode );
 	}
 
+	// $Barnyard: FUNCTION 006bf2b0
+	// TNodeTree<TTask>
+	// $Barnyard: FUNCTION 00403110
 	T* Remove( T& node, TBOOL flag = TFALSE )
 	{
-		// Toshi::TNodeTree<Toshi::TResource>::Remove - 00691e70
 		TNodeTree<T>* nodeRoot   = node.Tree();
 		T*            nodeParent = node.Parent();
 
@@ -143,19 +178,16 @@ public:
 			m_Count -= 1;
 		}
 
-		if ( flag )
+		if ( flag == TTRUE )
 		{
-			T* attachedNode = node.Child();
-
-			while ( attachedNode != TNULL )
+			// Move the children of the node to its parent (or to the root)
+			while ( node.Child() != TNULL )
 			{
-				TNodeTree<T>* nodeRoot = node.Tree();
+				T* attachedNode = node.Child();
+				T* newParent    = ( node.Parent() == ( node.Tree() ? node.Tree()->GetRoot() : TNULL ) ) ? TNULL : node.Parent();
 
 				Remove( *attachedNode, TFALSE );
-				Insert( node.Parent(), attachedNode );
-
-				attachedNode = node.Child();
-				TIMPLEMENT_D( "It seems to be unused and I hope it is. I don't know if it works and what it should do" );
+				Insert( newParent ? newParent : GetRoot(), attachedNode );
 			}
 		}
 
@@ -184,6 +216,7 @@ public:
 	}
 
 	// $Barnyard: FUNCTION 006bf3d0
+	// $Barnyard: FUNCTION 006bcaf0
 	void DeleteRecurse( T* node )
 	{
 		while ( node != TNULL )

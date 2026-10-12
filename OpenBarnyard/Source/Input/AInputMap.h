@@ -98,6 +98,12 @@ class AInputMap : public Toshi::TObject
 public:
 	TDECLARE_CLASS( AInputMap, Toshi::TObject );
 
+	// Low word is the AInputCommand, high word is the 1-based index of the binding in the controls data
+	using CommandBinding = TUINT32;
+
+	static AInputCommand GetBindingCommand( CommandBinding a_uiBinding ) { return AInputCommand( TUINT16( a_uiBinding ) ); }
+	static TUINT16       GetBindingIndex( CommandBinding a_uiBinding ) { return TUINT16( a_uiBinding >> 16 ); }
+
 public:
 	// $Barnyard: FUNCTION 00596a20
 	AInputMap( const Toshi::TPString8& a_rName )
@@ -105,12 +111,20 @@ public:
 	{
 	}
 
+	// $Barnyard: FUNCTION 00596bd0
+	// $Barnyard: FUNCTION 00596dc0
+	~AInputMap() {}
+
 	const Toshi::TPString8& GetName() const { return m_Name; }
 
-	void                                                      LoadFromProperties( const PBProperties& a_rProperties );
-	Toshi::T2Map<Toshi::TInputDevice::Doodad, AInputCommand>& GetCommandMap() { return m_oDoodadToCommandMap; }
+	void LoadFromProperties( const PBProperties& a_rProperties );
+
+	// Returns the doodad bound to the command or -1. If a_bPreferMouseKeyboard is TFALSE, the binding listed first is returned
+	Toshi::TInputDevice::Doodad GetCommandDoodad( AInputCommand a_eCommand, TBOOL a_bPreferMouseKeyboard );
+
+	Toshi::T2Map<Toshi::TInputDevice::Doodad, CommandBinding>& GetCommandMap() { return m_oDoodadToCommandMap; }
 
 private:
-	Toshi::TPString8                                         m_Name;
-	Toshi::T2Map<Toshi::TInputDevice::Doodad, AInputCommand> m_oDoodadToCommandMap;
+	Toshi::TPString8                                          m_Name;                // 0x04
+	Toshi::T2Map<Toshi::TInputDevice::Doodad, CommandBinding> m_oDoodadToCommandMap; // 0x08
 };

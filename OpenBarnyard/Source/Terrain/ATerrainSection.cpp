@@ -36,6 +36,39 @@ TBOOL ATerrainSection::IsPointInside( const Toshi::TVector4& a_rcPoint )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 005ed1d0
+ATerrainSection* ATerrainSection::FindUnloadedSectionBelow( const Toshi::TVector4& a_rcPosition ) const
+{
+	TFLOAT fMaxDistance = 400.0f;
+
+	if ( !m_pCollisionModelData || !m_pCollisionModelData->m_pCollisionModelSet )
+		return TNULL;
+
+	TVector4 vecOrigin = a_rcPosition;
+	vecOrigin.y -= 200.0f;
+
+	ATerrainInterface*        pTerrain = ATerrainInterface::GetSingleton();
+	ACollisionModelRayHitList oHitList;
+
+	if ( !m_pCollisionModelData->m_oCollisionInstance.CollideRay( vecOrigin, TVector4::VEC_POSY, fMaxDistance, &oHitList, pTerrain->GetSectionRayIgnoreGroups(), TFALSE ) )
+		return TNULL;
+
+	for ( TINT i = 0; i < oHitList.iNumHits; i++ )
+	{
+		ACollisionModelRayHitList::Hit& rHit      = oHitList.aHits[ i ];
+		TModelCollisionData*            pCollData = rHit.pInstance->GetCollisionData( rHit.iModel );
+		const TString8&                 strGroup  = pCollData->GetCollGroup( pCollData->GetGroupForTriangleImp( rHit.uiFaceId ) ).strName;
+
+		// Skip the "coll_load_" prefix of the group name to get the section name
+		ATerrainSection* pSection = pTerrain->FindSection( strGroup.GetString() + 10 );
+
+		if ( pSection && !pSection->IsLODLoaded( ATerrainLODType_High ) )
+			return pSection;
+	}
+
+	return TNULL;
+}
+
 // $Barnyard: FUNCTION 005ed310
 void ATerrainSection::LoadCollision()
 {
@@ -85,7 +118,7 @@ void ATerrainSection::LoadModels( ATerrainLODType a_eLODType )
 		if ( iNumLODs == 0 && m_szCollisionFilename[ 0 ] == '\0' )
 		{
 			SetLODQueued( a_eLODType, TFALSE );
-			SetLODEmpty( a_eLODType, TTRUE );
+			SetLODReady( a_eLODType, TTRUE );
 			SetLODLoaded( a_eLODType, TTRUE );
 		}
 		else
@@ -195,8 +228,13 @@ void ATerrainSection::LoadMatlib( ATerrainLODType a_eLODType )
 // $Barnyard: FUNCTION 005ed000
 void ATerrainSection::UnloadMatlib( ATerrainLODType a_eLODType )
 {
-	TINFO( "ATerrainSection: Unloading '%s' matlib\n", a_eLODType == ATerrainLODType_High ? m_szHighMatLibFilename : m_szLowMatLibFilename );
 	TASSERT( a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low );
+
+	// NOTE: the log isn't in retail. DestroyLOD gets here again once per LOD block of the section (via
+	// ATerrainLODBlock::Assign, as in retail) and a section without a matlib for the LOD has an empty file name,
+	// so only log when a library is actually unloaded
+	if ( ( a_eLODType == ATerrainLODType_High ) ? m_pMatLibHigh != TNULL : m_pMatLibLow != TNULL )
+		TINFO( "ATerrainSection: Unloading '%s' matlib\n", a_eLODType == ATerrainLODType_High ? m_szHighMatLibFilename : m_szLowMatLibFilename );
 
 	if ( a_eLODType == ATerrainLODType_High )
 	{
@@ -249,7 +287,7 @@ void ATerrainSection::DestroyLOD( ATerrainLODType a_eLODType )
 
 	UnloadMatlib( a_eLODType );
 
-	TUINT32 eNewFlags;
+	FLAGS eNewFlags;
 
 	if ( a_eLODType == ATerrainLODType_High )
 	{
@@ -285,7 +323,7 @@ void ATerrainSection::DestroyLOD( ATerrainLODType a_eLODType )
 	}
 
 	m_eFlags = eNewFlags;
-	SetLODEmpty( a_eLODType, TFALSE );
+	SetLODReady( a_eLODType, TFALSE );
 }
 
 // $Barnyard: FUNCTION 005ecea0
@@ -331,11 +369,11 @@ void ATerrainSection::SetLODQueued( ATerrainLODType a_eLODType, TBOOL a_bQueued 
 
 	if ( a_bQueued )
 	{
-		m_eFlags |= ( 16 << a_eLODType );
+		m_eFlags |= ( FLAGS_HIGH_LOD_QUEUED << a_eLODType );
 	}
 	else
 	{
-		m_eFlags &= ~( 16 << a_eLODType );
+		m_eFlags &= ~( FLAGS_HIGH_LOD_QUEUED << a_eLODType );
 	}
 }
 
@@ -345,11 +383,11 @@ void ATerrainSection::SetLODLoaded( ATerrainLODType a_eLODType, TBOOL a_bLoaded 
 
 	if ( a_bLoaded )
 	{
-		m_eFlags |= ( 1 << ( a_eLODType ) );
+		m_eFlags |= ( FLAGS_HIGH_LOD_LOADED << ( a_eLODType ) );
 	}
 	else
 	{
-		m_eFlags &= ~( 1 << ( a_eLODType ) );
+		m_eFlags &= ~( FLAGS_HIGH_LOD_LOADED << ( a_eLODType ) );
 	}
 }
 
@@ -359,26 +397,26 @@ void ATerrainSection::SetLODLoading( ATerrainLODType a_eLODType, TBOOL a_bLoadin
 
 	if ( a_bLoading )
 	{
-		m_eFlags |= ( 1 << ( a_eLODType + ATerrainLODType_NUMOF ) );
+		m_eFlags |= ( FLAGS_HIGH_LOD_LOADED << ( a_eLODType + ATerrainLODType_NUMOF ) );
 	}
 	else
 	{
-		m_eFlags &= ~( 1 << ( a_eLODType + ATerrainLODType_NUMOF ) );
+		m_eFlags &= ~( FLAGS_HIGH_LOD_LOADED << ( a_eLODType + ATerrainLODType_NUMOF ) );
 	}
 }
 
 // $Barnyard: FUNCTION 005ece70
-void ATerrainSection::SetLODEmpty( ATerrainLODType a_eLODType, TBOOL a_bEmpty )
+void ATerrainSection::SetLODReady( ATerrainLODType a_eLODType, TBOOL a_bReady )
 {
 	TASSERT( a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low );
 
-	if ( a_bEmpty )
+	if ( a_bReady )
 	{
-		m_eFlags |= ( 64 << a_eLODType );
+		m_eFlags |= ( FLAGS_HIGH_LOD_READY << a_eLODType );
 	}
 	else
 	{
-		m_eFlags &= ~( 64 << a_eLODType );
+		m_eFlags &= ~( FLAGS_HIGH_LOD_READY << a_eLODType );
 	}
 }
 
@@ -470,8 +508,18 @@ void ATerrainSection::ModelNode::SetGlow( TBOOL a_bIsGlow )
 
 				pMesh->SetFlags( TMesh::State_Glow, TTRUE );
 				pMaterial->SetFlags( TMaterial::FLAGS_GLOW, a_bIsGlow );
-				pMaterial->SetBlendMode( 3 );
+				pMaterial->SetBlendMode( AWorldMaterial::BLENDMODE_ADDITIVE );
 			}
 		}
+	}
+}
+
+// $Barnyard: FUNCTION 005ecfd0
+void ATerrainSection::ForceLoad( ATerrainLODType a_eLODType )
+{
+	if ( !IsLODLoaded( a_eLODType ) )
+	{
+		ATerrainInterface* pTerrain = ATerrainInterface::GetSingleton();
+		pTerrain->ForceSection( pTerrain->GetSectionIndex( this ), TFALSE );
 	}
 }

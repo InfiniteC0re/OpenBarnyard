@@ -5,7 +5,7 @@
 #include <GUI/T2GUIRectangle.h>
 
 class AFade
-	: public Toshi::TQList<AFade>::TNode
+    : public Toshi::TQList<AFade>::TNode
 {
 public:
 	friend class AFadeManager;
@@ -29,6 +29,18 @@ public:
 		    : A( TCOLOR_GET_A( a_uiColor ) ), R( TCOLOR_GET_R( a_uiColor ) ), G( TCOLOR_GET_G( a_uiColor ) ), B( TCOLOR_GET_B( a_uiColor ) )
 		{}
 
+		// $Barnyard: FUNCTION 00406ca0
+		// NOTE: a constructor taking 0-1 floats in the original. It's a setter here
+		// because Color( 0, 0, 0, 0 ) would be ambiguous with the TUINT8 constructor.
+		Color& SetFloats( TFLOAT a_fR, TFLOAT a_fG, TFLOAT a_fB, TFLOAT a_fA )
+		{
+			A = TUINT8( a_fA * 255.0f );
+			R = TUINT8( a_fR * 255.0f );
+			G = TUINT8( a_fG * 255.0f );
+			B = TUINT8( a_fB * 255.0f );
+			return *this;
+		}
+
 		constexpr TUINT32 GetTColor32() const
 		{
 			return TCOLOR4( R, G, B, A );
@@ -37,7 +49,7 @@ public:
 
 public:
 	AFade();
-	virtual ~AFade() = default;
+	virtual ~AFade();
 
 	void Update( TFLOAT a_fDeltaTime )
 	{

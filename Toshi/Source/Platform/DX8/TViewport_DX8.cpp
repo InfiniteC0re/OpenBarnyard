@@ -29,7 +29,8 @@ void TViewport::BeginSKU()
 
 	pD3DDevice->SetViewport( &viewport );
 
-	TUINT eClearFlags = ( ( m_bAllowDepthClear != TTRUE ) - 1U & 2 | m_bAllowBackgroundClear == TTRUE );
+	TUINT eClearFlags = ( m_bAllowDepthClear == TTRUE ? TRenderD3DInterface::CLEARFLAGS_DEPTH : TRenderD3DInterface::CLEARFLAGS_NONE ) |
+	    ( m_bAllowBackgroundClear == TTRUE ? TRenderD3DInterface::CLEARFLAGS_TARGET : TRenderD3DInterface::CLEARFLAGS_NONE );
 
 	if ( eClearFlags != 0 )
 	{

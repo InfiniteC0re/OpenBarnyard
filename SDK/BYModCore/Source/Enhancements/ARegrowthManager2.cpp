@@ -4,6 +4,7 @@
 #include "StaticLights.h"
 
 #include <BYardSDK/AGlowViewport.h>
+#include <BYardSDK/ABarnExploreMinigameState.h>
 #include <BYardSDK/SDKHooks.h>
 
 #include <Toshi/TSceneObject.h>
@@ -54,7 +55,7 @@ void ARegrowthManager2::FillRenderList()
 			TINT   iFrame  = GrowthToFrame( fGrowth );
 			TFLOAT fNorm   = 0.0f;
 
-			if ( rMap.uiAnimType == 1 )
+			if ( rMap.uiAnimType == GROWTHSTYLE_SCALE )
 			{
 				if ( fGrowth <= 0.001f ) continue;
 				if ( iFrame < 1 ) iFrame = 1;
@@ -80,7 +81,7 @@ void ARegrowthManager2::FillRenderList()
 
 			pEntry->oMatrix.Multiply( m_oModelViewMatrix, matLocal );
 
-			if ( rMap.uiAnimType == 1 )
+			if ( rMap.uiAnimType == GROWTHSTYLE_SCALE )
 			{
 				TFLOAT fMax    = (TFLOAT)( rMap.iNumFrames - 1 );
 				TFLOAT fFactor = ( fNorm < fMax ) ? ( fNorm / fMax ) : 1.0f;
@@ -115,13 +116,13 @@ void ARegrowthManager2::FillRenderList()
 // $Barnyard: FUNCTION 005e35d0
 void ARegrowthManager2::FillRenderList_Visible()
 {
-	TRenderContext* pContext      = TRenderInterface::GetSingleton()->GetCurrentContext();
-	TVector4        vecCamPos     = pContext->GetViewWorldMatrix().GetTranslation();
-	TFLOAT          fTotalTime    = *(TFLOAT*)( *(TUINT*)0x00783d3c + 0x20 ); // AGameTimeManager::ms_pInstance->m_flTotalTime
-	TUINT           uiNumMappings = *(TUINT*)( *(TUINT*)0x007962e8 + 8 );     // s_pBoneHelper->m_uiNumBones
-	TFLOAT          fWaterLevel   = *(TFLOAT*)0x0071f754;
-	TINT            iWaterMode    = *(TINT*)0x00773a64;
-	TINT            iCount        = 0;
+	TRenderContext*                  pContext      = TRenderInterface::GetSingleton()->GetCurrentContext();
+	TVector4                         vecCamPos     = pContext->GetViewWorldMatrix().GetTranslation();
+	TFLOAT                           fTotalTime    = *(TFLOAT*)( *(TUINT*)0x00783d3c + 0x20 ); // AGameTimeManager::ms_pInstance->m_flTotalTime
+	TUINT                            uiNumMappings = *(TUINT*)( *(TUINT*)0x007962e8 + 8 );     // s_pBoneHelper->m_uiNumBones
+	TFLOAT                           fWaterLevel   = *(TFLOAT*)0x0071f754;
+	ABarnExploreMinigameState::FLOOR eBarnFloor    = ABarnExploreMinigameState::GetFloor();
+	TINT                             iCount        = 0;
 
 	for ( TUINT i = 0; i < uiNumMappings; i++ )
 	{
@@ -137,7 +138,7 @@ void ARegrowthManager2::FillRenderList_Visible()
 			TINT   iFrame  = GrowthToFrame( fGrowth );
 			TFLOAT fNorm   = 0.0f;
 
-			if ( rMap.uiAnimType == 1 )
+			if ( rMap.uiAnimType == GROWTHSTYLE_SCALE )
 			{
 				if ( fGrowth <= 0.001f ) continue;
 				if ( iFrame < 1 ) iFrame = 1;
@@ -153,9 +154,9 @@ void ARegrowthManager2::FillRenderList_Visible()
 
 			if ( fDistSq >= m_fRenderDistance * m_fRenderDistance ) continue;
 
-			// Water-level filter (DAT_0071f754 / DAT_00773a64)
-			if ( !( pObj->vPosition.y <= fWaterLevel || iWaterMode == 0 ) ) continue;
-			if ( !( pObj->vPosition.y > fWaterLevel || iWaterMode == 1 || iWaterMode == 2 ) ) continue;
+			// Barn floor filter (DAT_0071f754 / ABarnExploreMinigameState::ms_iFloor)
+			if ( !( pObj->vPosition.y <= fWaterLevel || eBarnFloor == ABarnExploreMinigameState::FLOOR_LOFT ) ) continue;
+			if ( !( pObj->vPosition.y > fWaterLevel || eBarnFloor == ABarnExploreMinigameState::FLOOR_GROUND || eBarnFloor == ABarnExploreMinigameState::FLOOR_BASEMENT ) ) continue;
 
 			if ( !TRenderContext::CullSphereToFrustumSimple( sphere, pContext->GetWorldPlanes(), 6 ) ) continue;
 			if ( iCount >= MAX_RENDERED_INSTANCES ) break;
@@ -167,7 +168,7 @@ void ARegrowthManager2::FillRenderList_Visible()
 			CALL( 0x005e2520, void, ARegrowthManager2::Object*, pObj, TMatrix44*, &matLocal );
 			pEntry->oMatrix.Multiply( m_oModelViewMatrix, matLocal );
 
-			if ( rMap.uiAnimType == 1 )
+			if ( rMap.uiAnimType == GROWTHSTYLE_SCALE )
 			{
 				TFLOAT fMax    = (TFLOAT)( rMap.iNumFrames - 1 );
 				TFLOAT fFactor = ( fNorm < fMax ) ? ( fNorm / fMax ) : 1.0f;

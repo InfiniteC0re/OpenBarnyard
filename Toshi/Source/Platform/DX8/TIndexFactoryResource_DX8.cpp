@@ -12,6 +12,7 @@
 
 TOSHI_NAMESPACE_START
 
+// NOTE: GetClass 006d79f0, CreateObject 006d7b20, CreateObjectInPlace 006d7b50
 TDEFINE_CLASS( TIndexFactoryResource );
 
 // destructor
@@ -20,7 +21,7 @@ TDEFINE_CLASS( TIndexFactoryResource );
 // $Barnyard: FUNCTION 006d7a50
 TIndexBlockResource* TIndexFactoryResource::FindBlockResource( TIndexPoolResource* a_pResource )
 {
-	if ( a_pResource->GetFlags() & 2 )
+	if ( a_pResource->GetFlags() & TIndexPoolResourceInterface::FLAGS_DYNAMIC )
 	{
 		return TNULL;
 	}
@@ -29,6 +30,7 @@ TIndexBlockResource* TIndexFactoryResource::FindBlockResource( TIndexPoolResourc
 	Pair result = { TNULL, a_pResource };
 
 	TResource::RecurseSimple(
+	    // $Barnyard: FUNCTION 006d7a10
 	    []( TResource* a_pResource, void* a_pUserData ) {
 		    auto pPair = TSTATICCAST( Pair, a_pUserData );
 

@@ -5,7 +5,7 @@
 #include <GUI/T2GUIRenderer.h>
 
 class AGUI2RendererDX8
-	: public Toshi::T2GUIRenderer
+    : public Toshi::T2GUIRenderer
 {
 public:
 	inline constexpr static TUINT32 MAX_NUM_TRANSFORMS = 32;
@@ -41,12 +41,15 @@ public:
 	virtual void                  ClearScissor() OVERRIDE;
 	virtual void                  RenderRectangle( const Toshi::TVector2& a, const Toshi::TVector2& b, const Toshi::TVector2& uv1, const Toshi::TVector2& uv2 ) OVERRIDE;
 	virtual void                  RenderTriStrip( Toshi::TVector2* vertices, Toshi::TVector2* UV, uint32_t numverts ) OVERRIDE;
-	virtual void                  RenderLine( const Toshi::TVector2& a, const Toshi::TVector2& b ) OVERRIDE;
 	virtual void                  RenderLine( TFLOAT x1, TFLOAT y1, TFLOAT x2, TFLOAT y2 ) OVERRIDE;
+	virtual void                  RenderLine( const Toshi::TVector2& a, const Toshi::TVector2& b ) OVERRIDE;
 	virtual void                  RenderOutlineRectangle( const Toshi::TVector2& a, const Toshi::TVector2& b ) OVERRIDE;
 	virtual void                  RenderFilledRectangle( const Toshi::TVector2& a, const Toshi::TVector2& b ) OVERRIDE;
-	virtual void                  ScaleCoords( TFLOAT& x, TFLOAT& y ) OVERRIDE;
-	virtual void                  ResetZCoordinate() OVERRIDE;
+#ifdef BARNYARD_LATEST
+	virtual void RenderIndexedTriList( Toshi::TVector2* a_pVertices, Toshi::TVector2* a_pUVs, TINT* a_pIndices, TUINT32 a_uiNumIndices, TUINT32 a_uiNumVertices, TFLOAT a_fScaleX, TFLOAT a_fScaleY ) OVERRIDE;
+#endif
+	virtual void ScaleCoords( TFLOAT& x, TFLOAT& y ) OVERRIDE;
+	virtual void ResetZCoordinate() OVERRIDE;
 
 	void UpdateTransform();
 
@@ -55,6 +58,12 @@ private:
 
 public:
 	inline static Vertex sm_Vertices[ MAX_VERTICES ];
+
+#ifdef BARNYARD_LATEST
+	// NOTE: the Wii renderer sends the vertices of the XUI figures straight to the GPU; DX8 draws them from this buffer
+	inline constexpr static TUINT32 MAX_LARGE_VERTICES = 1536;
+	inline static Vertex            sm_aLargeVertices[ MAX_LARGE_VERTICES ];
+#endif
 	inline static TBOOL  sm_bUnknownFlag = TFALSE;
 	inline static TFLOAT sm_fZCoordinate = 0.1f;
 

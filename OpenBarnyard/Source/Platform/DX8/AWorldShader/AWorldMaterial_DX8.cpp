@@ -16,6 +16,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 005f5f60, CreateObject 005f6a30, CreateObjectInPlace 005f6a90
 TDEFINE_CLASS( AWorldMaterialHAL );
 
 // $Barnyard: FUNCTION 005f68f0
@@ -33,6 +34,7 @@ AWorldMaterialHAL::AWorldMaterialHAL()
 }
 
 // $Barnyard: FUNCTION 005f6930
+// $Barnyard: FUNCTION 005f6f20
 AWorldMaterialHAL::~AWorldMaterialHAL()
 {
 	if ( m_pRegMaterial )
@@ -64,7 +66,7 @@ void AWorldMaterialHAL::PreRender()
 	auto pRenderInterface = TRenderD3DInterface::Interface();
 	auto pD3DDevice       = pRenderInterface->GetDirect3DDevice();
 
-	AWorldShaderHAL::s_RenderStateFlags = 0x1B;
+	AWorldShaderHAL::s_RenderStateFlags = AWorldShaderHAL::RENDERSTATE_ALPHABLEND;
 
 	// Setup textures
 	for ( TUINT i = 0; i < TARRAYSIZE( m_aTextures ); i++ )
@@ -166,7 +168,7 @@ void AWorldMaterialHAL::PostRender()
 		pD3DDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP, 1 );
 	}
 
-	AWorldShaderHAL::s_RenderStateFlags = 0x1B;
+	AWorldShaderHAL::s_RenderStateFlags = AWorldShaderHAL::RENDERSTATE_ALPHABLEND;
 }
 
 // $Barnyard: FUNCTION 005f3580
@@ -183,16 +185,16 @@ void AWorldMaterialHAL::SetBlendMode( BLENDMODE a_eBlendMode )
 
 	switch ( a_eBlendMode )
 	{
-		case 0:
+		case BLENDMODE_DEFAULT:
 			SetOrderTable( pShader->GetOrderTable( 0 ) );
 			break;
-		case 1:
+		case BLENDMODE_ALPHA:
 			SetOrderTable( pShader->GetOrderTable( 2 ) );
 			break;
-		case 2:
+		case BLENDMODE_MODULATE:
 			SetOrderTable( pShader->GetOrderTable( 2 ) );
 			break;
-		case 3:
+		case BLENDMODE_ADDITIVE:
 			SetOrderTable( pShader->GetOrderTable( 3 ) );
 			break;
 		case 5:
@@ -201,7 +203,7 @@ void AWorldMaterialHAL::SetBlendMode( BLENDMODE a_eBlendMode )
 		case 6:
 			SetOrderTable( pShader->GetOrderTable( 4 ) );
 			break;
-		case 7:
+		case BLENDMODE_START_RENDER:
 			SetOrderTable( pShader->GetOrderTable( 7 ) );
 			break;
 		default:

@@ -37,6 +37,16 @@ T2GUIContext::T2GUIContext()
 	m_pRootElement = m_pCreatedRootElement;
 }
 
+// NOTE: inlined into T2GUI::DestroyContext (006c4870) in retail
+T2GUIContext::~T2GUIContext()
+{
+	if ( m_pDebugCanvas )
+		delete m_pDebugCanvas;
+
+	if ( m_pCreatedRootElement )
+		delete m_pCreatedRootElement;
+}
+
 // $Barnyard: FUNCTION 006c47f0
 void T2GUIContext::Tick( TFLOAT a_fDeltaTime )
 {

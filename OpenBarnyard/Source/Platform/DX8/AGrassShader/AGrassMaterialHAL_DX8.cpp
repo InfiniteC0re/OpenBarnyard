@@ -13,11 +13,11 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 005f7bf0, CreateObject 005f88a0, CreateObjectInPlace 005f8920
 TDEFINE_CLASS( AGrassMaterialHAL );
 
 AGrassMaterialHAL::AGrassMaterialHAL()
 {
-	
 }
 
 // $Barnyard: FUNCTION 005f80c0
@@ -53,22 +53,22 @@ void AGrassMaterialHAL::PreRender()
 
 	switch ( m_eBlendMode )
 	{
-		case 0:
+		case BLENDMODE_DEFAULT:
 			pDevice->SetRenderState( D3DRS_SRCBLEND, 5 );
 			pDevice->SetRenderState( D3DRS_DESTBLEND, 6 );
 			pDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
 			break;
-		case 1:
+		case BLENDMODE_ALPHA:
 			pDevice->SetRenderState( D3DRS_SRCBLEND, 5 );
 			pDevice->SetRenderState( D3DRS_DESTBLEND, 6 );
 			pDevice->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
 			break;
-		case 2:
+		case BLENDMODE_MODULATE:
 			pDevice->SetRenderState( D3DRS_SRCBLEND, 1 );
 			pDevice->SetRenderState( D3DRS_DESTBLEND, 3 );
 			pDevice->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
 			break;
-		case 3:
+		case BLENDMODE_ADDITIVE:
 			pDevice->SetRenderState( D3DRS_SRCBLEND, 5 );
 			pDevice->SetRenderState( D3DRS_DESTBLEND, 2 );
 			pDevice->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );

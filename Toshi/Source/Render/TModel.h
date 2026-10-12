@@ -50,6 +50,9 @@ public:
 	void SetPreRenderCallback( t_PreRenderCB a_fnCallback );
 	void SetCustomRenderMethod( t_CustomRenderCB a_fnCallback, void* a_pUserData );
 
+	t_CustomRenderCB GetCustomRenderMethod() const { return m_fnCustomRenderCb; }
+	void*            GetCustomRenderUserData() const { return m_pCustomRenderCbUserData; }
+
 	TINT32 GetLOD();
 	void   SetLOD( TINT32 a_iLOD );
 
@@ -93,7 +96,7 @@ public:
 	virtual TBOOL LoadFromFile( const TCHAR* a_szFileName )          = 0;
 	virtual void  Unload()                                           = 0;
 	virtual ~TModel();
-	virtual TBOOL GetUnknownFlag() = 0;
+	virtual TBOOL GetUnknownFlag( void* a_pUnk1, void* a_pUnk2 ) = 0; // +0x18, 2 arguments (RET 8) in retail
 
 	TBOOL LoadTRB();
 	TBOOL LoadTRB( TTRB* a_pTRB );

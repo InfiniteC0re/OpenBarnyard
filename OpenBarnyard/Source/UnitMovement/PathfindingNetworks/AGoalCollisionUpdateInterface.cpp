@@ -11,6 +11,7 @@
 TOSHI_NAMESPACE_USING
 
 // $Barnyard: FUNCTION 0054f640
+// $Barnyard: FUNCTION 00414fb0
 AGoalCollisionUpdateInterface::~AGoalCollisionUpdateInterface()
 {
 	AInteriorNetworkManager::GetSingleton()->RemoveGoalInterface( this );

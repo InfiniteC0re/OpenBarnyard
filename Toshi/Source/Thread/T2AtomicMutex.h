@@ -27,6 +27,9 @@ public:
 	void Lock();
 	void Unlock();
 
+	// Locks the mutex only if it's free (or already owned by this thread), never waits
+	TBOOL TryLock();
+
 private:
 	T2Atomic32       m_iState         = 0;
 	volatile TUINT32 m_uiLockedThread = 0;

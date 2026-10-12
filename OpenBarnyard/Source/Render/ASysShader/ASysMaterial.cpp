@@ -11,6 +11,12 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_NORUNTIME( ASysMaterial );
 
+// $Barnyard: FUNCTION 005f0090
+// $Barnyard: FUNCTION 005f03a0
+ASysMaterial::~ASysMaterial()
+{
+}
+
 // $Barnyard: FUNCTION 005f0040
 ASysMaterial::ASysMaterial()
 {

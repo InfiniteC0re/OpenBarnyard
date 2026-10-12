@@ -15,7 +15,7 @@ AGUI2TextBox::AGUI2TextBox()
 	m_bRenderShadow  = TFALSE;
 	m_wszText        = TNULL;
 	m_pFont          = TNULL;
-	m_bUnkFlag2      = TFALSE;
+	m_bFixedHeight   = TFALSE;
 	m_fShadowOffsetX = 5.0f;
 	m_fShadowOffsetY = 5.0f;
 	m_uiShadowColour = 0x80000000;
@@ -24,17 +24,19 @@ AGUI2TextBox::AGUI2TextBox()
 }
 
 // $Barnyard: FUNCTION 006c3660
+// $Barnyard: FUNCTION 00666f60
 AGUI2TextBox::~AGUI2TextBox()
 {
 }
 
 // $Barnyard: FUNCTION 006c3670
+// $BarnyardWiiJP: FUNCTION 804a24ac
 void AGUI2TextBox::Create( T2GUIFont* a_pFont, TFLOAT a_fWidth )
 {
 	m_pFont                = a_pFont;
 	T2GUIElement::m_fWidth = a_fWidth;
 	m_bDimensionsDirty     = TTRUE;
-	m_bUnkFlag2            = TFALSE;
+	m_bFixedHeight         = TFALSE;
 }
 
 void AGUI2TextBox::SetText( const TWCHAR* a_wszText )
@@ -84,6 +86,16 @@ void AGUI2TextBox::RenderText( void* a_fnCallback )
 	}
 }
 
+// $Barnyard: FUNCTION 006c3760
+// $BarnyardWiiJP: FUNCTION 804a2620
+TFLOAT AGUI2TextBox::GetLineHeight()
+{
+	if ( m_pFont )
+		return m_pFont->GetLineHeight();
+
+	return 0.0f;
+}
+
 void AGUI2TextBox::SetScale( TFLOAT a_fScale )
 {
 	m_fScale           = a_fScale;
@@ -125,9 +137,10 @@ void AGUI2TextBox::SetTextAlign( T2GUIFont::TextAlign a_eTextAlign )
 // $Barnyard: FUNCTION 006c3850
 void AGUI2TextBox::Render()
 {
-	TASSERT( m_pFont != TNULL );
+	// NOTE: there's no font until a text is set (e.g. an AGUI2FadingText before its first
+	// SetText), RenderText skips the text then
 
-	if ( T2GUIElement::HasFlags( 8 ) )
+	if ( T2GUIElement::HasFlags( T2GUIElement::FLAGS_RENDER_BEFORE_CHILDREN ) )
 	{
 		// Render children before text
 		T2GUIElement::Render();
@@ -135,7 +148,7 @@ void AGUI2TextBox::Render()
 
 	RenderText( TNULL );
 
-	if ( !T2GUIElement::HasFlags( 8 ) )
+	if ( !T2GUIElement::HasFlags( T2GUIElement::FLAGS_RENDER_BEFORE_CHILDREN ) )
 	{
 		// Render children after text
 		T2GUIElement::Render();
@@ -145,7 +158,7 @@ void AGUI2TextBox::Render()
 // $Barnyard: FUNCTION 006c36c0
 void AGUI2TextBox::GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight )
 {
-	if ( !m_bUnkFlag2 && m_bDimensionsDirty )
+	if ( !m_bFixedHeight && m_bDimensionsDirty )
 	{
 		if ( !m_wszText || !m_pFont )
 		{
@@ -190,7 +203,26 @@ void AGUI2TextBox::SetWidth( TFLOAT a_fWidth )
 	m_bDimensionsDirty     = TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c3690
+// $BarnyardWiiJP: FUNCTION 804a24c8
+void AGUI2TextBox::SetSize( TFLOAT a_fWidth, TFLOAT a_fHeight, TBOOL a_bFixedHeight )
+{
+	m_bFixedHeight         = a_bFixedHeight;
+	T2GUIElement::m_fWidth = a_fWidth;
+
+	if ( a_bFixedHeight )
+	{
+		T2GUIElement::m_fHeight = a_fHeight;
+		m_bDimensionsDirty      = TFALSE;
+	}
+	else
+	{
+		m_bDimensionsDirty = TTRUE;
+	}
+}
+
 // $Barnyard: FUNCTION 006c3890
+// $BarnyardWiiJP: FUNCTION 804a27b8
 void AGUI2TextBox::SetShadowAlpha( TFLOAT a_fAlpha )
 {
 	TUINT8 ui8Alpha  = TUINT8( a_fAlpha * 255.0f );

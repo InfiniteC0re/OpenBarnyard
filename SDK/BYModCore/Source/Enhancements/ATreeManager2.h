@@ -27,10 +27,10 @@ public:
 			TUINT8 iColor : 2;
 		};
 
-		TUINT8 uiUnk3;
+		TUINT8 uiRegrowthGroup;
 
 		ACollisionObjectSimple* pSimpleCollisionObjects = TNULL;
-		void*                   unk                     = TNULL;
+		void*                   pTrunkCollision         = TNULL;
 	};
 
 	struct TreeInstanceRenderData

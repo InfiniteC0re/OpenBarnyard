@@ -11,7 +11,13 @@
 
 TOSHI_NAMESPACE_START
 
+// NOTE: GetClass 006d7bb0, CreateObject 006d7e10, CreateObjectInPlace 006d7e40
 TDEFINE_CLASS( TTextureFactoryHAL );
+
+// $Barnyard: FUNCTION 006d7e70
+TTextureFactoryHAL::~TTextureFactoryHAL()
+{
+}
 
 // $Barnyard: FUNCTION 006d7bd0
 TTexture* TTextureFactoryHAL::CreateTextureFromFile( const TCHAR* a_szFilePath, TUINT32 a_eTextureFlags )

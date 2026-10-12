@@ -13,21 +13,21 @@ public:
 	using Flags = TUINT32;
 	enum Flags_ : Flags
 	{
-		Flags_None           = 0,
-		Flags_Skippable      = BITFLAG( 0 ),
-		Flags_Unk1           = BITFLAG( 1 ),
-		Flags_InstaSkippable = BITFLAG( 2 ),
-		Flags_HasFadeIn      = BITFLAG( 3 ),
-		Flags_HasFadeOut     = BITFLAG( 4 ),
-		Flags_Repeat         = BITFLAG( 5 ),
-		Flags_Ended          = BITFLAG( 6 ),
+		Flags_None            = 0,
+		Flags_Skippable       = BITFLAG( 0 ),
+		Flags_CancelSkippable = BITFLAG( 1 ),
+		Flags_InstaSkippable  = BITFLAG( 2 ),
+		Flags_HasFadeIn       = BITFLAG( 3 ),
+		Flags_HasFadeOut      = BITFLAG( 4 ),
+		Flags_Repeat          = BITFLAG( 5 ),
+		Flags_Ended           = BITFLAG( 6 ),
 	};
 
 	struct Params
 	{
 		TINT   iUnk1;
 		TBOOL  bSlideSkippable;
-		TBOOL  bUnk2;
+		TBOOL  bCancelSkippable;
 		TBOOL  bInstaSkippable;
 		TBOOL  bHasFadeIn;
 		TBOOL  bHasFadeOut;
@@ -36,11 +36,12 @@ public:
 		TFLOAT fDuration;
 		TFLOAT fFadeInTime;
 		TFLOAT fFadeOutTime;
-		TFLOAT fUnk5;
+		TFLOAT fMaxTotalTime;
 	};
 
 public:
 	AGUISlideshow();
+	~AGUISlideshow();
 
 	TBOOL Setup( AGameState::HUDParams* a_pHUDParams, const Params& a_rParams, TBOOL a_bShouldLocalise );
 	void  Update( TFLOAT a_fDeltaTime );
@@ -76,11 +77,11 @@ protected:
 	Flags                                              m_eFlags;
 	TBOOL                                              m_bIsActive;
 	TFLOAT                                             m_fCurrentSlideTime;
-	TFLOAT                                             m_fUnk2;
+	TFLOAT                                             m_fTotalTime;
 	TFLOAT                                             m_fDuration;
 	TFLOAT                                             m_fFadeInTime;
 	TFLOAT                                             m_fFadeOutTime;
-	TFLOAT                                             m_fUnk4;
+	TFLOAT                                             m_fMaxTotalTime;
 	Toshi::T2GUIRectangle                              m_FadeOverlay;
 	TBOOL                                              m_bIsAppearing;
 	TBOOL                                              m_bShouldLocalise;

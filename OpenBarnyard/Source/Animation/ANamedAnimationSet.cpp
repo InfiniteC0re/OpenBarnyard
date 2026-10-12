@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "ANamedAnimationSet.h"
+#include "AAnimationBreakpointSoundParticle.h"
+#include "Helpers/AGameLoader.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -7,6 +9,7 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// NOTE: GetClass 00580c40, CreateObject 00581380, CreateObjectInPlace 005813e0
 TDEFINE_CLASS( ANamedAnimationSet );
 
 TOSHI_NAMESPACE_USING
@@ -41,6 +44,7 @@ TPSTRING8_DECLARE( lookl );
 TPSTRING8_DECLARE( lookr );
 TPSTRING8_DECLARE( looku );
 TPSTRING8_DECLARE( lookd );
+TPSTRING8_DECLARE( SoundParticle );
 
 // $Barnyard: FUNCTION 00581840
 TBOOL ANamedAnimationSet::CreateFromProperties( const PBProperties* a_pProperties, Toshi::TSkeleton* a_pSkeleton )
@@ -75,15 +79,15 @@ TBOOL ANamedAnimationSet::CreateFromProperties( const PBProperties* a_pPropertie
 			if ( pAnim && pAnim->IsOverlay() )
 			{
 				if ( pAnim->GetName() == TPS8( blink ) )
-					m_eOverlayType = OVERLAYTYPE_BLINK;
+					m_eOverlayType |= OVERLAYTYPE_BLINK;
 				else if ( pAnim->GetName() == TPS8( lookl ) )
-					m_eOverlayType = OVERLAYTYPE_LOOK_LEFT;
+					m_eOverlayType |= OVERLAYTYPE_LOOK_LEFT;
 				else if ( pAnim->GetName() == TPS8( lookr ) )
-					m_eOverlayType = OVERLAYTYPE_LOOK_RIGHT;
+					m_eOverlayType |= OVERLAYTYPE_LOOK_RIGHT;
 				else if ( pAnim->GetName() == TPS8( looku ) )
-					m_eOverlayType = OVERLAYTYPE_LOOK_UP;
+					m_eOverlayType |= OVERLAYTYPE_LOOK_UP;
 				else if ( pAnim->GetName() == TPS8( lookd ) )
-					m_eOverlayType = OVERLAYTYPE_LOOK_DOWN;
+					m_eOverlayType |= OVERLAYTYPE_LOOK_DOWN;
 			}
 		}
 	}
@@ -124,8 +128,29 @@ void ANamedAnimationSet::Destroy()
 // $Barnyard: FUNCTION 00580d50
 TBOOL ANamedAnimationSet::AddSoundBreakpoint( ASoundBreakpoint* a_pSoundBreakpoint, Toshi::TSkeleton* a_pSkeleton )
 {
-	TASSERT( !"TODO" );
-	return TTRUE;
+	// Idle sounds are skipped in the barn explore minigame
+	if ( ( !T2String8::CompareNoCase( a_pSoundBreakpoint->pszAnimationName, "yuk" ) ||
+	       !T2String8::CompareNoCase( a_pSoundBreakpoint->pszAnimationName, "Idle1_Loop" ) ||
+	       !T2String8::CompareNoCase( a_pSoundBreakpoint->pszAnimationName, "Idle1_Start" ) ) &&
+	     AGameLoader::IsBarnExploreMiniGame() )
+	{
+		return TFALSE;
+	}
+
+	T2_FOREACH( m_mapAnimations, it )
+	{
+		ANamedAnimation* pAnimation = it->GetSecond();
+
+		if ( !T2String8::CompareNoCase( pAnimation->GetExportedName().GetString(), a_pSoundBreakpoint->pszAnimationName ) )
+		{
+			AAnimationBreakpointSoundParticle* pBreakpoint = TSTATICCAST( AAnimationBreakpointSoundParticle, AAnimationBreakpoint::CreateBreakpoint( TPS8( SoundParticle ), TTRUE ) );
+			pBreakpoint->SetSoundBreakpoint( a_pSoundBreakpoint );
+
+			pAnimation->AttachBreakpoint( pBreakpoint, a_pSkeleton );
+		}
+	}
+
+	return TFALSE;
 }
 
 // $Barnyard: FUNCTION 00580c50
@@ -135,6 +160,39 @@ ANamedAnimation* ANamedAnimationSet::GetNamedAnimation( const Toshi::TPString8& 
 
 	if ( it != m_mapAnimations.End() )
 		return it->second;
+
+	return TNULL;
+}
+
+// $Barnyard: FUNCTION 00580c90
+TINT ANamedAnimationSet::GetNumNonOverlayAnimations()
+{
+	TINT iNumAnimations = 0;
+
+	T2_FOREACH( m_mapAnimations, it )
+	{
+		if ( !it->second->IsOverlay() )
+			iNumAnimations++;
+	}
+
+	return iNumAnimations;
+}
+
+// $Barnyard: FUNCTION 00580ce0
+ANamedAnimation* ANamedAnimationSet::GetNonOverlayAnimation( TINT a_iIndex )
+{
+	TINT iIndex = 0;
+
+	T2_FOREACH( m_mapAnimations, it )
+	{
+		if ( !it->second->IsOverlay() )
+		{
+			if ( iIndex == a_iIndex )
+				return it->second;
+
+			iIndex++;
+		}
+	}
 
 	return TNULL;
 }
@@ -178,7 +236,7 @@ TBOOL ANamedAnimationSet::LoadAnimationTransition( const PBProperties* a_pProper
 	TPString8 strTransitionName;
 	a_pProperties->GetOptionalPropertyValue( strTransitionName, TPS8( TransitionName ) );
 
-	TBOOL bIsAutoTransition;
+	TBOOL bIsAutoTransition = TFALSE;
 	a_pProperties->GetOptionalPropertyValue( bIsAutoTransition, TPS8( AutoTransition ) );
 
 	TPString8                   strFinishType;
@@ -193,25 +251,54 @@ TBOOL ANamedAnimationSet::LoadAnimationTransition( const PBProperties* a_pProper
 	a_pProperties->GetOptionalPropertyValue( strLinkTo, TPS8( LinkTo ) );
 
 	auto pLinkTo = m_mapAnimations.Find( strLinkTo );
-	if ( m_mapAnimations.IsValid( pLinkTo ) && pLinkTo->GetSecond() != TNULL )
-	{
-		const PBPropertyValue* pLinkFromProperty = a_pProperties->GetProperty( "LinkFrom" );
-		TVALIDPTR( pLinkFromProperty );
+	if ( !m_mapAnimations.IsValid( pLinkTo ) || pLinkTo->GetSecond() == TNULL )
+		return TFALSE;
 
-		if ( pLinkFromProperty->GetType() == PBPropertyValue::Type::String )
+	ANamedAnimation*       pLinkToAnim       = pLinkTo->GetSecond();
+	const PBPropertyValue* pLinkFromProperty = a_pProperties->GetProperty( "LinkFrom" );
+
+	// Adds the transition from a_pLinkFrom to pLinkToAnim
+	auto AddTransitionFrom = [ & ]( ANamedAnimation* a_pLinkFrom ) {
+		TBOOL bManaged = bHasFinishType ? eFinishType : !( a_pLinkFrom->GetFlags() & ANamedAnimation::FLAGS_FINISH_MANUAL );
+
+		pLinkToAnim->AddFlags( ANamedAnimation::FLAGS_HAS_TRANSITION_IN );
+
+		// NOTE: retail passes the blend in time first, then the blend out time
+		a_pLinkFrom->GetTransitionSet().AddTransition(
+		    pLinkToAnim,
+		    strTransitionName,
+		    bHasBlendIn ? fBlendInTime : pLinkToAnim->GetDefaultBlendInTime(),
+		    bHasBlendOut ? fBlendOutTime : a_pLinkFrom->GetDefaultBlendOutTime(),
+		    bIsAutoTransition,
+		    bManaged
+		);
+	};
+
+	if ( pLinkFromProperty->GetType() == PBPropertyValue::Type::String )
+	{
+		// Transition from a single animation
+		auto pLinkFrom = m_mapAnimations.Find( pLinkFromProperty->GetTPString8() );
+
+		if ( !m_mapAnimations.IsValid( pLinkFrom ) || pLinkFrom->GetSecond() == TNULL )
+			return TFALSE;
+
+		AddTransitionFrom( pLinkFrom->GetSecond() );
+	}
+	else if ( pLinkFromProperty->GetType() == PBPropertyValue::Type::Array )
+	{
+		// Transition from each animation of the list
+		const PBPropertyValueArray* pLinkFromArray = pLinkFromProperty->GetArray();
+
+		for ( TUINT32 i = 0; i < pLinkFromArray->GetSize(); i++ )
 		{
-			auto pLinkFrom = m_mapAnimations.Find( pLinkFromProperty->GetTPString8() );
+			auto pLinkFrom = m_mapAnimations.Find( pLinkFromArray->GetValue( i )->GetTPString8() );
 
 			if ( !m_mapAnimations.IsValid( pLinkFrom ) || pLinkFrom->GetSecond() == TNULL )
-			{
-				TERROR( "Invalid LinkFrom property specified." );
 				return TFALSE;
-			}
 
-			TASSERT( !"Not implemented" );
-			return TTRUE;
+			AddTransitionFrom( pLinkFrom->GetSecond() );
 		}
 	}
 
-	return TFALSE;
+	return TTRUE;
 }

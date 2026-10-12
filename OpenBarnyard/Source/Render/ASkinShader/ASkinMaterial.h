@@ -17,8 +17,16 @@ public:
 	};
 
 	using BLENDMODE = TUINT;
+	enum BLENDMODE_ : BLENDMODE
+	{
+		BLENDMODE_DEFAULT  = 0,
+		BLENDMODE_ALPHA    = 1, // alpha blended
+		BLENDMODE_MODULATE = 2, // the colour multiplies the destination
+		BLENDMODE_ADDITIVE = 3, // the colour (times alpha) is added to the destination
+	};
 
 	friend class AModelLoader;
+	friend class ASkinSwap;
 
 public:
 	ASkinMaterial();
@@ -31,6 +39,9 @@ public:
 	virtual void  SetBlendMode( BLENDMODE a_eBlendMode );
 
 	BLENDMODE GetBlendMode() const { return m_eBlendMode; }
+
+	// NOTE: the meaning of the flag (0x64) is unknown, ABarnYardPoolMiniGameState clears it on its units
+	void SetFlag( TBOOL a_bFlag ) { m_bFlag = a_bFlag; }
 
 	void SetTexture( Toshi::TTexture* a_pTexture )
 	{

@@ -117,7 +117,8 @@ void TModelHAL::Unload()
 	UnloadTRB();
 }
 
-TBOOL TModelHAL::GetUnknownFlag()
+// RETURNS_TRUE (shared stub 00558f80, RET 8)
+TBOOL TModelHAL::GetUnknownFlag( void* a_pUnk1, void* a_pUnk2 )
 {
 	return TTRUE;
 }

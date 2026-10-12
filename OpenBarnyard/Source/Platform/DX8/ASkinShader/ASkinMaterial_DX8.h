@@ -41,6 +41,9 @@ public:
 	TBOOL HasLighting1Tex() const { return m_bHasLighting1Tex; }
 	TBOOL HasLighting2Tex() const { return m_bHasLighting2Tex; }
 
+	// Environment map texture (+0x74), set by AModelInstance::SetEnvironmentMap
+	void SetSomeTexture( Toshi::TTexture* a_pTexture ) { m_pSomeTexture = a_pTexture; }
+
 	Toshi::TTextureResourceHAL* GetLightingTexture( ELightingTexture a_eTexture ) const;
 	Toshi::TTextureResourceHAL* GetSomeTexture() const;
 

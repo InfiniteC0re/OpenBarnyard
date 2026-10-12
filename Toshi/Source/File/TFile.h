@@ -63,7 +63,8 @@ public:
 	TFileSystem( const TCHAR* a_szName );
 	TFileSystem( const TFileSystem& other );
 
-	virtual ~TFileSystem() = default;
+	// $Barnyard: FUNCTION 006bdd10
+	virtual ~TFileSystem() {}
 
 	/**
          * Creates file.
@@ -203,15 +204,27 @@ public:
          * Analogue of printf but writes result to the file.
          * @return number of characters written
          */
-	virtual TINT CPrintf( const TCHAR* a_szFormat, ... ) = 0;
+	virtual TINT VCPrintf( const TCHAR* a_szFormat, va_list a_vargs ) = 0;
 
 	/**
          * Analogue of wprintf but writes result to the file.
          * @return number of characters written
          */
-	virtual TINT WPrintf( const TWCHAR* a_wszFormat, ... ) = 0;
+	virtual TINT VWPrintf( const TWCHAR* a_wszFormat, va_list a_vargs ) = 0;
 
 	virtual ~TFile();
+
+	TINT CPrintf( const TCHAR* a_szFormat, ... );
+
+	TINT WPrintf( const TWCHAR* a_wszFormat, ... )
+	{
+		va_list args;
+		va_start( args, a_wszFormat );
+		TINT iResult = VWPrintf( a_wszFormat, args );
+		va_end( args );
+
+		return iResult;
+	}
 
 	TFileSystem* GetFileSystem() const
 	{
@@ -256,8 +269,8 @@ public:
 	TFileManager();
 	~TFileManager();
 
-	void Destroy();
-	void MountFileSystem( TFileSystem* a_pFileSystem );
+	static void Destroy();
+	void        MountFileSystem( TFileSystem* a_pFileSystem );
 
 	TFile* CreateFile( const TString8& a_strName, TFILEMODE flags );
 	TBOOL  GetFileInfo( const TString8& a_strPath, TNativeFileInfo& a_rNativeInfo );
@@ -267,6 +280,7 @@ public:
 
 	TString8 MakeAbsolutePath( const TString8& a_rcRelativePath ) const;
 
+	// $Barnyard: FUNCTION 006be1a0
 	void SetSystemPath( const TString8& name )
 	{
 		m_SysPath = name;

@@ -4,13 +4,27 @@
 #include <Toshi/TNodeList.h>
 #include <Render/TOrderTable.h>
 
+#include "ASkinLowEnd_DX8.h"
+
 class ASkinShaderHAL : public ASkinShader
 {
 public:
 	TDECLARE_CLASS( ASkinShaderHAL, ASkinShader );
 
-	struct AUnknown : Toshi::TNodeList<AUnknown>::TNode
+	// Dynamic vertex buffer of the low end (CPU skinning) path
+	using AUnknown = ASkinLowEnd::VertexBuffer;
+
+	// Render states set by the last packet, the material's PreRender sets RENDERSTATE_ALPHABLEND to force them again
+	using RENDERSTATE = TUINT;
+	enum RENDERSTATE_ : RENDERSTATE
 	{
+		RENDERSTATE_NONE       = 0,
+		RENDERSTATE_UNK0       = BITFLAG( 0 ),
+		RENDERSTATE_UNK1       = BITFLAG( 1 ),
+		RENDERSTATE_UNK3       = BITFLAG( 3 ),
+		RENDERSTATE_UNK4       = BITFLAG( 4 ),
+		RENDERSTATE_ALPHAREF   = RENDERSTATE_UNK3 | RENDERSTATE_UNK4,                                       // D3DRS_ALPHAREF is scaled by the packet alpha
+		RENDERSTATE_ALPHABLEND = RENDERSTATE_UNK0 | RENDERSTATE_UNK1 | RENDERSTATE_UNK3 | RENDERSTATE_UNK4, // D3DRS_ALPHABLENDENABLE is on
 	};
 
 	static constexpr TUINT NUM_ORDER_TABLES = 3;
@@ -65,15 +79,19 @@ public:
 		return &m_aOrderTables[ a_uiIndex ];
 	}
 
+	// Low end path, called by ASkinLowEnd::Render
+	void        SkinVerticesCPU( Toshi::TRenderPacket* a_pRenderPacket, const TBYTE* a_pSrcVertices, TBYTE* a_pDstVertices );
+	static void TransformVerticesRigid( Toshi::TRenderPacket* a_pRenderPacket, const TBYTE* a_pSrcVertices, TBYTE* a_pDstVertices );
+
 private:
 	void RenderLowEnd( Toshi::TRenderPacket* a_pRenderPacket );
 	void SetupLowEndMode();
 	void ApplyGPUSpecificPatches();
-	void CheckCPUFeature1();
-	void CheckCPUFeature2();
+	void CheckCPUSupportsSSE();
+	void CheckCPUSupportsSSE2();
 
 public:
-	inline static TUINT            sm_eRenderStateFlags = 27;
+	inline static RENDERSTATE      sm_eRenderStateFlags = RENDERSTATE_ALPHABLEND;
 	inline static Toshi::TMatrix44 sm_oWorldViewMatrix;
 	inline static Toshi::TMatrix44 sm_oViewModelMatrix;
 
@@ -92,7 +110,7 @@ private:
 	TBOOL                      m_bIsAlphaBlendMaterial;
 	TFLOAT                     m_fAMDPatch1;
 	TFLOAT                     m_fAMDPatch2;
-	TBOOL                      m_bCPUSupportsFeature1;
-	TBOOL                      m_bCPUSupportsFeature2;
+	TBOOL                      m_bCPUSupportsSSE;
+	TBOOL                      m_bCPUSupportsSSE2;
 	TBOOL                      m_bUnkFlag;
 };

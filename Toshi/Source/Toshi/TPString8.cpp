@@ -44,21 +44,56 @@ void TPString8Pool::Get( TPooledString8*& a_pOutString, const TCHAR* a_szString,
 	}
 }
 
+// NOTE: not in retail, initialises the unknown values like the constructor below does
 TPString8Pool::TPString8Pool( T2Allocator* a_pAllocator )
-    : m_pAllocator( a_pAllocator ), m_oMap( a_pAllocator )
+    : m_pAllocator( a_pAllocator ), m_Unk1( 0 ), m_oMap( a_pAllocator ), m_Unk2( 0 ), m_Unk3( 0 ), m_Unk4( 0 ), m_Unk5( 0 )
 {
-	// TODO: Initialise some unknown values
 }
 
-TPString8Pool::TPString8Pool( TINT a_iUnknown1, TINT a_iUnknown2, T2Allocator* a_pAllocator, void* m_pUnknown3 )
-    : m_pAllocator( a_pAllocator ), m_oMap( a_pAllocator )
+// $Barnyard: FUNCTION 006bc170
+TString8 operator+( const TString8& a_rcString, const TPString8& a_rcPString )
 {
-	// TODO: Initialise some unknown values
+	TString8 strResult( a_rcString );
+	strResult.Concat( a_rcPString.GetString8() );
+
+	return strResult;
+}
+
+// $Barnyard: FUNCTION 006bc760
+TPString8Pool::TPString8Pool( TINT a_iUnknown1, TINT a_iUnknown2, T2Allocator* a_pAllocator, void* m_pUnknown3 )
+    : m_pAllocator( a_pAllocator ), m_Unk1( TUINT( m_pUnknown3 ) ), m_oMap( a_pAllocator ), m_Unk2( 0 ), m_Unk3( 0 ), m_Unk4( 0 ), m_Unk5( 0 )
+{
 
 	for ( auto it = TPString8Initialiser::Head(); it != TNULL; it = it->Next() )
 	{
 		it->Initialise( this );
 	}
+}
+
+// $Barnyard: FUNCTION 006bc7b0
+TPString8Pool::~TPString8Pool()
+{
+	for ( auto it = TPString8Initialiser::Head(); it != TNULL; it = it->Next() )
+	{
+		it->Deinitialise();
+	}
+
+	for ( auto it = m_oMap.Begin(); it != m_oMap.End(); it++ )
+	{
+		TPooledString8* pString = it->GetSecond();
+
+		if ( pString )
+		{
+			pString->m_pPool = TNULL;
+			pString->m_oString.~TString8();
+			pString->m_iRefCount = -1;
+			m_pAllocator->Free( pString );
+		}
+	}
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	TPString8::ms_bPoolDestroyed = TTRUE;
+#endif // BARNYARD_COMMUNITY_PATCH
 }
 
 // $Barnyard: FUNCTION 006bc0a0
@@ -93,6 +128,40 @@ void TPString8Initialiser::Initialise( TPString8Pool* a_pStringPool )
 		     string.GetPooledString() != m_pStrings[ i ].m_pString8->GetPooledString() )
 		{
 			*m_pStrings[ i ].m_pString8 = string;
+		}
+	}
+}
+
+// $Barnyard: FUNCTION 006bc690
+void TPString8Initialiser::Deinitialise()
+{
+	for ( TUINT i = 0; i < m_iCount; i++ )
+	{
+		TPString8* pString = m_pStrings[ i ].m_pString8;
+
+		if ( TPooledString8* pPooled = pString->m_pPtr )
+		{
+			if ( pPooled->DecRefCount() == 1 )
+				pPooled->Delete();
+
+			pString->m_pPtr = TNULL;
+		}
+	}
+
+	if ( m_bCanReinitialise )
+	{
+		// NOTE: the original does the same once more, the strings are already released by the loop above
+		for ( TUINT i = 0; i < m_iCount; i++ )
+		{
+			TPString8* pString = m_pStrings[ i ].m_pString8;
+
+			if ( TPooledString8* pPooled = pString->m_pPtr )
+			{
+				if ( pPooled->DecRefCount() == 1 )
+					pPooled->Delete();
+
+				pString->m_pPtr = TNULL;
+			}
 		}
 	}
 }

@@ -14,7 +14,7 @@ TOSHI_NAMESPACE_USING
 AAnimatableObjectType::AAnimatableObjectType()
 {
 	m_pAModel = TNULL;
-	m_pUnk    = TNULL;
+	m_pSkins  = TNULL;
 }
 
 // $Barnyard: FUNCTION 0057f2c0
@@ -119,12 +119,61 @@ void AAnimatableObjectType::Destroy()
 		m_pAModel = TNULL;
 	}
 
-	if ( m_pUnk )
+	if ( m_pSkins )
 	{
-		TASSERT( !"Destroy m_pUnk" );
-		delete m_pUnk;
-		m_pUnk = TNULL;
+		delete m_pSkins;
+		m_pSkins = TNULL;
 	}
+}
+
+// $Barnyard: FUNCTION 0057ea10
+AAnimatableObjectType::Skins::~Skins()
+{
+	for ( TINT i = 0; i < iNumSkins; i++ )
+	{
+		TFree( pszTextures[ i ] );
+		TFree( pszSkinLights[ i ] );
+	}
+
+	if ( pszSkinLights ) TFree( pszSkinLights );
+	if ( pszTextures ) TFree( pszTextures );
+	if ( szMaterialName ) TFree( szMaterialName );
+}
+
+// $Barnyard: FUNCTION 0057ec00
+TINT AAnimatableObjectType::GetNumSkins() const
+{
+	if ( m_pSkins )
+		return m_pSkins->iNumSkins;
+
+	return 0;
+}
+
+// $Barnyard: FUNCTION 0057ec10
+const TCHAR* AAnimatableObjectType::GetMaterialName() const
+{
+	if ( m_pSkins )
+		return m_pSkins->szMaterialName;
+
+	return TNULL;
+}
+
+// $Barnyard: FUNCTION 0057ec20
+const TCHAR* AAnimatableObjectType::GetSkinTexture( TINT a_iSkin ) const
+{
+	if ( m_pSkins && a_iSkin >= 0 && a_iSkin < m_pSkins->iNumSkins )
+		return m_pSkins->pszTextures[ a_iSkin ];
+
+	return TNULL;
+}
+
+// $Barnyard: FUNCTION 0057ec50
+const TCHAR* AAnimatableObjectType::GetSkinLighting( TINT a_iSkin ) const
+{
+	if ( m_pSkins && a_iSkin >= 0 && a_iSkin < m_pSkins->iNumSkins )
+		return m_pSkins->pszSkinLights[ a_iSkin ];
+
+	return TNULL;
 }
 
 // $Barnyard: FUNCTION 0057ef40
@@ -139,6 +188,17 @@ ANamedAnimationSetRef AAnimatableObjectType::FindAnimationSet( const Toshi::TPSt
 	}
 
 	return TNULL;
+}
+
+// $Barnyard: FUNCTION 0057f220
+ANamedAnimationSetRef AAnimatableObjectType::FindAnimationSetOrDefault( const Toshi::TPString8& a_rcName ) const
+{
+	ANamedAnimationSetRef pAnimationSet = FindAnimationSet( a_rcName );
+
+	if ( !pAnimationSet.Get() )
+		pAnimationSet = m_vecAnimationSets[ 0 ];
+
+	return pAnimationSet;
 }
 
 // $Barnyard: FUNCTION 0057efb0
@@ -231,7 +291,44 @@ TBOOL AAnimatableObjectType::SetAnimController( const PBProperties* a_pPropertie
 TBOOL AAnimatableObjectType::SetSkins( const PBProperties* a_pProperties )
 {
 	TVALIDPTR( a_pProperties );
-	TASSERT( !"Not implemented" );
+
+	const PBPropertyValue* pTexValue = a_pProperties->GetProperty( "Tex" );
+
+	if ( pTexValue && pTexValue->GetType() == PBPropertyValue::Type::Array )
+	{
+		const PBPropertyValueArray* pTexArray = pTexValue->GetArray();
+
+		// The first texture is the material name, the rest are pairs of skin texture and skin light
+		TINT iNumSkins = ( TINT( pTexArray->GetSize() ) - 1 ) / 2;
+
+		if ( iNumSkins < 1 )
+			return TFALSE;
+
+		m_pSkins            = new Skins();
+		m_pSkins->iNumSkins = iNumSkins;
+
+		const TCHAR* szMaterialName = pTexArray->GetValue( 0 )->GetString();
+		m_pSkins->szMaterialName    = TSTATICCAST( TCHAR, TMalloc( TStringManager::String8Length( szMaterialName ) + 1 ) );
+		TStringManager::String8Copy( m_pSkins->szMaterialName, szMaterialName );
+
+		TINT iValueIndex        = 1;
+		m_pSkins->pszTextures   = TSTATICCAST( TCHAR*, TMalloc( iNumSkins * sizeof( TCHAR* ) ) );
+		m_pSkins->pszSkinLights = TSTATICCAST( TCHAR*, TMalloc( iNumSkins * sizeof( TCHAR* ) ) );
+
+		for ( TINT i = 0; i < iNumSkins; i++, iValueIndex++ )
+		{
+			const TCHAR* szTexture     = pTexArray->GetValue( iValueIndex )->GetString();
+			m_pSkins->pszTextures[ i ] = TSTATICCAST( TCHAR, TMalloc( TStringManager::String8Length( szTexture ) + 1 ) );
+			TStringManager::String8Copy( m_pSkins->pszTextures[ i ], szTexture );
+		}
+
+		for ( TINT i = 0; i < iNumSkins; i++, iValueIndex++ )
+		{
+			const TCHAR* szSkinLight     = pTexArray->GetValue( iValueIndex )->GetString();
+			m_pSkins->pszSkinLights[ i ] = TSTATICCAST( TCHAR, TMalloc( TStringManager::String8Length( szSkinLight ) + 1 ) );
+			TStringManager::String8Copy( m_pSkins->pszSkinLights[ i ], szSkinLight );
+		}
+	}
 
 	return TTRUE;
 }

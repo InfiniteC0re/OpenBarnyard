@@ -27,6 +27,8 @@ public:
 	~ATerrainLODBlock();
 
 	void SetupTRB( Toshi::TTRB* a_pTRB, ATerrainLODBlock* a_pOther );
+
+	static void* __stdcall TRBAlloc( Toshi::TTRB::AllocType alloctype, TUINT32 size, TINT16 unk1, TUINT32 unk2, void* userData );
 	void UpdateLastAccessTime();
 
 	void Assign( ATerrainSection* a_pVISGroup, ATerrainLODType a_eLODType );

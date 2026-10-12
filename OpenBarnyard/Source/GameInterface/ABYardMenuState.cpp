@@ -29,6 +29,7 @@ ABYardMenuState::ABYardMenuState()
 }
 
 // $Barnyard: FUNCTION 00432470
+// $Barnyard: FUNCTION 00432f10
 ABYardMenuState::~ABYardMenuState()
 {
 	if ( m_pButtonRotations )
@@ -239,12 +240,8 @@ void ABYardMenuState::OnInsertion()
 
 	// Setup menu
 	m_oMenu.SetFocus( TTRUE );
-	m_oMenu.SetItemActivationCallback( []( void* a_pUserData, AGUI2MenuItem* a_pItem ) {
-		TSTATICCAST( ABYardMenuState, a_pUserData )->OnMenuItemActivated( a_pItem );
-	} );
-	m_oMenu.SetItemFocusCallback( []( void* a_pUserData, AGUI2MenuItem* a_pOldFocus, AGUI2MenuItem* a_pNewFocus ) {
-		TSTATICCAST( ABYardMenuState, a_pUserData )->OnMenuItemFocused( *a_pOldFocus, *a_pNewFocus );
-	} );
+	m_oMenu.SetItemActivationCallback( MenuItemActivationCallback );
+	m_oMenu.SetItemFocusCallback( MenuItemFocusCallback );
 	m_oMenu.SetCallbackUserData( this );
 	m_oMenu.SetFocusSound( soundbank::UI_MENUCLICK );
 	m_oMenu.SetBackSound( soundbank::UI_MENUBACK );
@@ -317,7 +314,7 @@ void ABYardMenuState::OnActivate()
 	m_fOscillatorOffset = 0.0f;
 	m_bIgnoreInputs     = TFALSE;
 
-	m_HUDParams.SetFlags( 64 );
+	m_HUDParams.SetFlags( AHudElement::MASK_MENU_NAV );
 }
 
 // $Barnyard: FUNCTION 00433380
@@ -361,6 +358,74 @@ void ABYardMenuState::SetDialogOpacity( TFLOAT a_fOpacity )
 	m_oDialog.SetAlpha( a_fOpacity );
 }
 
+// $Barnyard: FUNCTION 00432b80
+void ABYardMenuState::UpdateMenuButtons( TFLOAT a_fDeltaTime )
+{
+	AGUI2MenuItem* pLastMenuItem = m_oMenu.GetLastMenuItem();
+	AGUI2MenuItem* pFocused      = m_oMenu.GetFocusedMenuItem();
+
+	if ( pLastMenuItem != TNULL )
+	{
+		AGUI2Button* pItem = TSTATICCAST( AGUI2Button, m_oMenu.GetLastMenuItem() );
+
+		while ( TTRUE )
+		{
+			TFLOAT fBackgroundScaleX, fBackgroundScaleY;
+			TFLOAT fTextScaleX, fTextScaleY;
+
+			if ( pItem == pFocused )
+			{
+				TFLOAT fSpeed     = a_fDeltaTime * 10.0f;
+				fBackgroundScaleX = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aMatrixRows[ 0 ].x, ms_fFocusedButtonMaxScale, fSpeed );
+				fBackgroundScaleY = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aMatrixRows[ 1 ].y, ms_fFocusedButtonMaxScale, fSpeed );
+				fTextScaleX       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aMatrixRows[ 0 ].x, ms_fFocusedButtonTextMaxScale, fSpeed );
+				fTextScaleY       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aMatrixRows[ 1 ].y, ms_fFocusedButtonTextMaxScale, fSpeed );
+			}
+			else
+			{
+				TFLOAT fSpeed     = a_fDeltaTime * 20.0f;
+				fBackgroundScaleX = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aMatrixRows[ 0 ].x, 1.0f, fSpeed );
+				fBackgroundScaleY = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aMatrixRows[ 1 ].y, 1.0f, fSpeed );
+				fTextScaleX       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aMatrixRows[ 0 ].x, 1.0f, fSpeed );
+				fTextScaleY       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aMatrixRows[ 1 ].y, 1.0f, fSpeed );
+			}
+
+			pItem->GetBackground().GetTransform().SetScale( fBackgroundScaleX, fBackgroundScaleX );
+			pItem->GetTextBox().GetTransform().SetScale( fTextScaleX, fTextScaleY );
+
+			pItem = TSTATICCAST( AGUI2Button, pItem->GetPrevMenuItem() );
+			if ( pItem == pLastMenuItem ) break;
+		}
+	}
+}
+
+// $Barnyard: FUNCTION 00432dc0
+void ABYardMenuState::UpdateFocusedButton( TFLOAT a_fDeltaTime )
+{
+	AGUI2Button* pFocusedButton = TSTATICCAST( AGUI2Button, m_oMenu.GetFocusedMenuItem() );
+
+	ms_fAnimationTime += a_fDeltaTime;
+	TFLOAT fProgress = TMath::Sin( ms_fFocusedButtonAnimSpeed * ms_fAnimationTime );
+
+	if ( ms_fAnimationTime < TMath::PI / ms_fFocusedButtonAnimSpeed )
+	{
+		TFLOAT fOffset = ms_fFocusedButtonMaxOffset * fProgress;
+		pFocusedButton->GetTextBox().SetTranslation( ms_vecActivatedButtonTranslation.x + fOffset, ms_vecActivatedButtonTranslation.y + fOffset );
+
+		TFLOAT fOneMinusProgress = 1.0f - fProgress;
+		pFocusedButton->SetShadowAlpha( fOneMinusProgress );
+		pFocusedButton->SetTextShadowOffset( ms_vecActivatedButtonShadow.x * fOneMinusProgress, ms_vecActivatedButtonShadow.y * fOneMinusProgress );
+	}
+	else
+	{
+		m_bIgnoreInputs = TFALSE;
+		m_eMenuState    = MENUSTATE_MENU_DISAPPEAR;
+
+		pFocusedButton->SetTextShadowOffset( ms_vecActivatedButtonShadow.x, ms_vecActivatedButtonShadow.y );
+		pFocusedButton->GetTextBox().SetTranslation( ms_vecActivatedButtonTranslation.x, ms_vecActivatedButtonTranslation.y );
+	}
+}
+
 // $Barnyard: FUNCTION 00432a90
 void ABYardMenuState::OnButtonActivated( AGUI2Button* a_pButton )
 {
@@ -377,4 +442,16 @@ void ABYardMenuState::OnButtonActivated( AGUI2Button* a_pButton )
 			ms_vecActivatedButtonShadow.y    = a_pButton->GetTextBox().GetShadowOffsetY();
 		}
 	}
+}
+
+// $Barnyard: FUNCTION 00432a70
+void ABYardMenuState::MenuItemActivationCallback( void* a_pUserData, AGUI2MenuItem* a_pItem )
+{
+	TSTATICCAST( ABYardMenuState, a_pUserData )->OnMenuItemActivated( a_pItem );
+}
+
+// $Barnyard: FUNCTION 00432b00
+void ABYardMenuState::MenuItemFocusCallback( void* a_pUserData, AGUI2MenuItem* a_pOldFocus, AGUI2MenuItem* a_pNewFocus )
+{
+	TSTATICCAST( ABYardMenuState, a_pUserData )->OnMenuItemFocused( *a_pOldFocus, *a_pNewFocus );
 }

@@ -39,23 +39,46 @@ public:
 	// Reflows elements vertically and calculates dimensions
 	void ReflowChildrenVertically();
 
+	// Reflows elements horizontally and calculates dimensions
+	void ReflowChildrenHorizontally();
+
 	TBOOL TriggerButtonPress( AGUI2MenuItem& a_rMenuItem );
 
 	void SetMenuAlpha( TFLOAT a_fAlpha, TFLOAT a_fShadowAlpha = -1.0f );
 	void SetMouseStateDirty() { m_bMouseStateDirty = TTRUE; }
+	void SetItemSpacing( TFLOAT a_fSpacing ) { m_fItemSpacing = a_fSpacing; }
 
 	AGUI2MenuItem* GetFocusedMenuItem() const { return m_pFocusedMenuItem; }
 	AGUI2MenuItem* GetHoveredMenuItem() const { return m_pHoveredMenuItem; }
 	AGUI2MenuItem* GetLastMenuItem() const { return m_pLastMenuItem; }
 
+	// Unlinks every menu item from the menu and from the element tree
+	void RemoveAllItems();
+
 	// $Barnyard: FUNCTION 0063e440
 	void SetCallbackUserData( void* a_pUserData ) { m_pCallbackUserData = a_pUserData; }
+
+	// $Barnyard: FUNCTION 0063e420
 	void SetItemActivationCallback( ActivateCallback a_fnCallback ) { m_fnActivateCallback = a_fnCallback; }
+	// $Barnyard: FUNCTION 0063e430
 	void SetItemFocusCallback( FocusCallback a_fnCallback ) { m_fnFocusCallback = a_fnCallback; }
 
+	// NOTE: shared folded setter in retail (004a3920)
+	void SetDefaultFocusElement( AGUI2MenuItem* a_pMenuItem ) { m_pDefaultFocusElement = a_pMenuItem; }
+
+	// NOTE: shared folded setter in retail (005f00a0)
+	void SetCancelItem( AGUI2MenuItem* a_pMenuItem ) { m_pCancelItem = a_pMenuItem; }
+
+	// $Barnyard: FUNCTION 0063e530
 	void SetFocusSound( ASoundId a_eSound ) { m_eFocusSound = a_eSound; }
+
+	// $Barnyard: FUNCTION 0063e540
 	void SetSelectSound( ASoundId a_eSound ) { m_eSelectSound = a_eSound; }
+
+	// $Barnyard: FUNCTION 0063e550
 	void SetBackSound( ASoundId a_eSound ) { m_eBackSound = a_eSound; }
+
+	// $Barnyard: FUNCTION 0063e560
 	void SetNegativeSound( ASoundId a_eSound ) { m_eNegativeSound = a_eSound; }
 
 private:
@@ -103,6 +126,9 @@ public:
 	~AGUI2MenuItem();
 
 	void LinkMenuItemBefore( AGUI2MenuItem& a_rLinkAfter );
+
+	// Removes the item from the list of menu items it's in
+	void UnlinkMenuItem();
 
 	TBOOL IsEnabled() const { return m_bEnabled; }
 	TBOOL CanFocus() const { return IsEnabled() && IsVisible(); }

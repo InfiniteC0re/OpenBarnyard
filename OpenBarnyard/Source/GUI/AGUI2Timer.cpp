@@ -29,7 +29,6 @@ AGUI2Timer::AGUI2Timer()
 // $Barnyard: FUNCTION 0064db70
 AGUI2Timer::~AGUI2Timer()
 {
-	
 }
 
 // $Barnyard: FUNCTION 0064e1c0
@@ -113,13 +112,15 @@ void AGUI2Timer::Tick( TFLOAT a_fDeltaTime )
 
 	if ( m_fTimeRatio > 0.0f )
 	{
-		m_fTickInterval = 0.01f;
-		m_fTickElapsed += a_fDeltaTime;
+		// Ticks faster the less time there's left
+		m_fTickElapsed  = 0.0f;
+		m_fTickInterval = ( m_fTimeRatio > TIMER_CRITICAL_RATIO ) ? 0.25f : 0.1f;
 	}
 	else
 	{
-		m_fTickElapsed = 0.0f;
-		m_fTickInterval = ( m_fTimeRatio > TIMER_CRITICAL_RATIO ) ? 0.25f : 0.1f;
+		// Time's up, it rings for a second (see IsTickComplete)
+		m_fTickInterval = 0.01f;
+		m_fTickElapsed += a_fDeltaTime;
 	}
 
 	if ( m_fTickElapsed > TIMER_TICK_COMPLETE_TIME )
@@ -256,8 +257,8 @@ void AGUI2Timer::Reset()
 	m_fTickRotation = 0.0f;
 	m_oBacking.GetTransform().SetIdentity();
 	m_fTickAccumulator = 0.0f;
-	m_fTickElapsed = 0.0f;
-	m_eTimerCue = TimerCue_None;
+	m_fTickElapsed     = 0.0f;
+	m_eTimerCue        = TimerCue_None;
 	StopCue();
 	SetPaused( TFALSE );
 }
@@ -283,9 +284,9 @@ void AGUI2Timer::UpdateClockPolygons()
 	m_oClockPolygon1.SetMaterial( m_pClockTextureSection->GetMaterial() );
 	m_oClockPolygon2.SetMaterial( m_pClockTextureSection->GetMaterial() );
 
-	TFLOAT fAngle = TMath::TWO_PI * m_fTimeRatio;
-	TFLOAT fSecondHalfAngle = fAngle - TMath::PI;
-	TVector2* pUVs = m_oClockPolygon1.GetUVs();
+	TFLOAT    fAngle           = TMath::TWO_PI * m_fTimeRatio;
+	TFLOAT    fSecondHalfAngle = fAngle - TMath::PI;
+	TVector2* pUVs             = m_oClockPolygon1.GetUVs();
 
 	if ( fSecondHalfAngle >= 0.0f )
 	{
@@ -309,7 +310,7 @@ void AGUI2Timer::UpdateClockPolygons()
 				}
 				else
 				{
-					TFLOAT fX = ( TMath::Tan( TMath::PI - fSecondHalfAngle ) + 1.0f ) * 0.5f;
+					TFLOAT fX   = ( TMath::Tan( TMath::PI - fSecondHalfAngle ) + 1.0f ) * 0.5f;
 					pUVs[ 3 ].y = 0.0f;
 					pUVs[ 4 ].Set( fX, 0.0f );
 				}
@@ -367,7 +368,7 @@ void AGUI2Timer::UpdateClockPolygons()
 		}
 	}
 
-	TFLOAT fWidth = ( m_fWidth / m_fTextureWidth ) * m_pClockTextureSection->GetWidth();
+	TFLOAT fWidth  = ( m_fWidth / m_fTextureWidth ) * m_pClockTextureSection->GetWidth();
 	TFLOAT fHeight = ( m_fHeight / m_fTextureHeight ) * m_pClockTextureSection->GetHeight();
 
 	UpdatePolygonVertices( m_oClockPolygon1, fWidth, fHeight );

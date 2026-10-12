@@ -18,6 +18,7 @@ public:
 
 public:
 	TMSWindow();
+	~TMSWindow();
 	TMSWindow( const TMSWindow& ) = default;
 
 	void Update( TFLOAT a_fDeltaTime );
@@ -56,13 +57,23 @@ public:
 
 	static void SetFocused( TBOOL a_bFocused );
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Development: "-background" keeps the window of unattended test runs out of the user's way.
+	// The window is placed outside of the desktop, never activated and not shown in the taskbar,
+	// and the game keeps running (no pause) while it isn't the active application.
+	static TBOOL IsBackgroundMode();
+
+	// Development: "-nopause" keeps a visible game running while it isn't the active application (watched test runs)
+	static TBOOL IsNoPauseMode();
+#endif
+
 private:
 	static LRESULT CALLBACK WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
 protected:
 	static constexpr GUID WceusbshGUID = { 0x25dbce51, 0x6c8f, 0x4a72, 0x8a, 0x6d, 0xb5, 0x4c, 0x2b, 0x4f, 0xc8, 0x35 };
 
-	inline static TBOOL      ms_bIsFocused;
+	inline static TBOOL      ms_bIsFocused = TTRUE; // 0x0077d188
 	inline static BOOL       ms_bIsFullscreen;
 	inline static STICKYKEYS ms_StickyKeys;
 	inline static HDEVNOTIFY ms_hDeviceNotify;

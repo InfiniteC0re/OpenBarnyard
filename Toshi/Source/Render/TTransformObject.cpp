@@ -14,13 +14,22 @@ TOSHI_NAMESPACE_START
 TTransformObject::TTransformObject()
     : m_eMode( Mode::Quat ), m_Quat( TQuaternion::IDENTITY ), m_Translation( TVector3::VEC_ZERO ), m_Scale( 1.0f, 1.0f, 1.0f )
 {
-	m_EulerOrder[ 0 ] = 2;
-	m_EulerOrder[ 1 ] = 1;
-	m_EulerOrder[ 2 ] = 0;
+	m_EulerOrder[ 0 ] = EULERAXIS_Z;
+	m_EulerOrder[ 1 ] = EULERAXIS_Y;
+	m_EulerOrder[ 2 ] = EULERAXIS_X;
 }
 
 TTransformObject::~TTransformObject()
 {
+}
+
+// $Barnyard: FUNCTION 006c8180
+TTransformObject& TTransformObject::operator=( const TTransformObject& a_rcOther )
+{
+	if ( &a_rcOther != this )
+		TUtil::MemCopy( this, &a_rcOther, sizeof( TTransformObject ) );
+
+	return *this;
 }
 
 // $Barnyard: FUNCTION 006c83b0
@@ -47,13 +56,13 @@ void TTransformObject::Push()
 		{
 			switch ( m_EulerOrder[ i ] )
 			{
-				case 0:
+				case EULERAXIS_X:
 					pPushTransform->RotateX( m_Euler.x );
 					break;
-				case 1:
+				case EULERAXIS_Y:
 					pPushTransform->RotateY( m_Euler.y );
 					break;
-				case 2:
+				case EULERAXIS_Z:
 					pPushTransform->RotateZ( m_Euler.z );
 					break;
 			}
@@ -102,13 +111,13 @@ void TTransformObject::GetLocalMatrixImp( TMatrix44& outMatrix )
 		{
 			switch ( m_EulerOrder[ i ] )
 			{
-				case 0:
+				case EULERAXIS_X:
 					outMatrix.RotateX( m_Euler.x );
 					break;
-				case 1:
+				case EULERAXIS_Y:
 					outMatrix.RotateY( m_Euler.y );
 					break;
-				case 2:
+				case EULERAXIS_Z:
 					outMatrix.RotateZ( m_Euler.z );
 					break;
 			}
@@ -130,7 +139,7 @@ void TTransformObject::SetEuler( const TVector3& a_rEuler )
 	m_Euler = a_rEuler;
 }
 
-void TTransformObject::SetEulerOrder( TUINT8 x, TUINT8 y, TUINT8 z )
+void TTransformObject::SetEulerOrder( EULERAXIS x, EULERAXIS y, EULERAXIS z )
 {
 	m_EulerOrder[ 0 ] = x;
 	m_EulerOrder[ 1 ] = y;
@@ -158,6 +167,15 @@ void TTransformObject::SetMatrix( const TMatrix44& matrix )
 	m_eMode       = Mode::Matrix;
 	m_Matrix      = matrix;
 	m_Translation = matrix.GetTranslation3();
+}
+
+// $Barnyard: FUNCTION 006c81a0
+TTransformObject::Mode TTransformObject::SetMode( Mode a_eMode )
+{
+	Mode eOldMode = m_eMode;
+	m_eMode       = a_eMode;
+
+	return eOldMode;
 }
 
 void TTransformObject::SetScale( TFLOAT a_flScaleX, TFLOAT a_flScaleY, TFLOAT a_flScaleZ )

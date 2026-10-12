@@ -21,6 +21,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 005f5f50, CreateObject 005f7880, CreateObjectInPlace 005f78e0
 TDEFINE_CLASS( AWorldShaderHAL );
 
 // $Barnyard: FUNCTION 005f75e0
@@ -31,13 +32,16 @@ AWorldShaderHAL::AWorldShaderHAL()
 	m_pUnk2         = TNULL;
 	m_iAlphaRef     = 128;
 
-	m_bIsHighEndMode      = TTRUE;
+	m_bIsHighEndMode = TTRUE;
+	// NOTE: retail leaves it uninitialised and always tests it with == 1 (see AFXShader_DX8.cpp)
+	m_bRenderEnvMap       = TFALSE;
 	m_bAlphaBlendMaterial = TFALSE;
-	m_bUnkFlag3           = TFALSE;
-	m_bUnkFlag4           = TFALSE;
+	m_bCPUSupportsSSE     = TFALSE;
+	m_bCPUSupportsSSE2    = TFALSE;
 }
 
 // $Barnyard: FUNCTION 005f77a0
+// $Barnyard: FUNCTION 005f7920
 AWorldShaderHAL::~AWorldShaderHAL()
 {
 }
@@ -78,7 +82,7 @@ void AWorldShaderHAL::Flush()
 			pDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, 0 );
 			pDevice->SetTextureStageState( 1, D3DTSS_COLOROP, 1 );
 			pDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP, 1 );
-			pDevice->SetRenderState( D3DRS_CULLMODE, m_bRenderEnvMap ? D3DCULL_CCW : D3DCULL_CW );
+			pDevice->SetRenderState( D3DRS_CULLMODE, m_bRenderEnvMap == TTRUE ? D3DCULL_CCW : D3DCULL_CW );
 			pDevice->SetRenderState( D3DRS_SPECULARENABLE, dwWasSpecularEnabled );
 			pDevice->SetRenderState( D3DRS_FOGENABLE, FALSE );
 			pDevice->SetPixelShader( 0 );
@@ -133,7 +137,7 @@ void AWorldShaderHAL::StartFlush()
 		pDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, 0 );
 		pDevice->SetTextureStageState( 1, D3DTSS_COLOROP, 1 );
 		pDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP, 1 );
-		pDevice->SetRenderState( D3DRS_CULLMODE, m_bRenderEnvMap ? D3DCULL_CCW : D3DCULL_CW );
+		pDevice->SetRenderState( D3DRS_CULLMODE, m_bRenderEnvMap == TTRUE ? D3DCULL_CCW : D3DCULL_CW );
 	}
 }
 
@@ -161,6 +165,7 @@ TBOOL AWorldShaderHAL::Create()
 	return AWorldShader::Create();
 }
 
+// $Barnyard: FUNCTION 005f6030
 static TBOOL CreateWorldVertexShader( const char* a_szFileName, const DWORD* a_pFunction, DWORD* a_pOutVertexShader )
 {
 	static constexpr DWORD s_ShaderDeclaration[] = {
@@ -222,7 +227,30 @@ TBOOL AWorldShaderHAL::Validate()
 		}
 	}
 
+	CheckCPUSupportsSSE();
+	CheckCPUSupportsSSE2();
+
 	return AWorldShader::Validate();
+}
+
+// $Barnyard: FUNCTION 005f6090
+void AWorldShaderHAL::CheckCPUSupportsSSE()
+{
+	TINT aCPUInfo[ 4 ];
+	__cpuid( aCPUInfo, 1 );
+
+	// EDX bit 25
+	m_bCPUSupportsSSE = ( aCPUInfo[ 3 ] & BITFLAG( 25 ) ) != 0;
+}
+
+// $Barnyard: FUNCTION 005f6180
+void AWorldShaderHAL::CheckCPUSupportsSSE2()
+{
+	TINT aCPUInfo[ 4 ];
+	__cpuid( aCPUInfo, 1 );
+
+	// EDX bit 26
+	m_bCPUSupportsSSE2 = ( aCPUInfo[ 3 ] & BITFLAG( 26 ) ) != 0;
 }
 
 // $Barnyard: FUNCTION 005f7580
@@ -272,33 +300,33 @@ void AWorldShaderHAL::Render( TRenderPacket* a_pRenderPacket )
 
 		if ( a_pRenderPacket->GetAlpha() >= 1.0f || isnan( a_pRenderPacket->GetAlpha() ) )
 		{
-			if ( s_RenderStateFlags & 24 )
+			if ( s_RenderStateFlags & RENDERSTATE_ALPHAREF )
 			{
 				pDevice->SetRenderState( D3DRS_ALPHAREF, m_iAlphaRef );
-				s_RenderStateFlags &= ~24;
+				s_RenderStateFlags &= ~RENDERSTATE_ALPHAREF;
 			}
 		}
 		else
 		{
 			pDevice->SetRenderState( D3DRS_ALPHAREF, TUINT8( m_iAlphaRef * a_pRenderPacket->GetAlpha() ) );
-			s_RenderStateFlags |= 24;
+			s_RenderStateFlags |= RENDERSTATE_ALPHAREF;
 		}
 
 		auto pMesh     = TSTATICCAST( AWorldMeshHAL, a_pRenderPacket->GetMesh() );
 		auto pMaterial = TSTATICCAST( AWorldMaterialHAL, pMesh->GetMaterial() );
 
-		if ( pMaterial->GetBlendMode() != 0 || a_pRenderPacket->GetAlpha() < 1.0f )
+		if ( pMaterial->GetBlendMode() != AWorldMaterial::BLENDMODE_DEFAULT || a_pRenderPacket->GetAlpha() < 1.0f )
 		{
-			if ( ISZERO( s_RenderStateFlags & 0x1b ) )
+			if ( ISZERO( s_RenderStateFlags & RENDERSTATE_ALPHABLEND ) )
 			{
 				pDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-				s_RenderStateFlags |= 0x1b;
+				s_RenderStateFlags |= RENDERSTATE_ALPHABLEND;
 			}
 		}
-		else if ( !ISZERO( s_RenderStateFlags & 0x1b ) )
+		else if ( !ISZERO( s_RenderStateFlags & RENDERSTATE_ALPHABLEND ) )
 		{
 			pDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, FALSE );
-			s_RenderStateFlags &= ~0x1b;
+			s_RenderStateFlags &= ~RENDERSTATE_ALPHABLEND;
 		}
 
 		TVector4 vSomeConst;
@@ -486,7 +514,7 @@ void AWorldShaderHAL::SetupLowEndMode()
 	pDevice->SetTextureStageState( 1, D3DTSS_COLOROP, 1 );
 	pDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP, 1 );
 
-	pDevice->SetRenderState( D3DRS_CULLMODE, m_bRenderEnvMap ? D3DCULL_CCW : D3DCULL_CW );
+	pDevice->SetRenderState( D3DRS_CULLMODE, m_bRenderEnvMap == TTRUE ? D3DCULL_CCW : D3DCULL_CW );
 
 	static TMatrix44 s_IdentityMatrix = TMatrix44::IDENTITY;
 

@@ -43,6 +43,20 @@ void TVector3::RotateX( TFLOAT a_fRotation )
 	z = oldY * f1 + z * f2;
 }
 
+// $Barnyard: FUNCTION 006cbc30
+TFLOAT TVector3::GetAngleBetweenVector( const TVector3& a_rcVec ) const
+{
+	// NOTE: same order of operations as the original, so parallel vectors give exactly 1 (angle 0) as in retail
+	TFLOAT fCos = ( z * a_rcVec.z + y * a_rcVec.y + a_rcVec.x * x ) /
+	    ( TMath::Sqrt( a_rcVec.y * a_rcVec.y + a_rcVec.z * a_rcVec.z + a_rcVec.x * a_rcVec.x ) * TMath::Sqrt( y * y + z * z + x * x ) );
+
+	// NOTE: unlike TVector4::GetAngleBetweenVector, values below -1 are not clamped
+	if ( 1.0f < fCos )
+		return 0.0f;
+
+	return TMath::ACos( fCos );
+}
+
 // $Barnyard: FUNCTION 006c7820
 void TVector3::RotateY( TFLOAT a_fRotation )
 {
@@ -56,6 +70,7 @@ void TVector3::RotateY( TFLOAT a_fRotation )
 	z = z * f2 + -f1 * oldX;
 }
 
+// $Barnyard: FUNCTION 006c7860
 void TVector3::RotateZ( TFLOAT a_fRotation )
 {
 	TFLOAT f1;

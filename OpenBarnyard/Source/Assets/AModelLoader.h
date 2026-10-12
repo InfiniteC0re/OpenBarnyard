@@ -58,9 +58,14 @@ public:
 	static void              DestroyMaterial( Toshi::TMaterial* a_pMaterial );
 	static void              ResolveTextures();
 
+	// Gives a_pMaterial (one of the loaded materials) the texture called a_szTextureName
+	static void ChangeMaterialTexture( Toshi::TMaterial* a_pMaterial, const TCHAR* a_szTextureName );
+
 	static Toshi::TCollisionCommon::TOSHICGROUP GetCollisionGroup( const TCHAR* a_szCollGroupName );
 
 	static void InitialiseStatic();
+	// Destroys the material library of the grass layers (see InitialiseGrassLayersTextures)
+	static void DestroyStatic();
 
 private:
 	static void              AddMaterial( const Toshi::TString8& a_rName, MaterialNode* a_pMaterialNode );
@@ -72,6 +77,12 @@ private:
 	static void MaterialApplyClamp( Toshi::TMaterial* a_pMaterial, const TCHAR* a_szMaterialName, Toshi::TTexture* a_pTexture );
 	static void MaterialApplyAlphaRef( Toshi::TMaterial* a_pMaterial, const TCHAR* a_szMaterialName, Toshi::TTexture* a_pTexture );
 
+	// Setup of the world materials using WorldEndRender, WorldStartRender and WorldUVOffsetsPerSec of the material properties
+	static TBOOL IsWorldEndRenderMaterial( const TCHAR* a_szMaterialName );
+	static TBOOL IsWorldStartRenderMaterial( const TCHAR* a_szMaterialName );
+	static void  WorldMaterialApplyUVOffsets( AWorldMaterial* a_pMaterial, const TCHAR* a_szMaterialName );
+	static void  WorldMaterialApplyProperties( AWorldMaterial* a_pMaterial, const TCHAR* a_szMaterialName );
+
 	static void LoadGrassMeshTRB( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader );
 	static void LoadWorldMeshTRB( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader );
 	static void LoadSkinLOD( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader );
@@ -81,6 +92,9 @@ private:
 private:
 	static TBOOL __stdcall AModelLoaderLoadTMDCallback( Toshi::TModel* a_pModel );
 	static TBOOL __stdcall AModelLoaderLoadTRBCallback( Toshi::TModel* a_pModel );
+
+	// Creates the LODs of a TRB model (called by AModelLoaderLoadTRBCallback)
+	static TBOOL LoadTRBModelLODs( Toshi::TModel* a_pModel );
 
 	inline static MaterialNode                 ms_oNodesAlloc[ MAX_NUM_ALLOCATED_MATERIALS ];
 	inline static Toshi::T2DList<MaterialNode> ms_oFreeMaterials;

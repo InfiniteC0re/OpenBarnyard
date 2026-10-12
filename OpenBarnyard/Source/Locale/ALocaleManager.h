@@ -45,6 +45,12 @@ public:
 public:
 	static const TCHAR* GetLanguageName( Lang a_eLang );
 
+	// $Barnyard: FUNCTION 00402870
+	static TBOOL IsLanguageSupported( Lang a_eLang ) { return a_eLang == Lang_EnglishUK; }
+
+	// NOTE: 004c4a20 is a shared function that returns 1
+	static Lang GetDefaultLanguage() { return Lang_EnglishUK; }
+
 	static ALocaleManager* Interface() { return TSTATICCAST( ALocaleManager, ms_pSingleton ); }
 };
 

@@ -18,6 +18,7 @@ TShader::TShader()
 	sm_oShaderList.AddShader( this );
 }
 
+// $Barnyard: FUNCTION 006ccd90
 TShader::~TShader()
 {
 	sm_oShaderList.RemoveShader( this );
@@ -68,6 +69,7 @@ void TShader::TShaderList::AddShader( TShader* pShader )
 	pShader->m_pNextShader = TNULL;
 }
 
+// $Barnyard: FUNCTION 006ccb20
 void TShader::TShaderList::RemoveShader( TShader* pShader )
 {
 	TShader* pCurrShader = m_pRoot;
@@ -98,7 +100,16 @@ void TShader::TShaderList::RemoveShader( TShader* pShader )
 			TASSERT( m_pRoot == pShader );
 			m_pRoot = pShader->m_pNextShader;
 		}
+
+		pShader->m_pNextShader = TNULL;
 	}
+}
+
+// $Barnyard: FUNCTION 006ccb90
+void TShader::TShaderList::EnumerateShaders( t_EnumerateCallback a_fnCallback )
+{
+	for ( TShader* pShader = m_pRoot; pShader != TNULL; pShader = pShader->m_pNextShader )
+		a_fnCallback( pShader );
 }
 
 TOSHI_NAMESPACE_END

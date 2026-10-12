@@ -10,6 +10,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006bb4b0
 TWCHAR* TStringManager::StringCharToUnicode( TWCHAR* a_UnicodeString, const TCHAR* a_CharString, TUINT32 a_iLength )
 {
 	TASSERT( ( a_UnicodeString != TNULL ) && ( a_CharString != TNULL ) );
@@ -26,6 +27,7 @@ TWCHAR* TStringManager::StringCharToUnicode( TWCHAR* a_UnicodeString, const TCHA
 	return a_UnicodeString;
 }
 
+// $Barnyard: FUNCTION 006bb500
 TCHAR* TStringManager::StringUnicodeToChar( TCHAR* a_CharString, const TWCHAR* const& a_UnicodeString, TUINT32 a_iLength )
 {
 	TASSERT( ( a_UnicodeString != TNULL ) && ( a_CharString != TNULL ) );

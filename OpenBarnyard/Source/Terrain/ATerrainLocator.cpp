@@ -2,6 +2,8 @@
 #include "ATerrainLocator.h"
 #include "Helpers/ATreeManager.h"
 #include "Helpers/AInstanceManager.h"
+#include "Helpers/ARegrowthManager.h"
+#include "Helpers/AInstanceLightingHelper.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -16,7 +18,7 @@ ATerrainLocatorList::ATerrainLocatorList()
     : m_pTRB( TNULL )
     , m_pLocatorsHeader( TNULL )
     , m_pLocatorVISHeader( TNULL )
-    , m_bCreatedGrowings( TFALSE )
+    , m_uiRegrowthGroup( 0 )
 {
 	m_oWorldTransform.SetMatrix( TMatrix44{
 	    1.0f,
@@ -38,8 +40,24 @@ ATerrainLocatorList::ATerrainLocatorList()
 	} );
 }
 
+// $Barnyard: FUNCTION 005eca30
 ATerrainLocatorList::~ATerrainLocatorList()
 {
+	ATreeManager::GetSingleton()->DestroyInstances( this );
+
+	if ( m_uiRegrowthGroup != 0 )
+	{
+		ARegrowthManager::GetSingleton()->DestroyGroup( m_uiRegrowthGroup );
+		m_uiRegrowthGroup = 0;
+	}
+
+	AInstanceManager::GetSingleton()->DestroyInstances( this );
+
+	AInstanceLightingHelper::GetSingleton()->DestroySpheres( this );
+
+	// The skeleton TRB (see ATerrainVIS::LoadSkeleton)
+	if ( m_pTRB )
+		delete m_pTRB;
 }
 
 // $Barnyard: FUNCTION 005ec8b0
@@ -54,7 +72,7 @@ ATerrainLocator* ATerrainLocatorList::FindLocator( const TCHAR* a_pszLocatorName
 		{
 			ATerrainLocator* pLocator = &m_pLocatorsHeader->pLocators[ i ];
 
-			if ( !TStringManager::String8Compare( m_pLocatorsHeader->ppNames[ pLocator->uiNameId ], a_pszLocatorName ) )
+			if ( !TStringManager::String8CompareNoCase( m_pLocatorsHeader->ppNames[ pLocator->uiNameId ], a_pszLocatorName ) )
 				return &m_pLocatorsHeader->pLocators[ i ];
 		}
 	}
@@ -65,7 +83,7 @@ ATerrainLocator* ATerrainLocatorList::FindLocator( const TCHAR* a_pszLocatorName
 		{
 			ATerrainLocatorVISSection* pSection = &m_pLocatorVISHeader->pSections[ i ];
 
-			// Do binary search
+			// Do binary search (the names are sorted case-insensitively, retail compares with stricmp)
 			TUINT uiBase    = pSection->uiFirstLocator;
 			TUINT uiEnd     = uiBase + pSection->uiNumLocators;
 			TUINT uiCurrent = ( ( uiEnd - uiBase ) / 2 ) + uiBase;
@@ -73,7 +91,7 @@ ATerrainLocator* ATerrainLocatorList::FindLocator( const TCHAR* a_pszLocatorName
 			while ( uiBase <= uiCurrent && uiCurrent < uiEnd )
 			{
 				ATerrainLocator* pLocator = &m_pLocatorsHeader->pLocators[ uiCurrent ];
-				TINT             iCmpRes  = TStringManager::String8Compare( m_pLocatorsHeader->ppNames[ pLocator->uiNameId ], a_pszLocatorName );
+				TINT             iCmpRes  = TStringManager::String8CompareNoCase( m_pLocatorsHeader->ppNames[ pLocator->uiNameId ], a_pszLocatorName );
 
 				if ( iCmpRes == 0 ) return pLocator;
 
@@ -106,9 +124,10 @@ void ATerrainLocatorList::LoadFromTRB( TTRB* a_pTRB )
 	TASSERT( m_pLocatorsHeader && m_pLocatorVISHeader );
 
 	ATreeManager::GetSingleton()->CreateInstances( this );
+	m_uiRegrowthGroup = ARegrowthManager::GetSingleton()->CreateFromLocators( this );
 	AInstanceManager::GetSingleton()->CreateInstances( this );
 
-	TTODO( "Create regrowths and other things from locators" );
+	AInstanceLightingHelper::GetSingleton()->CreateSpheres( this );
 }
 
 // $Barnyard: FUNCTION 005eca20

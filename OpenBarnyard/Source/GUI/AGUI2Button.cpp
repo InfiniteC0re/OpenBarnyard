@@ -14,23 +14,24 @@ TOSHI_NAMESPACE_USING
 // $Barnyard: FUNCTION 00640020
 AGUI2Button::AGUI2Button()
 {
-	m_bScaleOnFocus     = TTRUE;
-	m_bFocused          = TFALSE;
-	m_fRectangle1Width  = 0.0f;
-	m_fRectangle1Height = 0.0f;
-	m_bUseRectangle1    = TFALSE;
-	m_Unk3              = 0;
-	m_uiFocusedColour   = 0xffffff80;
-	m_uiEnabledColour   = 0xffffffff;
-	m_uiDisabledColour  = 0xffc0c0c0;
-	m_fFocusedScale     = 1.25f;
-	m_fScale            = 1.0f;
-	m_pFont             = TNULL;
-	m_fGap              = 0.0f;
-	m_wszButtonText     = TNULL;
+	m_bScaleOnFocus      = TTRUE;
+	m_bFocused           = TFALSE;
+	m_fRectangle1Width   = 0.0f;
+	m_fRectangle1Height  = 0.0f;
+	m_bUseRectangle1     = TFALSE;
+	m_pRectangle1Section = TNULL;
+	m_uiFocusedColour    = 0xffffff80;
+	m_uiEnabledColour    = 0xffffffff;
+	m_uiDisabledColour   = 0xffc0c0c0;
+	m_fFocusedScale      = 1.25f;
+	m_fScale             = 1.0f;
+	m_pFont              = TNULL;
+	m_fGap               = 0.0f;
+	m_wszButtonText      = TNULL;
 }
 
 // $Barnyard: FUNCTION 006400f0
+// $Barnyard: FUNCTION 00407f00
 AGUI2Button::~AGUI2Button()
 {
 	m_oBackgroundRect.Unlink();
@@ -72,6 +73,26 @@ void AGUI2Button::SetImage( const TCHAR* a_szTexSec, TFLOAT a_fScaleX, TFLOAT a_
 	m_oBackgroundRect.SetTextureSection( pTexSec );
 	m_oBackgroundRect.SetAttachment( T2GUIATTACHMENT_MIDDLECENTER, T2GUIATTACHMENT_MIDDLECENTER );
 	LinkChildBefore( m_oBackgroundRect, m_oText );
+}
+
+// $Barnyard: FUNCTION 00640240
+void AGUI2Button::SetHighlightImage( const TCHAR* a_szTexSec )
+{
+	m_pRectangle1Section = T2GUITextureSectionManager::GetTextureSection( a_szTexSec );
+
+	TFLOAT fHeight = m_pRectangle1Section->GetHeight() + m_fRectangle1Height;
+	TFLOAT fWidth  = m_pRectangle1Section->GetWidth() + m_fRectangle1Width;
+	m_Rectangle1.SetDimensions( fWidth, fHeight );
+	m_Rectangle1.SetTextureSection( m_pRectangle1Section );
+	m_Rectangle1.SetAttachment( T2GUIATTACHMENT_MIDDLECENTER, T2GUIATTACHMENT_MIDDLECENTER );
+}
+
+// $Barnyard: FUNCTION 006403f0
+void AGUI2Button::ResizeImage( TFLOAT a_fScaleX, TFLOAT a_fScaleY )
+{
+	TFLOAT fHeight = m_oText.GetHeight() * a_fScaleY;
+	TFLOAT fWidth  = m_oText.GetWidth() * a_fScaleX;
+	m_oBackgroundRect.SetDimensions( fWidth, fHeight );
 }
 
 // $Barnyard: FUNCTION 00640210

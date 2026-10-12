@@ -47,6 +47,24 @@ void AModelLoader::InitialiseGrassLayersTextures()
 #endif
 }
 
+// $Barnyard: FUNCTION 00613310
+// $Barnyard: FUNCTION 00613120
+void AModelLoader::DestroyStatic()
+{
+	if ( AMaterialLibraryManager::List::IsSingletonCreated() && g_pGrassLayersMatLib )
+	{
+		AMaterialLibraryManager::List::GetSingleton()->DestroyLibrary( g_pGrassLayersMatLib );
+		g_pGrassLayersMatLib = TNULL;
+	}
+
+	// NOTE: the original only clears the first four entries
+	g_aGrassLayers[ 0 ] = TNULL;
+	g_aGrassLayers[ 1 ] = TNULL;
+	g_aGrassLayers[ 2 ] = TNULL;
+	g_aGrassLayers[ 3 ] = TNULL;
+}
+
+// $Barnyard: FUNCTION 00613850
 static void LoadTreeIntersect( CellSphereTreeBranchNode* a_pRenderGroup, Cell*& a_ppModel, TModelLOD* a_pModelLOD )
 {
 	TVALIDPTR( a_pRenderGroup );
@@ -90,7 +108,7 @@ static void LoadTreeIntersect( CellSphereTreeBranchNode* a_pRenderGroup, Cell*& 
 			auto pIndexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TIndexFactoryResourceInterface>( SYSRESOURCE_IFSYS );
 			TVALIDPTR( pIndexFactory );
 
-			pSubMesh->pIndexPool = pIndexFactory->CreatePoolResource( pTerrainMesh->uiNumIndices, 9 );
+			pSubMesh->pIndexPool = pIndexFactory->CreatePoolResource( pTerrainMesh->uiNumIndices, TIndexPoolResourceInterface::FLAGS_STATIC | TIndexPoolResourceInterface::FLAGS_TRISTRIP );
 		}
 
 		pSubMesh->uiNumVertices = pTerrainMesh->uiNumVertices2;
@@ -148,6 +166,7 @@ void AModelLoader::LoadWorldMeshTRB( Toshi::TModel* a_pModel, TINT a_iLODIndex, 
 	}
 }
 
+// $Barnyard: FUNCTION 00613350
 static void LoadGrassTreeIntersect( CellSphereTreeBranchNode* a_pRenderGroup, Cell*& a_ppModel, TModelLOD* a_pModelLOD )
 {
 	TVALIDPTR( a_pRenderGroup );
@@ -196,7 +215,7 @@ static void LoadGrassTreeIntersect( CellSphereTreeBranchNode* a_pRenderGroup, Ce
 			auto pIndexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TIndexFactoryResourceInterface>( SYSRESOURCE_IFSYS );
 			TVALIDPTR( pIndexFactory );
 
-			pSubMesh->pIndexPool = pIndexFactory->CreatePoolResource( pTerrainMesh->uiNumIndices, 9 );
+			pSubMesh->pIndexPool = pIndexFactory->CreatePoolResource( pTerrainMesh->uiNumIndices, TIndexPoolResourceInterface::FLAGS_STATIC | TIndexPoolResourceInterface::FLAGS_TRISTRIP );
 		}
 
 		pSubMesh->uiNumVertices = pTerrainMesh->uiNumVertices2;
@@ -231,6 +250,7 @@ static void LoadGrassTreeIntersect( CellSphereTreeBranchNode* a_pRenderGroup, Ce
 	}
 }
 
+// $Barnyard: FUNCTION 00613540
 void AModelLoader::LoadGrassMeshTRB( TModel* a_pModel, TINT a_iLODIndex, TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader )
 {
 	TPROFILER_SCOPE();

@@ -5,6 +5,8 @@
 class ASectionDoneJob : public AMainThreadJob
 {
 public:
+	ASectionDoneJob();
+
 	virtual void  BeginJob() override;
 	virtual TBOOL RunJob() override;
 	virtual TBOOL CancelJob() override;

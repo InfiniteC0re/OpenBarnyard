@@ -47,6 +47,9 @@ public:
 	// Returns number of bytes allocated for the buffer
 	TINT GetNumAllocatedBytes() const;
 
+	// Returns number of bits
+	TINT GetSize() const { return m_iSize; }
+
 private:
 	TUINT32* m_pBuffer;
 	TINT     m_iSize;

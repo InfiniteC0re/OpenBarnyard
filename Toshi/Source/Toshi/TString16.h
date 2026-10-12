@@ -4,6 +4,8 @@
 
 TOSHI_NAMESPACE_START
 
+class TString8;
+
 class TString16
 {
 public:
@@ -12,10 +14,11 @@ public:
 	TString16( TString16&& src ) noexcept;
 	TString16( const TString16& src, T2Allocator* allocator = TNULL );
 	TString16( const TWCHAR* src, T2Allocator* allocator = TNULL );
+	TString16( const TString8& src, T2Allocator* allocator = TNULL );
 	TString16( TINT size, T2Allocator* allocator = TNULL );
 	~TString16() { FreeBuffer(); }
 
-	void Copy( const TString16& src, TINT size = -1 ) { Copy( src.m_pBuffer, size ); }
+	void Copy( const TString16& src, TINT size = -1 );
 	void Copy( const TWCHAR* src, TINT size = -1 );
 
 	void FreeBuffer();
@@ -23,8 +26,8 @@ public:
 	// Returns TTRUE if allocated memory
 	TBOOL AllocBuffer( TINT size, TBOOL freeMemory = TTRUE );
 
-	static TString16 Format( const TWCHAR* a_pcFormat, ... );
-	TString16&       VFormat( const TWCHAR* a_pcFormat, va_list a_vargs );
+	TString16& Format( const TWCHAR* a_pcFormat, ... );
+	TString16& VFormat( const TWCHAR* a_pcFormat, va_list a_vargs );
 
 	void ForceSetData( TWCHAR* a_cString, TINT a_ilength );
 	void UndoForceSetData() { Reset(); }
@@ -45,8 +48,14 @@ public:
 	// Returns string starting from specified a_iIndex. Use only if you are sure about what you do!
 	TWCHAR* GetStringUnsafe( TINT a_iIndex = 0 );
 
-	TString16& Concat( const TString16& str, TINT size = -1 ) { return Concat( str.m_pBuffer, size ); };
+	TString16& Concat( const TString16& str, TINT size = -1 );
 	TString16& Concat( const TWCHAR* src, TINT size = -1 );
+
+	// Inserts a_iCount characters of a_wszString at a_iPos
+	TString16& Insert( const TWCHAR* a_wszString, TINT a_iPos, TINT a_iCount = -1 );
+
+	// Removes a_iCount characters starting at a_iPos
+	TString16& Delete( TINT a_iPos, TINT a_iCount );
 
 	TString16& Reserve( TINT size );
 
@@ -59,14 +68,17 @@ public:
 	// Returns a substring contained in a [a_iFrom; end of the string] range
 	TString16 Right( TINT a_iFrom ) const;
 
+	// $Barnyard: FUNCTION 006cc700
 	TString16& MakeUpper()
 	{
-		_wcsupr( m_pBuffer );
+		if ( m_pBuffer ) _wcsupr( m_pBuffer );
 		return *this;
 	}
+
+	// $Barnyard: FUNCTION 006cc720
 	TString16& MakeLower()
 	{
-		_wcslwr( m_pBuffer );
+		if ( m_pBuffer ) _wcslwr( m_pBuffer );
 		return *this;
 	}
 
@@ -112,11 +124,11 @@ public:
 	TBOOL operator<=( const TWCHAR* a_wszStr ) const { return Compare( a_wszStr, -1 ) > 0; };
 	TBOOL operator<=( const TString16& str ) const { return Compare( str.m_pBuffer, -1 ) > 0; };
 
-	TString16& operator=( const TWCHAR* a_wszStr )
-	{
-		Copy( a_wszStr, -1 );
-		return *this;
-	}
+	TString16& operator=( const TWCHAR* a_wszStr );
+	TString16& operator=( const TString8& a_rcStr );
+
+	// Copies a C-string, widening each character
+	TString16& operator=( const TCHAR* a_szStr );
 
 	TString16& operator=( const TString16& str )
 	{

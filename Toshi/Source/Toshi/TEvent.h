@@ -53,6 +53,10 @@ public:
 	TEmitter( Owner* owner )
 	    : TGenericEmitter( owner ) {}
 
+	// NOTE: every instantiation is folded into one jmp to ~TGenericEmitter: 0042e130
+	// $Barnyard: FUNCTION 0042e130
+	~TEmitter() {}
+
 	void Throw( Data* pData ) { TGenericEmitter::Throw( pData ); }
 	void Throw( Data&& data ) { TGenericEmitter::Throw( &data ); }
 

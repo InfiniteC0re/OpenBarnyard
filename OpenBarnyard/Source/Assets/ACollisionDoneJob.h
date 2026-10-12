@@ -5,6 +5,8 @@
 class ACollisionDoneJob : public AMainThreadJob
 {
 public:
+	ACollisionDoneJob();
+
 	virtual void  BeginJob() override;
 	virtual TBOOL RunJob() override;
 	virtual TBOOL CancelJob() override;

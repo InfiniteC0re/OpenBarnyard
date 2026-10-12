@@ -4,6 +4,9 @@
 #include "Locale/ALocaleManager.h"
 #include "Helpers/ASimAnimModelHelperManager.h"
 #include "GUI/T2GUIFontManager.h"
+#include "GUI/T2GUITextureSectionManager.h"
+#include "Player/APlayerManager.h"
+#include "Helpers/AWindmillHelper.h"
 #include "GUI/AGUI2.h"
 #include "GUI/AFadeManager.h"
 #include "SoundBank/ui.h"
@@ -11,8 +14,16 @@
 #include "Sound/AMusicManager.h"
 #include "Input/AInputHandler.h"
 #include "GameInterface/AMovieState.h"
-#include "GameInterface/ADebugFlyState.h"
 #include "GameInterface/AFrontEndMiniGameState2.h"
+#include "GameInterface/AFrontEndPlayersState.h"
+#include "GameInterface/AFrontEndNewGameSelectState.h"
+#include "GameInterface/AFrontEndLoadState.h"
+#include "GameInterface/AFrontEndBonusState.h"
+#include "GameInterface/AFrontEndCharacterSelectState.h"
+#include "Helpers/AGameLoader.h"
+#include "AppBoot.h"
+#include "GameInterface/SaveLoadSKU.h"
+#include "Helpers/APlayerProgress.h"
 #include "AOptionsState.h"
 #include "Cameras/ACameraManager.h"
 #include "Cameras/ABoneAttachCameraHelper.h"
@@ -29,6 +40,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 00408de0, CreateObject 004095c0, CreateObjectInPlace 00409620
 TDEFINE_CLASS( AFrontEndMainMenuState2 );
 
 // $Barnyard: FUNCTION 00408f20
@@ -49,6 +61,7 @@ AFrontEndMainMenuState2::AFrontEndMainMenuState2( AWindmillHelper* a_pWindmillHe
 }
 
 // $Barnyard: FUNCTION 00408df0
+// $Barnyard: FUNCTION 00409050
 AFrontEndMainMenuState2::~AFrontEndMainMenuState2()
 {
 }
@@ -123,6 +136,12 @@ TBOOL AFrontEndMainMenuState2::ProcessCommand( AInputCommand a_eInputCommand, co
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 00409660
+static TBOOL __stdcall OnIntroFadeOver( AFrontEndMainMenuState2* a_pFrontEndState, AFade* a_pFade, TBOOL* a_pData )
+{
+	return a_pFrontEndState->StartIntroVideo();
+}
+
 // $Barnyard: FUNCTION 00409910
 TBOOL AFrontEndMainMenuState2::OnUpdate( TFLOAT a_fDeltaTime )
 {
@@ -139,7 +158,7 @@ TBOOL AFrontEndMainMenuState2::OnUpdate( TFLOAT a_fDeltaTime )
 			// Fade in screen and start intro video after that
 			AFade* pFade = AFadeManager::GetSingleton()->StartFade( AFade::Color( 0, 0, 0, 0 ), AFade::Color( 255, 0, 0, 0 ), 0.5f );
 			m_oFadeOverListener.Connect(
-			    pFade->GetFadeOverEmitter(), this, []( AFrontEndMainMenuState2* a_pFrontEndState, AFade* a_pFade, TBOOL* ) { return a_pFrontEndState->StartIntroVideo(); }, 0
+			    pFade->GetFadeOverEmitter(), this, OnIntroFadeOver, 0
 			);
 		}
 	}
@@ -159,7 +178,7 @@ void AFrontEndMainMenuState2::OnInsertion()
 {
 	// Note: commented out because it gives black screen atm
 	//if ( !m_bFlag )
-	//	AGameStateController::GetSingleton()->SetFlags( 4 );
+	//	AGameStateController::GetSingleton()->SetFlags( AGameStateController::FLAGS_FADING_IN );
 
 	ms_bIsInserted = TTRUE;
 
@@ -178,9 +197,6 @@ void AFrontEndMainMenuState2::OnInsertion()
 	{
 		const TWCHAR* wszText = g_pLocaleManager->GetString( FRONTENDBUTTON_TEXTS[ i ] );
 
-		if ( i == 0 )
-			wszText = L"DEBUG FLY";
-
 		m_aButtons[ i ].Create( pFont, pFont->GetTextWidth( wszText ), wszText, 5.0f );
 		m_aButtons[ i ].SetFocusedColour( AGUI2STYLE_COLOR_FOCUSED );
 		m_aButtons[ i ].SetEnabledColour( AGUI2STYLE_COLOR_PRIMARY );
@@ -197,9 +213,7 @@ void AFrontEndMainMenuState2::OnInsertion()
 	}
 
 	m_oMenu.SetFocusAt( m_aButtons[ 0 ] );
-	m_oMenu.SetItemFocusCallback( []( void* a_pUserData, AGUI2MenuItem* a_pOldFocus, AGUI2MenuItem* a_pNewFocus ) {
-		TSTATICCAST( AFrontEndMainMenuState2, a_pUserData )->OnMenuItemFocused( *a_pOldFocus, *a_pNewFocus );
-	} );
+	m_oMenu.SetItemFocusCallback( MenuItemFocusCallback );
 
 	m_oDialogTitleBackground.Hide();
 	m_Rectangle1.SetAttachment( T2GUIATTACHMENT_TOPCENTER, T2GUIATTACHMENT_TOPCENTER );
@@ -236,7 +250,13 @@ void AFrontEndMainMenuState2::OnRemoval()
 
 
 	AMusicManager::GetSingleton()->StopBackgroundMusic();
-	TTODO( "FUN_0054b390" );
+	ASimAnimModelHelperManager::GetSingleton()->RemoveModelHelper( m_pWindmillHelper );
+	m_pWindmillHelper->OnDestroy();
+
+	if ( m_pWindmillHelper )
+		delete m_pWindmillHelper;
+
+	m_pWindmillHelper = TNULL;
 
 	for ( TINT i = 0; i < FRONTENDBUTTON_NUMOF; i++ )
 	{
@@ -252,18 +272,60 @@ void AFrontEndMainMenuState2::OnRemoval()
 // $Barnyard: FUNCTION 00409680
 void AFrontEndMainMenuState2::OnActivate()
 {
-	TIMPLEMENT();
-
 	m_fAFKTime           = 0.0f;
 	m_iActivatedButtonID = -1;
 
 	m_Rectangle1.Show();
 	m_Rectangle2.Show();
 
+	AInputHandler* pInputHandler = AInputHandler::GetSingleton();
+
+	if ( pInputHandler->IsRecordingLostControllers() == TTRUE )
+		pInputHandler->SetRecordLostControllers( TFALSE );
+
+	APlayerManager::GetSingleton()->GetCurrentPlayerSet()->Reset();
+
 	BaseClass::OnActivate();
 	m_eMenuState = MENUSTATE_MENU_APPEAR;
 
 	m_oDialogTitleBackground.Hide();
+
+	// NOTE: the original also clears a global here (DAT_007810e9) that is never read
+
+	if ( m_pWindmillHelper )
+	{
+		// The English barn sign shows the title, the other languages show a localised title on the screen
+		T2Locale::Lang eLanguage = g_pLocaleManager->GetLanguage();
+		TBOOL          bEnglish  = eLanguage < ALocaleManager::Lang_Japanese;
+
+		m_pWindmillHelper->SetBarnSignAnimated( bEnglish );
+
+		if ( bEnglish )
+		{
+			m_Rectangle1.Hide();
+			m_Rectangle2.Hide();
+		}
+		else
+		{
+			m_Rectangle1.Show();
+			m_Rectangle2.Show();
+
+			T2GUITextureSection* pTitle  = T2GUITextureSectionManager::GetTextureSection( "BY_TITLE" );
+			TFLOAT               fWidth  = TMath::Abs( TFLOAT( pTitle->GetPoint2X() - pTitle->GetPoint1X() ) );
+			TFLOAT               fHeight = TMath::Abs( TFLOAT( pTitle->GetPoint2Y() - pTitle->GetPoint1Y() ) );
+
+			m_Rectangle1.T2GUIElement::SetDimensions( fWidth, fHeight );
+			m_Rectangle2.T2GUIElement::SetDimensions( fWidth, fHeight );
+			m_Rectangle1.SetTextureSection( pTitle );
+			m_Rectangle2.SetTextureSection( pTitle );
+
+			if ( eLanguage == ALocaleManager::Lang_German || eLanguage == ALocaleManager::Lang_French )
+			{
+				m_Rectangle1.SetDimensions( fWidth * 1.1f, fHeight * 1.1f );
+				m_Rectangle2.SetDimensions( fWidth * 1.1f, fHeight * 1.1f );
+			}
+		}
+	}
 }
 
 // $Barnyard: FUNCTION 00408ea0
@@ -289,8 +351,6 @@ void AFrontEndMainMenuState2::OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem )
 // $Barnyard: FUNCTION 004099f0
 void AFrontEndMainMenuState2::OnMenuClose()
 {
-	TIMPLEMENT();
-
 	if ( m_iActivatedButtonID == -1 )
 		return;
 
@@ -299,85 +359,88 @@ void AFrontEndMainMenuState2::OnMenuClose()
 	switch ( m_iActivatedButtonID )
 	{
 		case FRONTENDBUTTON_NEWGAME:
-			pPushGameState = new ADebugFlyState();
+		{
+			// Load the save file, then choose the slot of the new game
+			SaveLoadSKU* pSaveLoad = new SaveLoadSKU( APlayerProgress::GetSingleton(), TFALSE, new AFrontEndNewGameSelectState() );
+			pSaveLoad->StartMode3();
+			pPushGameState = pSaveLoad;
 			break;
+		}
+		case FRONTENDBUTTON_LOADGAME:
+		{
+			// Load the save file, then choose the slot to continue from
+			SaveLoadSKU* pSaveLoad = new SaveLoadSKU( APlayerProgress::GetSingleton(), TFALSE, new AFrontEndLoadState() );
+			pSaveLoad->StartMode2();
+			pPushGameState = pSaveLoad;
+			break;
+		}
 		case FRONTENDBUTTON_OPTIONS:
 			pPushGameState = new AOptionsState();
 			break;
-		case FRONTENDBUTTON_ANTICS:
-			// TODO: replace with character select state
-			pPushGameState = new AFrontEndMiniGameState2();
+		case FRONTENDBUTTON_BONUSES:
+			pPushGameState = new AFrontEndBonusState( AFrontEndBonusState::MODE_BONUSES );
 			break;
+		case FRONTENDBUTTON_ANTICS:
+#ifdef BARNYARD_COMMUNITY_PATCH
+			// Development: "-multiplayerantics" opens the abandoned player count selection test
+			// (AFrontEndPlayersState, recovered from the original source) before the minigames
+			if ( TStringManager::String8FindString( GetCommandLineA(), "-multiplayerantics" ) )
+			{
+				pPushGameState = new AFrontEndPlayersState();
+				break;
+			}
+
+			// Development: "-devsseq" opens the scripted sequence debug menu (AFrontEndDebugSSeqState)
+			// after choosing the character, the way AFrontEndCharacterSelectState supports it (unused in retail)
+			if ( TStringManager::String8FindString( GetCommandLineA(), "-devsseq" ) )
+			{
+				pPushGameState = new AFrontEndCharacterSelectState( TTRUE, TFALSE, TTRUE );
+				break;
+			}
+#endif // BARNYARD_COMMUNITY_PATCH
+
+			// Choose the character, then the minigame
+			pPushGameState = new AFrontEndCharacterSelectState( TTRUE, TFALSE, TFALSE );
+			break;
+		case FRONTENDBUTTON_QUIT:
+		{
+			AMessagePopupState* pPopup = new AMessagePopupState(
+			    g_pLocaleManager->GetString( 333 ),
+			    g_pLocaleManager->GetString( 1065 ),
+			    TPString8(),
+			    11,
+			    TFALSE,
+			    AInputCommand_Yes,
+			    AInputCommand_No,
+			    AInputCommand_Empty,
+			    AInputCommand_Empty,
+			    TFALSE,
+			    60.0f,
+			    0
+			);
+
+			m_oQuitPopupListener.Connect( pPopup->GetResponseEmitter(), this, OnQuitPopupResponse, 0 );
+			pPushGameState = pPopup;
+			break;
+		}
 	}
 
 	if ( pPushGameState )
 		AGameStateController::GetSingleton()->PushState( pPushGameState );
 }
 
-// $Barnyard: FUNCTION 00432b80
-void AFrontEndMainMenuState2::UpdateMenuButtons( TFLOAT a_fDeltaTime )
+// $Barnyard: FUNCTION 00408ef0
+TBOOL __stdcall AFrontEndMainMenuState2::OnQuitPopupResponse( AFrontEndMainMenuState2* a_pState, AMessagePopupState* a_pPopup, AMessagePopupState::ResponseEvent* a_pEvent )
 {
-	AGUI2MenuItem* pLastMenuItem = m_oMenu.GetLastMenuItem();
-	AGUI2MenuItem* pFocused      = m_oMenu.GetFocusedMenuItem();
-
-	if ( pLastMenuItem != TNULL )
+	if ( a_pEvent->eButton == AInputCommand_Yes )
 	{
-		AGUI2Button* pItem = TSTATICCAST( AGUI2Button, m_oMenu.GetLastMenuItem() );
-
-		while ( TTRUE )
-		{
-			TFLOAT fBackgroundScaleX, fBackgroundScaleY;
-			TFLOAT fTextScaleX, fTextScaleY;
-
-			if ( pItem == pFocused )
-			{
-				TFLOAT fSpeed     = a_fDeltaTime * 10.0f;
-				fBackgroundScaleX = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aMatrixRows[ 0 ].x, ms_fFocusedButtonMaxScale, fSpeed );
-				fBackgroundScaleY = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aMatrixRows[ 1 ].y, ms_fFocusedButtonMaxScale, fSpeed );
-				fTextScaleX       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aMatrixRows[ 0 ].x, ms_fFocusedButtonTextMaxScale, fSpeed );
-				fTextScaleY       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aMatrixRows[ 1 ].y, ms_fFocusedButtonTextMaxScale, fSpeed );
-			}
-			else
-			{
-				TFLOAT fSpeed     = a_fDeltaTime * 20.0f;
-				fBackgroundScaleX = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aMatrixRows[ 0 ].x, 1.0f, fSpeed );
-				fBackgroundScaleY = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aMatrixRows[ 1 ].y, 1.0f, fSpeed );
-				fTextScaleX       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aMatrixRows[ 0 ].x, 1.0f, fSpeed );
-				fTextScaleY       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aMatrixRows[ 1 ].y, 1.0f, fSpeed );
-			}
-
-			pItem->GetBackground().GetTransform().SetScale( fBackgroundScaleX, fBackgroundScaleX );
-			pItem->GetTextBox().GetTransform().SetScale( fTextScaleX, fTextScaleY );
-
-			pItem = TSTATICCAST( AGUI2Button, pItem->GetPrevMenuItem() );
-			if ( pItem == pLastMenuItem ) break;
-		}
-	}
-}
-
-// $Barnyard: FUNCTION 00432dc0
-void AFrontEndMainMenuState2::UpdateFocusedButton( TFLOAT a_fDeltaTime )
-{
-	AGUI2Button* pFocusedButton = TSTATICCAST( AGUI2Button, m_oMenu.GetFocusedMenuItem() );
-
-	ms_fAnimationTime += a_fDeltaTime;
-	TFLOAT fProgress = TMath::Sin( ms_fFocusedButtonAnimSpeed * ms_fAnimationTime );
-
-	if ( ms_fAnimationTime < TMath::PI / ms_fFocusedButtonAnimSpeed )
-	{
-		TFLOAT fOffset = ms_fFocusedButtonMaxOffset * fProgress;
-		pFocusedButton->GetTextBox().SetTranslation( ms_vecActivatedButtonTranslation.x + fOffset, ms_vecActivatedButtonTranslation.y + fOffset );
-
-		TFLOAT fOneMinusProgress = 1.0f - fProgress;
-		pFocusedButton->SetShadowAlpha( fOneMinusProgress );
-		pFocusedButton->SetTextShadowOffset( ms_vecActivatedButtonShadow.x * fOneMinusProgress, ms_vecActivatedButtonShadow.y * fOneMinusProgress );
+		AGameLoader::UnloadForExit();
+		g_oTheApp.Destroy();
 	}
 	else
 	{
-		m_bIgnoreInputs = TFALSE;
-		m_eMenuState    = MENUSTATE_MENU_DISAPPEAR;
-
-		pFocusedButton->SetTextShadowOffset( ms_vecActivatedButtonShadow.x, ms_vecActivatedButtonShadow.y );
-		pFocusedButton->GetTextBox().SetTranslation( ms_vecActivatedButtonTranslation.x, ms_vecActivatedButtonTranslation.y );
+		a_pPopup->Remove();
 	}
+
+	return TFALSE;
 }

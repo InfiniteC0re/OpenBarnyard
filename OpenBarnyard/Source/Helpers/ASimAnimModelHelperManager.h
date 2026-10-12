@@ -25,6 +25,9 @@ public:
 	// Adds helper to the list and returns it's index in the array
 	TINT AddModelHelper( ASimAnimModelHelper* a_pModelHelper );
 
+	// Removes the helper from the list (doesn't destroy it)
+	void RemoveModelHelper( ASimAnimModelHelper* a_pModelHelper );
+
 private:
 	TINT                 m_iNumHelpers;
 	ASimAnimModelHelper* m_apHelpers[ MAX_NUM_HELPERS ];

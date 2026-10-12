@@ -31,6 +31,8 @@ public:
 public:
 	AWaveBank( const Toshi::TPString8& a_strBank, const Toshi::TPString8& a_strPath, TBOOL a_bSetFrequency );
 
+	TINT GetNumLoads() const { return m_iNumLoads; }
+
 	virtual TBOOL             IsReady() const                                 = 0;
 	virtual LOADRESULT        Load( LOADFLAGS a_uiFlags, TINT a_iBufferSize ) = 0;
 	virtual UNLOADRESULT      Unload()                                        = 0;
@@ -38,9 +40,11 @@ public:
 	virtual void              ResetWave( TINT a_iWaveIndex ); // empty in the original
 	virtual ~AWaveBank();
 
-	AWave* GetWave( TINT a_iWaveIndex );
-	TINT   GetWaveId( TINT a_iWaveIndex );
-	TINT   GetWaveFrequency( TINT a_iWaveIndex );
+	AWave*            GetWave( TINT a_iWaveIndex );
+	TINT              GetWaveId( TINT a_iWaveIndex );
+	TINT              GetWaveFrequency( TINT a_iWaveIndex );
+	AWaveSampleHandle GetWaveSampleHandle( TINT a_iWaveIndex );
+	TFLOAT            GetWaveLength( TINT a_iWaveIndex );
 
 	// Creates wave sample if it's not created and returns it
 	AWaveSampleHandle CreateWaveSample( TINT a_iWaveIndex, TINT a_iUnused );
@@ -49,6 +53,9 @@ public:
 	void SetWaveFlag2( TINT a_iWaveIndex );
 
 	void ParseWavesData( const PBProperties* a_pBankProperties, TUINT a_uiForcedFlags );
+
+	// Unloads and destroys every wave bank in ASoundManager::ms_WaveBanks
+	static void DestroyAll();
 
 protected:
 	TINT                m_iNumWaves;

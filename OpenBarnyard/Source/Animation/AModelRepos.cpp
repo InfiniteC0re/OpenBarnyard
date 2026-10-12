@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "AModelRepos.h"
 #include "Assets/AAssetLoader.h"
+#include "Assets/AModelLoader.h"
+#include "Animation/AAnimatableObjectManager.h"
+
+#include <Render/TRenderInterface.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -10,6 +14,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 00612260, CreateObject 00612750, CreateObjectInPlace 006127b0
 TDEFINE_CLASS( AModelRepos );
 
 // $Barnyard: FUNCTION 00612340
@@ -22,10 +27,16 @@ AModelRepos::AModelRepos()
 // $Barnyard: FUNCTION 006130f0
 AModelRepos::~AModelRepos()
 {
-	TIMPLEMENT();
 	UnloadAllModels();
 	MarkAllModelsUnused();
 	UnloadUnusedModels();
+
+	TRenderInterface* pRender = TRenderInterface::GetSingleton();
+	pRender->FlushDyingResources();
+	pRender->FlushDyingResources();
+	pRender->FlushDyingResources();
+
+	AModelLoader::DestroyStatic();
 }
 
 // $Barnyard: FUNCTION 00612440
@@ -86,27 +97,41 @@ void AModelRepos::Update( TFLOAT a_fDeltaTime )
 	}
 }
 
+// $Barnyard: FUNCTION 006126c0
+void AModelRepos::ForEachModel( void ( *a_fnCallback )( AModel* a_pModel ) )
+{
+	T2_FOREACH( m_UsedModels, it )
+	{
+		a_fnCallback( it->GetSecond() );
+	}
+
+	T2_FOREACH( m_AllModels, it )
+	{
+		a_fnCallback( it->GetSecond() );
+	}
+}
+
 // $Barnyard: FUNCTION 006125d0
-void AModelRepos::RenderModels( TUINT a_uiMask )
+void AModelRepos::RenderModels( RENDERMASK a_eMask )
 {
 	// Render used models
 	T2_FOREACH( m_UsedModels, it )
 	{
-		if ( HASANYFLAG( a_uiMask, 1 ) )
-			it->GetSecond()->Render( 1 );
+		if ( HASANYFLAG( a_eMask, RENDERMASK_GLOW ) )
+			it->GetSecond()->Render( TTRUE );
 
-		if ( HASANYFLAG( a_uiMask, 2 ) )
-			it->GetSecond()->Render( 0 );
+		if ( HASANYFLAG( a_eMask, RENDERMASK_NORMAL ) )
+			it->GetSecond()->Render( TFALSE );
 	}
 
-	// Render other (all?) models
+	// Render loaded models
 	T2_FOREACH( m_AllModels, it )
 	{
-		if ( HASANYFLAG( a_uiMask, 1 ) )
-			it->GetSecond()->Render( 1 );
+		if ( HASANYFLAG( a_eMask, RENDERMASK_GLOW ) )
+			it->GetSecond()->Render( TTRUE );
 
-		if ( HASANYFLAG( a_uiMask, 2 ) )
-			it->GetSecond()->Render( 0 );
+		if ( HASANYFLAG( a_eMask, RENDERMASK_NORMAL ) )
+			it->GetSecond()->Render( TFALSE );
 	}
 }
 
@@ -118,7 +143,8 @@ AModel* AModelRepos::AllocateAModel( const Toshi::TPString8& a_rName, Toshi::TTR
 		a_pTRB = AAssetLoader::GetAssetTRB( AAssetType_AssetPack );
 	}
 
-	TVALIDPTR( a_pTRB );
+	// NOTE: a_pTRB is TNULL when no asset pack is loaded (e.g. ASplashManager is created by
+	// AGameSystemManager::OnCreate), AModel loads the model file itself then
 	return new AModel( a_rName, a_pTRB );
 }
 
@@ -132,6 +158,8 @@ void AModelRepos::MarkAllModelsUnused()
 		MarkModelUnused( it->GetSecond() );
 		it = next;
 	}
+
+	m_UsedModels.Clear();
 }
 
 // $Barnyard: FUNCTION 00612be0
@@ -264,7 +292,6 @@ void AModelRepos::DestroyModelInstance( AModelInstance* a_pInstance )
 		}
 	}
 #endif
-	
 }
 
 // $Barnyard: FUNCTION 00612c90
@@ -306,6 +333,16 @@ void AModelRepos::UnloadModel( const Toshi::TPString8& a_rcName, TBOOL a_bDestro
 
 	if ( m_AllModels.IsValid( pModelNode ) && pModelNode->GetSecond()->GetNumInstances() == 0 )
 	{
+#ifdef BARNYARD_COMMUNITY_PATCH
+		// Retail also unloads a model that an animatable object type of a loaded library still holds (e.g. through
+		// ASSeqCameraHelper::OnDetach, ABoneAttachCameraHelper, ASSeqAttachmentManager), and
+		// AAnimatableObjectType::Destroy then reads the freed model. Keep it until the type unloads it
+		if ( AAnimatableObjectManager::IsSingletonCreated() &&
+		     AAnimatableObjectManager::GetSingleton()->IsModelUsedByType( pModelNode->GetSecond() ) )
+			return;
+#endif
+
+
 		AModel* pModel = pModelNode->GetSecond();
 		m_AllModels.Remove( pModelNode );
 

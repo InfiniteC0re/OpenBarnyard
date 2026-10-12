@@ -45,6 +45,9 @@ public:
 	void SetExclusive( HWND a_hWindow, TBOOL a_bExclusive );
 	void SetCurrentPosition( TINT a_iX, TINT a_iY );
 
+	TINT GetPositionX() const { return m_iPositionX; } // 0x48
+	TINT GetPositionY() const { return m_iPositionY; } // 0x4c
+
 	const DIDEVICEINSTANCEA& GetDeviceInstance() const
 	{
 		return m_oDeviceInstance;
@@ -67,7 +70,7 @@ private:
 	TINT                  m_iUnk5;
 	TINT                  m_iUnk6;
 	TINT                  m_iUnk7;
-	BOOL                  m_bInitiliased;
+	TINT                  m_iWheelGranularity; // 0x7c, DIPROP_GRANULARITY of the wheel
 	DIDEVICEINSTANCEA     m_oDeviceInstance;
 	DIDEVCAPS             m_DIDevCaps;
 	IDirectInputDevice8A* m_poDXInputDevice;

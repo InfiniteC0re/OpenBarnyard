@@ -38,7 +38,7 @@ TBOOL TMutex::Destroy()
 	BOOL result = CloseHandle( m_Handle );
 	m_Handle    = NULL;
 	return result;
-#else // USE_WIN32_MUTEX
+#else  // USE_WIN32_MUTEX
 	return TTRUE;
 #endif // !USE_WIN32_MUTEX
 }
@@ -79,7 +79,9 @@ TBOOL TMutex::Lock( FLAG a_eFlags /*= FLAG_NONE */ )
 
 	return result == WAIT_OBJECT_0;
 #else  // !USE_WIN32_MUTEX
-	// TODO: take flags into account?
+	if ( a_eFlags & FLAG_NO_WAIT )
+		return m_Atomic.TryLock();
+
 	m_Atomic.Lock();
 	return TTRUE;
 #endif // USE_WIN32_MUTEX

@@ -13,7 +13,13 @@
 
 TOSHI_NAMESPACE_START
 
+// NOTE: GetClass 006d7830, CreateObject 006d7960, CreateObjectInPlace 006d7990
 TDEFINE_CLASS( TVertexFactoryResource );
+
+// $Barnyard: FUNCTION 006d79c0
+TVertexFactoryResource::~TVertexFactoryResource()
+{
+}
 
 // $Barnyard: FUNCTION 006d7910
 TVertexPoolResourceInterface* TVertexFactoryResource::CreatePoolResource( TUINT16 a_uiMaxStaticVertices, TUINT16 a_uiFlags )
@@ -48,7 +54,7 @@ TVertexBlockResource* TVertexFactoryResource::CreateBlockResource( TUINT16 a_uiM
 // $Barnyard: FUNCTION 006d7890
 TVertexBlockResource* TVertexFactoryResource::FindBlockResource( TVertexPoolResource* a_pResource )
 {
-	if ( a_pResource->GetFlags() & 2 )
+	if ( a_pResource->GetFlags() & TVertexPoolResourceInterface::FLAGS_DYNAMIC )
 	{
 		return TNULL;
 	}

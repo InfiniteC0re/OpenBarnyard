@@ -8,6 +8,11 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// $Barnyard: FUNCTION 005e8380
+AKeyLibLoaderJob::AKeyLibLoaderJob()
+{
+}
+
 void AKeyLibLoaderJob::BeginJob()
 {
 	AAssetStreaming::GetSingleton()->GetFileStream().AddStream(

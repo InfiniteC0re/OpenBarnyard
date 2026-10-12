@@ -13,6 +13,7 @@ public:
 
 public:
 	// constructors/destructor
+	// $Barnyard: FUNCTION 006c2220
 	constexpr T2GUITransform()
 	{
 		SetIdentity();

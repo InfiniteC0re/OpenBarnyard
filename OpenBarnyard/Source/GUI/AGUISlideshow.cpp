@@ -22,21 +22,29 @@ AGUISlideshow::AGUISlideshow()
 	m_eFlags            = Flags_None;
 	m_bIsActive         = TFALSE;
 	m_fCurrentSlideTime = 0.0f;
-	m_fUnk2             = 0.0f;
+	m_fTotalTime        = 0.0f;
 	m_fDuration         = 1.0f;
 	m_fFadeInTime       = 0.0f;
 	m_fFadeOutTime      = 0.0f;
-	m_fUnk4             = -1.0f;
+	m_fMaxTotalTime     = -1.0f;
 	m_bIsAppearing      = TFALSE;
 	m_bShouldLocalise   = TFALSE;
 }
 
+// $Barnyard: FUNCTION 0059de50
+// $Barnyard: FUNCTION 0059ddd0
+AGUISlideshow::~AGUISlideshow()
+{
+}
+
+// $Barnyard: FUNCTION 0042c0c0
 TPString8* AGUISlideshow::LocaliseBackgroundFileName( TPString8& a_rOutName, const TPString8& a_rName )
 {
 	LocaliseBackgroundFileName( a_rOutName, a_rName.GetString8().GetString() );
 	return &a_rOutName;
 }
 
+// $Barnyard: FUNCTION 0042c010
 void AGUISlideshow::LocaliseBackgroundFileName( TPString8& a_rOutName, const TCHAR* a_szName )
 {
 	TCHAR szFormattedName[ 256 ];
@@ -44,7 +52,8 @@ void AGUISlideshow::LocaliseBackgroundFileName( TPString8& a_rOutName, const TCH
 
 	if ( eLang != ALocaleManager::Lang_English && eLang != ALocaleManager::Lang_EnglishUK )
 	{
-		TCHAR szLang[ 4 ];
+		// NOTE: retail copies the whole language name (no size limit) and then cuts it to the first letter
+		TCHAR szLang[ 4 ] = {};
 		TStringManager::String8Copy(
 		    szLang,
 		    ALocaleManager::Interface()->GetCurrentLanguageName(),
@@ -66,7 +75,7 @@ void AGUISlideshow::Activate()
 
 	m_ImageIterator     = m_Images;
 	m_fCurrentSlideTime = 0.0f;
-	m_fUnk2             = 0.0f;
+	m_fTotalTime        = 0.0f;
 
 	if ( !m_bIsAppearing )
 	{
@@ -150,7 +159,7 @@ void AGUISlideshow::Update( TFLOAT a_fDeltaTime )
 			return;
 		}
 
-		m_fUnk2 += a_fDeltaTime;
+		m_fTotalTime += a_fDeltaTime;
 
 		if ( m_fCurrentSlideTime >= m_fFadeOutTime + m_fFadeInTime + m_fDuration )
 		{
@@ -172,7 +181,7 @@ TBOOL AGUISlideshow::IsSlideshowOver()
 		return !m_ImageIterator.IsValid();
 	}
 
-	if ( !HASANYFLAG( m_eFlags, Flags_Ended ) && ( m_fUnk4 <= 0.0f || m_fUnk2 <= m_fUnk4 ) )
+	if ( !HASANYFLAG( m_eFlags, Flags_Ended ) && ( m_fMaxTotalTime <= 0.0f || m_fTotalTime <= m_fMaxTotalTime ) )
 	{
 		return TFALSE;
 	}
@@ -234,9 +243,9 @@ TBOOL AGUISlideshow::Setup( AGameState::HUDParams* a_pHUDParams, const Params& a
 		m_eFlags |= Flags_Skippable;
 	}
 
-	if ( a_rParams.bUnk2 )
+	if ( a_rParams.bCancelSkippable )
 	{
-		m_eFlags |= Flags_Unk1;
+		m_eFlags |= Flags_CancelSkippable;
 	}
 
 	if ( a_rParams.bInstaSkippable )
@@ -261,8 +270,8 @@ TBOOL AGUISlideshow::Setup( AGameState::HUDParams* a_pHUDParams, const Params& a
 		m_eFlags |= Flags_Repeat;
 	}
 
-	m_fDuration = a_rParams.fDuration;
-	m_fUnk4     = a_rParams.fUnk5;
+	m_fDuration     = a_rParams.fDuration;
+	m_fMaxTotalTime = a_rParams.fMaxTotalTime;
 
 	TFLOAT fWidth, fHeight;
 	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
@@ -303,7 +312,7 @@ TBOOL AGUISlideshow::ProcessInput( const TInputInterface::InputEvent* a_pEvent )
 // $Barnyard: FUNCTION 0059da50
 TBOOL AGUISlideshow::ProcessCommand( AInputCommand a_eCommand )
 {
-	if ( ( ( a_eCommand != AInputCommand_Back && a_eCommand != AInputCommand_Cancel && a_eCommand != AInputCommand_Quit ) || !HASANYFLAG( m_eFlags, Flags_Unk1 ) ) && !HASANYFLAG( m_eFlags, Flags_InstaSkippable ) )
+	if ( ( ( a_eCommand != AInputCommand_Back && a_eCommand != AInputCommand_Cancel && a_eCommand != AInputCommand_Quit ) || !HASANYFLAG( m_eFlags, Flags_CancelSkippable ) ) && !HASANYFLAG( m_eFlags, Flags_InstaSkippable ) )
 	{
 		if ( m_eFlags & Flags_Skippable )
 		{
@@ -324,5 +333,5 @@ void AGUISlideshow::Reset()
 {
 	m_ImageIterator     = m_Images;
 	m_fCurrentSlideTime = 0.0f;
-	m_fUnk2             = 0.0f;
+	m_fTotalTime        = 0.0f;
 }

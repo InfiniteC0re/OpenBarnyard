@@ -156,6 +156,8 @@ public:
 	T2_DEFINE_ITERATOR( T, Node );
 
 public:
+	// Shared (identical code folding) by every instantiation: 00516030
+	// $Barnyard: FUNCTION 00516030
 	T2DList()
 	{
 		TSTATICASSERT( std::is_base_of<T2GenericDList::Node, T>::value );
@@ -178,11 +180,15 @@ public:
 		return m_oRoot.Prev();
 	}
 
+	// NOTE: retail folds every instantiation (005e94e0)
+	// $Barnyard: FUNCTION 005e94e0
 	Iterator Begin() const
 	{
 		return m_oRoot.Next();
 	}
 
+	// NOTE: retail folds the instantiations whose T has the node at offset 4 (00623810)
+	// $Barnyard: FUNCTION 00623810
 	Iterator End() const
 	{
 		return &m_oRoot;
@@ -214,6 +220,8 @@ public:
 		delete TSTATICCAST( T, iter );
 	}
 
+	// $Barnyard: FUNCTION 0057c4d0
+	// $Barnyard: FUNCTION 0057d520
 	void DeleteAll()
 	{
 		while ( Begin() != End() )
@@ -226,7 +234,7 @@ public:
 	Iterator Erase( Iterator iter )
 	{
 		Iterator itNext = iter.Next();
-		iter->Remove();
+		TSTATICCAST( Node, iter.Get() )->Remove(); // T can have other bases with a Remove method
 
 		return itNext;
 	}
@@ -248,6 +256,17 @@ public:
 		return !m_oRoot.IsLinked();
 	}
 
+	// Inserts a_pItem before a_itWhere and returns an iterator to it
+	// NOTE: retail folds every instantiation (005d6a20, used by T2SortedList::Push and AInteriorNetwork::PathSearch)
+	// $Barnyard: FUNCTION 005d6a20
+	Iterator InsertBefore( Iterator a_itWhere, T* a_pItem )
+	{
+		a_pItem->InsertBefore( a_itWhere );
+		return a_pItem;
+	}
+
+	// T2DList<AVeggiePatchVeggie> (node at +0xdc): 004c6260
+	// $Barnyard: FUNCTION 004c6260
 	void PushBack( T* pItem )
 	{
 		pItem->InsertBefore( &m_oRoot );

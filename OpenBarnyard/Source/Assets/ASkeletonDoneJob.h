@@ -5,6 +5,8 @@
 class ASkeletonDoneJob : public AMainThreadJob
 {
 public:
+	ASkeletonDoneJob();
+
 	virtual void  BeginJob() override;
 	virtual TBOOL RunJob() override;
 

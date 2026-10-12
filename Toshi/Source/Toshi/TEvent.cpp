@@ -39,13 +39,9 @@ void TGenericListener::Execute( void* pOwner, void* pData )
 // $Barnyard: FUNCTION 006c4680
 void TGenericEmitter::Destroy()
 {
-	if ( !m_Listeners.IsEmpty() )
-	{
-		for ( auto it = m_Listeners.Begin(); it != m_Listeners.End(); it++ )
-		{
-			it->Disconnect();
-		}
-	}
+	// NOTE: Disconnect unlinks the listener, so always take the first one
+	while ( !m_Listeners.IsEmpty() )
+		m_Listeners.Begin()->Disconnect();
 
 	m_pOwner = TNULL;
 }
@@ -68,6 +64,7 @@ void TGenericEmitter::Throw( void* a_pData )
 	}
 }
 
+// $Barnyard: FUNCTION 006c4660
 TGenericEmitter::TGenericEmitter( void* a_pOwner )
 {
 	Create( a_pOwner );

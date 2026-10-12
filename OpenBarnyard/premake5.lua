@@ -79,7 +79,11 @@ project "OpenBarnyard"
 		"Source/CVar/**.h",
 		"Source/CVar/**.cpp",
 		"Source/Player/**.h",
-		"Source/Player/**.cpp"
+		"Source/Player/**.cpp",
+		"Source/Units/**.h",
+		"Source/Units/**.cpp",
+		"Source/Quests/**.h",
+		"Source/Quests/**.cpp"
 	}
 	
 	libdirs

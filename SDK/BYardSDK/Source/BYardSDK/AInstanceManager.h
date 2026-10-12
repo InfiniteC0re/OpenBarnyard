@@ -116,7 +116,7 @@ protected:
 	TFLOAT m_flVisibilityDistanceBlendEnd;
 	TFLOAT m_flVisibilityDistanceBlendStart;
 
-	TBOOL  m_aInstanceVisMasks[ MAX_RENDERED_INSTANCES ];
+	TUINT8 m_aInstanceVisMasks[ MAX_RENDERED_INSTANCES ]; // clip flags
 	TUINT8 m_aInstanceFlags[ MAX_RENDERED_INSTANCES ];
 	TUINT8 m_aInstanceLightIDs[ MAX_RENDERED_INSTANCES ];
 

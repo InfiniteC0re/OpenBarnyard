@@ -18,7 +18,19 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 005f04b0, CreateObject 005f0e20, CreateObjectInPlace 005f0e80
 TDEFINE_CLASS( ASysShaderHAL );
+
+// $Barnyard: FUNCTION 005f04e0
+ASysShaderHAL::ASysShaderHAL()
+{
+}
+
+// $Barnyard: FUNCTION 005f0560
+// $Barnyard: FUNCTION 005f1090
+ASysShaderHAL::~ASysShaderHAL()
+{
+}
 
 // $Barnyard: FUNCTION 005f0980
 void ASysShaderHAL::Flush()
@@ -188,7 +200,7 @@ void ASysShaderHAL::Render( TRenderPacket* pPacket )
 
 	if ( ms_bRenderEnabled )
 	{
-		if ( pIndexPool->GetFlags() & 8 )
+		if ( pIndexPool->GetFlags() & TIndexPoolResourceInterface::FLAGS_TRISTRIP )
 		{
 			pDevice->DrawIndexedPrimitive(
 			    D3DPT_TRIANGLESTRIP,

@@ -9,6 +9,12 @@
 
 TDEFINE_CLASS_NORUNTIME( AMoviePlayer );
 
+// $Barnyard: FUNCTION 006057a0
+// $Barnyard: FUNCTION 00605800
+AMoviePlayer::~AMoviePlayer()
+{
+}
+
 // $Barnyard: FUNCTION 006056f0
 AMoviePlayer::AMoviePlayer()
     : m_SomeEmitter( this )

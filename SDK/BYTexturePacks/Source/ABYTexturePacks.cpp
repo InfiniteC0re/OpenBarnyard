@@ -40,7 +40,7 @@ void ABYTexturePacks::UpdateTexturePackPath()
 
 	m_pTexWatcher = new ATextureUpdateWatcher();
 	m_pTexWatcher->Init( g_szTexturePackPath );
-	m_pTexWatcher->Create( 32, TThread::THREAD_PRIORITY_LOWEST, 0 );
+	m_pTexWatcher->Create( 32, TThread::THREAD_PRIORITY_LOWEST, TThread::FLAGS_NONE );
 
 	ATextureUpdater::ReloadAllTextures();
 }

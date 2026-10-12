@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "AInputMapManager.h"
 #include "Memory/AMemory.h"
+#include "Locale/ALocaleManager.h"
+
+#include <Input/TInputDeviceKeyboard.h>
+#include <Input/TInputDeviceMouse.h>
+#include <Input/TInputDeviceController.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -10,16 +15,31 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 00596de0, CreateObject 0059c930, CreateObjectInPlace 0059c990
 TDEFINE_CLASS( AInputMapManager );
 
 // $Barnyard: FUNCTION 0059c840
 AInputMapManager::AInputMapManager()
-    : m_pActiveInputMap( TNULL ), m_iNumPushedInputMaps( 0 ), m_oDoodadToNameMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_oKeyMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_oCommandMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_UnkMap( AMemory::GetAllocator( AMemory::POOL_Misc ) )
+    : m_pActiveInputMap( TNULL ), m_iNumPushedInputMaps( 0 ), m_oDoodadToNameMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_oKeyMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_oCommandMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_oDoodadToCustomNameMap( AMemory::GetAllocator( AMemory::POOL_Misc ) )
 {
 	InitMouseDoodads();
 	InitKeyboardDoodads();
 	InitGamepadDoodads();
 	InitCommandMap();
+}
+
+// $Barnyard: FUNCTION 0059ae20
+// $Barnyard: FUNCTION 0059c910
+AInputMapManager::~AInputMapManager()
+{
+	while ( m_InputMaps.Size() != 0 )
+	{
+		AInputMap* pInputMap = m_InputMaps.Back().Value();
+		m_InputMaps.PopBack();
+
+		if ( pInputMap )
+			delete pInputMap;
+	}
 }
 
 // $Barnyard: FUNCTION 00597140
@@ -120,7 +140,8 @@ void AInputMapManager::GetEventCommands( const Toshi::TInputInterface::InputEven
 
 		while ( pCommandMap->IsValid( pCommandIndexRes ) )
 		{
-			auto  pCommandRes = m_oCommandMap.Find( pCommandIndexRes->GetSecond() );
+			auto  eCommand    = AInputMap::GetBindingCommand( pCommandIndexRes->GetSecond() );
+			auto  pCommandRes = m_oCommandMap.Find( eCommand );
 			TBOOL bCommandValid;
 
 			if ( m_oCommandMap.IsValid( pCommandRes ) )
@@ -140,13 +161,60 @@ void AInputMapManager::GetEventCommands( const Toshi::TInputInterface::InputEven
 
 			if ( bCommandValid )
 			{
-				a_rCommandArray.AddCommand( pCommandIndexRes->GetSecond() );
+				a_rCommandArray.AddCommand( eCommand );
 			}
 
 			// Look if there are any other commands binded to this doodad
 			pCommandIndexRes = pCommandMap->FindNext( pCommandIndexRes, a_pEvent->GetDoodad() );
 		}
 	}
+}
+
+// $Barnyard: FUNCTION 005975d0
+TBOOL AInputMapManager::GetCommandLocalisedName( AInputCommand a_eCommand, const TWCHAR*& a_rwszOutName )
+{
+	auto pCommandRes = m_oCommandMap.Find( a_eCommand );
+
+	if ( !m_oCommandMap.IsValid( pCommandRes ) )
+	{
+		a_rwszOutName = TNULL;
+		return TFALSE;
+	}
+
+	Command oCommand = pCommandRes->GetSecond();
+	a_rwszOutName    = ( oCommand.uiCode != -1 ) ? g_pLocaleManager->GetString( oCommand.uiCode ) : TNULL;
+
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 005973b0
+TBOOL AInputMapManager::GetDoodadCustomName( Toshi::TInputDevice::Doodad a_iDoodad, const TWCHAR*& a_rwszOutName )
+{
+	auto pNameRes = m_oDoodadToCustomNameMap.Find( a_iDoodad );
+
+	if ( !m_oDoodadToCustomNameMap.IsValid( pNameRes ) )
+	{
+		a_rwszOutName = TNULL;
+		return TFALSE;
+	}
+
+	a_rwszOutName = pNameRes->GetSecond();
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 00597350
+TBOOL AInputMapManager::GetDoodadLocalisedName( Toshi::TInputDevice::Doodad a_iDoodad, const TWCHAR*& a_rwszOutName )
+{
+	auto pKeyRes = m_oKeyMap.Find( a_iDoodad );
+
+	if ( !m_oKeyMap.IsValid( pKeyRes ) )
+	{
+		a_rwszOutName = TNULL;
+		return TFALSE;
+	}
+
+	a_rwszOutName = g_pLocaleManager->GetString( pKeyRes->GetSecond() );
+	return TTRUE;
 }
 
 // $Barnyard: FUNCTION 00597670
@@ -180,179 +248,179 @@ Toshi::TInputDevice::Doodad AInputMapManager::GetDoodadFromKey( const Toshi::TPS
 // $Barnyard: FUNCTION 0059c220
 void AInputMapManager::InitMouseDoodads()
 {
-	BindDoodad( 0x30001, TPString8( "Button1" ), 0x582 );
-	BindDoodad( 0x30002, TPString8( "Button2" ), 0x583 );
-	BindDoodad( 0x30003, TPString8( "Button3" ), 0x584 );
-	BindDoodad( 0x30004, TPString8( "Button4" ), 0x585 );
-	BindDoodad( 0x30005, TPString8( "Button5" ), 0x586 );
-	BindDoodad( 0x30006, TPString8( "Button6" ), 0x587 );
-	BindDoodad( 0x30007, TPString8( "Button7" ), 0x588 );
-	BindDoodad( 0x30008, TPString8( "Button8" ), 0x589 );
-	BindDoodad( 0x30009, TPString8( "Wheel Fwd" ), 0x58A );
-	BindDoodad( 0x3000A, TPString8( "Wheel Back" ), 0x58B );
-	BindDoodad( 0x3000B, TPString8( "Cursor Axis" ), 0x58C );
-	BindDoodad( 0x3000C, TPString8( "Wheel Axis" ), 0x58D );
+	BindDoodad( TInputDeviceMouse::BUTTON_1, TPString8( "Button1" ), 0x582 );
+	BindDoodad( TInputDeviceMouse::BUTTON_2, TPString8( "Button2" ), 0x583 );
+	BindDoodad( TInputDeviceMouse::BUTTON_3, TPString8( "Button3" ), 0x584 );
+	BindDoodad( TInputDeviceMouse::BUTTON_4, TPString8( "Button4" ), 0x585 );
+	BindDoodad( TInputDeviceMouse::BUTTON_5, TPString8( "Button5" ), 0x586 );
+	BindDoodad( TInputDeviceMouse::BUTTON_6, TPString8( "Button6" ), 0x587 );
+	BindDoodad( TInputDeviceMouse::BUTTON_7, TPString8( "Button7" ), 0x588 );
+	BindDoodad( TInputDeviceMouse::BUTTON_8, TPString8( "Button8" ), 0x589 );
+	BindDoodad( TInputDeviceMouse::BUTTON_WHEEL_FORWARD, TPString8( "Wheel Fwd" ), 0x58A );
+	BindDoodad( TInputDeviceMouse::BUTTON_WHEEL_BACKWARD, TPString8( "Wheel Back" ), 0x58B );
+	BindDoodad( TInputDeviceMouse::AXIS_CURSOR, TPString8( "Cursor Axis" ), 0x58C );
+	BindDoodad( TInputDeviceMouse::AXIS_WHEEL, TPString8( "Wheel Axis" ), 0x58D );
 }
 
 // $Barnyard: FUNCTION 0059af20
 void AInputMapManager::InitKeyboardDoodads()
 {
-	BindDoodad( 0x20001, TPString8( "Virtual Stick" ), 0x506 );
-	BindDoodad( 0x2002e, TPString8( "Left Shift" ), 0x530 );
-	BindDoodad( 0x2003a, TPString8( "Right Shift" ), 0x53c );
-	BindDoodad( 0x20021, TPString8( "Left Control" ), 0x523 );
-	BindDoodad( 0x2006b, TPString8( "Right Control" ), 0x56d );
-	BindDoodad( 0x2003c, TPString8( "Left Alt" ), 0x53e );
-	BindDoodad( 0x2006f, TPString8( "Right Alt" ), 0x571 );
-	BindDoodad( 0x2007b, TPString8( "Left Windows" ), 0x57d );
-	BindDoodad( 0x2007c, TPString8( "Right Windows" ), 0x57e );
-	BindDoodad( 0x20005, TPString8( "Escape" ), 0x507 );
-	BindDoodad( 0x20006, TPString8( "1" ), 0x508 );
-	BindDoodad( 0x20007, TPString8( "2" ), 0x509 );
-	BindDoodad( 0x20008, TPString8( "3" ), 0x50a );
-	BindDoodad( 0x20009, TPString8( "4" ), 0x50b );
-	BindDoodad( 0x2000a, TPString8( "5" ), 0x50c );
-	BindDoodad( 0x2000b, TPString8( "6" ), 0x50d );
-	BindDoodad( 0x2000c, TPString8( "7" ), 0x50e );
-	BindDoodad( 0x2000d, TPString8( "8" ), 0x50f );
-	BindDoodad( 0x2000e, TPString8( "9" ), 0x510 );
-	BindDoodad( 0x2000f, TPString8( "0" ), 0x511 );
-	BindDoodad( 0x20010, TPString8( "Minus" ), 0x512 );
-	BindDoodad( 0x20011, TPString8( "Equals" ), 0x513 );
-	BindDoodad( 0x20012, TPString8( "Backspace" ), 0x514 );
-	BindDoodad( 0x20013, TPString8( "Tab" ), 0x515 );
-	BindDoodad( 0x20014, TPString8( "Q" ), 0x516 );
-	BindDoodad( 0x20015, TPString8( "W" ), 0x517 );
-	BindDoodad( 0x20016, TPString8( "E" ), 0x518 );
-	BindDoodad( 0x20017, TPString8( "R" ), 0x519 );
-	BindDoodad( 0x20018, TPString8( "T" ), 0x51a );
-	BindDoodad( 0x20019, TPString8( "Y" ), 0x51b );
-	BindDoodad( 0x2001a, TPString8( "U" ), 0x51c );
-	BindDoodad( 0x2001b, TPString8( "I" ), 0x51d );
-	BindDoodad( 0x2001c, TPString8( "O" ), 0x51e );
-	BindDoodad( 0x2001d, TPString8( "P" ), 0x51f );
-	BindDoodad( 0x2001e, TPString8( "Left Bracket" ), 0x520 );
-	BindDoodad( 0x2001f, TPString8( "Right Bracket" ), 0x521 );
-	BindDoodad( 0x20020, TPString8( "Return" ), 0x522 );
-	BindDoodad( 0x20022, TPString8( "A" ), 0x524 );
-	BindDoodad( 0x20023, TPString8( "S" ), 0x525 );
-	BindDoodad( 0x20024, TPString8( "D" ), 0x526 );
-	BindDoodad( 0x20025, TPString8( "F" ), 0x527 );
-	BindDoodad( 0x20026, TPString8( "G" ), 0x528 );
-	BindDoodad( 0x20027, TPString8( "H" ), 0x529 );
-	BindDoodad( 0x20028, TPString8( "J" ), 0x52a );
-	BindDoodad( 0x20029, TPString8( "K" ), 0x52b );
-	BindDoodad( 0x2002a, TPString8( "L" ), 0x52c );
-	BindDoodad( 0x2002b, TPString8( "Semicolon" ), 0x52d );
-	BindDoodad( 0x2002c, TPString8( "Apostrophe" ), 0x52e );
-	BindDoodad( 0x2002d, TPString8( "Grave" ), 0x52f );
-	BindDoodad( 0x2002f, TPString8( "Backslash" ), 0x531 );
-	BindDoodad( 0x20030, TPString8( "Z" ), 0x532 );
-	BindDoodad( 0x20031, TPString8( "X" ), 0x533 );
-	BindDoodad( 0x20032, TPString8( "C" ), 0x534 );
-	BindDoodad( 0x20033, TPString8( "V" ), 0x535 );
-	BindDoodad( 0x20034, TPString8( "B" ), 0x536 );
-	BindDoodad( 0x20035, TPString8( "N" ), 0x537 );
-	BindDoodad( 0x20036, TPString8( "M" ), 0x538 );
-	BindDoodad( 0x20037, TPString8( "Comma" ), 0x539 );
-	BindDoodad( 0x20038, TPString8( "Period" ), 0x53a );
-	BindDoodad( 0x20039, TPString8( "Slash" ), 0x53b );
-	BindDoodad( 0x2003b, TPString8( "Multiply" ), 0x53d );
-	BindDoodad( 0x2003d, TPString8( "Space" ), 0x53f );
-	BindDoodad( 0x2003e, TPString8( "Capslock" ), 0x540 );
-	BindDoodad( 0x2003f, TPString8( "F1" ), 0x541 );
-	BindDoodad( 0x20040, TPString8( "F2" ), 0x542 );
-	BindDoodad( 0x20041, TPString8( "F3" ), 0x543 );
-	BindDoodad( 0x20042, TPString8( "F4" ), 0x544 );
-	BindDoodad( 0x20043, TPString8( "F5" ), 0x545 );
-	BindDoodad( 0x20044, TPString8( "F6" ), 0x546 );
-	BindDoodad( 0x20045, TPString8( "F7" ), 0x547 );
-	BindDoodad( 0x20046, TPString8( "F8" ), 0x548 );
-	BindDoodad( 0x20047, TPString8( "F9" ), 0x549 );
-	BindDoodad( 0x20048, TPString8( "F10" ), 0x54a );
-	BindDoodad( 0x20049, TPString8( "NumLock" ), 0x54b );
-	BindDoodad( 0x2004a, TPString8( "ScrollLock" ), 0x54c );
-	BindDoodad( 0x2004b, TPString8( "Numpad 7" ), 0x54d );
-	BindDoodad( 0x2004c, TPString8( "Numpad 8" ), 0x54e );
-	BindDoodad( 0x2004d, TPString8( "Numpad 9" ), 0x54f );
-	BindDoodad( 0x2004e, TPString8( "Subtract" ), 0x550 );
-	BindDoodad( 0x2004f, TPString8( "Numpad 4" ), 0x551 );
-	BindDoodad( 0x20050, TPString8( "Numpad 5" ), 0x552 );
-	BindDoodad( 0x20051, TPString8( "Numpad 6" ), 0x553 );
-	BindDoodad( 0x20052, TPString8( "Add" ), 0x554 );
-	BindDoodad( 0x20053, TPString8( "Numpad 1" ), 0x555 );
-	BindDoodad( 0x20054, TPString8( "Numpad 2" ), 0x556 );
-	BindDoodad( 0x20055, TPString8( "Numpad 3" ), 0x557 );
-	BindDoodad( 0x20056, TPString8( "Numpad 0" ), 0x558 );
-	BindDoodad( 0x20057, TPString8( "Decimal" ), 0x559 );
-	BindDoodad( 0x20058, TPString8( "F11" ), 0x55a );
-	BindDoodad( 0x20059, TPString8( "F12" ), 0x55b );
-	BindDoodad( 0x2005a, TPString8( "F13" ), 0x55c );
-	BindDoodad( 0x2005b, TPString8( "F14" ), 0x55d );
-	BindDoodad( 0x2005c, TPString8( "F15" ), 0x55e );
-	BindDoodad( 0x2005d, TPString8( "Kana" ), 0x55f );
-	BindDoodad( 0x2005e, TPString8( "Convert" ), 0x560 );
-	BindDoodad( 0x2005f, TPString8( "No Convert" ), 0x561 );
-	BindDoodad( 0x20060, TPString8( "Yen" ), 0x562 );
-	BindDoodad( 0x20061, TPString8( "Numpad Equals" ), 0x563 );
-	BindDoodad( 0x20062, TPString8( "Circumflex" ), 0x564 );
-	BindDoodad( 0x20063, TPString8( "At" ), 0x565 );
-	BindDoodad( 0x20064, TPString8( "Colon" ), 0x566 );
-	BindDoodad( 0x20065, TPString8( "Underline" ), 0x567 );
-	BindDoodad( 0x20066, TPString8( "Kanji" ), 0x568 );
-	BindDoodad( 0x20067, TPString8( "Stop" ), 0x569 );
-	BindDoodad( 0x20068, TPString8( "Ax" ), 0x56a );
-	BindDoodad( 0x20069, TPString8( "Unlabeled" ), 0x56b );
-	BindDoodad( 0x2006a, TPString8( "Numpad Enter" ), 0x56c );
-	BindDoodad( 0x2006c, TPString8( "Numpad Comma" ), 0x56e );
-	BindDoodad( 0x2006d, TPString8( "Divide" ), 0x56f );
-	BindDoodad( 0x2006e, TPString8( "SysRq" ), 0x570 );
-	BindDoodad( 0x20071, TPString8( "Pause" ), 0x572 );
-	BindDoodad( 0x20070, TPString8( "Home" ), 0x573 );
-	BindDoodad( 0x20072, TPString8( "Up" ), 0x574 );
-	BindDoodad( 0x20073, TPString8( "Prior" ), 0x575 );
-	BindDoodad( 0x20074, TPString8( "Left" ), 0x576 );
-	BindDoodad( 0x20075, TPString8( "Right" ), 0x577 );
-	BindDoodad( 0x20076, TPString8( "End" ), 0x578 );
-	BindDoodad( 0x20077, TPString8( "Down" ), 0x579 );
-	BindDoodad( 0x20078, TPString8( "Next" ), 0x57a );
-	BindDoodad( 0x20079, TPString8( "Insert" ), 0x57b );
-	BindDoodad( 0x2007a, TPString8( "Delete" ), 0x57c );
-	BindDoodad( 0x2007d, TPString8( "Apps" ), 0x57f );
-	BindDoodad( 0x2007e, TPString8( "Power" ), 0x580 );
-	BindDoodad( 0x2007f, TPString8( "Sleep" ), 0x581 );
+	BindDoodad( TInputDeviceKeyboard::VIRTKEY, TPString8( "Virtual Stick" ), 0x506 );
+	BindDoodad( TInputDeviceKeyboard::KEY_LSHIFT, TPString8( "Left Shift" ), 0x530 );
+	BindDoodad( TInputDeviceKeyboard::KEY_RSHIFT, TPString8( "Right Shift" ), 0x53c );
+	BindDoodad( TInputDeviceKeyboard::KEY_LCONTROL, TPString8( "Left Control" ), 0x523 );
+	BindDoodad( TInputDeviceKeyboard::KEY_RCONTROL, TPString8( "Right Control" ), 0x56d );
+	BindDoodad( TInputDeviceKeyboard::KEY_LMENU, TPString8( "Left Alt" ), 0x53e );
+	BindDoodad( TInputDeviceKeyboard::KEY_RMENU, TPString8( "Right Alt" ), 0x571 );
+	BindDoodad( TInputDeviceKeyboard::KEY_LWIN, TPString8( "Left Windows" ), 0x57d );
+	BindDoodad( TInputDeviceKeyboard::KEY_RWIN, TPString8( "Right Windows" ), 0x57e );
+	BindDoodad( TInputDeviceKeyboard::KEY_ESCAPE, TPString8( "Escape" ), 0x507 );
+	BindDoodad( TInputDeviceKeyboard::KEY_1, TPString8( "1" ), 0x508 );
+	BindDoodad( TInputDeviceKeyboard::KEY_2, TPString8( "2" ), 0x509 );
+	BindDoodad( TInputDeviceKeyboard::KEY_3, TPString8( "3" ), 0x50a );
+	BindDoodad( TInputDeviceKeyboard::KEY_4, TPString8( "4" ), 0x50b );
+	BindDoodad( TInputDeviceKeyboard::KEY_5, TPString8( "5" ), 0x50c );
+	BindDoodad( TInputDeviceKeyboard::KEY_6, TPString8( "6" ), 0x50d );
+	BindDoodad( TInputDeviceKeyboard::KEY_7, TPString8( "7" ), 0x50e );
+	BindDoodad( TInputDeviceKeyboard::KEY_8, TPString8( "8" ), 0x50f );
+	BindDoodad( TInputDeviceKeyboard::KEY_9, TPString8( "9" ), 0x510 );
+	BindDoodad( TInputDeviceKeyboard::KEY_0, TPString8( "0" ), 0x511 );
+	BindDoodad( TInputDeviceKeyboard::KEY_MINUS, TPString8( "Minus" ), 0x512 );
+	BindDoodad( TInputDeviceKeyboard::KEY_EQUALS, TPString8( "Equals" ), 0x513 );
+	BindDoodad( TInputDeviceKeyboard::KEY_BACK, TPString8( "Backspace" ), 0x514 );
+	BindDoodad( TInputDeviceKeyboard::KEY_TAB, TPString8( "Tab" ), 0x515 );
+	BindDoodad( TInputDeviceKeyboard::KEY_Q, TPString8( "Q" ), 0x516 );
+	BindDoodad( TInputDeviceKeyboard::KEY_W, TPString8( "W" ), 0x517 );
+	BindDoodad( TInputDeviceKeyboard::KEY_E, TPString8( "E" ), 0x518 );
+	BindDoodad( TInputDeviceKeyboard::KEY_R, TPString8( "R" ), 0x519 );
+	BindDoodad( TInputDeviceKeyboard::KEY_T, TPString8( "T" ), 0x51a );
+	BindDoodad( TInputDeviceKeyboard::KEY_Y, TPString8( "Y" ), 0x51b );
+	BindDoodad( TInputDeviceKeyboard::KEY_U, TPString8( "U" ), 0x51c );
+	BindDoodad( TInputDeviceKeyboard::KEY_I, TPString8( "I" ), 0x51d );
+	BindDoodad( TInputDeviceKeyboard::KEY_O, TPString8( "O" ), 0x51e );
+	BindDoodad( TInputDeviceKeyboard::KEY_P, TPString8( "P" ), 0x51f );
+	BindDoodad( TInputDeviceKeyboard::KEY_LBRACKET, TPString8( "Left Bracket" ), 0x520 );
+	BindDoodad( TInputDeviceKeyboard::KEY_RBRACKET, TPString8( "Right Bracket" ), 0x521 );
+	BindDoodad( TInputDeviceKeyboard::KEY_RETURN, TPString8( "Return" ), 0x522 );
+	BindDoodad( TInputDeviceKeyboard::KEY_A, TPString8( "A" ), 0x524 );
+	BindDoodad( TInputDeviceKeyboard::KEY_S, TPString8( "S" ), 0x525 );
+	BindDoodad( TInputDeviceKeyboard::KEY_D, TPString8( "D" ), 0x526 );
+	BindDoodad( TInputDeviceKeyboard::KEY_F, TPString8( "F" ), 0x527 );
+	BindDoodad( TInputDeviceKeyboard::KEY_G, TPString8( "G" ), 0x528 );
+	BindDoodad( TInputDeviceKeyboard::KEY_H, TPString8( "H" ), 0x529 );
+	BindDoodad( TInputDeviceKeyboard::KEY_J, TPString8( "J" ), 0x52a );
+	BindDoodad( TInputDeviceKeyboard::KEY_K, TPString8( "K" ), 0x52b );
+	BindDoodad( TInputDeviceKeyboard::KEY_L, TPString8( "L" ), 0x52c );
+	BindDoodad( TInputDeviceKeyboard::KEY_SEMICOLON, TPString8( "Semicolon" ), 0x52d );
+	BindDoodad( TInputDeviceKeyboard::KEY_APOSTROPHE, TPString8( "Apostrophe" ), 0x52e );
+	BindDoodad( TInputDeviceKeyboard::KEY_GRAVE, TPString8( "Grave" ), 0x52f );
+	BindDoodad( TInputDeviceKeyboard::KEY_BACKSLASH, TPString8( "Backslash" ), 0x531 );
+	BindDoodad( TInputDeviceKeyboard::KEY_Z, TPString8( "Z" ), 0x532 );
+	BindDoodad( TInputDeviceKeyboard::KEY_X, TPString8( "X" ), 0x533 );
+	BindDoodad( TInputDeviceKeyboard::KEY_C, TPString8( "C" ), 0x534 );
+	BindDoodad( TInputDeviceKeyboard::KEY_V, TPString8( "V" ), 0x535 );
+	BindDoodad( TInputDeviceKeyboard::KEY_B, TPString8( "B" ), 0x536 );
+	BindDoodad( TInputDeviceKeyboard::KEY_N, TPString8( "N" ), 0x537 );
+	BindDoodad( TInputDeviceKeyboard::KEY_M, TPString8( "M" ), 0x538 );
+	BindDoodad( TInputDeviceKeyboard::KEY_COMMA, TPString8( "Comma" ), 0x539 );
+	BindDoodad( TInputDeviceKeyboard::KEY_PERIOD, TPString8( "Period" ), 0x53a );
+	BindDoodad( TInputDeviceKeyboard::KEY_SLASH, TPString8( "Slash" ), 0x53b );
+	BindDoodad( TInputDeviceKeyboard::KEY_MULTIPLY, TPString8( "Multiply" ), 0x53d );
+	BindDoodad( TInputDeviceKeyboard::KEY_SPACE, TPString8( "Space" ), 0x53f );
+	BindDoodad( TInputDeviceKeyboard::KEY_CAPITAL, TPString8( "Capslock" ), 0x540 );
+	BindDoodad( TInputDeviceKeyboard::KEY_F1, TPString8( "F1" ), 0x541 );
+	BindDoodad( TInputDeviceKeyboard::KEY_F2, TPString8( "F2" ), 0x542 );
+	BindDoodad( TInputDeviceKeyboard::KEY_F3, TPString8( "F3" ), 0x543 );
+	BindDoodad( TInputDeviceKeyboard::KEY_F4, TPString8( "F4" ), 0x544 );
+	BindDoodad( TInputDeviceKeyboard::KEY_F5, TPString8( "F5" ), 0x545 );
+	BindDoodad( TInputDeviceKeyboard::KEY_F6, TPString8( "F6" ), 0x546 );
+	BindDoodad( TInputDeviceKeyboard::KEY_F7, TPString8( "F7" ), 0x547 );
+	BindDoodad( TInputDeviceKeyboard::KEY_F8, TPString8( "F8" ), 0x548 );
+	BindDoodad( TInputDeviceKeyboard::KEY_F9, TPString8( "F9" ), 0x549 );
+	BindDoodad( TInputDeviceKeyboard::KEY_F10, TPString8( "F10" ), 0x54a );
+	BindDoodad( TInputDeviceKeyboard::KEY_NUMLOCK, TPString8( "NumLock" ), 0x54b );
+	BindDoodad( TInputDeviceKeyboard::KEY_SCROLL, TPString8( "ScrollLock" ), 0x54c );
+	BindDoodad( TInputDeviceKeyboard::KEY_NUMPAD7, TPString8( "Numpad 7" ), 0x54d );
+	BindDoodad( TInputDeviceKeyboard::KEY_NUMPAD8, TPString8( "Numpad 8" ), 0x54e );
+	BindDoodad( TInputDeviceKeyboard::KEY_NUMPAD9, TPString8( "Numpad 9" ), 0x54f );
+	BindDoodad( TInputDeviceKeyboard::KEY_SUBTRACT, TPString8( "Subtract" ), 0x550 );
+	BindDoodad( TInputDeviceKeyboard::KEY_NUMPAD4, TPString8( "Numpad 4" ), 0x551 );
+	BindDoodad( TInputDeviceKeyboard::KEY_NUMPAD5, TPString8( "Numpad 5" ), 0x552 );
+	BindDoodad( TInputDeviceKeyboard::KEY_NUMPAD6, TPString8( "Numpad 6" ), 0x553 );
+	BindDoodad( TInputDeviceKeyboard::KEY_ADD, TPString8( "Add" ), 0x554 );
+	BindDoodad( TInputDeviceKeyboard::KEY_NUMPAD1, TPString8( "Numpad 1" ), 0x555 );
+	BindDoodad( TInputDeviceKeyboard::KEY_NUMPAD2, TPString8( "Numpad 2" ), 0x556 );
+	BindDoodad( TInputDeviceKeyboard::KEY_NUMPAD3, TPString8( "Numpad 3" ), 0x557 );
+	BindDoodad( TInputDeviceKeyboard::KEY_NUMPAD0, TPString8( "Numpad 0" ), 0x558 );
+	BindDoodad( TInputDeviceKeyboard::KEY_DECIMAL, TPString8( "Decimal" ), 0x559 );
+	BindDoodad( TInputDeviceKeyboard::KEY_F11, TPString8( "F11" ), 0x55a );
+	BindDoodad( TInputDeviceKeyboard::KEY_F12, TPString8( "F12" ), 0x55b );
+	BindDoodad( TInputDeviceKeyboard::KEY_F13, TPString8( "F13" ), 0x55c );
+	BindDoodad( TInputDeviceKeyboard::KEY_F14, TPString8( "F14" ), 0x55d );
+	BindDoodad( TInputDeviceKeyboard::KEY_F15, TPString8( "F15" ), 0x55e );
+	BindDoodad( TInputDeviceKeyboard::KEY_KANA, TPString8( "Kana" ), 0x55f );
+	BindDoodad( TInputDeviceKeyboard::KEY_CONVERT, TPString8( "Convert" ), 0x560 );
+	BindDoodad( TInputDeviceKeyboard::KEY_NOCONVERT, TPString8( "No Convert" ), 0x561 );
+	BindDoodad( TInputDeviceKeyboard::KEY_YEN, TPString8( "Yen" ), 0x562 );
+	BindDoodad( TInputDeviceKeyboard::KEY_NUMPADEQUALS, TPString8( "Numpad Equals" ), 0x563 );
+	BindDoodad( TInputDeviceKeyboard::KEY_CIRCUMFLEX, TPString8( "Circumflex" ), 0x564 );
+	BindDoodad( TInputDeviceKeyboard::KEY_AT, TPString8( "At" ), 0x565 );
+	BindDoodad( TInputDeviceKeyboard::KEY_COLON, TPString8( "Colon" ), 0x566 );
+	BindDoodad( TInputDeviceKeyboard::KEY_UNDERLINE, TPString8( "Underline" ), 0x567 );
+	BindDoodad( TInputDeviceKeyboard::KEY_KANJI, TPString8( "Kanji" ), 0x568 );
+	BindDoodad( TInputDeviceKeyboard::KEY_STOP, TPString8( "Stop" ), 0x569 );
+	BindDoodad( TInputDeviceKeyboard::KEY_AX, TPString8( "Ax" ), 0x56a );
+	BindDoodad( TInputDeviceKeyboard::KEY_UNLABELED, TPString8( "Unlabeled" ), 0x56b );
+	BindDoodad( TInputDeviceKeyboard::KEY_NUMPADENTER, TPString8( "Numpad Enter" ), 0x56c );
+	BindDoodad( TInputDeviceKeyboard::KEY_NUMPADCOMMA, TPString8( "Numpad Comma" ), 0x56e );
+	BindDoodad( TInputDeviceKeyboard::KEY_DIVIDE, TPString8( "Divide" ), 0x56f );
+	BindDoodad( TInputDeviceKeyboard::KEY_SYSRQ, TPString8( "SysRq" ), 0x570 );
+	BindDoodad( TInputDeviceKeyboard::KEY_PAUSE, TPString8( "Pause" ), 0x572 );
+	BindDoodad( TInputDeviceKeyboard::KEY_HOME, TPString8( "Home" ), 0x573 );
+	BindDoodad( TInputDeviceKeyboard::KEY_UP, TPString8( "Up" ), 0x574 );
+	BindDoodad( TInputDeviceKeyboard::KEY_PRIOR, TPString8( "Prior" ), 0x575 );
+	BindDoodad( TInputDeviceKeyboard::KEY_LEFT, TPString8( "Left" ), 0x576 );
+	BindDoodad( TInputDeviceKeyboard::KEY_RIGHT, TPString8( "Right" ), 0x577 );
+	BindDoodad( TInputDeviceKeyboard::KEY_END, TPString8( "End" ), 0x578 );
+	BindDoodad( TInputDeviceKeyboard::KEY_DOWN, TPString8( "Down" ), 0x579 );
+	BindDoodad( TInputDeviceKeyboard::KEY_NEXT, TPString8( "Next" ), 0x57a );
+	BindDoodad( TInputDeviceKeyboard::KEY_INSERT, TPString8( "Insert" ), 0x57b );
+	BindDoodad( TInputDeviceKeyboard::KEY_DELETE, TPString8( "Delete" ), 0x57c );
+	BindDoodad( TInputDeviceKeyboard::KEY_APPS, TPString8( "Apps" ), 0x57f );
+	BindDoodad( TInputDeviceKeyboard::KEY_POWER, TPString8( "Power" ), 0x580 );
+	BindDoodad( TInputDeviceKeyboard::KEY_SLEEP, TPString8( "Sleep" ), 0x581 );
 }
 
 // $Barnyard: FUNCTION 0059c410
 void AInputMapManager::InitGamepadDoodads()
 {
-	BindDoodad( 0x10001, TPString8( "DPadUp" ), 0x58e );
-	BindDoodad( 0x10002, TPString8( "DPadRight" ), 0x58f );
-	BindDoodad( 0x10003, TPString8( "DPadDown" ), 0x590 );
-	BindDoodad( 0x10004, TPString8( "DPadLeft" ), 0x591 );
-	BindDoodad( 0x10005, TPString8( "Select" ), 0x592 );
-	BindDoodad( 0x10006, TPString8( "Start" ), 0x593 );
-	BindDoodad( 0x10007, TPString8( "Left Stick Click" ), 0x594 );
-	BindDoodad( 0x10008, TPString8( "Right Stick Click" ), 0x595 );
-	BindDoodad( 0x10009, TPString8( "Context1" ), 0x596 );
-	BindDoodad( 0x1000a, TPString8( "Context2" ), 0x597 );
-	BindDoodad( 0x1000b, TPString8( "Context3" ), 0x598 );
-	BindDoodad( 0x1000c, TPString8( "Context4" ), 0x599 );
-	BindDoodad( 0x1000d, TPString8( "L1" ), 0x59a );
-	BindDoodad( 0x1000e, TPString8( "L2" ), 0x59b );
-	BindDoodad( 0x1000f, TPString8( "R1" ), 0x59c );
-	BindDoodad( 0x10010, TPString8( "R2" ), 0x59d );
-	BindDoodad( 0x10011, TPString8( "Left Stick Up" ), 0x59e );
-	BindDoodad( 0x10012, TPString8( "Left Stick Right" ), 0x59f );
-	BindDoodad( 0x10013, TPString8( "Left Stick Down" ), 0x5a0 );
-	BindDoodad( 0x10014, TPString8( "Left Stick Left" ), 0x5a1 );
-	BindDoodad( 0x10015, TPString8( "Right Stick Up" ), 0x5a2 );
-	BindDoodad( 0x10016, TPString8( "Right Stick Right" ), 0x5a3 );
-	BindDoodad( 0x10017, TPString8( "Right Stick Down" ), 0x5a4 );
-	BindDoodad( 0x10018, TPString8( "Right Stick Left" ), 0x5a5 );
-	BindDoodad( 0x1001b, TPString8( "Virtual DPad Stick" ), 0x5a8 );
-	BindDoodad( 0x10019, TPString8( "Left Stick" ), 0x5a6 );
-	BindDoodad( 0x1001a, TPString8( "Right Stick" ), 0x5a7 );
+	BindDoodad( TInputDeviceController::BUTTON_DPAD_UP, TPString8( "DPadUp" ), 0x58e );
+	BindDoodad( TInputDeviceController::BUTTON_DPAD_RIGHT, TPString8( "DPadRight" ), 0x58f );
+	BindDoodad( TInputDeviceController::BUTTON_DPAD_DOWN, TPString8( "DPadDown" ), 0x590 );
+	BindDoodad( TInputDeviceController::BUTTON_DPAD_LEFT, TPString8( "DPadLeft" ), 0x591 );
+	BindDoodad( TInputDeviceController::BUTTON_SELECT, TPString8( "Select" ), 0x592 );
+	BindDoodad( TInputDeviceController::BUTTON_START, TPString8( "Start" ), 0x593 );
+	BindDoodad( TInputDeviceController::BUTTON_STICK_LEFT, TPString8( "Left Stick Click" ), 0x594 );
+	BindDoodad( TInputDeviceController::BUTTON_STICK_RIGHT, TPString8( "Right Stick Click" ), 0x595 );
+	BindDoodad( TInputDeviceController::BUTTON_CONTEXT_1, TPString8( "Context1" ), 0x596 );
+	BindDoodad( TInputDeviceController::BUTTON_CONTEXT_2, TPString8( "Context2" ), 0x597 );
+	BindDoodad( TInputDeviceController::BUTTON_CONTEXT_3, TPString8( "Context3" ), 0x598 );
+	BindDoodad( TInputDeviceController::BUTTON_CONTEXT_4, TPString8( "Context4" ), 0x599 );
+	BindDoodad( TInputDeviceController::BUTTON_SHOULDER_LEFT_1, TPString8( "L1" ), 0x59a );
+	BindDoodad( TInputDeviceController::BUTTON_SHOULDER_LEFT_2, TPString8( "L2" ), 0x59b );
+	BindDoodad( TInputDeviceController::BUTTON_SHOULDER_RIGHT_1, TPString8( "R1" ), 0x59c );
+	BindDoodad( TInputDeviceController::BUTTON_SHOULDER_RIGHT_2, TPString8( "R2" ), 0x59d );
+	BindDoodad( TInputDeviceController::VIRTBTN_STICK_LEFT_UP, TPString8( "Left Stick Up" ), 0x59e );
+	BindDoodad( TInputDeviceController::VIRTBTN_STICK_LEFT_RIGHT, TPString8( "Left Stick Right" ), 0x59f );
+	BindDoodad( TInputDeviceController::VIRTBTN_STICK_LEFT_DOWN, TPString8( "Left Stick Down" ), 0x5a0 );
+	BindDoodad( TInputDeviceController::VIRTBTN_STICK_LEFT_LEFT, TPString8( "Left Stick Left" ), 0x5a1 );
+	BindDoodad( TInputDeviceController::VIRTBTN_STICK_RIGHT_UP, TPString8( "Right Stick Up" ), 0x5a2 );
+	BindDoodad( TInputDeviceController::VIRTBTN_STICK_RIGHT_RIGHT, TPString8( "Right Stick Right" ), 0x5a3 );
+	BindDoodad( TInputDeviceController::VIRTBTN_STICK_RIGHT_DOWN, TPString8( "Right Stick Down" ), 0x5a4 );
+	BindDoodad( TInputDeviceController::VIRTBTN_STICK_RIGHT_LEFT, TPString8( "Right Stick Left" ), 0x5a5 );
+	BindDoodad( TInputDeviceController::VIRTSTK_DPAD, TPString8( "Virtual DPad Stick" ), 0x5a8 );
+	BindDoodad( TInputDeviceController::STICK_LEFT, TPString8( "Left Stick" ), 0x5a6 );
+	BindDoodad( TInputDeviceController::STICK_RIGHT, TPString8( "Right Stick" ), 0x5a7 );
 }
 
 // $Barnyard: FUNCTION 00597d40
@@ -363,85 +431,85 @@ void AInputMapManager::InitCommandMap()
 
 	ADD_COMMAND( Unknown, -1, 0 );
 	ADD_COMMAND_EX( AInputCommand_Empty, Toshi::TPString8(), -1, 0 );
-	ADD_COMMAND( OK, 0x4b9, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Cancel, 0x4ba, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Retry, 0x4bb, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Back, 0x4bc, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Close, 0x4bd, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Quit, 0x4be, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Start, 0x4bf, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Select, 0x4c0, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Yes, 0x4c2, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( No, 0x4c3, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Restart, 0x4c4, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Leave, 0x4c5, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Save, 0x4c6, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Move, 0x4c9, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Up, 0x4c7, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Down, 0x4c8, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( LeftWithUp, 0x4eb, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( RightWithUp, 0x4ea, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Left, 0x4ca, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Right, 0x4cb, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Forward, 0x4cc, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( ForwardWithUp, 0x4ec, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( SuperSpeed_Forward_Debug, 0x4f6, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( SuperSpeed, 0x4f7, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( PanLeft, 0x4fe, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( PanRight, 0x4ff, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Reload, 0x4f4, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Dodge, 0x4f5, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Backward, 0x4cd, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( BackwardWithUp, 0x4ed, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( ZoomIn, 0x4d3, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( ZoomOut, 0x4d4, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Look, 0x4d5, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( LookUp, 0x4d6, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( LookDown, 0x4d7, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( LookLeft, 0x4d8, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( LookRight, 0x4d9, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( LookUpWithUp, 0x4b7, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( LookDownWithUp, 0x4b8, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( LookLeftWithUp, 0x4b5, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( LookRightWithUp, 0x4b6, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Context1, 0x4da, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Context2, 0x4db, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Context3, 0x4dc, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Context4, 0x4dd, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Menu, 0x4e4, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( DebugMenu, 0x4e5, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Interact, 0x4e6, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Use, 0x4f2, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Jump, 0x4f0, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Shoot, 0x4e7, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( ZLock, 0x500, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( ShootAlt, 0x4e8, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Switch, 0x4f9, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( SideStep, 0x4f8, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Speed, 0x4ef, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Brake, 0x4ee, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Accelerator, 0x4e9, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Bell, 0x4f3, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Trick1, 0x4fa, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Trick2, 0x4fb, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Trick3, 0x4fc, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Trick4, 0x4fd, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( SelectUp, 0x4de, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( SelectDown, 0x4df, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( SelectLeft, 0x4e0, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( SelectRight, 0x4e1, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( SelectPrevious, 0x4e2, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( SelectNext, 0x4e3, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( ElevateCameraCW, 0x4ce, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( ElevateCameraCCW, 0x4cf, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( RotateCameraCW, 0x4d0, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( RotateCamera, 0x4d1, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( RotateCameraCCW, 0x4d2, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Inventory, 0x4f1, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Icons, 0x501, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( ZLock, 0x500, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Quad, -1, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
-	ADD_COMMAND( Horn, 0x4b4, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Virtual | InputEvent_Moved );
+	ADD_COMMAND( OK, 0x4b9, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Cancel, 0x4ba, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Retry, 0x4bb, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Back, 0x4bc, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Close, 0x4bd, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Quit, 0x4be, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Start, 0x4bf, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Select, 0x4c0, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Yes, 0x4c2, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( No, 0x4c3, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Restart, 0x4c4, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Leave, 0x4c5, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Save, 0x4c6, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Move, 0x4c9, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Up, 0x4c7, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Down, 0x4c8, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( LeftWithUp, 0x4eb, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( RightWithUp, 0x4ea, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Left, 0x4ca, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Right, 0x4cb, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Forward, 0x4cc, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( ForwardWithUp, 0x4ec, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( SuperSpeed_Forward_Debug, 0x4f6, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( SuperSpeed, 0x4f7, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( PanLeft, 0x4fe, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( PanRight, 0x4ff, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Reload, 0x4f4, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Dodge, 0x4f5, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Backward, 0x4cd, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( BackwardWithUp, 0x4ed, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( ZoomIn, 0x4d3, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( ZoomOut, 0x4d4, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Look, 0x4d5, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( LookUp, 0x4d6, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( LookDown, 0x4d7, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( LookLeft, 0x4d8, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( LookRight, 0x4d9, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( LookUpWithUp, 0x4b7, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( LookDownWithUp, 0x4b8, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( LookLeftWithUp, 0x4b5, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( LookRightWithUp, 0x4b6, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Context1, 0x4da, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Context2, 0x4db, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Context3, 0x4dc, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Context4, 0x4dd, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Menu, 0x4e4, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( DebugMenu, 0x4e5, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Interact, 0x4e6, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Use, 0x4f2, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Jump, 0x4f0, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Shoot, 0x4e7, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( ZLock, 0x500, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( ShootAlt, 0x4e8, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Switch, 0x4f9, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( SideStep, 0x4f8, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Speed, 0x4ef, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Brake, 0x4ee, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Accelerator, 0x4e9, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Bell, 0x4f3, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Trick1, 0x4fa, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Trick2, 0x4fb, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Trick3, 0x4fc, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Trick4, 0x4fd, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( SelectUp, 0x4de, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( SelectDown, 0x4df, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( SelectLeft, 0x4e0, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( SelectRight, 0x4e1, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( SelectPrevious, 0x4e2, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( SelectNext, 0x4e3, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( ElevateCameraCW, 0x4ce, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( ElevateCameraCCW, 0x4cf, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( RotateCameraCW, 0x4d0, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( RotateCamera, 0x4d1, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( RotateCameraCCW, 0x4d2, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Inventory, 0x4f1, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Icons, 0x501, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( ZLock, 0x500, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Quad, -1, INPUTEVENT_GONE_DOWN | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
+	ADD_COMMAND( Horn, 0x4b4, INPUTEVENT_GONE_DOWN | INPUTEVENT_GONE_UP | INPUTEVENT_REPEAT | INPUTEVENT_VIRTUAL | INPUTEVENT_MOVED );
 	ADD_COMMAND_EX( AInputCommand_CUSTOM_COMMAND, "CUSTOM COMMAND", -1, 0 );
 }
 
@@ -451,3 +519,32 @@ void AInputMapManager::BindDoodad( Toshi::TInputDevice::Doodad a_iDoodad, const 
 	m_oDoodadToNameMap.Insert( a_iDoodad, a_ButtonName );
 	m_oKeyMap.Insert( a_iDoodad, a_uiAction );
 }
+
+// T2Map/T2RedBlackTree methods (template instances for m_oKeyMap, m_oDoodadToNameMap and m_oCommandMap):
+
+// Clear
+
+// $Barnyard: FUNCTION 00597920
+
+// node allocation (doodad/name pair, command pair)
+
+// $Barnyard: FUNCTION 00597980
+
+// $Barnyard: FUNCTION 00597a00
+
+// Insert
+
+// $Barnyard: FUNCTION 00597a80
+
+// $Barnyard: FUNCTION 00597b20
+
+// $Barnyard: FUNCTION 00597bd0
+
+// $Barnyard: FUNCTION 00597c60
+
+// Delete (range)
+
+// $Barnyard: FUNCTION 00597cf0
+// T2Pair::second returned by value (folded): <Doodad, TPString8> 00597400, <AInputCommand, Command> 00597430
+// $Barnyard: FUNCTION 00597400
+// $Barnyard: FUNCTION 00597430

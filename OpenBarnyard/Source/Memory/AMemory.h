@@ -63,6 +63,7 @@ public:
 
 public:
 	static void                      CreatePool( POOL a_ePool );
+	static void                      DestroyPool( POOL a_ePool );
 	static Toshi::T2Allocator*       GetAllocator( POOL a_ePool );
 	static Toshi::TMemory::MemBlock* GetMemBlock( POOL a_ePool );
 };

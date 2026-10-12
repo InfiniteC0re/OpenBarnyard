@@ -8,6 +8,9 @@ class ASysMaterial : public Toshi::TMaterial
 public:
 	TDECLARE_CLASS( ASysMaterial, Toshi::TMaterial );
 
+public:
+	~ASysMaterial();
+
 	enum BLENDMODE
 	{
 		BLENDMODE_DEFAULT,
@@ -35,6 +38,8 @@ public:
 	{
 		m_pTexture = a_pTexture;
 	}
+
+	Toshi::TTexture* GetSysTexture() const { return m_pTexture; }
 
 	ASysShader* GetSysShader() const
 	{

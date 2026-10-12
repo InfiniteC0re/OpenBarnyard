@@ -184,6 +184,10 @@ public:
 	static TBOOL Create();
 	static void  Destroy();
 
+	// Deletes the scheduler and the system timer
+	// NOTE: Destroy (006bbb80) only quits.
+	static void DestroySystemTimer();
+
 	static TBOOL Quitted() { return ms_bQuitted; }
 
 private:

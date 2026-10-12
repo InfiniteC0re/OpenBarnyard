@@ -9,7 +9,7 @@
 
 TOSHI_NAMESPACE_USING
 
-TDEFINE_CLASS_NORUNTIME( AAnimControllerType )
+TDEFINE_CLASS_NORUNTIME( AAnimControllerType );
 
 // $Barnyard: FUNCTION 005803b0
 AAnimControllerType::AAnimControllerType()
@@ -20,9 +20,4 @@ AAnimControllerType::AAnimControllerType()
 // $Barnyard: FUNCTION 00580360
 AAnimControllerType::~AAnimControllerType()
 {
-}
-
-TBOOL AAnimControllerType::Create( const PBProperties* a_pProperties )
-{
-	return TTRUE;
 }

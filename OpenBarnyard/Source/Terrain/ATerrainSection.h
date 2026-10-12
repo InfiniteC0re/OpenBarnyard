@@ -36,8 +36,8 @@ public:
 		void SetUseLighting( TBOOL a_bUseLighting );
 		void SetGlow( TBOOL a_bIsGlow );
 
-		TBOOL           IsUsingLighting() const { return !ISZERO( m_eFlags & MNF_USE_LIGHTING ); }
-		TBOOL           IsGlow() const { return !ISZERO( m_eFlags & MNF_GLOW ); }
+		TBOOL IsUsingLighting() const { return !ISZERO( m_eFlags & MNF_USE_LIGHTING ); }
+		TBOOL IsGlow() const { return !ISZERO( m_eFlags & MNF_GLOW ); }
 
 		AWorldMaterial* GetAnimatedMaterial() const { return m_pAnimatedMaterial; }
 
@@ -53,15 +53,27 @@ public:
 		TBOOL                   m_bCreated;
 	};
 
-	enum FLAGS : TUINT32
+	using FLAGS = TUINT32;
+	enum FLAGS_ : FLAGS
 	{
+		FLAGS_NONE              = 0,
 		FLAGS_HIGH_LOD_LOADED   = BITFLAG( 0 ),
 		FLAGS_LOW_LOD_LOADED    = BITFLAG( 1 ),
 		FLAGS_HIGH_LOD_LOADING  = BITFLAG( 2 ),
 		FLAGS_LOW_LOD_LOADING   = BITFLAG( 3 ),
 		FLAGS_HIGH_LOD_QUEUED   = BITFLAG( 4 ),
 		FLAGS_LOW_LOD_QUEUED    = BITFLAG( 5 ),
+		FLAGS_HIGH_LOD_READY    = BITFLAG( 6 ),
+		FLAGS_LOW_LOD_READY     = BITFLAG( 7 ),
 		FLAGS_COLLISION_LOADING = BITFLAG( 10 )
+	};
+
+	// Flags of the models of a LOD (m_aLODFlags)
+	using LODFLAGS = TUINT8;
+	enum LODFLAGS_ : LODFLAGS
+	{
+		LODFLAGS_NONE = 0,
+		LODFLAGS_GLOW = BITFLAG( 0 ), // the model uses lighting and glows
 	};
 
 	friend class ATerrainInterface;
@@ -72,6 +84,11 @@ public:
 public:
 	TBOOL IsPointInside( const Toshi::TVector4& a_rcPoint );
 
+	// Casts a ray down through a_rcPosition against this section's collision and returns the first section, named by
+	// the hit collision groups, whose high LOD isn't loaded yet (TNULL if there's none). Used to decide if the terrain
+	// has to stall until the ground under the camera is loaded.
+	ATerrainSection* FindUnloadedSectionBelow( const Toshi::TVector4& a_rcPosition ) const;
+
 	void LoadCollision();
 	void LoadModels( ATerrainLODType a_eLODType );
 	void LoadMatlib( ATerrainLODType a_eLODType );
@@ -81,20 +98,24 @@ public:
 
 	void RemoveFromStreamingQueue();
 
+	// Makes the terrain stream this section (ATerrainInterface::ForceSection) unless a_eLODType is already loaded
+	void ForceLoad( ATerrainLODType a_eLODType );
+
 	TBOOL IsMatLibLoaded( ATerrainLODType a_eLODType ) const;
 
-	TBOOL IsLODQueued( ATerrainLODType a_eLODType ) const { return ( m_eFlags & ( 16 << a_eLODType ) ); }
+	TBOOL IsLODQueued( ATerrainLODType a_eLODType ) const { return ( m_eFlags & ( FLAGS_HIGH_LOD_QUEUED << a_eLODType ) ); }
 	void  SetLODQueued( ATerrainLODType a_eLODType, TBOOL a_bQueued );
 
-	TBOOL IsLODLoaded( ATerrainLODType a_eLODType ) const { return m_eFlags & ( 1 << ( a_eLODType ) ); }
+	TBOOL IsLODLoaded( ATerrainLODType a_eLODType ) const { return m_eFlags & ( FLAGS_HIGH_LOD_LOADED << ( a_eLODType ) ); }
 	void  SetLODLoaded( ATerrainLODType a_eLODType, TBOOL a_bLoaded );
 
-	TBOOL IsLODLoading( ATerrainLODType a_eLODType ) const { return m_eFlags & ( 1 << ( a_eLODType + ATerrainLODType_NUMOF ) ); }
+	TBOOL IsLODLoading( ATerrainLODType a_eLODType ) const { return m_eFlags & ( FLAGS_HIGH_LOD_LOADED << ( a_eLODType + ATerrainLODType_NUMOF ) ); }
 	void  SetLODLoading( ATerrainLODType a_eLODType, TBOOL a_bLoading );
 
-	// TODO: The flag's name is wrong
-	TBOOL IsLODEmpty( ATerrainLODType a_eLODType ) const { return ( m_eFlags & ( 64 << ( a_eLODType & 0x1f ) ) ); }
-	void  SetLODEmpty( ATerrainLODType a_eLODType, TBOOL a_bEmpty );
+	// Set once the LOD has finished loading (or has nothing to load) and can be rendered.
+	// A loaded LOD without it is destroyed, and the streaming clears it to give an in-use block a second chance before reusing it.
+	TBOOL IsLODReady( ATerrainLODType a_eLODType ) const { return ( m_eFlags & ( FLAGS_HIGH_LOD_READY << ( a_eLODType & 0x1f ) ) ); }
+	void  SetLODReady( ATerrainLODType a_eLODType, TBOOL a_bReady );
 
 	void GetLODNames( ATerrainLODType a_eLODType, const TCHAR**& a_rLODs, TINT& a_rNumLODs )
 	{
@@ -128,7 +149,9 @@ public:
 
 	TINT GetLODCount( ATerrainLODType a_eLODType ) { return ( a_eLODType == ATerrainLODType_High ) ? m_iNumHighModelFiles : m_iNumLowModelFiles; }
 
-	TBOOL IsOtherSectionVisible( TINT a_iSection ) const { return m_pVisibility[ a_iSection ] > ATerrainLODType_None; }
+	TBOOL           IsOtherSectionVisible( TINT a_iSection ) const { return m_pVisibility[ a_iSection ] > ATerrainLODType_None; }
+	ATerrainLODType GetOtherSectionVisibility( TINT a_iSection ) const { return m_pVisibility[ a_iSection ]; }
+	void            SetOtherSectionVisibility( TINT a_iSection, ATerrainLODType a_eLOD ) { m_pVisibility[ a_iSection ] = a_eLOD; }
 
 private:
 	const TCHAR*  m_szName;
@@ -137,7 +160,7 @@ private:
 	TINT32        m_iNumHighModelFiles;
 	TINT32        m_iNumLowModelFiles;
 
-	TUINT8*      m_aLODFlags[ 2 ];
+	LODFLAGS*    m_aLODFlags[ 2 ];
 	const TCHAR* m_szCollisionFilename;
 	ModelNode*   m_pCollisionModelData;
 	ModelNode**  m_ppLODModelsData[ ATerrainLODType_NUMOF ];
@@ -151,7 +174,7 @@ private:
 	AMaterialLibrary* m_pMatLibLow;
 
 	ATerrainLODType*   m_pVisibility;
-	TUINT32            m_eFlags;
+	FLAGS              m_eFlags;
 	TUINT16            m_iNumHighMemBlocksUsed;
 	TUINT16            m_iNumLowMemBlocksUsed;
 	ATerrainLODBlock** m_ppHighLODBlocks;

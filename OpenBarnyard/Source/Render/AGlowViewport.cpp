@@ -40,6 +40,7 @@ AGlowViewport::~AGlowViewport()
 	delete[] m_pAllocObjects;
 }
 
+// $Barnyard: FUNCTION 00608540
 AGlowViewport::GlowObject* AGlowViewport::CreateGlowObject()
 {
 	if ( m_pHeadFreeObject == TNULL )
@@ -261,16 +262,20 @@ void AGlowViewport::GlowObject::Setup( const Toshi::TMatrix44& a_rcTransform, co
 	if ( a_eCameraMode == TRenderContext::CameraMode_Orthographic )
 	{
 		TRenderContext::ComputeOrthographicProjection( oProjection, a_rcViewportParams, a_rcProjectionParams );
+		oProjection.m_f41 = 0.5f;
+		oProjection.m_f42 = 0.5f;
 		TRenderContext::ComputeOrthographicFrustum( oFrustum, a_rcViewportParams, a_rcProjectionParams );
 	}
 	else
 	{
 		TRenderContext::ComputePerspectiveProjection( oProjection, a_rcViewportParams, a_rcProjectionParams );
+		oProjection.m_f31 = 0.5f;
+		oProjection.m_f32 = 0.5f;
 		TRenderContext::ComputePerspectiveFrustum( oFrustum, a_rcViewportParams, a_rcProjectionParams );
 	}
 
 	TMatrix44 oTransformInverted;
-	oTransformInverted.Invert( a_rcTransform );
+	oTransformInverted.InvertOrthogonal( a_rcTransform );
 
 	for ( TINT i = 0; i < WORLDPLANE_NUMOF; i++ )
 	{

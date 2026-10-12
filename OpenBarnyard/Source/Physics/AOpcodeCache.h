@@ -26,6 +26,6 @@ public:
 	Opcode::OBBCollider      m_OBBCollider;
 	Opcode::OBBCache         m_OBBCache;
 	Opcode::AABBTreeCollider m_AABBTreeCollider;
-	// ...
+	Opcode::BVTCache         m_BVTCache;
 };
 

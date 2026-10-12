@@ -29,6 +29,7 @@ AGUI2MenuGridTextItem::AGUI2MenuGridTextItem()
 }
 
 // $Barnyard: FUNCTION 0063f9b0
+// $Barnyard: FUNCTION 0063fda0
 AGUI2MenuGridTextItem::~AGUI2MenuGridTextItem()
 {
 	delete[] m_wszText;
@@ -62,6 +63,25 @@ void AGUI2MenuGridTextItem::Create( T2GUIFont* a_pFont, TFLOAT a_fWidth, const T
 
 	m_oTextBox.SetTextAlign( T2GUIFont::TextAlign_Center );
 	AGUI2MenuGridItem::SetDimensions( m_oTextBox.GetWidth(), m_oTextBox.GetHeight() );
+}
+
+// $Barnyard: FUNCTION 0063fb30
+void AGUI2MenuGridTextItem::SetText( const TWCHAR* a_wszText )
+{
+	if ( m_wszText )
+	{
+		delete[] m_wszText;
+		m_wszText = TNULL;
+	}
+
+	if ( a_wszText )
+		m_wszText = T2String16::CreateCopy( a_wszText );
+
+	// NOTE: the text box shows a_wszText, not the copy
+	m_oTextBox.SetTextAndFitWidth( a_wszText );
+
+	T2GUIElement::m_fWidth  = m_oTextBox.GetWidth();
+	T2GUIElement::m_fHeight = m_oTextBox.GetHeight();
 }
 
 // $Barnyard: FUNCTION 0063fd70

@@ -16,6 +16,15 @@ class TSkeletonInstance;
 class TSkeletonSequenceBone
 {
 public:
+	using FLAGS = TUINT8;
+	enum FLAGS_ : FLAGS
+	{
+		FLAGS_NONE               = 0,
+		FLAGS_TRANSLATE_ANIMATED = BITFLAG( 0 ),
+		FLAGS_OVERLAY_ANIMATED   = BITFLAG( 1 ),
+	};
+
+public:
 	/**
 		 * Returns lerp progress coefficient that should be used for animating
 		 * @param a_iCurrentAnimProgress The current progress of animation from 0 to 65535
@@ -37,24 +46,24 @@ public:
 
 	TFORCEINLINE TBOOL IsTranslateAnimated() const
 	{
-		return m_eFlags & 1;
+		return m_eFlags & FLAGS_TRANSLATE_ANIMATED;
 	}
 
 	TFORCEINLINE TBOOL IsOverlayAnimated() const
 	{
-		return m_eFlags & 2;
+		return m_eFlags & FLAGS_OVERLAY_ANIMATED;
 	}
 
-	TFORCEINLINE TUINT8 GetFlags() const
+	TFORCEINLINE FLAGS GetFlags() const
 	{
 		return m_eFlags;
 	}
 
 public:
-	TUINT8   m_eFlags;
-	TUINT8   m_iKeySize;
-	TUINT16  m_iNumKeys;
-	TBYTE*   m_pData;
+	FLAGS   m_eFlags;
+	TUINT8  m_iKeySize;
+	TUINT16 m_iNumKeys;
+	TBYTE*  m_pData;
 };
 
 class TSkeletonSequence
@@ -163,6 +172,13 @@ public:
 
 	TINT16 GetSequenceCount() { return m_iSequenceCount; }
 
+	// Transform of a_iBone relative to its parent in a_iSequence at a_fTime, a_uiCurrentKey is the key to start the search from.
+	// Returns the current key.
+	TUINT16 GetBoneLocalTransform( TINT a_iBone, TINT a_iSequence, TFLOAT a_fTime, TUINT16 a_uiCurrentKey, TMatrix44& a_rOutTransform );
+
+	// Transform of a_iBone in the space of the skeleton in a_iSequence at a_fTime
+	void GetBoneTransform( TINT a_iBone, TINT a_iSequence, TFLOAT a_fTime, TMatrix44& a_rOutTransform );
+
 public:
 	TINT16                   m_iBoneCount;         // 0x00
 	TINT16                   m_iManualBoneCount;   // 0x02
@@ -190,13 +206,14 @@ struct TSkeletonInstanceBone
 class TSkeletonInstance
 {
 public:
-	struct BoneCache
-	{
-		TQuaternion Rotation;
-		TVector3    Position;
-	};
-
 	friend TSkeleton;
+
+	using FLAGS = TUINT32;
+	enum FLAGS_ : FLAGS
+	{
+		FLAGS_NONE         = 0,
+		FLAGS_UPDATE_STATE = BITFLAG( 0 ), // the state has to be updated on the next UpdateTime
+	};
 
 public:
 	TSkeletonInstance();
@@ -212,26 +229,36 @@ public:
 	void UpdateTime( TFLOAT a_fDeltaTime );
 	void UpdateState( TBOOL a_bForceUpdate );
 
+	// Marks the state as up to date for the current frame without recalculating it
+	void UpdateStateFrame();
+
 	const TMatrix44& GetBoneTransformCurrent( TINT a_iBone );
 	TMatrix44&       GetBoneTransformCurrent( TINT a_iBone, TMatrix44& a_rOutTransform );
 	void             SetStateFromBasePose();
 
 	void Delete();
 
-	TSkeleton*                   GetSkeleton() { return m_pSkeleton; }
+	TSkeleton* GetSkeleton() { return m_pSkeleton; }
+
+	// $Barnyard: FUNCTION 006c9f50
+	TINT GetBoneID( const TCHAR* a_szBoneName ) { return m_pSkeleton->GetBoneID( a_szBoneName, 0 ); }
+
 	const TSkeletonInstanceBone* GetBones() { return m_pBones; }
 	const TSkeletonInstanceBone& GetBone( TINT a_uiIndex );
 
-	TBOOL IsAnyBaseAnimationPlaying() const { return !m_BaseAnimations.IsEmpty(); }
-	TBOOL IsAnyOverlayAnimationPlaying() const { return !m_OverlayAnimations.IsEmpty(); }
-	TBOOL IsAnyAnimationPlaying() const { return !m_BaseAnimations.IsEmpty() || !m_OverlayAnimations.IsEmpty(); }
+	TBOOL               IsAnyBaseAnimationPlaying() const { return !m_BaseAnimations.IsEmpty(); }
+	TQList<TAnimation>& GetBaseAnimations() { return m_BaseAnimations; }
+	TBOOL               IsAnyOverlayAnimationPlaying() const { return !m_OverlayAnimations.IsEmpty(); }
+	TBOOL               IsAnyAnimationPlaying() const { return !m_BaseAnimations.IsEmpty() || !m_OverlayAnimations.IsEmpty(); }
+
+	FLAGS GetFlags() const { return m_eFlags; }
+	void  SetFlags( FLAGS a_eFlags ) { m_eFlags = a_eFlags; }
 
 public:
 	inline static TMatrix44 g_aForwardMatrices[ TANIMATION_MAXBONES ];
-	inline static BoneCache g_aBonesCaches[ TANIMATION_MAXBONES ];
 
 private:
-	TINT                   m_eFlags;
+	FLAGS                  m_eFlags;
 	TUINT32                m_iSize;
 	TSkeleton*             m_pSkeleton;
 	TINT16                 m_iBaseAnimationCount;

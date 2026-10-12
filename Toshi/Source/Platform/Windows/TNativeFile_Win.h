@@ -43,8 +43,8 @@ public:
 	virtual TWCHAR  GetWChar() OVERRIDE;
 	virtual TINT    PutCChar( TCHAR a_cCharacter ) OVERRIDE;
 	virtual TINT    PutWChar( TWCHAR a_wcCharacter ) OVERRIDE;
-	virtual TINT    CPrintf( const TCHAR* a_szFormat, ... ) OVERRIDE;
-	virtual TINT    WPrintf( const TWCHAR* a_wszFormat, ... ) OVERRIDE;
+	virtual TINT    VCPrintf( const TCHAR* a_szFormat, va_list a_vargs ) OVERRIDE;
+	virtual TINT    VWPrintf( const TWCHAR* a_wszFormat, va_list a_vargs ) OVERRIDE;
 
 	TBOOL Open( const TString8& a_FileName, TFILEMODE a_Mode );
 

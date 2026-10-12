@@ -1,5 +1,10 @@
 #include "pch.h"
 #include "AHudManager.h"
+#include "AInteractionHudElement.h"
+#include "AMenuNavHudElement.h"
+#include "ATerrainSectionHudElement.h"
+#include "Units/AAnimalPopulationManager.h"
+#include "GUI/AGUI2ModelRenderer.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -7,6 +12,7 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// NOTE: GetClass 0044efe0, CreateObject 0044f080, CreateObjectInPlace 0044f100 (the constructor is inlined in both)
 TDEFINE_CLASS( AHudManager );
 
 AHudManager::AHudManager()
@@ -33,8 +39,13 @@ TBOOL AHudManager::Reset()
 // $Barnyard: FUNCTION 0044f4b0
 TBOOL AHudManager::OnCreate()
 {
-	// TODO: The original creates AInteractionHudElement, ATerrainSectionHudElement, and AMenuNavHudElement here.
-	TIMPLEMENT();
+	// NOTE: the original inlines AddElement( pElement, TTRUE, TTRUE, TFALSE )
+	AddElement( new AInteractionHudElement(), TTRUE, TTRUE, TFALSE );
+	AddElement( new ATerrainSectionHudElement(), TTRUE, TTRUE, TFALSE );
+
+	AMenuNavHudElement* pMenuNav  = new AMenuNavHudElement();
+	pMenuNav->m_bCurrentlyVisible = TFALSE;
+	AddElement( pMenuNav, TTRUE, TTRUE, TFALSE );
 
 	return TTRUE;
 }
@@ -67,8 +78,9 @@ TBOOL AHudManager::OnUpdate( TFLOAT a_fDeltaTime )
 		}
 	}
 
-	// TODO: The original also mirrors HUD mask bit 0x80 into a field of AAnimalPopulationManager
-	TTODO( "AAnimalPopulationManager" );
+	// The quest "!" on the HUD is only rendered while the HUD shows it
+	if ( AAnimalPopulationManager::GetSingleton() && AAnimalPopulationManager::GetSingleton()->GetExclamationView() )
+		AAnimalPopulationManager::GetSingleton()->GetExclamationView()->SetRender( HASANYFLAG( uiHUDMask, AHudElement::MASK_INTERACTION ) );
 
 	return TTRUE;
 }

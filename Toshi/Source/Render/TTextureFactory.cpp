@@ -26,7 +26,13 @@ TTextureFactory::NameEntry::~NameEntry()
 	TASSERT( TFALSE == IsLinked() );
 }
 
+// $Barnyard: FUNCTION 006d9650
+TTextureFactory::TTextureFactory()
+{
+}
+
 // $Barnyard: FUNCTION 006d9680
+// $Barnyard: FUNCTION 006d96b0
 TTextureFactory::~TTextureFactory()
 {
 	for ( TUINT32 i = 0; i < NUM_LISTS; i++ )

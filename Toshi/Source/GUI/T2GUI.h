@@ -21,6 +21,15 @@ public:
 		return ms_pCurrentContext;
 	}
 
+	// $Barnyard: FUNCTION 006c4870
+	static void DestroyContext()
+	{
+		if ( ms_pCurrentContext )
+			delete ms_pCurrentContext;
+
+		ms_pCurrentContext = TNULL;
+	}
+
 private:
 	inline static T2GUIContext* ms_pCurrentContext = TNULL;
 };

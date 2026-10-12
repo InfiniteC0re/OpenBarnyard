@@ -53,11 +53,26 @@ public:
 
 	void ChangeToManaged( TFLOAT a_fBlendOutSpeed );
 
+	// Returns TTRUE if the managed animation finishes blending out within a_fDeltaTime
+	TBOOL IsFinishing( TFLOAT a_fDeltaTime ) const;
+
+	// Sets the time of the animation (wrapped or clamped to the sequence), returns the previous total time
+	TFLOAT SetTime( TFLOAT a_fTime );
+
 	Flags GetFlags() const { return m_eFlags; }
 	State GetState() const { return m_eState; }
 	TBOOL IsActive() const { return m_eFlags & Flags_Active; }
 	TBOOL IsManaged() const { return m_eFlags & Flags_Managed; }
 	TBOOL IsUpdateStateOnRemove() const { return m_eFlags & Flags_UpdateStateOnRemove; }
+
+	// Sets or clears Flags_UpdateStateOnRemove, returns the previous state
+	// $Barnyard: FUNCTION 006ca2a0
+	TBOOL SetUpdateStateOnRemove( TBOOL a_bUpdateState )
+	{
+		TBOOL bOld = HASANYFLAG( m_eFlags, Flags_UpdateStateOnRemove );
+		m_eFlags   = ( m_eFlags & ~Flags_UpdateStateOnRemove ) | ( ( a_bUpdateState == TTRUE ) ? Flags_UpdateStateOnRemove : 0 );
+		return bOld;
+	}
 
 	TUINT16                  GetSequence() const { return m_iSeqID; }
 	class TSkeletonSequence* GetSequencePtr() const;

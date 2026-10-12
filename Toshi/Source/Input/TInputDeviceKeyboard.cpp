@@ -16,6 +16,7 @@ TInputDeviceKeyboard::TInputDeviceKeyboard()
 {
 }
 
+// $Barnyard: FUNCTION 006c4fa0
 // $Barnyard: FUNCTION 006c5680
 TInputDeviceKeyboard::~TInputDeviceKeyboard()
 {
@@ -45,7 +46,7 @@ static VirtualButtonDefinition s_aVirtualButtons[] = {
 // $Barnyard: FUNCTION 006c56b0
 TINT TInputDeviceKeyboard::ProcessVirtualButtons( EventEmitter& a_rEmitter, TFLOAT flt )
 {
-	a_rEmitter.Throw( TInputInterface::InputEvent( this, 0x20001, TInputInterface::EVENT_TYPE_VIRTUAL, m_aMags[ 0 ], m_aMags[ 1 ] ) );
+	a_rEmitter.Throw( TInputInterface::InputEvent( this, VIRTKEY, TInputInterface::EVENT_TYPE_VIRTUAL, m_aMags[ 0 ], m_aMags[ 1 ] ) );
 	TINT iNumThrownEvents = 1;
 
 	for ( TUINT i = 0; i < TARRAYSIZE( s_aVirtualButtons ); i++ )
@@ -262,12 +263,24 @@ TBOOL TInputDeviceKeyboard::GetDoodadProperties( Doodad a_iDoodad, DoodadPropert
 {
 	if ( ( a_iDoodad >= DOODAD_START ) && ( a_iDoodad < DOODAD_END ) )
 	{
-		doodadProps.m_iUnk  = 0;
-		doodadProps.m_bFlag = TFALSE;
+		doodadProps.m_iNumAxes = 0;
+		doodadProps.m_bFlag    = TFALSE;
 		return TTRUE;
 	}
 
 	return TFALSE;
 }
+
+#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
+
+void TInputDeviceKeyboard::Dev_QueueKey( Doodad a_iDoodad, TBOOL a_bDown )
+{
+	ms_bDevKeys = TTRUE;
+
+	if ( ms_iNumDevKeys < DEV_MAX_QUEUED_KEYS )
+		ms_aDevKeys[ ms_iNumDevKeys++ ] = { a_iDoodad, a_bDown };
+}
+
+#endif
 
 TOSHI_NAMESPACE_END

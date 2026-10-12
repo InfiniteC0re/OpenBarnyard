@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "AAnimatableObjectTypeBunch.h"
+#include "AAnimatableObjectManager.h"
+#include "ARandom.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -53,5 +55,29 @@ TBOOL AAnimatableObjectTypeBunch::CreateFromProperties( const PBProperties* a_pP
 // $Barnyard: FUNCTION 0057f6f0
 void AAnimatableObjectTypeBunch::OnAnimatableObjectCreated( AAnimatableObject* a_pAnimatableObject )
 {
-	TASSERT( !"Not implemented" );
+	if ( m_eType != TYPE_BUNCH )
+		return;
+
+	// The extra objects of the bunch are created from this type too, keep them from making bunches of their own
+	TINT iBunchCount = m_iBunchCount;
+	m_iBunchCount    = 1;
+
+	for ( TINT i = 1; i < iBunchCount; i++ )
+	{
+		TRandom&    rRandom      = ARandom::GetSingleton()->m_oRandom;
+		TQuaternion quatRotation = TQuaternion::IDENTITY;
+
+		quatRotation.RotateAroundAxis( TVector4::VEC_NEGX.AsVector3(), rRandom.GetFloatMinMax( -m_fRange, m_fRange ) );
+		quatRotation.RotateAroundAxis( TVector4::VEC_NEGY.AsVector3(), rRandom.GetFloatMinMax( -m_fRange, m_fRange ) );
+		quatRotation.RotateAroundAxis( TVector4::VEC_NEGZ.AsVector3(), rRandom.GetFloatMinMax( -TMath::PI, TMath::PI ) );
+
+		AAnimatableObject* pObject = AAnimatableObjectManager::GetSingleton()->CreateAnimatableObject( this, a_pAnimatableObject->GetOwner(), 0 );
+
+		if ( !m_strChildBone.IsEmpty() || !m_strParentBone.IsEmpty() )
+			AAnimatableObjectManager::GetSingleton()->AttachObject( pObject, a_pAnimatableObject, m_strChildBone, m_strParentBone, TVector4::VEC_ZERO, quatRotation, 1.0f );
+		else
+			AAnimatableObjectManager::GetSingleton()->AttachObject( pObject, a_pAnimatableObject, 0, 0, TVector4::VEC_ZERO, quatRotation, 1.0f );
+	}
+
+	m_iBunchCount = iBunchCount;
 }

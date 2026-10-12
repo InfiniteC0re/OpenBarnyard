@@ -14,12 +14,13 @@ public:
 	AGUI2Timer();
 	~AGUI2Timer();
 
-	void Create( TFLOAT a_fWidth, TFLOAT a_fHeight );
-	void SetDuration( TFLOAT a_fDuration );
-	void SetTime( TFLOAT a_fTime );
-	void StopCue();
-	void SetPaused( TBOOL a_bPaused );
-	void Reset();
+	void  Create( TFLOAT a_fWidth, TFLOAT a_fHeight );
+	void  SetDuration( TFLOAT a_fDuration );
+	void  SetTime( TFLOAT a_fTime );
+	void  StopCue();
+	void  SetPaused( TBOOL a_bPaused );
+	TBOOL IsPaused() const { return m_bPaused; }
+	void  Reset();
 
 	TBOOL IsTimerWarning() const;
 	TBOOL IsTimerCritical() const;
@@ -52,20 +53,20 @@ private:
 	void UpdatePolygonVertices( Toshi::T2GUIPolygon& a_rPolygon, TFLOAT a_fWidth, TFLOAT a_fHeight );
 
 private:
-	Toshi::T2GUIElement        m_oRootElement;
-	Toshi::T2GUIRectangle      m_oBacking;
-	Toshi::T2GUIPolygon        m_oClockPolygon1;
-	Toshi::T2GUIPolygon        m_oClockPolygon2;
+	Toshi::T2GUIElement         m_oRootElement;
+	Toshi::T2GUIRectangle       m_oBacking;
+	Toshi::T2GUIPolygon         m_oClockPolygon1;
+	Toshi::T2GUIPolygon         m_oClockPolygon2;
 	Toshi::T2GUITextureSection* m_pClockTextureSection;
-	TFLOAT                     m_fDuration;
-	TFLOAT                     m_fTextureWidth;
-	TFLOAT                     m_fTextureHeight;
-	TimerCue                   m_eTimerCue;
-	TINT                       m_iCueIndex;
-	TFLOAT                     m_fTimeRatio;
-	TFLOAT                     m_fTickAccumulator;
-	TFLOAT                     m_fTickElapsed;
-	TFLOAT                     m_fTickRotation;
-	TFLOAT                     m_fTickInterval;
-	TBOOL                      m_bPaused;
+	TFLOAT                      m_fDuration;
+	TFLOAT                      m_fTextureWidth;
+	TFLOAT                      m_fTextureHeight;
+	TimerCue                    m_eTimerCue;
+	TINT                        m_iCueIndex;
+	TFLOAT                      m_fTimeRatio;
+	TFLOAT                      m_fTickAccumulator;
+	TFLOAT                      m_fTickElapsed;
+	TFLOAT                      m_fTickRotation;
+	TFLOAT                      m_fTickInterval;
+	TBOOL                       m_bPaused;
 };

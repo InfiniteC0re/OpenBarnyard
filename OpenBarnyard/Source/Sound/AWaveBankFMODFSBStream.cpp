@@ -24,7 +24,7 @@ AWaveBankFMODFSBStream::AWaveBankFMODFSBStream( const TPString8& a_strBank, cons
 // $Barnyard: FUNCTION 005dcfd0
 TBOOL AWaveBankFMODFSBStream::IsReady() const
 {
-	return FSOUND_Stream_GetOpenState( (FSOUND_STREAM*)m_FileHandle ) == 0;
+	return FSOUND_Stream_GetOpenState( (FSOUND_STREAM*)m_FileHandle ) == ASoundManager::OPENSTATE_READY;
 }
 
 // $Barnyard: FUNCTION 005dd2d0
@@ -57,7 +57,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSBStream::Load( LOADFLAGS a_uiFlags, TINT a_
 	// Open the FSB stream
 	TUINT uiStreamOpenMode =
 	    ( FSOUND_NONBLOCKING | FSOUND_SIGNED | FSOUND_MONO | FSOUND_16BITS ) |
-	    ( ( m_pWaves->iFlags & 2 ) ? FSOUND_HW3D : FSOUND_HW2D );
+	    ( ( m_pWaves->iFlags & AWave::FLAGS_3D ) ? FSOUND_HW3D : FSOUND_HW2D );
 
 	FSOUND_STREAM* pStream = FSOUND_Stream_Open( oFileInfo.InternalPath, uiStreamOpenMode, oFileInfo.Offset, oFileInfo.Length );
 	TVALIDPTR( pStream );
@@ -68,7 +68,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSBStream::Load( LOADFLAGS a_uiFlags, TINT a_
 		if ( ASoundManager::ms_bShouldUpdateLoadingScreen )
 		{
 			TINT iOpenState = FSOUND_Stream_GetOpenState( pStream );
-			while ( iOpenState == -2 )
+			while ( iOpenState == ASoundManager::OPENSTATE_OPENING )
 			{
 				g_oLoadScreen.Update();
 #ifndef BARNYARD_COMMUNITY_PATCH
@@ -88,7 +88,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSBStream::Load( LOADFLAGS a_uiFlags, TINT a_
 			AWave* pWave         = &m_pWaves[ i ];
 			pWave->iIndex        = i;
 			pWave->pSampleHandle = pStream;
-			pWave->iFlags |= ( 4 | 8 );
+			pWave->iFlags |= ( AWave::FLAGS_UNK2 | AWave::FLAGS_UNK3 );
 		}
 
 		return LOADRESULT_OK;
@@ -107,7 +107,7 @@ AWaveBank::UNLOADRESULT AWaveBankFMODFSBStream::Unload()
 		FSOUND_STREAM* pStream = (FSOUND_STREAM*)m_FileHandle;
 
 		TINT iOpenState = FSOUND_Stream_GetOpenState( pStream );
-		while ( iOpenState == -2 )
+		while ( iOpenState == ASoundManager::OPENSTATE_OPENING )
 		{
 #ifndef BARNYARD_COMMUNITY_PATCH
 			ThreadSleep( 5 );
@@ -123,11 +123,17 @@ AWaveBank::UNLOADRESULT AWaveBankFMODFSBStream::Unload()
 			AWave* pWave         = &m_pWaves[ i ];
 			pWave->pSampleHandle = TNULL;
 			pWave->iIndex        = -1;
-			pWave->iFlags &= ~( 4 | 8 );
+			pWave->iFlags &= ~( AWave::FLAGS_UNK2 | AWave::FLAGS_UNK3 );
 		}
 
 		m_FileHandle = TNULL;
 	}
 
 	return UNLOADRESULT_OK;
+}
+
+// $Barnyard: FUNCTION 005dcfc0
+// $Barnyard: FUNCTION 005dd2b0
+AWaveBankFMODFSBStream::~AWaveBankFMODFSBStream()
+{
 }

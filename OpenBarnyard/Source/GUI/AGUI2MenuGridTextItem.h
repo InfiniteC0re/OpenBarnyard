@@ -12,13 +12,18 @@ public:
 
 	void Create( Toshi::T2GUIFont* a_pFont, TFLOAT a_fWidth, const TWCHAR* a_wszText, TFLOAT a_fGap );
 
+	// Replaces the text (keeps a copy of it) and resizes the item to it
+	void SetText( const TWCHAR* a_wszText );
+
 	void SetId( TINT a_iID ) { m_iID = a_iID; }
 	TINT GetId() const { return m_iID; }
 
 	void SetScaleOnFocus( TBOOL a_bScaleOnFocus ) { m_bScaleOnFocus = a_bScaleOnFocus; }
+	// $Barnyard: FUNCTION 0063fa60
 	void SetFocusedScale( TFLOAT a_fScale ) { m_fFocusedScale = a_fScale; }
 	void SetFocusedColour( TUINT a_uiColour ) { m_uiFocusedColour = a_uiColour; }
 	void SetEnabledColour( TUINT a_uiColour ) { m_uiEnabledColour = a_uiColour; }
+	// $Barnyard: FUNCTION 0063fa70
 	void SetDisabledColour( TUINT a_uiColour ) { m_uiDisabledColour = a_uiColour; }
 
 	void SetTextShadow( TBOOL a_bEnabled, TUINT32 a_uiColour, TFLOAT a_fAlpha )

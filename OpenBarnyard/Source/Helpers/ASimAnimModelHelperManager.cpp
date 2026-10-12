@@ -43,3 +43,19 @@ TINT ASimAnimModelHelperManager::AddModelHelper( ASimAnimModelHelper* a_pModelHe
 
 	return iIndex;
 }
+
+// $Barnyard: FUNCTION 0054b390
+void ASimAnimModelHelperManager::RemoveModelHelper( ASimAnimModelHelper* a_pModelHelper )
+{
+	for ( TINT i = 0; i < m_iNumHelpers; i++ )
+	{
+		if ( m_apHelpers[ i ] == a_pModelHelper )
+		{
+			for ( TINT k = i + 1; k < m_iNumHelpers; k++ )
+				m_apHelpers[ k - 1 ] = m_apHelpers[ k ];
+
+			m_iNumHelpers--;
+			return;
+		}
+	}
+}

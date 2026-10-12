@@ -11,7 +11,14 @@
 
 TOSHI_NAMESPACE_USING
 
+// NOTE: GetClass 00614c20, CreateObject 00614c80, CreateObjectInPlace 00614d00
 TDEFINE_CLASS( ADisplayModes_Win );
+
+// $Barnyard: FUNCTION 00614c30
+// $Barnyard: FUNCTION 00614c60
+ADisplayModes_Win::~ADisplayModes_Win()
+{
+}
 
 // $Barnyard: FUNCTION 00614e00
 void ADisplayModes_Win::Initialise()

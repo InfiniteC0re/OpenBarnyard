@@ -11,6 +11,9 @@ public:
 	TDECLARE_CLASS( TVertexFactoryResource, TVertexFactoryResourceInterface );
 
 public:
+	~TVertexFactoryResource();
+
+public:
 	virtual TVertexPoolResourceInterface* CreatePoolResource( TUINT16 a_uiMaxStaticVertices, TUINT16 a_uiFlags );
 
 	TVertexBlockResource* FindBlockResource( TVertexPoolResource* a_pResource );

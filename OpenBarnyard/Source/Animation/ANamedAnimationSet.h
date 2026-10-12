@@ -38,7 +38,13 @@ public:
 	TBOOL AddSoundBreakpoint( ASoundBreakpoint* a_pSoundBreakpoint, Toshi::TSkeleton* a_pSkeleton );
 
 	const Toshi::TPString8& GetName() const { return m_strName; }
+	OVERLAYTYPE             GetOverlayType() const { return m_eOverlayType; }
 	ANamedAnimation*        GetNamedAnimation( const Toshi::TPString8& a_strName );
+
+	// Number of animations that aren't overlays
+	TINT GetNumNonOverlayAnimations();
+	// Returns a_iIndex'th animation that isn't an overlay or TNULL
+	ANamedAnimation* GetNonOverlayAnimation( TINT a_iIndex );
 
 private:
 	ANamedAnimation* LoadNamedAnimation( const PBProperties* a_pProperties, Toshi::TSkeleton* a_pSkeleton );

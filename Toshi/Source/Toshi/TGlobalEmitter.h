@@ -42,12 +42,26 @@ public:
 	};
 
 public:
+	// Instantiations: 00429630, <ATriggerGuiEvent> 005c26c0
 	// $Barnyard: FUNCTION 00429630
+	// TGlobalEmitter<AInteractionActivityEvent> 0059f9a0, TGlobalEmitter<AInteractionManagerEvent> 005a31b0
+	// $Barnyard: FUNCTION 005a31b0
+	// $Barnyard: FUNCTION 0059f9a0
+	// $Barnyard: FUNCTION 005c26c0
+	// <AGameStateControllerEvent>: 00429630, <AAnimalConversationEvent>: 00430410, <AUIDMapClearEvent>: 0040da70, <AUnitDestroyEvent>: 0040fe90
+	// $Barnyard: FUNCTION 00430410
+	// $Barnyard: FUNCTION 0040da70
+	// $Barnyard: FUNCTION 0040fe90
 	static void Throw( const T& a_rData )
 	{
-		for ( auto it = sm_oListeners.Begin(); it != sm_oListeners.End(); ++it )
+		// NOTE: the next listener is read before the callback, listeners can disconnect themselves
+		for ( auto it = sm_oListeners.Begin(); it != sm_oListeners.End(); )
 		{
+			auto itNext = it;
+			++itNext;
+
 			it->Execute( a_rData );
+			it = itNext;
 		}
 	}
 
@@ -107,6 +121,13 @@ template <class T>
 class TGlobalEvent
 {
 public:
+	// TGlobalEvent<AInteractionActivityEvent> 0059f9f0
+	// $Barnyard: FUNCTION 0059f9f0
+	// <AAnimalConversationEvent>: 004303f0
+	// $Barnyard: FUNCTION 004303f0
+	// <AGameStateControllerEvent>: 004296c0, <AInteractionManagerEvent>: 005a32a0
+	// $Barnyard: FUNCTION 004296c0
+	// $Barnyard: FUNCTION 005a32a0
 	virtual void ThrowGlobal() const
 	{
 		TGlobalEmitter<T>::Throw( *TSTATICCAST( const T, this ) );

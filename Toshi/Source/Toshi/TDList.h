@@ -67,6 +67,9 @@ public:
 
 	void RemoveAll();
 
+	// Returns the number of nodes in the list
+	TINT Count();
+
 public:
 	static void InsertSegmentAfter( TNode* a_pNode1, TNode* a_pNode2, TNode* a_pNode3 );
 	static void InsertSegmentBefore( TNode* a_pNode1, TNode* a_pNode2, TNode* a_pNode3 );

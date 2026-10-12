@@ -12,9 +12,9 @@
 
 TOSHI_NAMESPACE_USING
 
-TCHAR   TDebug_ScratchMem[ 4096 ];
-BOOL    TDebug_IsMutexCreated;
-TMutex  TDebug_Mutex;
+TCHAR  TDebug_ScratchMem[ 4096 ];
+BOOL   TDebug_IsMutexCreated;
+TMutex TDebug_Mutex;
 
 void TDebug_AcquireMutex()
 {
@@ -85,7 +85,7 @@ void TDebug_OutputDebugString( const TCHAR* a_szString )
 
 void TDebug_BroadcastDebugString( const TCHAR* a_szString )
 {
-	//TIMPLEMENT();
+	// NOTE: retail has no debug output (it is compiled out), so there is nothing to reconstruct here
 }
 
 #include "resource.h"
@@ -145,6 +145,18 @@ TINT TDebug_AssertHandler( const TCHAR* a_szExpression, const TCHAR* a_szFileNam
 	TDebug_uiAssertLineNumber = a_uiLineNumber;
 
 	TERROR( "Assertion (%s) failed ('%s', at line %u)\n", a_szExpression, a_szFileName, a_uiLineNumber );
+
+	// Let an attached debugger know about the assertion (it can capture the callstack at this point)
+	if ( IsDebuggerPresent() )
+	{
+		TCHAR szDebugMessage[ 1024 ];
+		T2String8::Format( szDebugMessage, sizeof( szDebugMessage ), "Assertion (%s) failed ('%s', at line %u)\n", a_szExpression, a_szFileName, a_uiLineNumber );
+		OutputDebugStringA( szDebugMessage );
+	}
+
+	// Unattended runs (e.g. automated tests) can't answer the dialog, act as if Ignore was pressed
+	if ( T2String8::FindString( GetCommandLineA(), "-noassertdialog" ) )
+		return 0;
 
 	HWND hWnd = GetActiveWindow();
 
