@@ -476,13 +476,7 @@ void AMiscFunctions::HideChampionChart()
 // $Barnyard: FUNCTION 00603260
 void AMiscFunctions::SaveFinishedBarnDetail()
 {
-	// NOTE: the original doesn't check for a missing slot here
-	APlayerProgress::SaveSlot* pSlot = APlayerProgress::GetSingleton()->GetCurrentSlot();
-
-	if ( !( pSlot->eFlags & APlayerProgress::SLOTFLAGS_BARNDETAIL ) )
-		pSlot->eFlags |= APlayerProgress::SLOTFLAGS_NEWUNLOCK;
-
-	pSlot->eFlags |= APlayerProgress::SLOTFLAGS_BARNDETAIL;
+	APlayerProgress::GetSingleton()->SetCurrentSlotBarnDetail();
 }
 
 // $Barnyard: FUNCTION 00603430

@@ -7,7 +7,8 @@ TOSHI_NAMESPACE_START
 class T2GUIRenderer
 {
 public:
-	T2GUIRenderer()          = default;
+	T2GUIRenderer() = default;
+	// $Barnyard: FUNCTION 006d8940
 	virtual ~T2GUIRenderer() = default;
 
 	virtual T2GUIMaterial* CreateMaterial( TTexture* a_pTexture )                                                                = 0;

@@ -987,8 +987,5 @@ void AToshiAnimationInterface::KillBaseAnimations()
 		g_oAnimationRefPool.DeleteObject( itAnimRef );
 	}
 
-	TQList<TAnimation>& rAnimations = m_pSkeletonInstance->GetBaseAnimations();
-
-	while ( !rAnimations.IsEmpty() )
-		m_pSkeletonInstance->RemoveAnimation( rAnimations.Begin(), 0.0f );
+	m_pSkeletonInstance->RemoveAllBaseAnimations();
 }

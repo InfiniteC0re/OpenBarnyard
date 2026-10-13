@@ -416,6 +416,13 @@ void TSkeletonInstance::RemoveAllAnimations()
 		RemoveAnimation( m_OverlayAnimations.Begin(), 0.0f );
 }
 
+// $Barnyard: FUNCTION 006cb3f0
+void TSkeletonInstance::RemoveAllBaseAnimations()
+{
+	while ( !m_BaseAnimations.IsEmpty() )
+		RemoveAnimation( m_BaseAnimations.Begin(), 0.0f );
+}
+
 TSkeletonInstance::~TSkeletonInstance()
 {
 	m_pSkeleton->m_iInstanceCount--;

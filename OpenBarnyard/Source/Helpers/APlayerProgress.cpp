@@ -165,6 +165,19 @@ APlayerProgress::SaveSlot* APlayerProgress::SetCurrentSlotChampion()
 	return pSlot;
 }
 
+// $Barnyard: FUNCTION 00651e90
+APlayerProgress::SaveSlot* APlayerProgress::SetCurrentSlotBarnDetail()
+{
+	// NOTE: the original doesn't check for a missing slot here
+	SaveSlot* pSlot = GetCurrentSlot();
+
+	if ( !( pSlot->eFlags & SLOTFLAGS_BARNDETAIL ) )
+		pSlot->eFlags |= SLOTFLAGS_NEWUNLOCK;
+
+	pSlot->eFlags |= SLOTFLAGS_BARNDETAIL;
+	return pSlot;
+}
+
 // $Barnyard: FUNCTION 004232e0
 TBOOL APlayerProgress::IsHero() const
 {

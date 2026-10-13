@@ -414,6 +414,19 @@ static void __stdcall InitColourRange( void* a_pAttribute, TINT a_iStart, TINT a
 	}
 }
 
+// $Barnyard: FUNCTION 00675290
+static void ConvertColourFixed( AParticleDwordParams* a_pParams )
+{
+	a_pParams->auiValues[ 0 ] = AParticleInitData::Convert( a_pParams->auiValues[ 0 ] );
+}
+
+// $Barnyard: FUNCTION 006752b0
+static void ConvertColourRange( AParticleDwordParams* a_pParams )
+{
+	a_pParams->auiValues[ 0 ] = AParticleInitData::Convert( a_pParams->auiValues[ 0 ] );
+	a_pParams->auiValues[ 1 ] = AParticleInitData::Convert( a_pParams->auiValues[ 1 ] );
+}
+
 // $Barnyard: FUNCTION 00675190
 void AParticleInit::Resolve()
 {
@@ -472,22 +485,13 @@ void AParticleInit::Resolve()
 			fnInit = InitDwordRange;
 			break;
 		case TYPE_COLOUR_FIXED:
-		{
 			fnInit = InitDwordFixed;
-
-			AParticleDwordParams* pParams = TREINTERPRETCAST( AParticleDwordParams*, pData );
-			pParams->auiValues[ 0 ]       = AParticleInitData::Convert( pParams->auiValues[ 0 ] );
+			ConvertColourFixed( TREINTERPRETCAST( AParticleDwordParams*, pData ) );
 			break;
-		}
 		case TYPE_COLOUR_RANGE:
-		{
 			fnInit = InitColourRange;
-
-			AParticleDwordParams* pParams = TREINTERPRETCAST( AParticleDwordParams*, pData );
-			pParams->auiValues[ 0 ]       = AParticleInitData::Convert( pParams->auiValues[ 0 ] );
-			pParams->auiValues[ 1 ]       = AParticleInitData::Convert( pParams->auiValues[ 1 ] );
+			ConvertColourRange( TREINTERPRETCAST( AParticleDwordParams*, pData ) );
 			break;
-		}
 	}
 }
 

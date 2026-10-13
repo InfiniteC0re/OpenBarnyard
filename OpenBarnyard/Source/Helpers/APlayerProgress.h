@@ -128,6 +128,9 @@ public:
 	// Is SLOTFLAGS_CHAMPION set on the current slot
 	TBOOL IsChampion() const;
 
+	// Sets SLOTFLAGS_BARNDETAIL on the current slot (and SLOTFLAGS_NEWUNLOCK the first time)
+	SaveSlot* SetCurrentSlotBarnDetail();
+
 	// Is SLOTFLAGS_BARNDETAIL set on the current slot
 	TBOOL HasCurrentSlotBarnDetail() const;
 

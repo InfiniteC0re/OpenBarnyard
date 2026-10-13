@@ -42,6 +42,7 @@ APrecisionJersyCow::APrecisionJersyCow()
 }
 
 // $Barnyard: FUNCTION 005012a0
+// $Barnyard: FUNCTION 005012b0
 // $Barnyard: FUNCTION 005012d0
 APrecisionJersyCow::~APrecisionJersyCow()
 {

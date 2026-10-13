@@ -88,6 +88,7 @@ TBOOL TIndexBlockResource::Validate()
 			pair.first = this;
 
 			TResource::RecurseSimple(
+			    // $Barnyard: FUNCTION 006bfff0
 			    []( TResource* a_pResource, void* a_pUserData ) {
 				    if ( a_pResource->IsExactly( &TGetClass( TIndexPoolResource ) ) )
 				    {

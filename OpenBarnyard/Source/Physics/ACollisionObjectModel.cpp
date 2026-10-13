@@ -105,6 +105,7 @@ void ACollisionObjectModel::UpdateTransform()
 }
 
 // $Barnyard: FUNCTION 005dfaf0
+// $Barnyard: FUNCTION 0061e710
 TFLOAT ACollisionObjectModel::GetRadius()
 {
 	// NOTE: retail jumps to a method of the capsule (m_vPosition, m_fRadius, m_vDirection, m_fLength) at 0061e710

@@ -225,6 +225,7 @@ public:
 
 	void RemoveAnimation( TAnimation* a_pAnimation, TFLOAT a_fBlendOutSpeed );
 	void RemoveAllAnimations();
+	void RemoveAllBaseAnimations();
 
 	void UpdateTime( TFLOAT a_fDeltaTime );
 	void UpdateState( TBOOL a_bForceUpdate );
