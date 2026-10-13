@@ -8,6 +8,7 @@
 #include "Enhancements/AInstanceManager2.h"
 #include "Enhancements/ATreeManager2.h"
 #include "Enhancements/ARegrowthManager2.h"
+#include "Enhancements/AControllerButtonGlyphs.h"
 
 #include <BYardSDK/AGameStateController.h>
 #include <BYardSDK/THookedRenderD3DInterface.h>
@@ -1178,6 +1179,8 @@ void AHooks::Initialise()
 
 	InstallHook<APoolAi_ComputeAimDirection>();
 	InstallHook<ARenderer_ScreenToRay>();
+
+	AControllerButtonGlyphs::Initialise();
 
 	InstallHook<AKeyFrameLibraryManager_LoadLibrary>();
 
