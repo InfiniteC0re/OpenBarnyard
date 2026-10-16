@@ -347,8 +347,8 @@ void AGUI2Menu::ReflowChildrenVertically()
 	m_fHeight = fOffsetY;
 
 	// Set focus at default item if it's specified
-	if ( m_pFocusedMenuItem )
-		SetFocusAt( *m_pFocusedMenuItem );
+	if ( m_pDefaultFocusElement )
+		SetFocusAt( *m_pDefaultFocusElement );
 
 	m_bHorizontalFlow = TFALSE;
 }
