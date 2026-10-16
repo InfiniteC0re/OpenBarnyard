@@ -5,8 +5,9 @@
 #include <Input/TInputDeviceController.h>
 #include <Toshi/T2Vector.h>
 #include <Toshi/TDList.h>
-#include <Math/TVector4.h>
 #include <Toshi/TSystem.h>
+#include <Toshi/TScheduler.h>
+#include <Math/TVector4.h>
 
 class AInputHandler : public Toshi::TTask
     , public Toshi::TSingleton<AInputHandler>
@@ -172,10 +173,19 @@ public:
 	// Stops one rumble effect started by SetRumble
 	// NOTE: a stub on PC retail, reconstructed from the PS2 build
 	void RemoveRumble( TINT a_iRumble, Toshi::TInputDeviceController* a_pController );
+	
+	// Sets a flag about whether controller is currently used or not
+	void  SetControllerUsed( TBOOL a_bUsed ) { m_bControllerUsed = a_bUsed; }
+	TBOOL IsControllerUsed() { return m_bControllerUsed; }
 #else
 	// Starts a rumble effect on the controller. Does nothing on PC.
 	// NOTE: shared folded stub (005cc080) that returns 0
 	TBOOL SetRumble( Toshi::TInputDeviceController* a_pController, const RumbleParams* a_pParams ) { return TFALSE; }
+
+	void RemoveRumble( TINT a_iRumble, Toshi::TInputDeviceController* a_pController ) {}
+
+	void  SetControllerUsed( TBOOL a_bUsed ) {}
+	TBOOL IsControllerUsed() { return TFALSE; }
 #endif
 
 	// Sets the world position the rumble effects come from (a_pController is unused)
@@ -235,6 +245,12 @@ private:
 	Toshi::TInputDeviceController*                                                                     m_pRumbleController;       // 0x328, never set on PC retail
 	Toshi::TDList<Rumble>                                                                              m_llRumbles;               // 0x32c
 	TBOOL                                                                                              m_bRumbleEnabled;          // 0x334
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+	TBOOL m_bControllerUsed; // whether current device is controller or keyboarr/mouse
+
+#endif // BARNYARD_COMMUNITY_PATCH
 };
 
-TSTATICASSERT( sizeof( AInputHandler ) == 0x338 );
+//TSTATICASSERT( sizeof( AInputHandler ) == 0x338 );

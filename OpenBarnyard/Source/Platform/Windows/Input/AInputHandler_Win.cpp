@@ -335,6 +335,36 @@ TBOOL AInputHandler::ProcessInputEvent( Toshi::TInputInterface* a_pInputInterfac
 		}
 	}
 
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Update whether controller is used or not
+	if ( !IsControllerUsed() && pInputSource->GetClass()->IsA( &TGetClass( TInputDeviceController ) ) )
+	{
+		TINT   iDoodad    = a_pEvent->GetDoodad();
+		TFLOAT flMagTotal = 0.0f;
+
+		if ( a_pEvent->GetEventType() == TInputInterface::EVENT_TYPE_VIRTUAL )
+			flMagTotal = TMath::Abs( a_pEvent->GetMagnitudeFloat( 0 ) ) + TMath::Abs( a_pEvent->GetMagnitudeFloat( 1 ) );
+
+		if ( flMagTotal >= 0.1f || a_pEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN )
+		{
+			SetControllerUsed( TTRUE );
+
+			TTRACE( "Controller is active\n" );
+		}
+	}
+	else if ( IsControllerUsed() && a_pEvent->GetEventType() != TInputInterface::EVENT_TYPE_VIRTUAL )
+	{
+		if ( pInputSource->GetClass()->IsA( &TGetClass( TInputDeviceMouse ) ) || pInputSource->GetClass()->IsA( &TGetClass( TInputDeviceKeyboard ) ) )
+		{
+			SetControllerUsed( TFALSE );
+			StopAllRumbles();
+
+			TTRACE( "Controller is not active anymore due to %s\n", pInputSource->GetClass()->GetName() );
+		}
+	}
+#endif // BARNYARD_COMMUNITY_PATCH
+
 	// NOTE: the original first calls 006ce000 (RETURNS_FALSE stub) with the event
 	if ( AGameStateController::GetSingleton()->ProcessInput( a_pEvent ) ||
 	     ( ARootTask::GetSingleton()->IsGameSystemCreated() == TTRUE && AControlComponentManager::GetSingleton()->ProcessInput( a_pEvent ) ) )
@@ -500,7 +530,7 @@ TINT AInputHandler::SetRumble( TInputDeviceController* a_pController, const Rumb
 	if ( !a_pController || !a_pController->IsForceFeedbackDevice() || !m_bRumbleEnabled )
 		return 0;
 
-	if ( m_llFreeRumbles.IsEmpty() )
+	if ( m_llFreeRumbles.IsEmpty() || !IsControllerUsed() )
 		return 0;
 
 	Rumble* pRumble = m_llFreeRumbles.Head();
