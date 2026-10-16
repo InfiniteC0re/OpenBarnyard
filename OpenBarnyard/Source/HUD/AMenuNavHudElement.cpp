@@ -3,6 +3,7 @@
 #include "GUI/AGUI2.h"
 #include "Locale/ALocale.h"
 #include "Locale/ALocaleManager.h"
+#include "AHudManager.h"
 
 #include <GUI/T2GUIFontManager.h>
 #include <GUI/T2GUITextureSectionManager.h>
@@ -208,4 +209,12 @@ void AMenuNavHudElement::SetTextScale( TFLOAT a_fScale )
 TFLOAT AMenuNavHudElement::GetTextScale()
 {
 	return m_aTexts[ 0 ].GetScale();
+}
+
+void AMenuNavHudElement::UpdateText()
+{
+	if ( !AHudManager::GetSingleton() ) return;
+
+	if ( AMenuNavHudElement* pMenuNav = AHudManager::GetSingleton()->FindElement<AMenuNavHudElement>() )
+		pMenuNav->SetTexts( 1047, 1048, -1 );
 }

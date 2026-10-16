@@ -40,6 +40,8 @@ Toshi::TInputDevice::Doodad AInputMap::GetCommandDoodad( AInputCommand a_eComman
 	Toshi::TInputDevice::Doodad iDoodad       = -1;
 	TUINT16                     uiLowestIndex = TUINT16( -1 );
 
+	auto pInputManager = AInputMapManager::GetSingleton();
+
 	for ( auto it = m_oDoodadToCommandMap.Begin(); it != m_oDoodadToCommandMap.End(); it++ )
 	{
 		CommandBinding uiBinding = it->GetSecond();
@@ -48,6 +50,11 @@ Toshi::TInputDevice::Doodad AInputMap::GetCommandDoodad( AInputCommand a_eComman
 			continue;
 
 		Toshi::TInputDevice::Doodad iBindingDoodad = it->GetFirst();
+		
+#ifdef BARNYARD_COMMUNITY_PATCH
+		if ( !pInputManager->HasBindForDoodad( iBindingDoodad ) )
+			continue;
+#endif // BARNYARD_COMMUNITY_PATCH
 
 		if ( a_bPreferMouseKeyboard == TTRUE )
 		{

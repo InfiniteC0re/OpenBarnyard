@@ -50,6 +50,8 @@ public:
 	void   SetTextScale( TFLOAT a_fScale );
 	TFLOAT GetTextScale();
 
+	static void UpdateText();
+
 public:
 	Toshi::T2GUIRectangle m_oBacking;                  // 0x14, "Wood_Thin"
 	AGUI2TextBox          m_aTexts[ NUM_TEXTS ];       // 0x8c

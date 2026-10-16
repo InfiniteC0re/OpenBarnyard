@@ -303,8 +303,7 @@ void AControlOptionsState::OnRemoval()
 	m_oSensitivitySlider.GetSlider().RemoveSelf();
 	m_oSensitivitySlider.RemoveSelf();
 
-	AHudManager::GetSingleton()->FindElement<AMenuNavHudElement>()->SetTexts( 1047, 1048, -1 );
-
+	AMenuNavHudElement::UpdateText();
 	BaseClass::OnRemoval();
 }
 

@@ -96,13 +96,19 @@ public:
 	TBOOL                       GetDoodadLocalisedName( Toshi::TInputDevice::Doodad a_iDoodad, const TWCHAR*& a_rwszOutName );
 	Toshi::TInputDevice::Doodad GetDoodadFromKey( const Toshi::TPString8& a_rKey );
 
+	TBOOL HasBindForDoodad( Toshi::TInputDevice::Doodad a_iDoodad );
+
 private:
 	void InitMouseDoodads();
 	void InitKeyboardDoodads();
 	void InitGamepadDoodads();
 	void InitCommandMap();
 
+	void DeinitMouseDoodads();
+	void DeinitKeyboardDoodads();
+
 	void BindDoodad( Toshi::TInputDevice::Doodad a_iDoodad, const Toshi::TPString8& a_ButtonName, ActionId a_uiAction );
+	void UnbindDoodad( Toshi::TInputDevice::Doodad a_iDoodad );
 
 private:
 	Toshi::T2Vector<AInputMap*, MAX_NUM_INPUT_MAPS>             m_InputMaps;
@@ -110,9 +116,13 @@ private:
 	Toshi::T2Map<Toshi::TInputDevice::Doodad, Toshi::TPString8> m_oDoodadToNameMap;
 	Toshi::T2Map<Toshi::TInputDevice::Doodad, ActionId>         m_oKeyMap;
 	Toshi::T2Map<AInputCommand, Command>                        m_oCommandMap;
-	// NOTE: nothing fills this map in the original, it is only checked by GetDoodadCustomName
-	Toshi::T2Map<Toshi::TInputDevice::Doodad, const TWCHAR*> m_oDoodadToCustomNameMap; // 0xd4
-	TINT                                                     m_iNumPushedInputMaps;
+	Toshi::T2Map<Toshi::TInputDevice::Doodad, const TWCHAR*>    m_oDoodadToCustomNameMap; // 0xd4
+	TINT                                                        m_iNumPushedInputMaps;
 	// ...
 	AInputMap* m_apPushedInputMaps[ MAX_NUM_INPUT_MAPS ];
+
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	TBOOL m_bIsUsingController  = TFALSE;
+#endif // BARNYARD_COMMUNITY_PATCH
 };

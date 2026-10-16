@@ -687,7 +687,7 @@ void ACameraOptionsState::OnRemoval()
 	}
 	m_oGridMenu.RemoveSelf();
 
-	AHudManager::GetSingleton()->FindElement<AMenuNavHudElement>()->SetTexts( 1047, 1048, -1 );
+	AMenuNavHudElement::UpdateText();
 
 	BaseClass::OnRemoval();
 }

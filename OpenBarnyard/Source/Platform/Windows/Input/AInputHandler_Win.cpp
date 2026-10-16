@@ -349,8 +349,9 @@ TBOOL AInputHandler::ProcessInputEvent( Toshi::TInputInterface* a_pInputInterfac
 		if ( flMagTotal >= 0.1f || a_pEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN )
 		{
 			SetControllerUsed( TTRUE );
+			m_bControllerXInput = pInputSource->GetClass()->IsA( &TGetClass( TInputXInputDeviceController ) );
 
-			TTRACE( "Controller is active\n" );
+			TTRACE( "Controller is active (XInput: %d)\n", m_bControllerXInput );
 		}
 	}
 	else if ( IsControllerUsed() && a_pEvent->GetEventType() != TInputInterface::EVENT_TYPE_VIRTUAL )

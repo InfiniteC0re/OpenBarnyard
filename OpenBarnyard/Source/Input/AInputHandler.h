@@ -177,6 +177,8 @@ public:
 	// Sets a flag about whether controller is currently used or not
 	void  SetControllerUsed( TBOOL a_bUsed ) { m_bControllerUsed = a_bUsed; }
 	TBOOL IsControllerUsed() { return m_bControllerUsed; }
+	TBOOL IsControllerXInput() { return m_bControllerXInput; }
+
 #else
 	// Starts a rumble effect on the controller. Does nothing on PC.
 	// NOTE: shared folded stub (005cc080) that returns 0
@@ -186,6 +188,7 @@ public:
 
 	void  SetControllerUsed( TBOOL a_bUsed ) {}
 	TBOOL IsControllerUsed() { return TFALSE; }
+	TBOOL IsControllerXInput() { return TFALSE; }
 #endif
 
 	// Sets the world position the rumble effects come from (a_pController is unused)
@@ -248,7 +251,8 @@ private:
 
 #ifdef BARNYARD_COMMUNITY_PATCH
 
-	TBOOL m_bControllerUsed; // whether current device is controller or keyboarr/mouse
+	TBOOL m_bControllerUsed   = TFALSE; // whether current device is controller or keyboarr/mouse
+	TBOOL m_bControllerXInput = TFALSE;
 
 #endif // BARNYARD_COMMUNITY_PATCH
 };

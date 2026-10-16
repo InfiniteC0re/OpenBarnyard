@@ -141,14 +141,7 @@ void AFrontEndLanguageState::OnRemoval()
 	for ( TINT i = 0; i < LANGUAGE_NUMOF; i++ )
 		m_aButtons[ i ].RemoveSelf();
 
-	if ( !m_bFirstBoot )
-	{
-		// NOTE: a PS2 helper (0x00176918) that isn't on PC
-		AMenuNavHudElement* pMenuNav = AHudManager::GetSingleton()->FindElement<AMenuNavHudElement>();
-
-		if ( pMenuNav )
-			pMenuNav->SetTexts( 1047, 1048, -1 );
-	}
+	if ( !m_bFirstBoot ) AMenuNavHudElement::UpdateText();
 
 	BaseClass::OnRemoval();
 }

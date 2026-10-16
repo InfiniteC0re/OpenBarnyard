@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "AInputMapManager.h"
+#include "AInputHandler.h"
 #include "Memory/AMemory.h"
 #include "Locale/ALocaleManager.h"
+#include "HUD/AMenuNavHudElement.h"
 
 #include <Input/TInputDeviceKeyboard.h>
 #include <Input/TInputDeviceMouse.h>
@@ -128,9 +130,72 @@ TBOOL AInputMapManager::SetMap( const Toshi::TPString8& a_rMapName )
 	return TTRUE;
 }
 
+struct GlyphEntry
+{
+	TINT          iDoodad;
+	const TWCHAR* wszGlyph;
+};
+
+static const GlyphEntry s_aGlyphsPS2[] = {
+	{ TInputDeviceController::BUTTON_CONTEXT_1, L"\x0F1A" },        // Triangle
+	{ TInputDeviceController::BUTTON_CONTEXT_2, L"\x0F0D" },        // Circle
+	{ TInputDeviceController::BUTTON_CONTEXT_3, L"\x0F0E" },        // Cross
+	{ TInputDeviceController::BUTTON_CONTEXT_4, L"\x0F0F" },        // Square
+	{ TInputDeviceController::BUTTON_SHOULDER_LEFT_1, L"\x0F08" },  // L1
+	{ TInputDeviceController::BUTTON_SHOULDER_LEFT_2, L"\x0F11" },  // L2
+	{ TInputDeviceController::BUTTON_SHOULDER_RIGHT_1, L"\x0F09" }, // R1
+	{ TInputDeviceController::BUTTON_SHOULDER_RIGHT_2, L"\x0F10" }, // R2
+	{ TInputDeviceController::VIRTSTK_DPAD, L"\x0F16" },            // D-pad
+};
+
+static const GlyphEntry s_aGlyphsGC[] = {
+	{ TInputDeviceController::BUTTON_CONTEXT_1, L"\x0F0A" },        // Y
+	{ TInputDeviceController::BUTTON_CONTEXT_2, L"\x0F0C" },        // B
+	{ TInputDeviceController::BUTTON_CONTEXT_3, L"\x0F0B" },        // A
+	{ TInputDeviceController::BUTTON_CONTEXT_4, L"\x0F1B" },        // X
+	{ TInputDeviceController::BUTTON_SHOULDER_LEFT_1, L"\x0F19" },  // L
+	{ TInputDeviceController::BUTTON_SHOULDER_RIGHT_1, L"\x0F20" }, // R
+	{ TInputDeviceController::BUTTON_SHOULDER_RIGHT_2, L"\x0F1C" }, // Z
+	{ TInputDeviceController::VIRTSTK_DPAD, L"\x0F01" },            // D-pad
+};
+
 // $Barnyard: FUNCTION 00597790
 void AInputMapManager::GetEventCommands( const Toshi::TInputInterface::InputEvent* a_pEvent, AInputCommandArray& a_rCommandArray )
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	
+	TBOOL bIsCurrentlyUsingController = AInputHandler::GetSingleton()->IsControllerUsed();
+
+	if ( m_bIsUsingController != bIsCurrentlyUsingController )
+	{
+		if ( bIsCurrentlyUsingController )
+		{
+			// Unbind keyboard and mouse
+			DeinitMouseDoodads();
+			DeinitKeyboardDoodads();
+
+			// Apply correct remaps to draw controller glyphs
+			TSIZE             iNumRemaps = ( AInputHandler::GetSingleton()->IsControllerXInput() ) ? TARRAYSIZE( s_aGlyphsGC ) : TARRAYSIZE( s_aGlyphsPS2 );
+			const GlyphEntry* pRemaps    = ( AInputHandler::GetSingleton()->IsControllerXInput() ) ? s_aGlyphsGC : s_aGlyphsPS2;
+
+			for ( TSIZE i = 0; i < iNumRemaps; i++ )
+			{
+				m_oDoodadToCustomNameMap.Insert( pRemaps[ i ].iDoodad, pRemaps[ i ].wszGlyph );
+			}
+		}
+		else
+		{
+			InitMouseDoodads();
+			InitKeyboardDoodads();
+			m_oDoodadToCustomNameMap.Clear();
+		}
+
+		AMenuNavHudElement::UpdateText();
+
+		m_bIsUsingController = bIsCurrentlyUsingController;
+	}
+#endif // BARNYARD_COMMUNITY_PATCH
+
 	a_rCommandArray.Clear();
 
 	if ( m_pActiveInputMap )
@@ -243,6 +308,11 @@ Toshi::TInputDevice::Doodad AInputMapManager::GetDoodadFromKey( const Toshi::TPS
 	}
 
 	return -1;
+}
+
+TBOOL AInputMapManager::HasBindForDoodad( Toshi::TInputDevice::Doodad a_iDoodad )
+{
+	return m_oDoodadToNameMap.Find( a_iDoodad ) != m_oDoodadToNameMap.End();
 }
 
 // $Barnyard: FUNCTION 0059c220
@@ -391,6 +461,150 @@ void AInputMapManager::InitKeyboardDoodads()
 	BindDoodad( TInputDeviceKeyboard::KEY_SLEEP, TPString8( "Sleep" ), 0x581 );
 }
 
+void AInputMapManager::DeinitMouseDoodads()
+{
+	UnbindDoodad( TInputDeviceMouse::BUTTON_1 );
+	UnbindDoodad( TInputDeviceMouse::BUTTON_2 );
+	UnbindDoodad( TInputDeviceMouse::BUTTON_3 );
+	UnbindDoodad( TInputDeviceMouse::BUTTON_4 );
+	UnbindDoodad( TInputDeviceMouse::BUTTON_5 );
+	UnbindDoodad( TInputDeviceMouse::BUTTON_6 );
+	UnbindDoodad( TInputDeviceMouse::BUTTON_7 );
+	UnbindDoodad( TInputDeviceMouse::BUTTON_8 );
+	UnbindDoodad( TInputDeviceMouse::BUTTON_WHEEL_FORWARD );
+	UnbindDoodad( TInputDeviceMouse::BUTTON_WHEEL_BACKWARD );
+	UnbindDoodad( TInputDeviceMouse::AXIS_CURSOR );
+	UnbindDoodad( TInputDeviceMouse::AXIS_WHEEL );
+}
+
+void AInputMapManager::DeinitKeyboardDoodads()
+{
+	UnbindDoodad( TInputDeviceKeyboard::VIRTKEY );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_LSHIFT );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_RSHIFT );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_LCONTROL );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_RCONTROL );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_LMENU );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_RMENU );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_LWIN );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_RWIN );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_ESCAPE );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_1 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_2 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_3 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_4 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_5 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_6 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_7 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_8 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_9 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_0 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_MINUS );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_EQUALS );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_BACK );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_TAB );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_Q );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_W );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_E );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_R );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_T );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_Y );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_U );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_I );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_O );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_P );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_LBRACKET );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_RBRACKET );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_RETURN );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_A );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_S );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_D );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_G );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_H );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_J );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_K );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_L );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_SEMICOLON );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_APOSTROPHE );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_GRAVE );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_BACKSLASH );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_Z );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_X );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_C );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_V );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_B );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_N );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_M );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_COMMA );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_PERIOD );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_SLASH );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_MULTIPLY );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_SPACE );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_CAPITAL );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F1 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F2 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F3 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F4 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F5 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F6 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F7 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F8 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F9 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F10 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NUMLOCK );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_SCROLL );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NUMPAD7 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NUMPAD8 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NUMPAD9 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_SUBTRACT );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NUMPAD4 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NUMPAD5 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NUMPAD6 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_ADD );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NUMPAD1 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NUMPAD2 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NUMPAD3 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NUMPAD0 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_DECIMAL );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F11 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F12 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F13 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F14 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_F15 );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_KANA );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_CONVERT );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NOCONVERT );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_YEN );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NUMPADEQUALS );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_CIRCUMFLEX );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_AT );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_COLON );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_UNDERLINE );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_KANJI );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_STOP );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_AX );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_UNLABELED );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NUMPADENTER );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NUMPADCOMMA );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_DIVIDE );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_SYSRQ );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_PAUSE );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_HOME );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_UP );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_PRIOR );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_LEFT );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_RIGHT );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_END );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_DOWN );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_NEXT );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_INSERT );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_DELETE );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_APPS );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_POWER );
+	UnbindDoodad( TInputDeviceKeyboard::KEY_SLEEP );
+}
+
 // $Barnyard: FUNCTION 0059c410
 void AInputMapManager::InitGamepadDoodads()
 {
@@ -518,6 +732,12 @@ void AInputMapManager::BindDoodad( Toshi::TInputDevice::Doodad a_iDoodad, const 
 {
 	m_oDoodadToNameMap.Insert( a_iDoodad, a_ButtonName );
 	m_oKeyMap.Insert( a_iDoodad, a_uiAction );
+}
+
+void AInputMapManager::UnbindDoodad( Toshi::TInputDevice::Doodad a_iDoodad )
+{
+	m_oDoodadToNameMap.FindAndRemove( a_iDoodad );
+	m_oKeyMap.FindAndRemove( a_iDoodad );
 }
 
 // T2Map/T2RedBlackTree methods (template instances for m_oKeyMap, m_oDoodadToNameMap and m_oCommandMap):
