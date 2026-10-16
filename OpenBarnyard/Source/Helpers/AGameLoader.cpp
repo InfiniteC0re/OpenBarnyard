@@ -3254,7 +3254,6 @@ void AGameLoader::Dev_UpdateMiniGameRequest()
 		APlayerProfileManager::GetSingleton()->SetMainGender( APlayerProfile::GENDER_MALE );
 
 	APlayerSet* pPlayerSet = APlayerManager::GetSingleton()->GetPlayerSet( 1 );
-	pPlayerSet->AddHumanPlayer( AInputHandler::GetSingleton()->GetMainController(), -1 );
 
 	// "-devplayers <n>": n human players sharing the main controller (multiplayer turn tests)
 	if ( const TCHAR* szPlayers = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devplayers " ) )
@@ -3262,8 +3261,15 @@ void AGameLoader::Dev_UpdateMiniGameRequest()
 		TINT iNumPlayers = TMath::Min( atoi( szPlayers + TStringManager::String8Length( "-devplayers " ) ), pMiniGameManager->GetMiniGame( iMiniGame )->GetMaxNumPlayers() );
 		TINFO( "-devplayers: %d human players\n", iNumPlayers );
 
-		for ( TINT i = 1; i < iNumPlayers; i++ )
-			pPlayerSet->AddHumanPlayer( AInputHandler::GetSingleton()->GetMainController(), -1 );
+		for ( TINT i = iNumPlayers - 1; i >= 0; i-- )
+		{
+			TInputDeviceController* pController = ( i > 0 ) ? AInputHandler::GetSingleton()->GetController( i - 1 ) : TNULL;
+			pPlayerSet->AddHumanPlayer( pController, -1 );
+		}
+	}
+	else
+	{
+		pPlayerSet->AddHumanPlayer( AInputHandler::GetSingleton()->GetMainController(), -1 );
 	}
 
 	if ( pMiniGameManager->GetMiniGame( iMiniGame )->GetName() == TPS8D( "AGateCrashMiniGameState" ) )

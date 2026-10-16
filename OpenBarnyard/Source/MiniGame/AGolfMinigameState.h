@@ -214,6 +214,7 @@ public:
 	// Resets the players, the tee, the coins and the HUD for the current hole and starts the hole camera fly-over (GAMESTATE_INTRO)
 	void SetupPlayerTurn(); // 00474830
 	void SetupTee();        // inlined into SetupPlayerTurn
+	void StartFlyOver();    // inlined into SetupPlayerTurn
 
 	// After the tee shots: shows the balls and the gophers, starts the clock (GAMESTATE_PLAY)
 	void StartPlay(); // 00474360

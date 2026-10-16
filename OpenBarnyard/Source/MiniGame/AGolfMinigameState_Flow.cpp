@@ -650,18 +650,7 @@ void AGolfMinigameState::SetupPlayerTurn()
 			pAnimObjManager->DetachObject( pBall->GetAnimatableObject(), GetAnimatedUnit( m_pPlayerUnit )->GetAnimatableObject() );
 	}
 
-	// Fly over the hole
-	ABoneAttachCameraHelper* pCameraHelper = TSTATICCAST( ABoneAttachCameraHelper, ACameraManager::GetSingleton()->GetCameraHelper( ACameraManager::CAMERAHELPER_BONEATTACH ) );
-	ACameraManager::GetSingleton()->SetCameraHelper( pCameraHelper );
-
-	TString8 strCameraModel;
-	strCameraModel.Format( "data\\models\\golf_hole_%d_camera", m_pCourse->aHoles[ m_iCurrentHole ] );
-	TPString8 strPooledCameraModel( strCameraModel.GetString() );
-
-	pCameraHelper->OnDetach();
-	pCameraHelper->SetModel( strPooledCameraModel, "camera_base" );
-	pCameraHelper->SetAnimation( "fly" );
-	pCameraHelper->SetAnimationSpeed( 1.5f );
+	StartFlyOver();
 
 	m_oFlagReticle.SetVisible( TFALSE );
 	m_pTimerOrStrokes->Hide();
@@ -737,6 +726,22 @@ void AGolfMinigameState::SetupPlayerTurn()
 	*TREINTERPRETCAST( TUINT32*, m_aUsedZones ) = 0;
 
 	SetupTee();
+}
+
+void AGolfMinigameState::StartFlyOver()
+{
+	// Fly over the hole, the camera ends behind the tee
+	ABoneAttachCameraHelper* pCameraHelper = TSTATICCAST( ABoneAttachCameraHelper, ACameraManager::GetSingleton()->GetCameraHelper( ACameraManager::CAMERAHELPER_BONEATTACH ) );
+	ACameraManager::GetSingleton()->SetCameraHelper( pCameraHelper );
+
+	TString8 strCameraModel;
+	strCameraModel.Format( "data\\models\\golf_hole_%d_camera", m_pCourse->aHoles[ m_iCurrentHole ] );
+	TPString8 strPooledCameraModel( strCameraModel.GetString() );
+
+	pCameraHelper->OnDetach();
+	pCameraHelper->SetModel( strPooledCameraModel, "camera_base" );
+	pCameraHelper->SetAnimation( "fly" );
+	pCameraHelper->SetAnimationSpeed( 1.5f );
 }
 
 // NOTE: inlined into SetupPlayerTurn in retail. Split out so that, with 2+ players, the next player can tee off

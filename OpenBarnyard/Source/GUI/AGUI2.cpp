@@ -43,11 +43,10 @@ AGUI2::AGUI2()
 	m_pRootElement     = TNULL;
 	m_bShowMouseCursor = TFALSE;
 
-	// NOTE: retail initialises the four debug overlay flags to TFALSE
-	m_bShowMemStatsInfo = TTRUE;
-	m_bShowFPSInfo      = TTRUE;
-	m_bShowPlayerInfo   = TTRUE;
-	m_bShowTexturesInfo = TTRUE;
+	m_bShowMemStatsInfo = TFALSE;
+	m_bShowFPSInfo      = TFALSE;
+	m_bShowPlayerInfo   = TFALSE;
+	m_bShowTexturesInfo = TFALSE;
 
 #ifdef BARNYARD_LATEST
 	// Wii: 803ea648

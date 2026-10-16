@@ -299,7 +299,11 @@ TBOOL AGolfMinigameState::NextPlayer()
 		// intro, so with 2+ players player 0 tees off forever. Only set the tee up
 		// for the next player instead (the dead "not in the intro" branch of the tee set-up suggests that intent)
 		if ( m_iNumPlayers > 1 )
+		{
+			StartFlyOver();
+			m_eGameState = GAMESTATE_INTRO;
 			SetupTee();
+		}
 		else
 #endif
 			SetupPlayerTurn();
@@ -676,9 +680,22 @@ void AGolfMinigameState::OnInsertion()
 	{
 		// NOTE: with 2+ players retail leaves m_pTimerOrStrokes uninitialised and never creates the life HUD,
 		// but still uses both (crash), and StartPlay sets up the timer that isn't created either. Create the timer
-		// without attaching it (so it stays invisible) and point m_pTimerOrStrokes at it, and create the life HUD hidden
+		// and point m_pTimerOrStrokes at it, and create the life HUD hidden. The time limit still ends the hole and
+		// scores it, so on timed courses the timer is shown as in single player (the strokes counter is per player,
+		// so it isn't shown on stroke limit courses)
 		m_oTimer.Create( 0.0f, 0.0f );
 		m_pTimerOrStrokes = &m_oTimer;
+
+		if ( !m_pCourse->bStrokeLimit )
+		{
+			m_oTimer.SetAttachment( T2GUIATTACHMENT_TOPLEFT, T2GUIATTACHMENT_TOPLEFT );
+			m_oTimer.GetTransform().SetTranslation( 10.0f, 10.0f );
+			m_GUIElement.AddChildTail( m_oTimer );
+
+			TFLOAT fWidth, fHeight;
+			m_oTimer.GetDimensions( fWidth, fHeight );
+			m_oTimer.SetDimensions( fWidth * 0.75f, fHeight * 0.75f );
+		}
 
 #  ifdef BARNYARD_LATEST
 		m_iLives = s_iNumLives;
