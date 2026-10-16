@@ -15,6 +15,11 @@ TFileSystem::TFileSystem( const TFileSystem& other )
 	m_Prefix = TString8( other.GetPrefix() );
 }
 
+// $Barnyard: FUNCTION 006bdd10
+TFileSystem::~TFileSystem()
+{
+}
+
 // $Barnyard: FUNCTION 006be2e0
 TFileSystem::TFileSystem( const TCHAR* name )
     : m_Name( name )

@@ -27,7 +27,8 @@ public:
 	virtual TBOOL OnCreate( TINT argc, TCHAR** argv );
 	virtual TBOOL OnUpdate( float deltaTime );
 	virtual TBOOL OnDestroy();
-	virtual TBOOL IsConsoleEnabled() { return TTRUE; }
+
+	TBOOL IsConsoleEnabled() { return TTRUE; }
 
 	static void OnApplicationExitEvent( void* a_pApp, const TApplicationExitEvent& a_rEvent )
 	{

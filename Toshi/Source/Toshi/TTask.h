@@ -26,7 +26,7 @@ public:
 
 public:
 	TTask();
-	virtual ~TTask();
+	virtual ~TTask() = 0;
 
 	virtual TBOOL Create();
 	virtual TBOOL CreateFailed();

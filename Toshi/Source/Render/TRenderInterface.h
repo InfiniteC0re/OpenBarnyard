@@ -69,15 +69,15 @@ public:
 
 public:
 	TRenderInterface();
-	virtual ~TRenderInterface();
+	virtual ~TRenderInterface() = 0;
 
-	virtual TBOOL                         CreateDisplay( const DISPLAYPARAMS& a_rParams );
-	virtual TBOOL                         DestroyDisplay();
-	virtual TBOOL                         Update( TFLOAT a_fDeltaTime );
-	virtual TBOOL                         BeginScene();
-	virtual TBOOL                         EndScene()                = 0;
-	virtual TRenderAdapter::Mode::Device* GetCurrentDevice()        = 0;
-	virtual DISPLAYPARAMS*                GetCurrentDisplayParams() = 0;
+	virtual TBOOL                         CreateDisplay( const DISPLAYPARAMS& a_rParams ) = 0;
+	virtual TBOOL                         DestroyDisplay()                                = 0;
+	virtual TBOOL                         Update( TFLOAT a_fDeltaTime )                   = 0;
+	virtual TBOOL                         BeginScene()                                    = 0;
+	virtual TBOOL                         EndScene()                                      = 0;
+	virtual TRenderAdapter::Mode::Device* GetCurrentDevice()                              = 0;
+	virtual DISPLAYPARAMS*                GetCurrentDisplayParams()                       = 0;
 	virtual TBOOL                         Create();
 	virtual TBOOL                         Destroy();
 	virtual void                          RenderIndexPrimitive( TINT a_ePrimitiveType, TINT a_iNumVertices, TINT a_iNumPrimitives, TINT a_pIndices, TINT a_pVertices, TINT a_iVertexStride );

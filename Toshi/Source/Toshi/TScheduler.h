@@ -8,17 +8,14 @@ TOSHI_NAMESPACE_START
 
 class TTask;
 
-class TScheduler : public TObject
+class TScheduler
 {
-public:
-	TDECLARE_CLASS( TScheduler, TObject );
-
 public:
 	using t_DeltaTimeCalculator = TFLOAT ( * )( TFLOAT a_fRealDT );
 
 public:
 	TScheduler();
-	~TScheduler();
+	virtual ~TScheduler();
 
 	TTask* CreateTask( TClass* a_pClass, TTask* a_pParent = TNULL );
 

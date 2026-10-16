@@ -105,9 +105,9 @@ public:
 
 	struct Comparator
 	{
-		TINT operator()( const TPString8& a, const TPString8& b )
+		TINT operator()( const TPString8& a, const TPString8& b ) const
 		{
-			return a.GetPooledString() - b.GetPooledString();
+			return a.Compare( b );
 		}
 	};
 

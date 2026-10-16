@@ -98,7 +98,7 @@ public:
 
 public:
 	TInputInterface();
-	~TInputInterface();
+	virtual ~TInputInterface() = 0;
 
 	virtual TBOOL Initialise()   = 0;
 	virtual TBOOL Deinitialise() = 0;
@@ -167,7 +167,7 @@ public:
 
 public:
 	TInputDevice();
-	~TInputDevice();
+	virtual ~TInputDevice() = 0;
 
 	virtual TBOOL        Acquire()                  = 0;
 	virtual TBOOL        Unacquire()                = 0;

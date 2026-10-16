@@ -137,7 +137,7 @@ public:
 		m_eFlags &= ~FLAGS_VISIBLE;
 	}
 
-	// NOTE: the out of line copy is also the last slot (+0x50) of the AGUI2Feathers vtable (00739dc0)
+	// NOTE: the out of line copy is also the last slot (+0x48) of the AGUI2Feathers vtable (00739d78)
 	// $Barnyard: FUNCTION 004048d0
 	void SetVisible( TBOOL a_bVisible )
 	{

@@ -17,7 +17,11 @@ struct TComparator
 	// Optimize comparison by passing values instead of references (pointers) when applicable
 	using ArgType = std::conditional_t<sizeof( Type ) == sizeof( void* ), Type, const Type&>;
 
-	auto operator()( ArgType a, ArgType b ) const { return a - b; }
+	TINT operator()( ArgType a, ArgType b ) const
+	{
+		if ( a > b ) return 1;
+		return -( a < b );
+	}
 };
 
 //-----------------------------------------------------------------------------
@@ -26,11 +30,31 @@ struct TComparator
 //-----------------------------------------------------------------------------
 struct TComparatorHelper
 {
-	template<typename T> static TBOOL IsEqual( T a_iResult ) { TSTATICASSERT( std::is_arithmetic_v<T> ); return a_iResult == 0; }
-	template<typename T> static TBOOL IsGreater( T a_iResult ) { TSTATICASSERT( std::is_arithmetic_v<T> ); return a_iResult > 0; }
-	template<typename T> static TBOOL IsLess( T a_iResult ) { TSTATICASSERT( std::is_arithmetic_v<T> ); return a_iResult < 0; }
-	template<typename T> static TBOOL IsLessOrEqual( T a_iResult ) { TSTATICASSERT( std::is_arithmetic_v<T> ); return a_iResult <= 0; }
-	template<typename T> static TBOOL IsGreaterOrEqual( T a_iResult ) { TSTATICASSERT( std::is_arithmetic_v<T> ); return a_iResult >= 0; }
+	template <typename T> static TBOOL IsEqual( T a_iResult )
+	{
+		TSTATICASSERT( std::is_arithmetic_v<T> );
+		return a_iResult == 0;
+	}
+	template <typename T> static TBOOL IsGreater( T a_iResult )
+	{
+		TSTATICASSERT( std::is_arithmetic_v<T> );
+		return a_iResult > 0;
+	}
+	template <typename T> static TBOOL IsLess( T a_iResult )
+	{
+		TSTATICASSERT( std::is_arithmetic_v<T> );
+		return a_iResult < 0;
+	}
+	template <typename T> static TBOOL IsLessOrEqual( T a_iResult )
+	{
+		TSTATICASSERT( std::is_arithmetic_v<T> );
+		return a_iResult <= 0;
+	}
+	template <typename T> static TBOOL IsGreaterOrEqual( T a_iResult )
+	{
+		TSTATICASSERT( std::is_arithmetic_v<T> );
+		return a_iResult >= 0;
+	}
 };
 
 //-----------------------------------------------------------------------------
@@ -40,7 +64,7 @@ struct TComparatorHelper
 template <class T, class C = TComparator<T>>
 struct TComparatorHelperT
 {
-	using Type = T;
+	using Type       = T;
 	using Comparator = C;
 
 	// Optimize comparison by passing values instead of references (pointers) when applicable

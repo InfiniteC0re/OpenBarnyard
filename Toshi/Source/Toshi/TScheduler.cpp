@@ -11,8 +11,6 @@
 
 TOSHI_NAMESPACE_START
 
-TDEFINE_CLASS_NORUNTIME( TScheduler );
-
 TFLOAT TScheduler::s_MaxTimeDeltaAllowed          = 0.25f;
 TFLOAT TScheduler::s_DebugSlowMaxTimeDeltaAllowed = 0.005f;
 

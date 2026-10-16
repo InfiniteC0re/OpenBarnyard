@@ -46,7 +46,6 @@
 
 		inline_	void					Reset()									{ Container::Reset();							}
 
-		// $Barnyard: FUNCTION 006188d0
 		inline_	void					AddFace(const CollisionFace& face)		{ Add(face.mFaceID).Add(face.mDistance).Add(face.mU).Add(face.mV);	}
 	};
 

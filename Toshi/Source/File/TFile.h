@@ -63,8 +63,7 @@ public:
 	TFileSystem( const TCHAR* a_szName );
 	TFileSystem( const TFileSystem& other );
 
-	// $Barnyard: FUNCTION 006bdd10
-	virtual ~TFileSystem() {}
+	virtual ~TFileSystem() = 0;
 
 	/**
          * Creates file.
@@ -212,7 +211,8 @@ public:
          */
 	virtual TINT VWPrintf( const TWCHAR* a_wszFormat, va_list a_vargs ) = 0;
 
-	virtual ~TFile();
+	// NOTE: pure in retail (_purecall in the vtable), the body is still called by the derived destructors
+	virtual ~TFile() = 0;
 
 	TINT CPrintf( const TCHAR* a_szFormat, ... );
 
