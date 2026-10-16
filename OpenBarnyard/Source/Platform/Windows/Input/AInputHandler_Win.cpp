@@ -73,7 +73,11 @@ TBOOL AInputHandler::OnCreate()
 		// Remember the controllers
 		for ( auto it = pInputInterface->GetDeviceList().Begin(); it != pInputInterface->GetDeviceList().End(); it++ )
 		{
+#  ifdef BARNYARD_COMMUNITY_PATCH
+			if ( it->GetClass()->IsA( &TGetClass( TInputDXDeviceController ) ) || it->GetClass()->IsA( &TGetClass( TInputXInputDeviceController ) ) )
+#  else
 			if ( it->GetClass()->IsA( &TGetClass( TInputDXDeviceController ) ) )
+#  endif
 				m_Devices.PushBack( it );
 		}
 	}
@@ -346,7 +350,21 @@ TBOOL AInputHandler::OnDeviceStatusChanged( Toshi::TInputInterface* a_pInputInte
 		return TFALSE;
 
 	if ( a_pEvent->eStatus == TInputInterface::DEVICESTATUS_CONNECTED )
+	{
+#if defined( BARNYARD_COMMUNITY_PATCH ) && defined( TRENDERINTERFACE_DX8 )
+		if ( pDevice->GetClass()->IsA( &TGetClass( TInputXInputDeviceController ) ) &&
+		     pDevice == m_pLostMainController && m_pMainController == TNULL &&
+		     m_Devices.Find( pDevice ) == m_Devices.End() )
+		{
+			m_Devices.PushBack( pDevice );
+			m_pMainController     = TSTATICCAST( TInputDeviceController, pDevice );
+			m_pLostMainController = TNULL;
+			return TTRUE;
+		}
+#endif
+
 		return TFALSE;
+	}
 
 	if ( a_pEvent->eStatus == TInputInterface::DEVICESTATUS_DISCONNECTED )
 	{

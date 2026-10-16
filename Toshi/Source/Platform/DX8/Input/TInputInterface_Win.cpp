@@ -1,6 +1,7 @@
 #include "ToshiPCH.h"
 #include "TInputInterface_Win.h"
 #include "TInputDeviceController_Win.h"
+#include "TInputDeviceController_XInput.h"
 #include "TInputDeviceMouse_Win.h"
 #include "TInputDeviceKeyboard_Win.h"
 
@@ -28,6 +29,10 @@ TBOOL TInputDXInterface::Initialise()
 			m_hMainWindow = FindWindowA( "TRenderD3DInterface", NULL );
 		}
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+		CreateXInputControllers();
+#endif
+
 		hRes = m_poDirectInput8->EnumDevices( DI8DEVCLASS_ALL, TInputDXInterface::EnumerateDeviceCallback, this, DIEDFL_ATTACHEDONLY );
 
 		if ( hRes == DI_OK )
@@ -53,6 +58,10 @@ TBOOL TInputDXInterface::Deinitialise()
 		m_poDirectInput8->Release();
 		m_poDirectInput8 = NULL;
 	}
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	TInputXInputDeviceController::UnloadXInput();
+#endif
 
 	return TTRUE;
 }
@@ -197,6 +206,12 @@ BOOL TInputDXInterface::EnumerateDeviceCallback( LPCDIDEVICEINSTANCEA a_poDevice
 		case DI8DEVTYPE_JOYSTICK:
 		case DI8DEVTYPE_GAMEPAD:
 		{
+#ifdef BARNYARD_COMMUNITY_PATCH
+			// NOTE: XInput pads are handled by TInputXInputDeviceController
+			if ( TInputXInputDeviceController::IsXInputLoaded() && TInputXInputDeviceController::IsXInputDevice( a_poDeviceInstance->guidProduct ) )
+				return DIENUM_CONTINUE;
+#endif
+
 			LPDIRECTINPUTDEVICE8A pInputDevice;
 
 			if ( pInput8->CreateDevice( a_poDeviceInstance->guidInstance, &pInputDevice, NULL ) != DI_OK )
@@ -228,5 +243,26 @@ BOOL TInputDXInterface::EnumerateDeviceCallback( LPCDIDEVICEINSTANCEA a_poDevice
 
 	return DIENUM_CONTINUE;
 }
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+void TInputDXInterface::CreateXInputControllers()
+{
+	if ( !TInputXInputDeviceController::LoadXInput() )
+		return;
+
+	for ( DWORD i = 0; i < XUSER_MAX_COUNT; i++ )
+	{
+		if ( !TInputXInputDeviceController::IsUserConnected( i ) )
+			continue;
+
+		TInputXInputDeviceController* pController = new TInputXInputDeviceController();
+		pController->BindToUserIndex( i );
+		AddDevice( pController );
+		pController->Acquire();
+	}
+}
+
+#endif // BARNYARD_COMMUNITY_PATCH
 
 TOSHI_NAMESPACE_END

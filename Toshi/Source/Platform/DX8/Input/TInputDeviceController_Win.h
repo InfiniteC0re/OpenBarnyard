@@ -12,7 +12,7 @@ public:
 
 	static constexpr TINT NUM_DX_BUTTONS = 16;
 
-	static constexpr TINT STICK_CENTRE   = 0x8000;
+	static constexpr TINT STICK_CENTRE   = 32768;
 	static constexpr TINT STICK_DEADZONE = 7500;
 	static constexpr TINT STICK_SATURATE = 32000;
 
@@ -63,6 +63,8 @@ public:
 	static TINT   TranslateDoodadToDXButton( Doodad a_iDoodad );
 
 private:
+	friend class TInputXInputDeviceController;
+
 	static TFLOAT        NormaliseStick( TINT a_iValue );
 	static BOOL CALLBACK EnumerateObjectCallback( LPCDIDEVICEOBJECTINSTANCEA a_poDeviceInstance, LPVOID a_pData );
 

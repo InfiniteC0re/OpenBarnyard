@@ -47,6 +47,10 @@ public:
 	}
 
 private:
+#ifdef BARNYARD_COMMUNITY_PATCH
+	void CreateXInputControllers();
+#endif
+
 	static BOOL CALLBACK EnumerateDeviceCallback( LPCDIDEVICEINSTANCEA a_poDeviceInstance, LPVOID poDXInputInterface );
 
 	LPDIRECTINPUT8A GetDirectInput() const

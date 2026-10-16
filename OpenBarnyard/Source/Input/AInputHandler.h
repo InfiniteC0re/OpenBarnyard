@@ -65,21 +65,21 @@ public:
 			fUnk1        = 0.0f;
 			fUnk2        = 0.0f;
 			eFade        = FADE_LINEAR;
-			iUnk         = 0;
+			pController  = TNULL;
 		}
 
 		// Updates the strength, returns TTRUE once the rumble is over
 		TBOOL Update( TFLOAT a_fDeltaTime );
 
-		TFLOAT fMaxStrength; // 0x08
-		TFLOAT fMinStrength; // 0x0c
-		TFLOAT fStrength;    // 0x10
-		TFLOAT fDuration;    // 0x14, -1.0f = infinite
-		TFLOAT fTime;        // 0x18
-		TFLOAT fUnk1;        // 0x1c
-		TFLOAT fUnk2;        // 0x20
-		FADE   eFade;        // 0x24
-		TINT   iUnk;         // 0x28
+		TFLOAT                         fMaxStrength; // 0x08
+		TFLOAT                         fMinStrength; // 0x0c
+		TFLOAT                         fStrength;    // 0x10
+		TFLOAT                         fDuration;    // 0x14, -1.0f = infinite
+		TFLOAT                         fTime;        // 0x18
+		TFLOAT                         fUnk1;        // 0x1c
+		TFLOAT                         fUnk2;        // 0x20
+		FADE                           eFade;        // 0x24
+		Toshi::TInputDeviceController* pController;  // 0x28
 	};
 
 	// A rumble effect that comes from a world position, it's attenuated by the distance to m_vRumblePosition
@@ -222,7 +222,7 @@ private:
 	Toshi::TDList<Rumble>                                                                              m_llFreeRumbles;           // 0x308
 	Toshi::TDList<PositionalRumble>                                                                    m_llPositionalRumbles;     // 0x310
 	Toshi::TVector4                                                                                    m_vRumblePosition;         // 0x318, SetRumblePosition
-	Toshi::TInputDeviceController*                                                                     m_pRumbleController;       // 0x328, never set on PC
+	Toshi::TInputDeviceController*                                                                     m_pRumbleController;       // 0x328, never set on PC retail
 	Toshi::TDList<Rumble>                                                                              m_llRumbles;               // 0x32c
 	TBOOL                                                                                              m_bRumbleEnabled;          // 0x334
 };
