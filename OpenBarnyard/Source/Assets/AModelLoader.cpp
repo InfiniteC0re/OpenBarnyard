@@ -332,29 +332,23 @@ TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMa
 	auto pResultMaterial = FindMaterial( materialName );
 	if ( pResultMaterial ) return pResultMaterial;
 
-	TTextureResourceHAL* pTexture;
-	const char*          szTextureName;
-	auto                 pTMDMaterial = FindMaterialInModel( a_szMaterialName );
+	TTextureResourceHAL* pTexture      = TNULL;
+	const char*          szTextureName = "invalid";
+	auto                 pTMDMaterial  = FindMaterialInModel( a_szMaterialName );
 
 	if ( pTMDMaterial )
 	{
-		pTexture = TDYNAMICCAST(
-		    TTextureResourceHAL,
-		    AMaterialLibraryManager::GetSingleton()->FindTexture( pTMDMaterial->szTextureFile )
-		);
-
 		szTextureName = pTMDMaterial->szTextureFile;
+		pTexture      = TDYNAMICCAST( TTextureResourceHAL, AMaterialLibraryManager::GetSingleton()->FindTexture( szTextureName ) );
 	}
 
-	if ( !pTMDMaterial || !pTexture )
+	if ( !pTexture )
 	{
-		// NOTE: retail falls back silently. E.g. 'golfsign' of golfgate.trb lives in the sim_gates matlib and
-		// the terrain matlibs of the golf course, neither is loaded when AGateManager creates the gate models
+		// Retail falls back silently
 		pTexture = TDYNAMICCAST(
 		    TTextureResourceHAL,
 		    TRenderD3DInterface::Interface()->GetInvalidTexture()
 		);
-		szTextureName = "invalid";
 	}
 
 	TVALIDPTR( pTexture );
