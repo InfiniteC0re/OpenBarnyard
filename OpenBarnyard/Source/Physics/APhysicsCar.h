@@ -56,6 +56,25 @@ public:
 	const APhysicsCarParams& GetParams() const { return m_oParams; }
 	TFLOAT                   GetMaxSpeed() const { return m_oParams.fMaxSpeed; }
 
+#ifdef BARNYARD_LATEST
+	// Recovery point of FlipUpright: the car is put back there, facing along the direction
+	// (set every frame for the player's truck of Joy Ride by ACarChaseMiniGameState::UpdateSplineFollowers)
+
+	// $BarnyardWiiJP: FUNCTION 8042c654
+	void SetRecoveryPoint( const Toshi::TVector4& a_rcPoint )
+	{
+		m_vRecoveryPoint    = a_rcPoint;
+		m_bHasRecoveryPoint = TTRUE;
+	}
+
+	// $BarnyardWiiJP: FUNCTION 8042c680
+	void SetRecoveryDirection( const Toshi::TVector4& a_rcDirection )
+	{
+		m_vRecoveryDirection = a_rcDirection;
+		m_bHasRecoveryPoint  = TTRUE;
+	}
+#endif // BARNYARD_LATEST
+
 private:
 	// Steps of PreUpdate
 	void UpdateStopped();    // freezes the car when it stands still
@@ -69,10 +88,20 @@ private:
 	void ApplyAntiRoll();
 
 public:
-	TFLOAT                   m_fFlipTimer;      // 0xD98, time the car has been lying on its roof
-	TBOOL                    m_bHandBrakeSlide; // 0xD9C
-	ABikePhysicsEventHandler m_oEventHandler;   // 0xDA0, NOTE: same class as the one of APhysicsBike (vtable 0x0073ade4)
-	APhysicsCarParams        m_oParams;         // 0xDA8
+	TFLOAT m_fFlipTimer;      // 0xD98, time the car has been lying on its roof
+	TBOOL  m_bHandBrakeSlide; // 0xD9C
+#ifdef BARNYARD_LATEST
+	// NOTE: offsets of the JP Wii build are 0xE8D, 0xE90 and 0xEA0 (its APhysicsVehicle is bigger)
+	TBOOL           m_bHasRecoveryPoint;      // 0xD9D
+	Toshi::TVector4 m_vRecoveryPoint;         // 0xDA0
+	Toshi::TVector4 m_vRecoveryDirection;     // 0xDB0
+#endif                                        // BARNYARD_LATEST
+	ABikePhysicsEventHandler m_oEventHandler; // 0xDA0, NOTE: same class as the one of APhysicsBike (vtable 0x0073ade4)
+	APhysicsCarParams        m_oParams;       // 0xDA8
 };
 
+#ifdef BARNYARD_LATEST
+TSTATICASSERT( sizeof( APhysicsCar ) == 0xE5C );
+#else
 TSTATICASSERT( sizeof( APhysicsCar ) == 0xE3C );
+#endif

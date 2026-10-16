@@ -19,7 +19,12 @@ class AMultiplexStream
     : public Toshi::TSingleton<AMultiplexStream>
 {
 public:
+#ifdef BARNYARD_LATEST
+	// Room for the streams the Wii data adds (Data/Sound/MultiplexStreams_Wii.trb, see LoadWiiStreams)
+	static constexpr TINT MAX_NUM_STREAMS = 32;
+#else
 	static constexpr TINT MAX_NUM_STREAMS = 17;
+#endif
 
 	// NOTE: same states as AVOStream::STATE
 	using STATE = TINT;
@@ -84,6 +89,17 @@ public:
 	STATE GetState() const { return m_eState; }
 	TINT  GetNumSubChannels() const { return m_iNumSubChannels; }
 
+#ifdef BARNYARD_LATEST
+	// Is there a stream of that name (the Wii-only ones need the converted Wii data)
+	TBOOL HasStream( const TCHAR* a_szName ) const;
+
+	// Is the open stream the one of that name
+	TBOOL IsCurrentStream( const Toshi::TPString8& a_rcName ) const;
+
+	// Is the stream's channel still playing (FALSE once a stream that doesn't loop has ended)
+	TBOOL IsChannelPlaying() const;
+#endif
+
 	// $Barnyard: FUNCTION 005d3c50
 	static TBOOL IsPaused() { return ms_iPauseCount > 0; }
 
@@ -95,6 +111,10 @@ private:
 	static TINT ms_iPauseCount;
 
 private:
+#ifdef BARNYARD_LATEST
+	void LoadWiiStreams( const TCHAR* a_szFileName );
+#endif
+
 	void*                                                            m_pStream;                     // 0x000, FSOUND_STREAM
 	STATE                                                            m_eState;                      // 0x004
 	TINT                                                             m_iChannel;                    // 0x008

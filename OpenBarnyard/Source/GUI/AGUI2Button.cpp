@@ -59,6 +59,21 @@ void AGUI2Button::Create( T2GUIFont* a_pFont, TFLOAT a_fWidth, const TWCHAR* a_w
 	m_oText.SetTextAlign( T2GUIFont::TextAlign_Center );
 }
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+// $BarnyardPS2EU: FUNCTION 003f2d40
+void AGUI2Button::SetText( const TWCHAR* a_wszText, TBOOL a_bFitWidth )
+{
+	if ( a_bFitWidth )
+		m_oText.SetTextAndFitWidth( a_wszText );
+	else
+		m_oText.SetText( a_wszText );
+
+	m_wszButtonText = a_wszText;
+}
+
+#endif // BARNYARD_COMMUNITY_PATCH
+
 // $Barnyard: FUNCTION 00640380
 void AGUI2Button::SetImage( const TCHAR* a_szTexSec, TFLOAT a_fScaleX, TFLOAT a_fScaleY )
 {

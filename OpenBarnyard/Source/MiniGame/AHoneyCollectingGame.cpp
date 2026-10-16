@@ -114,6 +114,13 @@ TPSTRING8_DECLARE( entrance2 );
 // Locale strings
 static constexpr TINT LOCALE_ROYAL_JELLY = 553;
 
+// Size of the icons of the minimap
+#ifdef BARNYARD_LATEST
+static constexpr TFLOAT MAP_ICON_SIZE = 0.14f; // latest version (Wii 806af298)
+#else
+static constexpr TFLOAT MAP_ICON_SIZE = 0.1f;
+#endif
+
 #ifdef BARNYARD_LATEST
 // Lives of the difficulty (latest version, 806af294), set by the constructor. Normal is the PC retail MAX_LIVES
 static TINT s_iNumLives = AHoneyCollectingGame::MAX_LIVES;
@@ -764,6 +771,7 @@ TBOOL AHoneyCollectingGame::OnUpdate( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 0048eda0
+// $BarnyardWiiJP: FUNCTION 801b378c
 void AHoneyCollectingGame::OnInsertion()
 {
 	m_strWorldHoney     = TPS8D( "worldhoney" );
@@ -941,7 +949,7 @@ void AHoneyCollectingGame::OnInsertion()
 			rSpot.pModel      = pModel;
 			rSpot.pCollision  = pCollision;
 			rSpot.vPosition   = matTransform.AsBasisVector4( BASISVECTOR_TRANSLATION );
-			rSpot.iMapIcon    = m_oMap.AddIcon( rSpot.vPosition, TVector4::VEC_POSZ, AGUI2MiniMap::ICONTYPE_HIDE, AGUI2MiniMap::ICON_WHITE_STAR, 0.1f );
+			rSpot.iMapIcon    = m_oMap.AddIcon( rSpot.vPosition, TVector4::VEC_POSZ, AGUI2MiniMap::ICONTYPE_HIDE, AGUI2MiniMap::ICON_WHITE_STAR, MAP_ICON_SIZE );
 			m_oMap.SetIconColour( rSpot.iMapIcon, 0xFF3C96E0 );
 			m_iNumHidingSpots++;
 		}
@@ -952,7 +960,7 @@ void AHoneyCollectingGame::OnInsertion()
 	AAnimatableObjectType* pBeeType       = pObjectManager->FindType( TPS8( beehive_bee ) );
 
 	ASteer* pPlayerSteer = m_pPlayer->GetSteer();
-	m_oMap.AddIcon( *pPlayerSteer->GetPosition(), *pPlayerSteer->GetDirection(), AGUI2MiniMap::ICONTYPE_PLAYER, AGUI2MiniMap::ICON_PLAYER, 0.1f );
+	m_oMap.AddIcon( *pPlayerSteer->GetPosition(), *pPlayerSteer->GetDirection(), AGUI2MiniMap::ICONTYPE_PLAYER, AGUI2MiniMap::ICON_PLAYER, MAP_ICON_SIZE );
 	m_oMap.SetCentre( *m_pPlayer->GetSteer()->GetPosition(), *m_pPlayer->GetSteer()->GetDirection() );
 
 	// The honey left in the hives since the last time
@@ -973,7 +981,7 @@ void AHoneyCollectingGame::OnInsertion()
 		rHive.pEmptyHive = pObjectManager->CreateAnimatableObject( pEmptyHiveType, TNULL, 0 );
 		rHive.pEmptyHive->GetModelInstance()->SetTransform( rcPosition, rcDir );
 
-		rHive.iMapIcon = m_oMap.AddIcon( rcPosition, rcDir, AGUI2MiniMap::ICONTYPE_EDGE, AGUI2MiniMap::ICON_HONEY, 0.1f );
+		rHive.iMapIcon = m_oMap.AddIcon( rcPosition, rcDir, AGUI2MiniMap::ICONTYPE_EDGE, AGUI2MiniMap::ICON_HONEY, MAP_ICON_SIZE );
 		m_oMap.SetIconRotates( rHive.iMapIcon, TFALSE );
 
 		TINT  iHoney    = HIVE_HONEY;
@@ -2377,6 +2385,7 @@ void AHoneyCollectingGame::AddJarHoney( TFLOAT a_fHeight )
 }
 
 // $Barnyard: FUNCTION 0048dfc0
+// $BarnyardWiiJP: FUNCTION 801b8354
 void AHoneyCollectingGame::CreateSwarms()
 {
 	for ( TINT i = 0; i < NUM_SWARMS; i++ )
@@ -2389,7 +2398,7 @@ void AHoneyCollectingGame::CreateSwarms()
 		// The swarm and its field of view on the minimap
 		TVector4 vPosition  = *pSwarm->GetSteer()->GetPosition();
 		TVector4 vDirection = *pSwarm->GetSteer()->GetDirection();
-		TINT     iMapIcon   = m_oMap.AddIcon( vPosition, vDirection, AGUI2MiniMap::ICONTYPE_HIDE, AGUI2MiniMap::ICON_ENEMY, 0.1f );
+		TINT     iMapIcon   = m_oMap.AddIcon( vPosition, vDirection, AGUI2MiniMap::ICONTYPE_HIDE, AGUI2MiniMap::ICON_ENEMY, MAP_ICON_SIZE );
 
 		vDirection.x = -vDirection.x;
 		vDirection.y = -vDirection.y;
@@ -2399,7 +2408,7 @@ void AHoneyCollectingGame::CreateSwarms()
 		vOffset.Multiply( vDirection, 3.0f );
 
 		TVector4 vFOVPosition( vPosition.x - vOffset.x, vPosition.y - vOffset.y, vPosition.z - vOffset.z, vPosition.w );
-		TINT     iFOVMapIcon = m_oMap.AddIcon( vFOVPosition, vDirection, AGUI2MiniMap::ICONTYPE_HIDE, "unit", "unit", 0.1f );
+		TINT     iFOVMapIcon = m_oMap.AddIcon( vFOVPosition, vDirection, AGUI2MiniMap::ICONTYPE_HIDE, "unit", "unit", MAP_ICON_SIZE );
 
 		pSwarm->Setup( m_pNetwork, TTRUE, &m_aPatrols[ i ].oSpline, iMapIcon, iFOVMapIcon );
 

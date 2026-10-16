@@ -12,8 +12,7 @@
 // SaveCurrentGameState pushes it with m_bCannotSave set when quests are assigned,
 // then it only shows a message that the game can't be saved now.
 // TClass 00781b6c, vtable 0071b198, size 0xbc.
-// NOTE: ProcessInput (+0x0c) is 0043fc30 (see ASleepCycleState::ProcessInput), it
-// only calls AGameState::ProcessInput, so it is not overridden here. Member names are invented.
+// Member names are invented.
 //-----------------------------------------------------------------------------
 class ASleepCycleChooseState
     : public AGameState
@@ -30,6 +29,8 @@ public:
 	//-----------------------------------------------------------------------------
 	// AGameState
 	//-----------------------------------------------------------------------------
+	// NOTE: folded with ASleepCycleState::ProcessInput (0043fc30), it only calls AGameState::ProcessInput
+	virtual TBOOL ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent ) OVERRIDE { return AGameState::ProcessInput( a_pInputEvent ); }   // +0x0c
 	virtual TBOOL ProcessCommand( AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents ) OVERRIDE; // +0x10
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) OVERRIDE;                                                                                                // +0x4c
 	virtual void  OnInsertion() OVERRIDE;                                                                                                                  // +0x50

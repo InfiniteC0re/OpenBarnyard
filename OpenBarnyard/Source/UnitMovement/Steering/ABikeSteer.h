@@ -35,7 +35,7 @@ public:
 		CUE_LAND,   // 0x8c, 246, landing hard
 		CUE_CRASH,  // 0x90, 245, crashing into things
 		CUE_SKID,   // 0x94, 267
-		CUE_UNK4,   // 0x98
+		CUE_CHAIN,  // 0x98, 269, only played by the latest version (the chain ticks)
 		CUE_THROWN, // 0x9c, 607/641, the rider is thrown off
 		CUE_BUSH,   // 0xa0, 272
 		CUE_NUMOF
@@ -220,8 +220,8 @@ private:
 	TBOOL                  m_bAIControlled;                          // 0x84
 	TBOOL                  m_bOffTerrain;                            // 0x85
 	TINT                   m_aCues[ CUE_NUMOF ];                     // 0x88
-	TINT                   m_iUnkA4;                                 // 0xa4
-	TINT                   m_iUnkA8;                                 // 0xa8
+	TFLOAT                 m_fChainTickTime;                         // 0xa4, time since the last chain tick (latest version)
+	TINT                   m_iChainTickPitch;                        // 0xa8, index of the pitch of the next chain tick (latest version)
 	TFLOAT                 m_afEffectTimers[ 6 ];                    // 0xac
 	APhysicsBike*          m_pPhysics;                               // 0xc4
 	TINT                   m_aiEffects[ EFFECT_NUMOF ];              // 0xc8, AParticleEffectManager::FindEffect
@@ -232,6 +232,15 @@ private:
 	TFLOAT                 m_afTyreTrackOffsets[ NUM_TYRE_TRACKS ];  // 0x11c
 	TFLOAT                 m_afTyreTrackWidths[ NUM_TYRE_TRACKS ];   // 0x124
 	TINT                   m_aiGroundMaterials[ NUM_TYRE_TRACKS ];   // 0x12c, ground material under each wheel (-1 if in the air)
+
+#ifdef BARNYARD_LATEST
+	// NOTE: at 0xb8 on the Wii, here at the end so the PC layout is kept
+	TFLOAT m_fSkidSoundTime; // the skid sound plays at least this long
+#endif
 };
 
+#ifdef BARNYARD_LATEST
+TSTATICASSERT( sizeof( ABikeSteer ) == 0x138 );
+#else
 TSTATICASSERT( sizeof( ABikeSteer ) == 0x134 );
+#endif

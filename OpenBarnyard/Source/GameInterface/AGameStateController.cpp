@@ -257,8 +257,14 @@ void AGameStateController::PushState( AGameState* a_pGameState )
 {
 	if ( m_oStates.Size() > 1 )
 	{
-		( *m_oStates.Back() )->Deactivate();
-		( *m_oStates.Back() )->Suspend();
+		// NOTE: AGameState::Deactivate inlined; the original reads the top of the stack again after each call
+		( *m_oStates.Back() )->OnDeactivate();
+
+		TGlobalEmitter<AGameStateControllerEvent>::Throw(
+		    AGameStateControllerEvent( *m_oStates.Back(), AGameStateControllerEvent::Type_GameStateDeactivated )
+		);
+
+		( *m_oStates.Back() )->OnSuspend();
 	}
 
 	InsertGameState( a_pGameState );
@@ -282,9 +288,15 @@ void AGameStateController::PopState( AGameState* a_pGameState )
 
 	if ( m_oStates.Size() > 1 )
 	{
-		pCurrentGameState = *m_oStates.Back();
-		pCurrentGameState->OnResume( a_pGameState );
-		pCurrentGameState->Activate();
+		// NOTE: AGameState::Activate inlined; the original reads the top of the stack again after each call.
+		// The resumed state can change the stack in OnActivate (AEndGameState returns to the front end, which
+		// destroys every state), so the activation event is thrown for the state on top afterwards.
+		( *m_oStates.Back() )->OnResume( a_pGameState );
+		( *m_oStates.Back() )->OnActivate();
+
+		TGlobalEmitter<AGameStateControllerEvent>::Throw(
+		    AGameStateControllerEvent( *m_oStates.Back(), AGameStateControllerEvent::Type_GameStateActivated )
+		);
 	}
 }
 

@@ -1142,7 +1142,7 @@ void ASoundManager::SetCategoryVolume( const TPString8& a_rcName, TFLOAT a_fVolu
 	else
 	{
 		// An unknown category gets the next index, like LoadWaveBanksInfo does. This happens when the save
-		// is loaded at boot (SaveLoad::OnLoaded -> AOptions::ApplySettings) before the wave bank info is loaded
+		// is loaded at boot (SaveLoad::ApplyLoadedSave -> AOptions::ApplySettings) before the wave bank info is loaded
 		iCategory = TINT( m_CategoryIndices.Size() );
 		m_CategoryIndices.Insert( a_rcName, TSIZE( iCategory ) );
 	}

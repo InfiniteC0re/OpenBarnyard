@@ -33,6 +33,11 @@ public:
 	// Sets the texts from the locale strings a_iLeft, a_iRight and a_iCentre (-1 hides the text)
 	void SetTexts( TINT a_iLeft, TINT a_iRight, TINT a_iCentre );
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Sets the texts from strings (TNULL hides the text). Not on PC, used by AFrontEndLanguageState
+	void SetTextStrings( const TWCHAR* a_wszLeft, const TWCHAR* a_wszRight, const TWCHAR* a_wszCentre );
+#endif
+
 	// Shows the default "select" and "back" texts
 	void SetDefaultTexts();
 

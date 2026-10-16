@@ -109,6 +109,12 @@ public:
 	inline static TBOOL           ms_bDevInteract = TFALSE;
 #endif
 
+#ifdef BARNYARD_LATEST
+	// Latest version (Wii 0x806b08f0, set by the constructor): while it and AGameLoader::IsPigApplePieReturn are set, the
+	// commands are ignored and UpdateAI presses the action button once the Pig is the target
+	inline static TBOOL ms_bPigApplePieInteract = TFALSE;
+#endif
+
 public:
 	// Also used by ABarnExploreMinigameState (root's interaction)
 	AInteractionSequence* FindUnitInteraction( AUnit* a_pUnit, TBOOL a_bAnyState );

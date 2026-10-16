@@ -93,6 +93,11 @@ public:
 	// Returns localised loading screen picture of a_iMiniGame (empty if it has none)
 	Toshi::TPString8& GetLoadingScreenName( Toshi::TPString8& a_rOutName, TINT a_iMiniGame );
 
+#ifdef BARNYARD_LATEST
+	// Wii: name of the XUI load screen scene of a_iMiniGame (empty if it has none)
+	const Toshi::TPString8& GetXUILoadScreenName( TINT a_iMiniGame );
+#endif
+
 	// $Barnyard: FUNCTION 00469330
 	AMiniGame* GetNextMiniGame() { return &m_vecMiniGames[ m_iNextMiniGameIndex ]; }
 

@@ -229,6 +229,10 @@ public:
 	static TBOOL Dev_IsMiniGameRequested();
 	static void  Dev_UpdateMiniGameRequest();
 
+	// Development: the command line the dev switches are read from. "-minigame <micro game>" (a game state of the sim,
+	// not a minigame of AMiniGameManager) adds "-simstate" and the dev switches that start that micro game
+	static const TCHAR* Dev_GetCommandLine();
+
 	// Development: "-simstate" skips the startup screens and loads the main game (ASimState) once the frontend is up
 	static TBOOL Dev_IsSimStateRequested();
 	static void  Dev_UpdateSimStateRequest();
@@ -282,6 +286,14 @@ public:
 	// The goal the sim player is placed at once the next game state (the barn, the sim) is loaded (ASpawnActivity)
 	static void  SetPlayerStartGoal( const Toshi::TPString8& a_rcGoal );
 	static TBOOL IsStoryMode();
+
+#ifdef BARNYARD_LATEST
+	// Latest version (Wii 0x806b4aa1): TTRUE from the main game load that brings the player back to the Pig with the apple
+	// pie ("Pig Apple Pie") until the conversation with the Pig starts (AAnimalConversationState::OnInsertion). Meanwhile
+	// APlayerControlComponent holds the controls and talks to the Pig, and ASimState skips the autosave.
+	static TBOOL IsPigApplePieReturn();
+	static void  SetPigApplePieReturn( TBOOL a_bReturn );
+#endif
 
 	// NOTE: inlined in retail (e.g. ACowTippingMiniGameState::OnInsertion)
 	static void  SetStoryMode( TBOOL a_bStoryMode );

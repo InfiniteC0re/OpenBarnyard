@@ -30,7 +30,12 @@ TOSHI_NAMESPACE_USING
 // $Barnyard: FUNCTION 0065a160
 // $Barnyard: FUNCTION 0065a260
 // $Barnyard: FUNCTION 0065b960
+#ifdef BARNYARD_LATEST
+// NOTE: APhysicsCar has the recovery point fields of the JP Wii build
+static T2ObjectPool<APhysicsCar, AVehicleManager::MAX_NUM_VEHICLES, sizeof( APhysicsCar ), 4> s_oCarPool;
+#else
 static T2ObjectPool<APhysicsCar, AVehicleManager::MAX_NUM_VEHICLES, 3644, 4> s_oCarPool;
+#endif
 
 // T2ObjectPool<APhysicsBike, 8, 4044> methods (vtables 0x0073aecc, 0x0073af1c):
 // $Barnyard: FUNCTION 0065a110

@@ -7,6 +7,8 @@
 #include "AInteractionActivityMessageGroups.h"
 #include "AInteractionRequirement.h"
 #include "APlaceholderRequirement.h"
+#include "AGroupRequirement.h"
+#include "Quests/AQuestManager.h"
 #include "AUnit.h"
 #include "AUnitManager.h"
 #include "UnitMovement/Steering/ASteer.h"
@@ -867,12 +869,111 @@ TBOOL AInteractionManager::LoadInteractions( const TCHAR* a_szFileName, TINT a_i
 
 	TGlobalEmitter<AInteractionManagerEvent>::Throw( AInteractionManagerEvent( TNULL, AInteractionManagerEvent::TYPE_INTERACTIONS_LOADED, AInteractionManagerEvent::KIND_NORMAL ) );
 
+#ifdef BARNYARD_LATEST
+	if ( TStringManager::String8CompareNoCase( a_szFileName, "AllInteractions" ) == 0 )
+		ApplyLatestAct1Order();
+#endif
+
 	// The names are only needed while loading
 	for ( TINT i = 0; i < m_aRequirements.Size(); i++ )
 		m_aRequirements[ i ]->m_strName = TPString8();
 
 	return TTRUE;
 }
+
+#ifdef BARNYARD_LATEST
+
+// Data/Interactions/AllInteractions.trz of the latest version (Wii): the groups of act 1 tiers 2-5
+struct LatestAct1TierGroup
+{
+	const TCHAR* szGroup;
+	const TCHAR* aszRequirements[ AQuestManager::MAX_NUM_TIER_QUESTS ];
+};
+
+static const LatestAct1TierGroup s_aLatestAct1TierGroups[] = {
+	{ "Act 1 Tier 2 - Complete", { "Ben Welcome Complete", "Pip Barnyard Secrets Complete", TNULL } },
+	{ "Act 1 Tier 3 - Complete", { "Otis Pest Squirting Completed", "Pig Apple Pie Complete", TNULL } },
+	{ "Act 1 Tier 4 - Complete", { "Miles Target Squirting 1 Complete", "Duke Farmer Alert Complete", TNULL } },
+	{ "Act 1 Tier 5 - Complete", { "Pig Mud Jumpers Complete", "Hanna Missing Eggs Complete", TNULL } },
+};
+
+void AInteractionManager::ApplyLatestAct1Order()
+{
+	if ( !AQuestManager::IsSingletonCreated() || !AQuestManager::IsLatestAct1Order() )
+		return;
+
+	// The "Act 1 Tier N - Complete" groups require the quests of the tiers of the latest order
+	TINT iNumGroups = 0;
+
+	for ( TINT i = 0; i < TARRAYSIZE( s_aLatestAct1TierGroups ); i++ )
+	{
+		const LatestAct1TierGroup& rcGroup = s_aLatestAct1TierGroups[ i ];
+		TINT                       iGroup  = GetRequirementIndex( TPString8( rcGroup.szGroup ) );
+
+		if ( iGroup == -1 || !m_aRequirements[ iGroup ]->IsA( &TGetClass( AGroupRequirement ) ) )
+		{
+			TWARN( "AInteractionManager: no group requirement '%s'\n", rcGroup.szGroup );
+			continue;
+		}
+
+		TINT aiRequirements[ AQuestManager::MAX_NUM_TIER_QUESTS ];
+		TINT iNumRequirements = 0;
+
+		for ( TINT k = 0; k < AQuestManager::MAX_NUM_TIER_QUESTS && rcGroup.aszRequirements[ k ]; k++ )
+		{
+			TINT iRequirement = GetRequirementIndex( TPString8( rcGroup.aszRequirements[ k ] ) );
+
+			if ( iRequirement == -1 )
+			{
+				TWARN( "AInteractionManager: no requirement '%s' for '%s'\n", rcGroup.aszRequirements[ k ], rcGroup.szGroup );
+				iNumRequirements = -1;
+				break;
+			}
+
+			aiRequirements[ iNumRequirements++ ] = iRequirement;
+		}
+
+		if ( iNumRequirements > 0 )
+		{
+			TSTATICCAST( AGroupRequirement, m_aRequirements[ iGroup ] )->SetRequirements( aiRequirements, iNumRequirements );
+			iNumGroups++;
+		}
+	}
+
+	// The quest givers wait for the tier before the one of their quest in the latest order
+	TINT iNumGivers = 0;
+
+	for ( TINT i = 0; i < AQuestManager::LATEST_ACT1_NUM_QUESTS; i++ )
+	{
+		const AQuestManager::LatestAct1Quest& rcQuest = AQuestManager::ms_aLatestAct1Quests[ i ];
+
+		if ( rcQuest.iTier == rcQuest.iPCTier )
+			continue;
+
+		TString8 strName;
+		strName.Format( "%s Not Given", rcQuest.szQuest );
+		TINT iNotGiven = GetRequirementIndex( TPString8( strName ) );
+
+		strName.Format( "Act 1 Tier %d - Complete", rcQuest.iPCTier - 1 );
+		TINT iPCTier = GetRequirementIndex( TPString8( strName ) );
+
+		strName.Format( "Act 1 Tier %d - Complete", rcQuest.iTier - 1 );
+		TINT iTier = GetRequirementIndex( TPString8( strName ) );
+
+		if ( iNotGiven == -1 || iPCTier == -1 || iTier == -1 )
+			continue;
+
+		for ( TINT k = 0; k < m_aInteractions.Size(); k++ )
+		{
+			if ( m_aInteractions[ k ]->HasRequirement( iNotGiven ) && m_aInteractions[ k ]->ReplaceRequirement( iPCTier, iTier ) )
+				iNumGivers++;
+		}
+	}
+
+	TINFO( "AInteractionManager: act 1 order of the latest version, %d tier groups and %d quest givers changed\n", iNumGroups, iNumGivers );
+}
+
+#endif // BARNYARD_LATEST
 
 // $Barnyard: FUNCTION 005a3f20
 TBOOL AInteractionManager::LoadRequirements( const PBProperties* a_pProperties )

@@ -142,6 +142,25 @@ static TBOOL s_bKeepQuestOnDayPhaseChange = TFALSE; // 0x806b507e (Wii)
 // Wii: set once "Ben Tomato Launcher" is done, AQuestManager::OnUpdate starts the tomato launcher sequence (SSUL_Main)
 static TBOOL s_bStartTomatoLauncherSequence = TFALSE; // 0x806b5088 (Wii)
 
+// Data/Quests/tier_data_JP.trb (Wii): the quests of act 1 tiers 2-5, in the order of the file
+const AQuestManager::LatestAct1Quest AQuestManager::ms_aLatestAct1Quests[ LATEST_ACT1_NUM_QUESTS ] = {
+	{ "Ben Welcome", 2, 2 },
+	{ "Pip Barnyard Secrets", 2, 3 },
+	{ "Otis Pest Squirting", 3, 4 },
+	{ "Pig Apple Pie", 3, 2 },
+	{ "Miles Target Squirting 1", 4, 5 },
+	{ "Duke Farmer Alert", 4, 2 },
+	{ "Pig Mud Jumpers", 5, 5 },
+	{ "Hanna Missing Eggs", 5, 5 },
+};
+
+// NOTE: not in the original. Set by ApplyLatestAct1Order once the act 1 quests are in the order of the latest version
+// (it stays TFALSE if the tier data doesn't have the expected quests, then the PC order is kept)
+static TBOOL s_bLatestAct1Order = TFALSE;
+
+// NOTE: not in the original. Act 1 tiers 2-5 in the PC order (their completed masks aren't used), the order of the saves
+static AQuestManager::QuestTier s_aPCAct1Tiers[ AQuestManager::LATEST_ACT1_NUM_TIERS ];
+
 #  ifdef BARNYARD_COMMUNITY_PATCH
 // NOTE: the PC data has none of the Wii scripted sequences and ASSeqState crashes on a missing one,
 // so they're only played once the converted Wii files are added to the game data.
@@ -639,7 +658,27 @@ TBOOL AQuestManager::Save( AHackedQuickSave::Buffer* a_pBuffer )
 	for ( TINT i = 0; i < iNumAssigned; i++ )
 		m_vecAssignedQuests[ i ]->Save( a_pBuffer );
 
+#ifdef BARNYARD_LATEST
+	// NOTE: saves keep the PC order of act 1 (see SaveCompletedQuests), the saved tier is the first PC tier with a quest left
+	TINT iSavedTier = m_iTier;
+
+	if ( s_bLatestAct1Order && m_iAct == 1 && m_iTier >= LATEST_ACT1_FIRST_TIER && m_iTier <= LATEST_ACT1_LAST_TIER )
+	{
+		QuestTier aPCTiers[ LATEST_ACT1_NUM_TIERS ];
+
+		for ( TINT i = 0; i < LATEST_ACT1_NUM_TIERS; i++ )
+		{
+			aPCTiers[ i ]                 = s_aPCAct1Tiers[ i ];
+			aPCTiers[ i ].uiCompletedMask = GetAct1CompletedMask( s_aPCAct1Tiers[ i ], TNULL );
+		}
+
+		iSavedTier = GetFirstIncompleteAct1Tier( aPCTiers );
+	}
+
+	a_pBuffer->WriteInt( iSavedTier );
+#else
 	a_pBuffer->WriteInt( m_iTier );
+#endif
 	a_pBuffer->WriteInt( m_iAct );
 	a_pBuffer->WriteInt( m_iNumTiers );
 	a_pBuffer->WriteBool( m_bGameComplete );
@@ -672,6 +711,20 @@ TBOOL AQuestManager::Load( AHackedQuickSave::Buffer* a_pBuffer )
 	a_pBuffer->ReadBool( m_bBannerComplete );
 	LoadCompletedQuests( a_pBuffer );
 
+#ifdef BARNYARD_LATEST
+	// NOTE: saves have the PC order of act 1 (LoadCompletedQuests converts the completed quests), the story continues at
+	// the first tier of the latest order with a quest left. A save of this version comes back exactly as it was saved.
+	if ( s_bLatestAct1Order && m_iAct == 1 && m_iTier >= LATEST_ACT1_FIRST_TIER && m_iTier <= LATEST_ACT1_LAST_TIER )
+	{
+		TINT iTier = GetFirstIncompleteAct1Tier( &m_aTiers[ LATEST_ACT1_FIRST_TIER - 1 ] );
+
+		if ( iTier != m_iTier )
+			TINFO( "AQuestManager: the saved act 1 tier %d (PC order) is tier %d of the latest order\n", m_iTier, iTier );
+
+		m_iTier = iTier;
+	}
+#endif
+
 	ACheatActivator::GetSingleton()->UpdateQuestTier();
 	ACheatActivator::GetSingleton()->UpdateTierRequirements();
 
@@ -698,7 +751,18 @@ TBOOL AQuestManager::LoadAssignedQuests( AHackedQuickSave::Buffer* a_pBuffer, T2
 TBOOL AQuestManager::SaveCompletedQuests( AHackedQuickSave::Buffer* a_pBuffer )
 {
 	for ( TINT i = 0; i < m_iNumTiers; i++ )
+	{
+#ifdef BARNYARD_LATEST
+		// NOTE: act 1 is saved in the PC order, so PC retail and this version read the same quests as completed
+		if ( s_bLatestAct1Order && i + 1 >= LATEST_ACT1_FIRST_TIER && i + 1 <= LATEST_ACT1_LAST_TIER )
+		{
+			a_pBuffer->WriteUInt8( GetAct1CompletedMask( s_aPCAct1Tiers[ i + 1 - LATEST_ACT1_FIRST_TIER ], TNULL ) );
+			continue;
+		}
+#endif
+
 		a_pBuffer->WriteUInt8( m_aTiers[ i ].uiCompletedMask );
+	}
 
 	return TTRUE;
 }
@@ -712,6 +776,26 @@ TBOOL AQuestManager::LoadCompletedQuests( AHackedQuickSave::Buffer* a_pBuffer )
 		a_pBuffer->ReadUInt8( uiMask );
 		m_aTiers[ i ].uiCompletedMask = uiMask;
 	}
+
+#ifdef BARNYARD_LATEST
+	// NOTE: act 1 is saved in the PC order (see SaveCompletedQuests)
+	if ( s_bLatestAct1Order )
+	{
+		QuestTier aPCTiers[ LATEST_ACT1_NUM_TIERS ];
+
+		for ( TINT i = 0; i < LATEST_ACT1_NUM_TIERS; i++ )
+		{
+			aPCTiers[ i ]                 = s_aPCAct1Tiers[ i ];
+			aPCTiers[ i ].uiCompletedMask = m_aTiers[ LATEST_ACT1_FIRST_TIER - 1 + i ].uiCompletedMask;
+		}
+
+		for ( TINT i = 0; i < LATEST_ACT1_NUM_TIERS; i++ )
+		{
+			QuestTier& rTier      = m_aTiers[ LATEST_ACT1_FIRST_TIER - 1 + i ];
+			rTier.uiCompletedMask = GetAct1CompletedMask( rTier, aPCTiers );
+		}
+	}
+#endif
 
 	return TTRUE;
 }
@@ -826,7 +910,143 @@ void AQuestManager::LoadTierData()
 			}
 		}
 	}
+
+#ifdef BARNYARD_LATEST
+	// NOTE: the latest version (Wii) loads Data/Quests/tier_data_JP.trb instead, which changes the order of act 1.
+	// The PC tier data is loaded here and put in that order.
+	ApplyLatestAct1Order();
+#endif
 }
+
+#ifdef BARNYARD_LATEST
+
+TBOOL AQuestManager::IsLatestAct1Order()
+{
+	return s_bLatestAct1Order;
+}
+
+TINT AQuestManager::GetLatestAct1Tier( const TCHAR* a_szQuest, TINT a_iPCTier )
+{
+	if ( !s_bLatestAct1Order )
+		return a_iPCTier;
+
+	for ( TINT i = 0; i < LATEST_ACT1_NUM_QUESTS; i++ )
+	{
+		if ( ms_aLatestAct1Quests[ i ].iPCTier == a_iPCTier && TStringManager::String8CompareNoCase( ms_aLatestAct1Quests[ i ].szQuest, a_szQuest ) == 0 )
+			return ms_aLatestAct1Quests[ i ].iTier;
+	}
+
+	return a_iPCTier;
+}
+
+void AQuestManager::ApplyLatestAct1Order()
+{
+	s_bLatestAct1Order = TFALSE;
+
+	if ( m_auiNumTiers[ 0 ] < LATEST_ACT1_LAST_TIER )
+		return;
+
+	QuestTier* pTiers = &m_aTiers[ GetAbsQuestTier( 1, LATEST_ACT1_FIRST_TIER ) - 1 ];
+
+	// The PC tiers must have exactly the quests of the table, otherwise (other tier data) the PC order is kept
+	TINT iNumQuests = 0;
+
+	for ( TINT i = 0; i < LATEST_ACT1_NUM_TIERS; i++ )
+	{
+		for ( TINT k = 0; k < pTiers[ i ].uiNumQuests; k++ )
+		{
+			TBOOL bFound = TFALSE;
+
+			for ( TINT n = 0; n < LATEST_ACT1_NUM_QUESTS && !bFound; n++ )
+			{
+				bFound = ms_aLatestAct1Quests[ n ].iPCTier == i + LATEST_ACT1_FIRST_TIER &&
+				    TStringManager::String8CompareNoCase( ms_aLatestAct1Quests[ n ].szQuest, m_vecQuests[ pTiers[ i ].auiQuests[ k ] ]->GetName().GetString() ) == 0;
+			}
+
+			if ( !bFound )
+			{
+				TWARN( "AQuestManager: the act 1 tier %d has the unexpected quest '%s', the act 1 order of the latest version isn't used\n", i + LATEST_ACT1_FIRST_TIER, m_vecQuests[ pTiers[ i ].auiQuests[ k ] ]->GetName().GetString() );
+				return;
+			}
+
+			iNumQuests++;
+		}
+	}
+
+	if ( iNumQuests != LATEST_ACT1_NUM_QUESTS )
+	{
+		TWARN( "AQuestManager: act 1 tiers %d-%d have %d quests instead of %d, the act 1 order of the latest version isn't used\n", LATEST_ACT1_FIRST_TIER, LATEST_ACT1_LAST_TIER, iNumQuests, LATEST_ACT1_NUM_QUESTS );
+		return;
+	}
+
+	// Keep the PC order for the saves
+	for ( TINT i = 0; i < LATEST_ACT1_NUM_TIERS; i++ )
+	{
+		s_aPCAct1Tiers[ i ]                 = pTiers[ i ];
+		s_aPCAct1Tiers[ i ].uiCompletedMask = 0;
+		pTiers[ i ].uiNumQuests             = 0;
+		pTiers[ i ].uiCompletedMask         = 0;
+	}
+
+	// The tiers of the latest version
+	for ( TINT n = 0; n < LATEST_ACT1_NUM_QUESTS; n++ )
+	{
+		const LatestAct1Quest& rcQuest = ms_aLatestAct1Quests[ n ];
+		QuestTier&             rTier   = pTiers[ rcQuest.iTier - LATEST_ACT1_FIRST_TIER ];
+
+		for ( TINT i = 0; i < LATEST_ACT1_NUM_TIERS; i++ )
+		{
+			for ( TINT k = 0; k < s_aPCAct1Tiers[ i ].uiNumQuests; k++ )
+			{
+				TUINT8 uiQuest = s_aPCAct1Tiers[ i ].auiQuests[ k ];
+
+				if ( TStringManager::String8CompareNoCase( m_vecQuests[ uiQuest ]->GetName().GetString(), rcQuest.szQuest ) == 0 )
+					rTier.auiQuests[ rTier.uiNumQuests++ ] = uiQuest;
+			}
+		}
+	}
+
+	s_bLatestAct1Order = TTRUE;
+	TINFO( "AQuestManager: act 1 tiers %d-%d use the order of the latest version\n", LATEST_ACT1_FIRST_TIER, LATEST_ACT1_LAST_TIER );
+}
+
+TUINT8 AQuestManager::GetAct1CompletedMask( const QuestTier& a_rcTier, const QuestTier* a_pCompletedTiers ) const
+{
+	const QuestTier* pFrom  = a_pCompletedTiers ? a_pCompletedTiers : &m_aTiers[ LATEST_ACT1_FIRST_TIER - 1 ];
+	TUINT8           uiMask = 0;
+
+	for ( TINT k = 0; k < a_rcTier.uiNumQuests; k++ )
+	{
+		for ( TINT i = 0; i < LATEST_ACT1_NUM_TIERS; i++ )
+		{
+			for ( TINT n = 0; n < pFrom[ i ].uiNumQuests; n++ )
+			{
+				if ( pFrom[ i ].auiQuests[ n ] == a_rcTier.auiQuests[ k ] && ( pFrom[ i ].uiCompletedMask & ( 1 << n ) ) )
+					uiMask |= TUINT8( 1 << k );
+			}
+		}
+	}
+
+	return uiMask;
+}
+
+TINT AQuestManager::GetFirstIncompleteAct1Tier( const QuestTier* a_pTiers )
+{
+	for ( TINT i = 0; i < LATEST_ACT1_NUM_TIERS; i++ )
+	{
+		if ( !IsTierComplete( a_pTiers[ i ] ) )
+			return i + LATEST_ACT1_FIRST_TIER;
+	}
+
+	return LATEST_ACT1_LAST_TIER + 1;
+}
+
+TBOOL AQuestManager::IsTierComplete( const QuestTier& a_rcTier )
+{
+	return a_rcTier.uiCompletedMask == TUINT8( ( 1 << a_rcTier.uiNumQuests ) - 1 );
+}
+
+#endif // BARNYARD_LATEST
 
 // $Barnyard: FUNCTION 005cc130
 void AQuestManager::ClearAssignedQuests()
@@ -1077,6 +1297,13 @@ void AQuestManager::AdvanceQuestTier( TINT a_iNumTiers )
 
 		SetQuestTier( m_iAct, m_iTier, TFALSE );
 	}
+
+#ifdef BARNYARD_LATEST
+	// NOTE: not in the original. A PC retail save can have completed quests of a later act 1 tier of the latest order (see
+	// Load); a tier with nothing left to do is skipped, the story would stop there otherwise
+	if ( s_bLatestAct1Order && !m_bGameComplete && m_iAct == 1 && m_iTier >= LATEST_ACT1_FIRST_TIER && m_iTier <= LATEST_ACT1_LAST_TIER && IsTierComplete( *GetCurrentQuestTier() ) )
+		AdvanceQuestTier( 1 );
+#endif
 }
 
 // $Barnyard: FUNCTION 005cd790
@@ -1191,6 +1418,13 @@ void AQuestManager::RemoveQuest( AQuestInstance* a_pInstance, TBOOL a_bCompleted
 
 	if ( a_bAdvance == TTRUE )
 	{
+#ifdef BARNYARD_LATEST
+		// NOTE: not in the original. A quest of a PC retail save can be in a later act 1 tier of the latest order than the
+		// current one (see Load), the story stays at the current tier then
+		if ( s_bLatestAct1Order && iAct == 1 && m_iAct == 1 && m_iTier >= LATEST_ACT1_FIRST_TIER && iTier > m_iTier && iTier <= LATEST_ACT1_LAST_TIER )
+			iTier = m_iTier;
+#endif
+
 		m_iAct  = iAct;
 		m_iTier = iTier;
 
@@ -1212,8 +1446,14 @@ void AQuestManager::RemoveQuest( AQuestInstance* a_pInstance, TBOOL a_bCompleted
 			bTierComplete = bTierComplete && ( pTier->uiCompletedMask & ( 1 << i ) ) != 0;
 		}
 
+#ifdef BARNYARD_LATEST
+		// NOTE: only once the current tier is complete (the quest's tier can be a later one, see above)
+		if ( bTierComplete && a_bAdvance && ( pTier == GetCurrentQuestTier() || IsTierComplete( *GetCurrentQuestTier() ) ) )
+			AdvanceQuestTier( 1 );
+#else
 		if ( bTierComplete && a_bAdvance )
 			AdvanceQuestTier( 1 );
+#endif
 	}
 
 #ifdef BARNYARD_LATEST

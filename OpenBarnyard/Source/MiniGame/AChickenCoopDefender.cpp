@@ -1786,6 +1786,7 @@ void AChickenCoopDefender::DestroyModels()
 }
 
 // $Barnyard: FUNCTION 00517960
+// $BarnyardWiiJP: FUNCTION 8026c280
 void AChickenCoopDefender::CreateHotSpots()
 {
 	TINT iNumHotSpots = m_oGame.pScoringNetwork->m_pINetwork->m_iNumNormalAreas;
@@ -1804,7 +1805,13 @@ void AChickenCoopDefender::CreateHotSpots()
 	m_oGame.pMapIcons = TSTATICCAST( TINT, TMalloc( sizeof( TINT ) * iNumOpen ) );
 
 	for ( TINT i = 0; i < iNumOpen; i++ )
-		m_oGame.pMapIcons[ i ] = m_oMap.AddIcon( TVector4::VEC_ZERO, TVector4::VEC_POSX, AGUI2MiniMap::ICONTYPE_EDGE, AGUI2MiniMap::ICON_PING_RING, 0.1f );
+		m_oGame.pMapIcons[ i ] = m_oMap.AddIcon( TVector4::VEC_ZERO, TVector4::VEC_POSX, AGUI2MiniMap::ICONTYPE_EDGE, AGUI2MiniMap::ICON_PING_RING,
+#ifdef BARNYARD_LATEST
+		                                         0.13f // Latest version: bigger hotspot icons
+#else
+		                                         0.1f
+#endif
+		);
 
 	// Open random hot spots of every kind
 	for ( TINT i = 0; i < AChickenCoopDefenderGame::NUM_KINDS; i++ )

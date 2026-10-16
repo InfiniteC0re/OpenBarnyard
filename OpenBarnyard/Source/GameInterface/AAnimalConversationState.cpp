@@ -255,8 +255,22 @@ TBOOL AAnimalConversationState::OnUpdate( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 004304a0
+// $BarnyardWiiJP: FUNCTION 8013ad6c
 void AAnimalConversationState::OnInsertion()
 {
+#ifdef BARNYARD_LATEST
+	// Latest version: the player is back at the Pig with the apple pie (see AGameLoader::IsPigApplePieReturn)
+	if ( AGameLoader::IsPigApplePieReturn() )
+	{
+		AGameLoader::SetPigApplePieReturn( TFALSE );
+		AGameStateController::GetSingleton()->ShowOverlay( TTRUE, TFALSE, 1.0f, TFALSE, TNULL );
+
+		// NOTE: the Wii doesn't check for ASimState
+		if ( AGameState* pSimState = AGameStateController::GetSingleton()->FindGameStateOnStack( TPS8( ASimState ) ) )
+			pSimState->SetOverlay( AGameState::OVERLAY_1 );
+	}
+#endif
+
 	AGameState* pParentState = AGameStateController::GetSingleton()->FindGameStateOnStack( TPS8( ASimState ) );
 
 	if ( pParentState )

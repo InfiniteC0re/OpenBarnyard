@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ABarnYardPoolMiniGameState.h"
+#include "Helpers/APlayerProgress.h"
 #include "Animation/AAnimatableObject.h"
 #include "Animation/AModel.h"
 #include "Cameras/APoolCamera.h"
@@ -38,6 +39,7 @@ static APoolBallSteer* GetBallSteer( AUnit* a_pUnit )
 }
 
 // $Barnyard: FUNCTION 004d5520
+// $BarnyardWiiJP: FUNCTION 80214038
 void ABarnYardPoolMiniGameState::ResetGame()
 {
 	m_iOtherTeam        = 1;
@@ -111,7 +113,23 @@ void ABarnYardPoolMiniGameState::ResetGame()
 
 	m_vForward.Set( vBlack.x - vWhite.x, vBlack.y - vWhite.y, vBlack.z - vWhite.z, vBlack.w );
 	m_vForward.Normalise();
+#ifdef BARNYARD_LATEST
+	// Latest version: a smaller, circular ball-in-hand area on the small table. It makes the placement easier
+	// (made for the Wii controls), so here it's only used on Easy.
+	// NOTE: the Wii also checks variant 7 (an unused pool table variant, see OnInsertion)
+	if ( m_iVariant == 5 && APlayerProgress::GetSingleton()->IsEasyDifficulty() )
+	{
+		m_fBallInHandRadius                  = 0.41f;
+		ABarnYardPoolAI::ms_fBallInHandShape = 1.0f;
+	}
+	else
+	{
+		m_fBallInHandRadius                  = 0.5f;
+		ABarnYardPoolAI::ms_fBallInHandShape = 0.65f;
+	}
+#else
 	m_fBallInHandRadius = 0.5f;
+#endif
 
 	// Everything is at the height of the cloth
 	TFLOAT fHeight = pTerrain->GetGroundHeight( vBlack, TCollisionCommon::TOSHICGROUPFLAG( 0 ) ) - 0.06f;

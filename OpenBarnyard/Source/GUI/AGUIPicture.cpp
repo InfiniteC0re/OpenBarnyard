@@ -63,7 +63,50 @@ void AGUIPicture::InitialiseClass()
 
 		fValB += fValA;
 	}
+
+#ifdef BARNYARD_LATEST
+	InitialiseWiiSplitRules();
+#endif
 }
+
+#ifdef BARNYARD_LATEST
+
+// NOTE: this is the dynamic initializer of split_rules in the Wii build
+// $BarnyardWiiJP: FUNCTION 8031f830
+void AGUIPicture::InitialiseWiiSplitRules()
+{
+	// Width of the textures of the three columns, all are 256 pixels high
+	constexpr TFLOAT aTexWidths[ 3 ] = { 256.0f, 256.0f, 128.0f };
+	constexpr TFLOAT TEX_HEIGHT      = 256.0f;
+
+	TFLOAT fY = -224.0f;
+
+	for ( TINT i = 0; i < 2; i++ )
+	{
+		const TFLOAT fHeight = ( i == 0 ) ? TEX_HEIGHT - 1.0f : 224.0f - fY;
+		TFLOAT       fX      = -320.0f;
+
+		for ( TINT k = 0; k < 3; k++ )
+		{
+			const TFLOAT fWidth = ( k < 2 ) ? aTexWidths[ k ] - 1.0f : 320.0f - fX;
+			SplitRule&   rRule  = ms_aWiiSplitRules[ i * 3 + k ];
+
+			rRule.Pos1        = { fX, fX + fWidth };
+			rRule.Pos2        = { fY, fY + fHeight };
+			rRule.UV1         = { 0.0f, fWidth / aTexWidths[ k ] };
+			rRule.UV2         = { 0.0f, fHeight / TEX_HEIGHT };
+			rRule.iImageIndex = i * 3 + k;
+			rRule.iUnk1       = 0;
+			rRule.iUnk2       = 0;
+
+			fX += fWidth;
+		}
+
+		fY += fHeight;
+	}
+}
+
+#endif // BARNYARD_LATEST
 
 // NOTE: retail resets m_iUnknown1 after m_Name is destroyed
 // $Barnyard: FUNCTION 0059d5e0
@@ -100,7 +143,14 @@ void AGUIPicture::Render()
 
 		T2GUITransform transform;
 		transform.SetTranslation( 0.0f, 0.0f );
-		transform.Scale( fWidth / 638.0f, fHeight / 477.0f );
+
+#ifdef BARNYARD_LATEST
+		// The Wii build (8031f69c) scales by 638x445
+		if ( m_bWiiLayout )
+			transform.Scale( fWidth / 638.0f, fHeight / 445.0f );
+		else
+#endif
+			transform.Scale( fWidth / 638.0f, fHeight / 477.0f );
 
 		auto pRenderer = AGUI2::GetRenderer();
 		pRenderer->PushTransform( transform, TVector2::VEC_ZERO, TVector2::VEC_ZERO );

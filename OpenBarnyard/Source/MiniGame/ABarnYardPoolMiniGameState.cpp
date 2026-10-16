@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ABarnYardPoolMiniGameState.h"
+#include "Helpers/APlayerProgress.h"
 #include "AMiniGameManager.h"
 #include "Animation/AAnimatableObject.h"
 #include "Animation/AAnimatableObjectManager.h"
@@ -231,8 +232,21 @@ void ABarnYardPoolMiniGameState::PlayWinSequence()
 }
 
 // $Barnyard: FUNCTION 004d33f0
+// $BarnyardWiiJP: FUNCTION 80216b44
 void ABarnYardPoolMiniGameState::Pause()
 {
+#ifdef BARNYARD_LATEST
+	// Latest version: the small table has no intro sequence, the cue ball (hidden by OnPreStart) is just shown again
+	// NOTE: the Wii leaves the cue ball's shadow hidden here
+	if ( m_iVariant == 5 )
+	{
+		if ( m_pCueBall )
+			m_pCueBall->SetVisible( TTRUE );
+
+		return;
+	}
+#endif
+
 	AGameStateController::GetSingleton()->PushState(
 	    new ASSeqState( "sspool_intro", "sspool_intro", "SSpool_CameraB", TVector4::VEC_ZERO, 1, TTRUE, TTRUE, TTRUE, TFALSE, TFALSE, TFALSE, TTRUE, TFALSE )
 	);
@@ -298,6 +312,7 @@ void ABarnYardPoolMiniGameState::SetMaterialsFlag( AAnimatedUnit* a_pUnit, TBOOL
 }
 
 // $Barnyard: FUNCTION 004d62d0
+// $BarnyardWiiJP: FUNCTION 80210860
 void ABarnYardPoolMiniGameState::OnInsertion()
 {
 	m_fLineOffset       = 0.0f;
@@ -327,7 +342,12 @@ void ABarnYardPoolMiniGameState::OnInsertion()
 			break;
 		case 5:
 			AGameLoader::Terrain_Set( AGameLoader::Terrain_EnvPoolTable, TFALSE, TTRUE, 0, 0, 0, 0 );
-			m_iDifficulty   = 4;
+#ifdef BARNYARD_LATEST
+			// Latest version: an easier opponent on the small table. Made for the Wii controls, so only on Easy here.
+			m_iDifficulty = APlayerProgress::GetSingleton()->IsEasyDifficulty() ? 2 : 4;
+#else
+			m_iDifficulty = 4;
+#endif
 			m_fPocketRadius = 0.07f;
 			break;
 		default:
@@ -424,7 +444,11 @@ void ABarnYardPoolMiniGameState::OnInsertion()
 	m_bUnkD9A = TTRUE;
 
 	// NOTE: retail calls DOES_NOTHING (nullsub_7) with the main controller and TVector4::VEC_ZERO here
-	ASSeqController::GetSingleton()->LoadScript( "sspool_intro.tso", TVector4::VEC_ZERO );
+#ifdef BARNYARD_LATEST
+	// Latest version: no intro sequence on the small table
+	if ( m_iVariant != 5 )
+#endif
+		ASSeqController::GetSingleton()->LoadScript( "sspool_intro.tso", TVector4::VEC_ZERO );
 
 	// No sky and no sun flare
 	ASkyDome* pSkyDome = ARenderer::GetSingleton()->GetSkyDome();

@@ -187,7 +187,7 @@ AAnimationBreakpointSoundParticle::SURFACE AAnimationBreakpointSoundParticle::Ge
 	else
 		a_rTransform.m_f42 += fClosest;
 
-	if ( eCollGroup == TCollisionCommon::TOSHICGROUP_WATER || eCollGroup == TCollisionCommon::TOSHICGROUP_DEEPWATER )
+	if ( eCollGroup == TCollisionCommon::TOSHICGROUP_WATER || eCollGroup == TCollisionCommon::TOSHICGROUP_WATER2 )
 		a_rTransform.m_f42 -= 0.1f;
 
 	switch ( eCollGroup )
@@ -198,7 +198,7 @@ AAnimationBreakpointSoundParticle::SURFACE AAnimationBreakpointSoundParticle::Ge
 		case TCollisionCommon::TOSHICGROUP_STONE: return SURFACE_STONE;
 		case TCollisionCommon::TOSHICGROUP_DIRT: return SURFACE_DIRT;
 		case TCollisionCommon::TOSHICGROUP_WATER:
-		case TCollisionCommon::TOSHICGROUP_DEEPWATER: return SURFACE_WATER;
+		case TCollisionCommon::TOSHICGROUP_WATER2: return SURFACE_WATER;
 		case TCollisionCommon::TOSHICGROUP_SAND: return SURFACE_SAND;
 		case TCollisionCommon::TOSHICGROUP_MUD: return SURFACE_MUD;
 		case TCollisionCommon::TOSHICGROUP_HAY: return SURFACE_HAY;

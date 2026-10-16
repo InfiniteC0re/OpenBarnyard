@@ -67,6 +67,11 @@ public:
 	// $Barnyard: FUNCTION 006401e0
 	const TWCHAR* GetText() const { return m_wszButtonText; }
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Changes the text, a_bFitWidth makes the text box as wide as it. Not on PC (used when the language changes)
+	void SetText( const TWCHAR* a_wszText, TBOOL a_bFitWidth );
+#endif
+
 	//-----------------------------------------------------------------------------
 	// T2GUIElement
 	//-----------------------------------------------------------------------------

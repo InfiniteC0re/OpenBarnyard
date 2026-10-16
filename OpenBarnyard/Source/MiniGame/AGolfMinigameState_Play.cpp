@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <Render/TCameraObject.h>
 #include "AGolfMinigameState.h"
+#include "Helpers/APlayerProgress.h"
 #include "ALoadScreen.h"
 #include "Animation/AAnimatableObject.h"
 #include "Animation/AAnimatableObjectManager.h"
@@ -829,6 +830,7 @@ void AGolfMinigameState::UpdateBall( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 00475c30
+// $BarnyardWiiJP: FUNCTION 80199f78
 void AGolfMinigameState::OnHoleFinished( TFLOAT a_fDeltaTime )
 {
 	TINT iNumHoled = 0;
@@ -895,14 +897,35 @@ void AGolfMinigameState::OnHoleFinished( TFLOAT a_fDeltaTime )
 							const TVector4* pBallPos  = pBallSteer->GetPosition();
 							TVector4        vToHole( m_vHolePosition.x - pBallPos->x, m_vHolePosition.y - pBallPos->y, m_vHolePosition.z - pBallPos->z, m_vHolePosition.w );
 
+#ifdef BARNYARD_LATEST
+							// Latest version: only when clearly rolling away (normalised directions). It gives the ball
+							// more time (made for the Wii controls), so here it's only used on Easy.
+							if ( APlayerProgress::GetSingleton()->IsEasyDifficulty() )
+							{
+								vVelocity.Normalise();
+								vToHole.Normalise();
+
+								if ( fSpeed < 4.0f && TVector4::DotProduct3( vVelocity, vToHole ) < -0.5f )
+									bGiveUp = TTRUE;
+							}
+							else if ( fSpeed < 4.0f && TVector4::DotProduct3( vVelocity, vToHole ) < 0.0f )
+								bGiveUp = TTRUE;
+#else
 							if ( fSpeed < 4.0f && TVector4::DotProduct3( vVelocity, vToHole ) < 0.0f )
 								bGiveUp = TTRUE;
+#endif
 						}
 					}
 				}
 
+#ifdef BARNYARD_LATEST
+				// Latest version: the forced give-up comes after 20 s instead of 10 s (only on Easy here, see above)
+				if ( rPlayer.iBallState != BALLSTATE_HELD && m_fCourseOverTime <= ( APlayerProgress::GetSingleton()->IsEasyDifficulty() ? 20.0f : 10.0f ) && !bGiveUp )
+					continue;
+#else
 				if ( rPlayer.iBallState != BALLSTATE_HELD && m_fCourseOverTime <= 10.0f && !bGiveUp )
 					continue;
+#endif
 
 				AAnimatedUnit*     pGopher  = GetAnimatedUnit( rPlayer.pGopher );
 				ATerrainInterface* pTerrain = ATerrainInterface::GetSingleton();

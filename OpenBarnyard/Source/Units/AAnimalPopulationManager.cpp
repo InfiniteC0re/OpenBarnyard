@@ -399,6 +399,28 @@ void AAnimalPopulationManager::LoadSpawnData()
 	m_pQuestTierSpawnSet   = m_oTRB.CastSymbol<Set<QuestTierSpawn>>( "QuestTierSpawnSet" );
 	m_pSaveableUnitSet     = m_oTRB.CastSymbol<Set<SaveableUnit>>( "SaveableUnitSet" );
 	m_pStringMappingTables = m_oTRB.CastSymbol<StringTable>( "StringMappingTables" );
+
+#ifdef BARNYARD_LATEST
+	// NOTE: the latest version (Wii) loads Data/Units/AnimalSpawn_JP.trb, whose quest giver spawns of act 1 follow its
+	// quest order (AQuestManager::ms_aLatestAct1Quests). The spawns of the PC data are moved to those tiers here.
+	// The act 1 tiers are the first absolute tiers.
+	for ( TINT i = 0; i < m_pQuestTierSpawnSet->iNumEntries; i++ )
+	{
+		QuestTierSpawn* pQuestTier = &m_pQuestTierSpawnSet->pEntries[ i ];
+		const TCHAR*    szQuest    = GetString( STRINGTABLE_QUEST, pQuestTier->uiQuest );
+
+		for ( TINT k = 0; k < AQuestManager::LATEST_ACT1_NUM_QUESTS; k++ )
+		{
+			const AQuestManager::LatestAct1Quest& rcQuest = AQuestManager::ms_aLatestAct1Quests[ k ];
+
+			if ( pQuestTier->uiTier == rcQuest.iPCTier && TStringManager::String8CompareNoCase( szQuest, rcQuest.szQuest ) == 0 )
+			{
+				pQuestTier->uiTier = TUINT8( rcQuest.iTier );
+				break;
+			}
+		}
+	}
+#endif // BARNYARD_LATEST
 }
 
 // $Barnyard: FUNCTION 0053e510
@@ -1413,7 +1435,22 @@ TBOOL AAnimalPopulationManager::IsUnitInQuest( AUnit* a_pUnit, AQuest* a_pQuest,
 	return TFALSE;
 }
 
+#ifdef BARNYARD_LATEST
+// Latest version (inlined in FindQuestLocator): the act 1 quests are in another order (see AQuestManager::LoadTierData),
+// but the terrain keeps the locators of the PC order, so the quest tier of some quest givers is changed back to it.
+static TINT GetPCOrderLocatorTier( const TCHAR* a_szName, TINT a_iAct, TINT a_iTier )
+{
+	if ( a_iAct == 1 && a_iTier == 3 && TStringManager::String8Compare( a_szName, "otis" ) == 0 ) return 4;
+	if ( a_iAct == 1 && a_iTier == 3 && TStringManager::String8Compare( a_szName, "pig" ) == 0 ) return 2;
+	if ( a_iAct == 1 && a_iTier == 4 && TStringManager::String8Compare( a_szName, "ben" ) == 0 ) return 5;
+	if ( a_iAct == 1 && a_iTier == 4 && TStringManager::String8Compare( a_szName, "duke" ) == 0 ) return 2;
+
+	return a_iTier;
+}
+#endif // BARNYARD_LATEST
+
 // $Barnyard: FUNCTION 0053a870
+// $BarnyardWiiJP: FUNCTION 8029da7c
 ATerrainLocator* AAnimalPopulationManager::FindQuestLocator( TMatrix44& a_rOutTransform, QUESTLOCATOR a_iMode, const TCHAR* a_szName, TINT a_iTier, TINT a_iQuest )
 {
 	if ( TStringManager::String8Compare( "twink", a_szName ) == 0 )
@@ -1426,6 +1463,10 @@ ATerrainLocator* AAnimalPopulationManager::FindQuestLocator( TMatrix44& a_rOutTr
 	{
 		if ( TStringManager::String8CompareNoCase( "pip", a_szName ) == 0 )
 			return TNULL;
+
+#ifdef BARNYARD_LATEST
+		a_iQuest = GetPCOrderLocatorTier( a_szName, a_iTier, a_iQuest );
+#endif
 
 		TStringManager::String8Format( szLocator, sizeof( szLocator ), "ql_a%dt%02d_conv_%s", a_iTier, a_iQuest, a_szName );
 		ATerrainLocator* pLocator = pTerrain->FindLocator( szLocator );
@@ -1440,6 +1481,10 @@ ATerrainLocator* AAnimalPopulationManager::FindQuestLocator( TMatrix44& a_rOutTr
 	}
 	else if ( a_iMode == QUESTLOCATOR_QUEST )
 	{
+#ifdef BARNYARD_LATEST
+		a_iQuest = GetPCOrderLocatorTier( a_szName, a_iTier, a_iQuest );
+#endif
+
 		TStringManager::String8Format( szLocator, sizeof( szLocator ), "ql_a%dt%02d_%s", a_iTier, a_iQuest, a_szName );
 		ATerrainLocator* pLocator = pTerrain->FindLocator( szLocator );
 

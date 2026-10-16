@@ -122,7 +122,7 @@ SaveLoadSKU::Step* SaveLoadSKU::LoadStep::Update( TFLOAT a_fDeltaTime )
 	}
 
 	m_pOwner->m_eResult = RESULT_SUCCESS;
-	m_pOwner->OnLoaded();
+	m_pOwner->ApplyLoadedSave();
 	m_pOwner->m_eResult = RESULT_SUCCESS;
 
 	delete this;

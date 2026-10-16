@@ -825,6 +825,7 @@ void ATapperMiniGameState::ResetGlasses()
 }
 
 // $Barnyard: FUNCTION 004e04a0
+// $BarnyardWiiJP: FUNCTION 8022e228
 TBOOL ATapperMiniGameState::LoadData()
 {
 	TTRB oTRB;
@@ -852,6 +853,11 @@ TBOOL ATapperMiniGameState::LoadData()
 		for ( TINT i = 0; i < 4; i++ )
 			m_afParams[ FLOATPARAM_WALK_SPEED_BAR1 + i ] *= 0.85f;
 	}
+
+	// Latest version: the minimum glass speed (FLOATPARAM_FILL_MIN) is raised from 3.0 to 3.5.
+	// NOTE: the Wii copies Floats[ 36 ] into Floats[ 33 ], where its tapper.trb inserts ( 3.0, 3.5 ) at index 35.
+	// We load the PC data, so the value is set directly.
+	m_afParams[ FLOATPARAM_FILL_MIN ] = 3.5f;
 #endif
 
 	return TTRUE;

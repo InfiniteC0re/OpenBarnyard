@@ -636,15 +636,24 @@ void ABarnYardPoolAI::PlaceCueBall( TVector4 a_vCenter, TFLOAT a_fCueBallSize, T
 	m_pCueBall->SetPosition( vecPlacement );
 }
 
+#ifdef BARNYARD_LATEST
+TFLOAT ABarnYardPoolAI::ms_fBallInHandShape = 0.65f;
+#endif
+
 // $Barnyard: FUNCTION 004d1ca0
+// $BarnyardWiiJP: FUNCTION 802152a8
 TBOOL ABarnYardPoolAI::ClampToBallInHandArea( TVector4 a_vPoint, TVector4 a_vCenter, TFLOAT a_fRadius, TVector4 a_vForward, TVector4* a_pOutPoint )
 {
 	TVector4 vecDirection( a_vPoint.x - a_vCenter.x, 0.0f, a_vPoint.z - a_vCenter.z, a_vPoint.w );
 	TBOOL    bInside = TTRUE;
 
-	TFLOAT fDistance    = vecDirection.NormaliseMag();
-	TFLOAT fDot         = TVector4::DotProduct3( vecDirection, a_vForward );
+	TFLOAT fDistance = vecDirection.NormaliseMag();
+	TFLOAT fDot      = TVector4::DotProduct3( vecDirection, a_vForward );
+#ifdef BARNYARD_LATEST
+	TFLOAT fMaxDistance = ( ( ms_fBallInHandShape - 1.0f ) * TMath::Abs( fDot ) + 1.0f ) * a_fRadius;
+#else
 	TFLOAT fMaxDistance = ( TMath::Abs( fDot ) * -0.35000002f + 1.0f ) * a_fRadius;
+#endif
 
 	if ( fDistance > fMaxDistance || fDot > 0.0f )
 	{

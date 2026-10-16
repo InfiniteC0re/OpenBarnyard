@@ -42,6 +42,16 @@ public:
 
 	void SetUseScissor( TBOOL a_bUseScissor ) { m_bUseScissor = a_bUseScissor; }
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Sizes the borders, the middle rectangle and the dialog to the bounds of the elements in the middle rectangle
+	// NOTE: only in the PS2 builds (used by AQuestVictoryState), the name is ours
+	void FitToContent();
+
+	// Element that gets the focus with the dialog (see SetFocus)
+	// $BarnyardPS2: FUNCTION 003e43a8
+	void SetFocusElement( Toshi::T2GUIElement* a_pElement ) { m_pFocusElement = a_pElement; }
+#endif
+
 private:
 	Toshi::T2GUIElement*        m_pFocusElement;
 	Toshi::T2GUITextureSection* m_apTexTiles[ Toshi::T2GUIATTACHMENT_NUMOF ];

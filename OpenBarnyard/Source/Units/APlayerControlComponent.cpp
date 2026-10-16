@@ -59,6 +59,8 @@
 #include "ARandom.h"
 #include "GameInterface/ASimState.h"
 #include "Helpers/ALadderBeansGame.h"
+#include "Input/AInputHandler.h"
+#include "Input/AInputMapManager.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -89,6 +91,10 @@ TPSTRING8_DECLARE( milkweed );
 TPSTRING8_DECLARE( goldrush_token );
 TPSTRING8_DECLARE( playerinstance );
 TPSTRING8_DECLARE( trigger_gate );
+#ifdef BARNYARD_LATEST
+TPSTRING8_DECLARE( pig );
+TPSTRING8_DECLARE( NormalBarnyard );
+#endif
 
 // NOTE: CreateObject 00591660 / CreateObjectInPlace 005916c0
 // NOTE: GetClass 0058e500, CreateObject 00591660, CreateObjectInPlace 005916c0
@@ -131,6 +137,7 @@ void __stdcall AUnitActionReceiver::UnitActionCallback( void* a_pCaller, AAnimat
 }
 
 // $Barnyard: FUNCTION 005913d0
+// $BarnyardWiiJP: FUNCTION 8030ab48
 APlayerControlComponent::APlayerControlComponent()
     : m_pAutoArea( TNULL )
     , m_pArea( TNULL )
@@ -155,6 +162,10 @@ APlayerControlComponent::APlayerControlComponent()
     , m_fUseItemCooldown( 1.0f )
 {
 	m_pInventoryCallbacks = APlayerInventoryCallbacks::Create();
+
+#ifdef BARNYARD_LATEST
+	ms_bPigApplePieInteract = TTRUE;
+#endif
 }
 
 // $Barnyard: FUNCTION 00591500
@@ -167,6 +178,7 @@ APlayerControlComponent::~APlayerControlComponent()
 }
 
 // $Barnyard: FUNCTION 00591720
+// $BarnyardWiiJP: FUNCTION 8030b65c
 void APlayerControlComponent::UpdateAI( TFLOAT a_fDeltaTime )
 {
 	TBOOL bPaused = TTRUE;
@@ -228,11 +240,42 @@ void APlayerControlComponent::UpdateAI( TFLOAT a_fDeltaTime )
 
 	UpdateBushes( a_fDeltaTime );
 	UpdateLookAt( pOwner );
+
+#ifdef BARNYARD_LATEST
+	// Latest version: back with the apple pie, the player talks to the Pig as soon as it's the target (the Wii presses
+	// the action button of the main controller, here the key or button bound to it)
+	if ( ms_bPigApplePieInteract && AGameLoader::IsPigApplePieReturn() && m_pTargetUnit && m_pTargetUnit->GetType()->GetName() == TPS8( pig ) )
+	{
+		ms_bPigApplePieInteract = TFALSE;
+
+		AInputMap*           pInputMap = AInputMapManager::GetSingleton()->FindMap( TPS8( NormalBarnyard ) );
+		TInputDevice::Doodad iDoodad   = pInputMap->GetCommandDoodad( AInputCommand_Interact, TTRUE );
+		AInputHandler*       pHandler  = AInputHandler::GetSingleton();
+
+		// NOTE: the Wii uses the main controller, PC players may have none
+		TInputDevice* pDevice = pHandler->GetMainController();
+
+		if ( iDoodad > 0x30000 && iDoodad < 0x3000d )
+			pDevice = pHandler->GetMouseDevice();
+		else if ( iDoodad > 0x20000 && iDoodad < 0x20080 )
+			pDevice = pHandler->GetKeyboardDevice();
+
+		if ( pDevice )
+			TInputInterface::GetSingleton()->SendEvent( pDevice, iDoodad, TInputInterface::EVENT_TYPE_GONE_DOWN );
+	}
+#endif
 }
 
 // $Barnyard: FUNCTION 0058ff80
+// $BarnyardWiiJP: FUNCTION 8030aeec
 TBOOL APlayerControlComponent::ProcessCommand( AInputCommand a_eCommand, const TInputInterface::InputEvent* a_pEvent )
 {
+#ifdef BARNYARD_LATEST
+	// Latest version: the controls are held while the player is brought back to the Pig with the apple pie (see UpdateAI)
+	if ( ms_bPigApplePieInteract && AGameLoader::IsPigApplePieReturn() )
+		return TFALSE;
+#endif
+
 	AUnit* pOwner = GetOwner();
 
 	if ( !pOwner )

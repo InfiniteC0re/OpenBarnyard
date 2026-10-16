@@ -201,7 +201,7 @@ TBOOL SaveLoad::SaveToSlot( TBOOL a_bDontSave, TBOOL a_bTakeSnapshot )
 }
 
 // $Barnyard: FUNCTION 006521c0
-void SaveLoad::OnLoaded()
+void SaveLoad::ApplyLoadedSave()
 {
 	AOptions*             pOptions  = AOptions::GetSingleton();
 	Toshi::T2Locale::Lang eLanguage = ALocaleManager::Lang_UNKNOWN;

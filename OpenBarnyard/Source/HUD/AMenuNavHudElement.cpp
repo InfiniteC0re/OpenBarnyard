@@ -139,6 +139,36 @@ void AMenuNavHudElement::SetTexts( TINT a_iLeft, TINT a_iRight, TINT a_iCentre )
 	m_aTexts[ 2 ].SetVisible( a_iCentre != -1 );
 }
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+// $BarnyardPS2EU: FUNCTION 001766b0
+void AMenuNavHudElement::SetTextStrings( const TWCHAR* a_wszLeft, const TWCHAR* a_wszRight, const TWCHAR* a_wszCentre )
+{
+	if ( a_wszLeft )
+	{
+		ALocale::FormatInputTags( m_apwszTexts[ 0 ], MAX_LENGTH, a_wszLeft );
+		SetNavText( m_aTexts[ 0 ], m_apwszTexts[ 0 ], m_abFixedWidth[ 0 ] );
+	}
+
+	if ( a_wszRight )
+	{
+		ALocale::FormatInputTags( m_apwszTexts[ 1 ], MAX_LENGTH, a_wszRight );
+		SetNavText( m_aTexts[ 1 ], m_apwszTexts[ 1 ], m_abFixedWidth[ 1 ] );
+	}
+
+	if ( a_wszCentre )
+	{
+		ALocale::FormatInputTags( m_apwszTexts[ 2 ], MAX_LENGTH, a_wszCentre );
+		SetNavText( m_aTexts[ 2 ], m_apwszTexts[ 2 ], m_abFixedWidth[ 2 ] );
+	}
+
+	m_aTexts[ 0 ].SetVisible( a_wszLeft != TNULL );
+	m_aTexts[ 1 ].SetVisible( a_wszRight != TNULL );
+	m_aTexts[ 2 ].SetVisible( a_wszCentre != TNULL );
+}
+
+#endif // BARNYARD_COMMUNITY_PATCH
+
 // $Barnyard: FUNCTION 00455d90
 void AMenuNavHudElement::SetDefaultTexts()
 {

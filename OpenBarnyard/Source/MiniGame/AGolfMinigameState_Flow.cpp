@@ -36,6 +36,17 @@
 
 TOSHI_NAMESPACE_USING
 
+#ifdef BARNYARD_LATEST
+// Latest version: the time limit of each hole number (1..18). The Wii golfdata.trb raises them
+// (PC: 45/60/45/45/45/60/60/60/90, 60/120/60/60/60/90/145/160/145). We load the PC data, so they are set here.
+// They make golf easier (made for the Wii controls), so they're only used on Easy, where the Easy x1.1 of
+// SetupPlayerTurn applies on top of them (as on the Wii, whose Easy scales its raised limits).
+static constexpr TFLOAT s_afHoleTimeLimits[ 18 ] = {
+	90.0f, 90.0f, 60.0f, 50.0f, 50.0f, 70.0f, 70.0f, 70.0f, 100.0f,
+	70.0f, 130.0f, 70.0f, 70.0f, 70.0f, 100.0f, 160.0f, 180.0f, 160.0f
+};
+#endif
+
 TPSTRING8_DECLARE( idle );
 TPSTRING8_DECLARE( idle_lp );
 TPSTRING8_DECLARE( idle_lp2 );
@@ -596,6 +607,7 @@ void AGolfMinigameState::UpdateHud( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 00474830
+// $BarnyardWiiJP: FUNCTION 80194040
 void AGolfMinigameState::SetupPlayerTurn()
 {
 	AAnimatableObjectManager* pAnimObjManager = AAnimatableObjectManager::GetSingleton();
@@ -668,6 +680,14 @@ void AGolfMinigameState::SetupPlayerTurn()
 	m_oPlayListeners.Clear();
 
 	m_fTimeLimit = m_pCourse->afTimeLimits[ m_iCurrentHole ];
+
+#ifdef BARNYARD_LATEST
+	// Courses with a stroke limit have no time limits (0)
+	TINT iHoleNumber = m_pCourse->aHoles[ m_iCurrentHole ];
+
+	if ( m_fTimeLimit > 0.0f && iHoleNumber >= 1 && iHoleNumber <= TARRAYSIZE( s_afHoleTimeLimits ) && APlayerProgress::GetSingleton()->IsEasyDifficulty() )
+		m_fTimeLimit = s_afHoleTimeLimits[ iHoleNumber - 1 ];
+#endif
 
 #ifdef BARNYARD_LATEST
 	// Latest version (Wii 80194040): more time on Easy

@@ -400,6 +400,7 @@ TBOOL AInstanceManager::Render()
 }
 
 // $Barnyard: FUNCTION 005e0300
+// $BarnyardWiiJP: FUNCTION 8037463c
 void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 {
 	TSTATICASSERT( 255 > NUM_MODELS );
@@ -535,7 +536,20 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 			    T2String8::FindString( pszName, "FenceRBrown" ) != TNULL ||
 			    T2String8::FindString( pszName, "FenceRGrey" ) != TNULL ||
 			    T2String8::FindString( pszName, "roadbarrier" ) != TNULL ||
-			    T2String8::FindString( pszName, "car_treewall" ) != TNULL;
+			    T2String8::FindString( pszName, "car_treewall" ) != TNULL
+#ifdef BARNYARD_LATEST
+			    // Latest version: the road signs lose their collision too
+			    || T2String8::FindString( pszName, "sign_bump" ) != TNULL ||
+			    T2String8::FindString( pszName, "sign_left" ) != TNULL ||
+			    T2String8::FindString( pszName, "sign_right" ) != TNULL ||
+			    T2String8::FindString( pszName, "sign_s_bend1" ) != TNULL ||
+			    T2String8::FindString( pszName, "sign_s_bend2" ) != TNULL ||
+			    T2String8::FindString( pszName, "sign_cow" ) != TNULL ||
+			    T2String8::FindString( pszName, "sign_cross" ) != TNULL ||
+			    T2String8::FindString( pszName, "sign_stop" ) != TNULL ||
+			    T2String8::FindString( pszName, "sign_speed" ) != TNULL
+#endif
+			    ;
 
 			// NOTE: the instance itself is always created, this only decides which collision it gets
 			if ( ( !bHasCollisionSet && iBoneRadius == -1 && !bForceCapsule ) || ( pLocator->iFlags2 < 0 ) || bNoCollision )

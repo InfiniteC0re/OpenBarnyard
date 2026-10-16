@@ -5,6 +5,7 @@
 #include "Helpers/ASimAnimModelHelperManager.h"
 #include "GUI/T2GUIFontManager.h"
 #include "GUI/T2GUITextureSectionManager.h"
+#include "GUI/AGUISlideshow.h"
 #include "Player/APlayerManager.h"
 #include "Helpers/AWindmillHelper.h"
 #include "GUI/AGUI2.h"
@@ -20,6 +21,7 @@
 #include "GameInterface/AFrontEndLoadState.h"
 #include "GameInterface/AFrontEndBonusState.h"
 #include "GameInterface/AFrontEndCharacterSelectState.h"
+#include "GameInterface/AFrontEndDebugState.h"
 #include "Helpers/AGameLoader.h"
 #include "AppBoot.h"
 #include "GameInterface/SaveLoadSKU.h"
@@ -243,6 +245,33 @@ void AFrontEndMainMenuState2::OnInsertion()
 	m_bFocusedElementBloated = TFALSE;
 }
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+// $BarnyardPS2EU: FUNCTION 00110c18
+void AFrontEndMainMenuState2::UpdateTexts()
+{
+	for ( TINT i = 0; i < FRONTENDBUTTON_NUMOF; i++ )
+	{
+		m_aButtons[ i ].SetText( g_pLocaleManager->GetString( FRONTENDBUTTON_TEXTS[ i ] ), TTRUE );
+		m_aButtons[ i ].ResizeImage( 1.25f, 1.5f );
+	}
+
+	m_oMenu.ReflowChildrenVertically();
+
+	TFLOAT fMenuWidth, fMenuHeight;
+	m_oMenu.GetDimensions( fMenuWidth, fMenuHeight );
+
+	if ( fMenuHeight < 128.0f )
+		fMenuHeight = 128.0f;
+
+	if ( fMenuWidth < 384.0f )
+		fMenuWidth = 384.0f;
+
+	m_oDialog.SetDialogSize( fMenuWidth + 128.0f, fMenuHeight + 128.0f );
+}
+
+#endif // BARNYARD_COMMUNITY_PATCH
+
 // $Barnyard: FUNCTION 00409340
 void AFrontEndMainMenuState2::OnRemoval()
 {
@@ -310,7 +339,11 @@ void AFrontEndMainMenuState2::OnActivate()
 			m_Rectangle1.Show();
 			m_Rectangle2.Show();
 
-			T2GUITextureSection* pTitle  = T2GUITextureSectionManager::GetTextureSection( "BY_TITLE" );
+			// The title of the language, e.g. BY_TITLEF
+			TPString8 strTitle;
+			AGUISlideshow::LocaliseBackgroundFileName( strTitle, TPS8D( "BY_TITLE" ) );
+
+			T2GUITextureSection* pTitle  = T2GUITextureSectionManager::GetTextureSection( strTitle.GetString() );
 			TFLOAT               fWidth  = TMath::Abs( TFLOAT( pTitle->GetPoint2X() - pTitle->GetPoint1X() ) );
 			TFLOAT               fHeight = TMath::Abs( TFLOAT( pTitle->GetPoint2Y() - pTitle->GetPoint1Y() ) );
 
@@ -390,11 +423,11 @@ void AFrontEndMainMenuState2::OnMenuClose()
 				break;
 			}
 
-			// Development: "-devsseq" opens the scripted sequence debug menu (AFrontEndDebugSSeqState)
-			// after choosing the character, the way AFrontEndCharacterSelectState supports it (unused in retail)
+			// Development: "-devsseq" opens the developer menu (AFrontEndDebugState, recovered from the PS2 build):
+			// "Debug MiniGames", "Preview Scripted Sequences" (AFrontEndDebugSSeqState) and "Preview Terrains"
 			if ( TStringManager::String8FindString( GetCommandLineA(), "-devsseq" ) )
 			{
-				pPushGameState = new AFrontEndCharacterSelectState( TTRUE, TFALSE, TTRUE );
+				pPushGameState = new AFrontEndDebugState();
 				break;
 			}
 #endif // BARNYARD_COMMUNITY_PATCH

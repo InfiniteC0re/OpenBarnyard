@@ -32,6 +32,7 @@
 #include "Physics/AVehicleManager.h"
 #include "Physics/APhysicsBike.h"
 #include "Helpers/ABikeHelpers.h"
+#include "SoundBank/barnyard.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -138,8 +139,11 @@ ABikeSteer::ABikeSteer()
 	for ( TINT i = 0; i < CUE_NUMOF; i++ )
 		m_aCues[ i ] = -1;
 
-	m_iUnkA4 = 0;
-	m_iUnkA8 = 0;
+	m_fChainTickTime  = 0.0f;
+	m_iChainTickPitch = 0;
+#ifdef BARNYARD_LATEST
+	m_fSkidSoundTime = 0.0f;
+#endif
 
 	for ( TINT i = 0; i < TARRAYSIZE( m_afEffectTimers ); i++ )
 		m_afEffectTimers[ i ] = 0.0f;
@@ -172,6 +176,7 @@ ABikeSteer::ABikeSteer()
 
 // $Barnyard: FUNCTION 0055b2c0
 // $Barnyard: FUNCTION 0055a830
+// $BarnyardWiiJP: FUNCTION 802c0d1c
 ABikeSteer::~ABikeSteer()
 {
 	AVisibleUnit* pUnit = TSTATICCAST( AVisibleUnit, &GetParentUnit() );
@@ -192,10 +197,13 @@ ABikeSteer::~ABikeSteer()
 	m_aCues[ CUE_LAND ]   = -1;
 	m_aCues[ CUE_CRASH ]  = -1;
 	m_aCues[ CUE_SKID ]   = -1;
-	m_aCues[ CUE_UNK4 ]   = -1;
+	m_aCues[ CUE_CHAIN ]  = -1;
 	m_aCues[ CUE_BUSH ]   = -1;
-	m_iUnkA4              = 0;
-	m_iUnkA8              = 0;
+	m_fChainTickTime      = 0.0f;
+	m_iChainTickPitch     = 0;
+#ifdef BARNYARD_LATEST
+	m_fSkidSoundTime = 0.0f;
+#endif
 
 	if ( m_pTailLight )
 	{
@@ -738,16 +746,19 @@ void ABikeSteer::Reset( const TVector4& a_rcPosition, const TVector4& a_rcDirect
 // $Barnyard: FUNCTION 0055a960
 void ABikeSteer::Initialise( const TVector4& a_rcPosition, const TVector4& a_rcDirection )
 {
-	m_bStoppingToGetOff        = TFALSE;
-	m_iUnkA4                   = 0;
-	m_iUnkA8                   = 0;
+	m_bStoppingToGetOff = TFALSE;
+	m_fChainTickTime    = 0.0f;
+	m_iChainTickPitch   = 0;
+#ifdef BARNYARD_LATEST
+	m_fSkidSoundTime = 0.0f;
+#endif
 	m_bInWater                 = TFALSE;
 	m_fInWaterTime             = 0.0f;
 	m_aCues[ CUE_ENGINE ]      = -1;
 	m_aCues[ CUE_LAND ]        = -1;
 	m_aCues[ CUE_CRASH ]       = -1;
 	m_aCues[ CUE_SKID ]        = -1;
-	m_aCues[ CUE_UNK4 ]        = -1;
+	m_aCues[ CUE_CHAIN ]       = -1;
 	m_aCues[ CUE_BUSH ]        = -1;
 	m_aTyreTrackPositions[ 0 ] = TVector4::VEC_ZERO;
 	m_aTyreTrackPositions[ 1 ] = TVector4::VEC_ZERO;
@@ -1318,6 +1329,7 @@ TBOOL ABikeSteer::UpdatePlayerControl( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 0055b450
+// $BarnyardWiiJP: FUNCTION 802c27dc
 void ABikeSteer::UpdateSounds( TFLOAT a_fDeltaTime )
 {
 	ASoundManager* pSoundManager = ASoundManager::GetSingleton();
@@ -1359,10 +1371,35 @@ void ABikeSteer::UpdateSounds( TFLOAT a_fDeltaTime )
 	}
 
 	// The skid
+#ifdef BARNYARD_LATEST
+	m_fSkidSoundTime = TMath::Max( m_fSkidSoundTime - a_fDeltaTime, 0.0f );
+#endif
+
 	pSoundManager->SetCuePositionToUnit( m_aCues[ CUE_SKID ], &GetParentUnit() );
 
 	if ( m_bSkidding && m_pPhysics->m_aWheels[ 1 ].m_bOnGround == TTRUE )
 	{
+#ifdef BARNYARD_LATEST
+		// Latest version: the volume and the pitch are also set when the sound starts,
+		// and the sound plays for at least 0.4 s (see below)
+		TFLOAT fVolume    = 1.0f;
+		TFLOAT fSlipAngle = TMath::Abs( m_pPhysics->m_aWheels[ 1 ].m_fSlipAngle );
+
+		if ( fSlipAngle < 0.08726646f )
+			fVolume = fSlipAngle * 11.459156f;
+
+		if ( m_aCues[ CUE_SKID ] == -1 || !pSoundManager->IsCueUsed( m_aCues[ CUE_SKID ] ) )
+		{
+			m_aCues[ CUE_SKID ] = pSoundManager->PlayCueAtUnit( 267, &GetParentUnit() );
+			m_fSkidSoundTime    = 0.4f;
+		}
+
+		if ( m_aCues[ CUE_SKID ] != -1 )
+		{
+			pSoundManager->SetCueVolume( m_aCues[ CUE_SKID ], fVolume );
+			pSoundManager->SetCueFrequency( m_aCues[ CUE_SKID ], 0.8f );
+		}
+#else
 		if ( m_aCues[ CUE_SKID ] == -1 || !pSoundManager->IsCueUsed( m_aCues[ CUE_SKID ] ) )
 		{
 			m_aCues[ CUE_SKID ] = pSoundManager->PlayCueAtUnit( 267, &GetParentUnit() );
@@ -1378,12 +1415,73 @@ void ABikeSteer::UpdateSounds( TFLOAT a_fDeltaTime )
 			pSoundManager->SetCueVolume( m_aCues[ CUE_SKID ], fVolume );
 			pSoundManager->SetCueFrequency( m_aCues[ CUE_SKID ], 0.8f );
 		}
+#endif
 	}
+#ifdef BARNYARD_LATEST
+	else if ( m_aCues[ CUE_SKID ] != -1 && m_fSkidSoundTime <= 0.0f )
+#else
 	else if ( m_aCues[ CUE_SKID ] != -1 )
+#endif
 	{
 		pSoundManager->StopCue( m_aCues[ CUE_SKID ] );
 		m_aCues[ CUE_SKID ] = -1;
 	}
+
+#ifdef BARNYARD_LATEST
+	// Latest version: the chain ticks 16 times per turn of the rear wheel, cycling through 4 pitches
+	// NOTE: like on the Wii, the tick only depends on the throttle and on the spin of the rear wheel, which keeps its last
+	// value while the wheel is off the ground, so the chain also ticks in the air. At riding speed (~25 rad/s) the ticks
+	// come every frame and the 0.09 s one-shot samples (cue 269 isn't looping) overlap into a continuous buzz
+	static constexpr TFLOAT s_afChainTickPitches[ 4 ] = { 1.0f, 1.12f, 1.0f, 0.89f }; // Wii 804f5ab8
+
+	// NOTE: our choice, not the Wii's: the Wii plays the ticks at the bank's volume (same as PC's cue 269),
+	// which is too loud with the overlapping ticks
+	static constexpr TFLOAT s_fChainTickVolume = 0.5f;
+
+	pSoundManager->SetCuePositionToUnit( m_aCues[ CUE_CHAIN ], &GetParentUnit() );
+
+	// The freewheel only ticks while the rider isn't pedalling (throttle in gear 2, brake in reverse)
+	TBOOL bNoTicks = ( m_pPhysics->m_fThrottle > 0.0f && m_pPhysics->m_oGearBox.iGear == 2 ) ||
+	    ( m_pPhysics->m_fBrake > 0.0f && m_pPhysics->m_oGearBox.iGear == 0 );
+
+	TFLOAT fWheelSpin = TMath::Abs( m_pPhysics->m_aWheels[ 1 ].m_fAngularVelocity );
+
+#  ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: community patch: the chain only ticks while the bike has a rider and its rear wheel touches the ground.
+	// The Wii keeps ticking off the wheel's last spin in the air and on the riderless bike after a fall. The ticks also
+	// come at most every s_fChainTickMinInterval seconds, so they stay separate clicks instead of overlapping into a buzz
+	static constexpr TFLOAT s_fChainTickMinInterval = 0.07f;
+
+	if ( bNoTicks || fWheelSpin <= 0.01f || m_pPhysics->IsRiderless() || !m_pPhysics->m_aWheels[ 1 ].m_bOnGround )
+#  else
+	if ( bNoTicks || fWheelSpin <= 0.01f )
+#  endif
+	{
+		if ( m_aCues[ CUE_CHAIN ] != -1 )
+			pSoundManager->StopCue( m_aCues[ CUE_CHAIN ] );
+	}
+	else
+	{
+		m_fChainTickTime += a_fDeltaTime;
+
+#  ifdef BARNYARD_COMMUNITY_PATCH
+		if ( ( fWheelSpin * m_fChainTickTime / TMath::TWO_PI ) * 16.0f < 1.0f || m_fChainTickTime < s_fChainTickMinInterval )
+#  else
+		if ( ( fWheelSpin * m_fChainTickTime / TMath::TWO_PI ) * 16.0f < 1.0f )
+#  endif
+		{
+			pSoundManager->SetCueFrequency( m_aCues[ CUE_CHAIN ], s_afChainTickPitches[ m_iChainTickPitch ] );
+		}
+		else
+		{
+			m_aCues[ CUE_CHAIN ] = pSoundManager->PlayCueAtPositionEx( soundbank::BARNYARD_BIKE_CHAIN_LOOP, *GetPosition(), s_fChainTickVolume, TFALSE, 0.0f, -1 );
+			m_fChainTickTime     = 0.0f;
+
+			if ( ++m_iChainTickPitch > 3 )
+				m_iChainTickPitch = 0;
+		}
+	}
+#endif
 
 	// Landing hard
 	APhysicsVehicleBottomOut oBottomOut  = m_pPhysics->m_oBottomOut;

@@ -300,6 +300,12 @@ private:
 	TBOOL LoadInteractions( const TCHAR* a_szFileName, TINT a_iFirstActivity );
 	TBOOL LoadRequirements( const PBProperties* a_pProperties );
 
+#ifdef BARNYARD_LATEST
+	// NOTE: not in the original. Applies the act 1 order of the latest version to the PC AllInteractions (the Wii
+	// changes the "Act 1 Tier N - Complete" groups and the tier the quest givers wait for), see AQuestManager::LoadTierData
+	void ApplyLatestAct1Order();
+#endif
+
 	// Allocates the activity scratch memory of every sequence.
 	void AllocateActivityData();
 

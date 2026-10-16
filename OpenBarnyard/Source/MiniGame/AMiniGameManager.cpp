@@ -208,6 +208,38 @@ AMiniGameManager::AMiniGameManager()
 	    .AddVariant( 0x243, 0x32e, 0x32f )
 	    .AddVariant( 0x242, 0x332, 0x333 )
 	    .AddVariant( 0x269, 0x330, 0x331 );
+
+#ifdef BARNYARD_LATEST
+	// The XUI load screens of the Wii build (the Coyote Showdown one is picked by the loaders)
+	// NOTE: the Wii build sets them right after registering each minigame (AMiniGame::SetXUILoadScreen)
+	static constexpr const TCHAR* s_aXUILoadScreens[][ 2 ] = {
+		{ "AChickenFireMinigameState", "ChickenLaunch_LoadScreen" },
+		{ "AGolfMiniGameState", "Gophergolf_LoadScreen" },
+		{ "AStatuesMiniGameState", "TeaseTheMailman_LoadScreen" },
+		{ "ACarChaseMiniGameState", "JoyRide_LoadScreen" },
+		{ "AGateCrashMiniGameState", "MudJumpers_LoadScreen" },
+		{ "ABarnYardPoolMiniGameState", "BarnyardPool_LoadScreen" },
+		{ "ABikeRaceMicroGame", "Bike_Race_LoadScreen" },
+		{ "AChasingChicksMiniGame", "ChasingChicks_LoadScreen" },
+		{ "AVeggiePatchDefenderGame", "VegetablePatchDefender_LoadScreen" },
+		{ "ACowTippingMiniGameState", "CowTipping_LoadScreen" },
+		{ "ATapperMiniGameState", "MilkBar_LoadScreen" },
+		{ "ADartMiniGame", "BarnyardDarts_LoadScreen" },
+		{ "AWhackARaccMiniGameState", "WhackARac_LoadScreen" },
+		{ "ATeaseMrsBeadyGame", "Teasemrsbeady_LoadScreen" },
+		{ "AHoneyCollectingGame", "HoneyCollecting_LoadScreen" },
+		{ "APrecisionSquirt", "SharpSquirter_LoadScreen" },
+		{ "AChickenCoopDefender", "ChickenCoopDefender_LoadScreen" },
+	};
+
+	for ( TINT i = 0; i < TARRAYSIZE( s_aXUILoadScreens ); i++ )
+	{
+		TINT iMiniGame = FindMiniGame( TPString8( s_aXUILoadScreens[ i ][ 0 ] ) );
+
+		if ( iMiniGame != -1 )
+			m_vecMiniGames[ iMiniGame ].SetXUILoadScreen( TPString8( s_aXUILoadScreens[ i ][ 1 ] ) );
+	}
+#endif // BARNYARD_LATEST
 }
 
 // $Barnyard: FUNCTION 0046b1b0
@@ -433,6 +465,21 @@ TPString8& AMiniGameManager::GetLoadingScreenName( TPString8& a_rOutName, TINT a
 	AGUISlideshow::LocaliseBackgroundFileName( a_rOutName, *pLoadingScreenName );
 	return a_rOutName;
 }
+
+#ifdef BARNYARD_LATEST
+
+// $BarnyardWiiJP: FUNCTION 8018927c
+const TPString8& AMiniGameManager::GetXUILoadScreenName( TINT a_iMiniGame )
+{
+	static TPString8 s_strEmpty;
+
+	if ( a_iMiniGame == -1 )
+		return s_strEmpty;
+
+	return m_vecMiniGames[ a_iMiniGame ].GetXUILoadScreen();
+}
+
+#endif // BARNYARD_LATEST
 
 // $Barnyard: FUNCTION 00469970
 void AMiniGameManager::StoreResults( AMiniGameState::S1* a_pResults )

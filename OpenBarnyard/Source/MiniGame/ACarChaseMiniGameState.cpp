@@ -1047,6 +1047,7 @@ void ACarChaseMiniGameState::CreateCoins()
 }
 
 // $Barnyard: FUNCTION 004f17b0
+// $BarnyardWiiJP: FUNCTION 8023b7fc
 void ACarChaseMiniGameState::LoadTrack()
 {
 	// Road block locators of each track, the lists end with an empty string
@@ -1054,7 +1055,12 @@ void ACarChaseMiniGameState::LoadTrack()
 	static const TCHAR* s_apTrack2RoadBlocks[] = { "8_00", "8_02", "2_03", "2_02", "3_02", "10_01", "" };
 	static const TCHAR* s_apTrack3RoadBlocks[] = { "21_00", "8_00", "8_02", "" };
 	static const TCHAR* s_apTrack4RoadBlocks[] = { "2_03", "2_02", "3_02", "" };
+#ifdef BARNYARD_LATEST
+	// NOTE: the JP Wii build ends the lists with "xxx"
+	static const TCHAR* s_apTrack5RoadBlocks[] = { "3_00", "2_00", "2_01", "" };
+#else
 	static const TCHAR* s_apTrack5RoadBlocks[] = { "3_01", "3_02", "10_01", "8_01", "8_03", "19_00", "21_02", "" };
+#endif
 
 	m_iNumRoadBlocks = 0;
 
@@ -1070,29 +1076,49 @@ void ACarChaseMiniGameState::LoadTrack()
 			ppRoadBlocks          = s_apTrack1RoadBlocks;
 			m_iNumSplineFollowers = 1;
 			m_iUnkc98             = 0;
-			m_fTimeLimit          = 100.0f;
-			szSpline              = "track01_spline";
+#ifdef BARNYARD_LATEST
+			// Latest version: 110 (made for the Wii controls, only on Easy here)
+			m_fTimeLimit = APlayerProgress::GetSingleton()->IsEasyDifficulty() ? 110.0f : 100.0f;
+#else
+			m_fTimeLimit = 100.0f;
+#endif
+			szSpline = "track01_spline";
 			break;
 		case TRACK_2:
 			ppRoadBlocks          = s_apTrack2RoadBlocks;
 			m_iNumSplineFollowers = 1;
 			m_iUnkc98             = 4;
-			m_fTimeLimit          = 300.0f;
-			szSpline              = "track02_spline";
+#ifdef BARNYARD_LATEST
+			// Latest version: 330 (made for the Wii controls, only on Easy here)
+			m_fTimeLimit = APlayerProgress::GetSingleton()->IsEasyDifficulty() ? 330.0f : 300.0f;
+#else
+			m_fTimeLimit = 300.0f;
+#endif
+			szSpline = "track02_spline";
 			break;
 		case TRACK_3:
 			ppRoadBlocks          = s_apTrack3RoadBlocks;
 			m_iNumSplineFollowers = 1;
 			m_iUnkc98             = 6;
-			m_fTimeLimit          = 300.0f;
-			szSpline              = "track03_spline";
+#ifdef BARNYARD_LATEST
+			// Latest version: 330 (made for the Wii controls, only on Easy here)
+			m_fTimeLimit = APlayerProgress::GetSingleton()->IsEasyDifficulty() ? 330.0f : 300.0f;
+#else
+			m_fTimeLimit = 300.0f;
+#endif
+			szSpline = "track03_spline";
 			break;
 		case TRACK_4:
 			ppRoadBlocks          = s_apTrack4RoadBlocks;
 			m_iNumSplineFollowers = 1;
 			m_iUnkc98             = 8;
-			m_fTimeLimit          = 300.0f;
-			szSpline              = "track04_spline";
+#ifdef BARNYARD_LATEST
+			// Latest version: 330 (made for the Wii controls, only on Easy here)
+			m_fTimeLimit = APlayerProgress::GetSingleton()->IsEasyDifficulty() ? 330.0f : 300.0f;
+#else
+			m_fTimeLimit = 300.0f;
+#endif
+			szSpline = "track04_spline";
 			break;
 		case TRACK_FOLLOW_KIDS:
 			ppRoadBlocks          = s_apTrack5RoadBlocks;
@@ -1136,9 +1162,12 @@ void ACarChaseMiniGameState::LoadTrack()
 			m_apBarriers[ 3 ]->SetSkeletonUpdating( TTRUE, TTRUE );
 			m_apBarriers[ 5 ]->SetSkeletonUpdating( TTRUE, TTRUE );
 			break;
+#ifndef BARNYARD_LATEST
+		// NOTE: the JP Wii build doesn't use the barrier on the track 5 (its road blocks are elsewhere)
 		case TRACK_FOLLOW_KIDS:
 			m_apBarriers[ 4 ]->SetSkeletonUpdating( TTRUE, TTRUE );
 			break;
+#endif
 		default:
 			break;
 	}
@@ -1150,7 +1179,7 @@ void ACarChaseMiniGameState::LoadTrack()
 		m_fTimeLimit = 99999.0f;
 
 #ifdef BARNYARD_LATEST
-	// Latest version (Wii 8023b7fc): more time on Easy
+	// The JP Wii build gives more time on Easy, on top of the raised Easy limits above (121 s and 363 s, as on the Wii)
 	if ( APlayerProgress::GetSingleton()->IsEasyDifficulty() )
 		m_fTimeLimit *= 1.1f;
 #endif
@@ -1786,7 +1815,7 @@ void ACarChaseMiniGameState::OnInsertion()
 	m_oRacePlacingHud.SetForceHide( TTRUE );
 
 	T2GUIFontManager::FindFont( "Rekord26" );
-	m_oIconRectangle.SetTextureSection( T2GUITextureSectionManager::GetTextureSection( "Chase_Icon_Light" ) );
+	m_oIconRectangle.SetTextureSection( *T2GUITextureSectionManager::GetTextureSection( "Chase_Icon_Light" ) );
 	m_oIconElement.SetDimensions( m_oIconRectangle.GetWidth(), m_oIconRectangle.GetHeight() );
 	m_oIconElement.SetAttachment( T2GUIATTACHMENT_TOPCENTER, T2GUIATTACHMENT_TOPCENTER );
 	m_oIconElement.SetTransform( 0.0f, 60.0f );
@@ -1898,7 +1927,17 @@ void ACarChaseMiniGameState::OnInsertion()
 	AVehicleManager::SetUseTriangleNormal( TTRUE );
 
 	AMusicManager::GetSingleton()->SetEnabled( TFALSE, TTRUE );
+
+#ifdef BARNYARD_LATEST
+	// NOTE: Wii 8023d3fc: the joy rides play the second bike track, only the star track keeps "Joyride".
+	// "Bike02Joyride" is a converted Wii stream (AMultiplexStream::LoadWiiStreams); without it, PC.
+	if ( m_eTrack != TRACK_STAR && AMultiplexStream::GetSingleton()->HasStream( "Bike02Joyride" ) )
+		AMultiplexStream::GetSingleton()->Open( "Bike02Joyride" );
+	else
+		AMultiplexStream::GetSingleton()->Open( "Joyride" );
+#else
 	AMultiplexStream::GetSingleton()->Open( "Joyride" );
+#endif
 }
 
 // $Barnyard: FUNCTION 004f0d20

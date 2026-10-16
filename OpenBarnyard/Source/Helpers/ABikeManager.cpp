@@ -459,6 +459,7 @@ TBOOL ABikeManager::OnUpdate( TFLOAT a_fDeltaTime )
 			ABikeHelpers::SetupFallingCow( GetRider(), vecVelocity, vecDirection, vecPrevPosition );
 
 			// Stop the music of the ride
+			// NOTE: the Wii (802a1e0c) also only checks Bike, so with the Wii's Bike02 the music keeps playing after a fall
 			if ( AMusicManager::GetSingleton()->GetCurrentStream() == TPS8( Bike ) )
 			{
 				ASoundManager::GetSingleton()->PlayCue( 262 );

@@ -7,9 +7,12 @@
 // Purpose: a state that allows selection of the number of players that can
 // join into a multiplayer game (Barnyard Antics with 2-4 controllers).
 // NOTE: recovered from the original source. This is an abandoned developer test
-// that didn't ship on any platform: PC retail only has its TClass registration
-// (0x00706580) and the PS2 builds only have the class name. Only reachable with
-// the BARNYARD_COMMUNITY_PATCH "-multiplayerantics" switch.
+// that nothing reaches on any platform: PC retail only has its TClass registration
+// (0x00706580, size 0xe60, parent AGameState). The PS2 builds keep every virtual
+// (SLUS_212.77 vtable 0x505eb8, size 0xe84, `$BarnyardPS2` markers) but not the
+// constructor, and they match this code (Docs/PS2DeadCode.md). Both TClasses
+// name AGameState as the parent although the class derives from ABYardMenuState.
+// Only reachable with the BARNYARD_COMMUNITY_PATCH "-multiplayerantics" switch.
 //-----------------------------------------------------------------------------
 class AFrontEndPlayersState
     : public ABYardMenuState
@@ -54,3 +57,5 @@ private:
 	TINT         m_iSelectedItem;
 	AGUI2TextBox m_oControllersPrompt;
 };
+
+TSTATICASSERT( sizeof( AFrontEndPlayersState ) == 0xe60 );

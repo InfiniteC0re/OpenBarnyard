@@ -8,6 +8,7 @@
 #include "Helpers/AGameLoader.h"
 #include "GUI/T2GUIFontManager.h"
 #include "GUI/T2GUITextureSectionManager.h"
+#include "GUI/AGUISlideshow.h"
 #include "GUI/AGUI2.h"
 #include "GUI/AFadeManager.h"
 #include "Input/AInputHandler.h"
@@ -177,7 +178,11 @@ void AFrontEndAttractState::OnActivate()
 		{
 			m_oTitleShadow.Show();
 
-			T2GUITextureSection* pTitle  = T2GUITextureSectionManager::GetTextureSection( "BY_TITLE" );
+			// The title of the language, e.g. BY_TITLEF
+			TPString8 strTitle;
+			AGUISlideshow::LocaliseBackgroundFileName( strTitle, TPS8D( "BY_TITLE" ) );
+
+			T2GUITextureSection* pTitle  = T2GUITextureSectionManager::GetTextureSection( strTitle.GetString() );
 			TFLOAT               fWidth  = TMath::Abs( TFLOAT( pTitle->GetPoint2X() - pTitle->GetPoint1X() ) );
 			TFLOAT               fHeight = TMath::Abs( TFLOAT( pTitle->GetPoint2Y() - pTitle->GetPoint1Y() ) );
 

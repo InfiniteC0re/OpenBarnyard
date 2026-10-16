@@ -33,6 +33,14 @@ TPSTRING8_DECLARE( BDeath );
 TPSTRING8_DECLARE( BY_NIGHT );
 TPSTRING8_DECLARE( BY_DAY );
 TPSTRING8_DECLARE( Bike );
+#ifdef BARNYARD_LATEST
+TPSTRING8_DECLARE( Bike02 );
+TPSTRING8_DECLARE( BY_day02 );
+TPSTRING8_DECLARE( BY_day03 );
+TPSTRING8_DECLARE( BY_day04 );
+TPSTRING8_DECLARE( BY_day05 );
+TPSTRING8_DECLARE( BY_day06 );
+#endif
 TPSTRING8_DECLARE( AAudioOptionsState );
 
 // NOTE: GetClass 005d45c0, CreateObject 005d5630, CreateObjectInPlace 005d5690
@@ -101,10 +109,37 @@ TBOOL AMusicManager::Reset()
 	return TTask::Reset();
 }
 
+#ifdef BARNYARD_LATEST
+
+// The Wii day and bike music: a random track each time the current one has ended. A track the
+// PC data doesn't have (no converted Wii streams, see AMultiplexStream::LoadWiiStreams) falls
+// back to the retail one, so without the Wii data this plays like PC.
+static const TPString8& PickTrack( TPString8& a_rCurrent, const TPString8* const* a_ppTracks, TINT a_iNumTracks, const TPString8& a_rcFallback )
+{
+	AMultiplexStream* pStream = AMultiplexStream::GetSingleton();
+
+	if ( a_rCurrent.IsEmpty() || ( pStream->GetState() == AMultiplexStream::STATE_PLAYING && !pStream->IsChannelPlaying() && pStream->IsCurrentStream( a_rCurrent ) ) )
+	{
+		const TPString8& rcTrack = *a_ppTracks[ ARandom::GetSingleton()->m_oRandom.GetInt( a_iNumTracks ) ];
+		a_rCurrent               = pStream->HasStream( rcTrack.GetString() ) ? rcTrack : a_rcFallback;
+	}
+
+	return a_rCurrent;
+}
+
+#endif
+
 // $Barnyard: FUNCTION 005d4860
+// $BarnyardWiiJP: FUNCTION 8036a55c
 TBOOL AMusicManager::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	m_bNearBenGrave = TFALSE;
+
+#if defined( BARNYARD_LATEST ) && defined( BARNYARD_COMMUNITY_PATCH )
+	// Off the bike: the next ride picks its track again
+	if ( !ABikeManager::IsSingletonCreated() || !ABikeManager::GetSingleton()->IsPlayerOnBike() )
+		m_strBikeStream = TPString8();
+#endif
 
 	if ( !m_bEnabled )
 		return TTask::OnUpdate( a_fDeltaTime );
@@ -240,11 +275,26 @@ TBOOL AMusicManager::OnUpdate( TFLOAT a_fDeltaTime )
 				}
 				else if ( ABikeManager::GetSingleton()->IsPlayerOnBike() == TTRUE )
 				{
+#ifdef BARNYARD_LATEST
+#  ifdef BARNYARD_COMMUNITY_PATCH
+					// NOTE: community patch: a new random bike track for each ride (m_strBikeStream is cleared at the top of OnUpdate while off the bike).
+					// The Wii only picks again once the track has ended, and a ride is usually shorter than the song, so the
+					// first pick of the session (PC's Bike or the Wii's Bike02) played on every ride
+#  endif
+					static const TPString8* s_apBikeTracks[] = { &TPS8( Bike ), &TPS8( Bike02 ) };
+					strStream                                = PickTrack( m_strBikeStream, s_apBikeTracks, TARRAYSIZE( s_apBikeTracks ), TPS8( Bike ) );
+#else
 					strStream = TPS8( Bike );
+#endif
 				}
 				else
 				{
+#ifdef BARNYARD_LATEST
+					static const TPString8* s_apDayTracks[] = { &TPS8( BY_DAY ), &TPS8( BY_day02 ), &TPS8( BY_day03 ), &TPS8( BY_day04 ), &TPS8( BY_day05 ), &TPS8( BY_day06 ) };
+					strStream                               = PickTrack( m_strDayStream, s_apDayTracks, TARRAYSIZE( s_apDayTracks ), TPS8( BY_DAY ) );
+#else
 					strStream = TPS8( BY_DAY );
+#endif
 				}
 			}
 		}
@@ -292,6 +342,7 @@ TBOOL AMusicManager::OnUpdate( TFLOAT a_fDeltaTime )
 			case AMultiplexStream::STATE_PLAYING:
 				if ( !m_bFadingOut )
 				{
+					// NOTE: the Wii (8036a55c) also only checks Bike here and for the fade in, not Bike02
 					m_bFadingOut    = TTRUE;
 					m_fFadeDuration = ( strStream == TPS8( Bike ) ) ? s_fBikeFadeOutTime : s_fDefaultFadeOutTime;
 

@@ -1844,7 +1844,7 @@ void APrecisionSquirt::OnInsertion()
 	m_oAmmoBar.Create( 32.5f, 1.625f, 0.3f );
 	m_oAmmoBar.SetAttachment( T2GUIATTACHMENT_MIDDLECENTER, T2GUIATTACHMENT_MIDDLECENTER );
 	m_oAmmoBacking.AddChildTail( m_oAmmoBar );
-	m_oAmmoBacking.SetTextureSection( T2GUITextureSectionManager::GetTextureSection( "Score_Wood_Thin" ) );
+	m_oAmmoBacking.SetTextureSection( *T2GUITextureSectionManager::GetTextureSection( "Score_Wood_Thin" ) );
 	m_oAmmoBacking.SetWidth( m_oAmmoBar.GetWidth() + 26.0f );
 	m_oAmmoBacking.SetAttachment( T2GUIATTACHMENT_TOPLEFT, T2GUIATTACHMENT_TOPLEFT );
 	m_GUIElement.AddChildTail( m_oAmmoBacking );

@@ -526,6 +526,7 @@ void AChasingChicksMiniGame::UpdateAlways( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 00511a60
+// $BarnyardWiiJP: FUNCTION 8025c5ec
 void AChasingChicksMiniGame::UpdateGame( TFLOAT a_fDeltaTime )
 {
 	m_bRenderReticles = TTRUE;
@@ -727,8 +728,14 @@ void AChasingChicksMiniGame::UpdateGame( TFLOAT a_fDeltaTime )
 				TFLOAT fDist = vToCentre.NormaliseMag();
 				TSTATICCAST( ACommonSteer, pSteer )->StopAndFace( vToCentre );
 
+#ifdef BARNYARD_LATEST
+				// Latest version: a stricter facing check
+				if ( !pSteer->IsFacingDesired( 0.99f ) )
+					break;
+#else
 				if ( !pSteer->IsFacingDesired( 0.98f ) )
 					break;
+#endif
 
 				if ( i == 0 )
 				{
@@ -1641,6 +1648,7 @@ void AChasingChicksMiniGame::DestroyChicks()
 }
 
 // $Barnyard: FUNCTION 0050fa90
+// $BarnyardWiiJP: FUNCTION 8025f650
 void AChasingChicksMiniGame::CreateHotSpots()
 {
 	TINT iNumHotSpots = m_oGame.pScoringNetwork->m_pINetwork->m_iNumNormalAreas;
@@ -1659,7 +1667,13 @@ void AChasingChicksMiniGame::CreateHotSpots()
 	m_oGame.pMapIcons = TSTATICCAST( TINT, TMalloc( sizeof( TINT ) * iNumOpen ) );
 
 	for ( TINT i = 0; i < iNumOpen; i++ )
-		m_oGame.pMapIcons[ i ] = m_oMap.AddIcon( TVector4::VEC_ZERO, TVector4::VEC_POSX, AGUI2MiniMap::ICONTYPE_EDGE, AGUI2MiniMap::ICON_PING_RING, 0.1f );
+		m_oGame.pMapIcons[ i ] = m_oMap.AddIcon( TVector4::VEC_ZERO, TVector4::VEC_POSX, AGUI2MiniMap::ICONTYPE_EDGE, AGUI2MiniMap::ICON_PING_RING,
+#ifdef BARNYARD_LATEST
+		                                         0.13f // Latest version: bigger hotspot icons
+#else
+		                                         0.1f
+#endif
+		);
 
 	// Open random pens of every kind
 	for ( TINT i = 0; i < AChasingChicksGame::MAX_PLAYERS; i++ )

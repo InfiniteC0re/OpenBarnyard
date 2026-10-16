@@ -761,6 +761,7 @@ void ACarChaseMiniGameState::UpdateRacers( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 004ed3c0
+// $BarnyardWiiJP: FUNCTION 802399a0
 void ACarChaseMiniGameState::UpdateSplineFollowers( TFLOAT a_fDeltaTime )
 {
 	ASpline& rSpline = m_oRaceTrack.oSpline;
@@ -771,6 +772,17 @@ void ACarChaseMiniGameState::UpdateSplineFollowers( TFLOAT a_fDeltaTime )
 	rSpline.GetClosestPositionAndDirection( *m_apSteers[ CAR_PLAYER ]->GetPosition(), vPlayerClosest, vPlayerDirection, fPlayerProgress, 300.0f );
 
 	TFLOAT fPlayerDistance = rSpline.GetLength() * fPlayerProgress;
+
+#ifdef BARNYARD_LATEST
+	// The player's truck is put back on the track at the closest point when it lies on its roof (APhysicsCar::FlipUpright).
+	// It makes the chase easier (made for the Wii controls), so here it's only done on Easy.
+	if ( APlayerProgress::GetSingleton()->IsEasyDifficulty() )
+	{
+		APhysicsCar* pPlayerPhysics = m_apSteers[ CAR_PLAYER ]->GetCar();
+		pPlayerPhysics->SetRecoveryPoint( vPlayerClosest );
+		pPlayerPhysics->SetRecoveryDirection( vPlayerDirection );
+	}
+#endif // BARNYARD_LATEST
 
 	// NOTE: m_iNumSplineFollowers is the number of spline followers
 	for ( TINT i = m_iNumSplineFollowers - 1; i >= 0; i-- )
@@ -1131,6 +1143,7 @@ void ACarChaseMiniGameState::UpdateHUD( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 004f14c0
+// $BarnyardWiiJP: FUNCTION 802395e0
 void ACarChaseMiniGameState::UpdateCoins( TFLOAT a_fDeltaTime )
 {
 	TVector4 vPlayerPos = *m_apSteers[ CAR_PLAYER ]->GetPosition();
@@ -1149,7 +1162,12 @@ void ACarChaseMiniGameState::UpdateCoins( TFLOAT a_fDeltaTime )
 
 		if ( !rCoin.bCollected )
 		{
+#ifdef BARNYARD_LATEST
+			// The JP Wii build picks the coins up within 6 (PC: 3). Made for the Wii controls, so only on Easy here.
+			if ( fDistanceSq < ( APlayerProgress::GetSingleton()->IsEasyDifficulty() ? 36.0f : 9.0f ) )
+#else
 			if ( fDistanceSq < 9.0f )
+#endif
 			{
 				// Collected
 				m_iNumCoinsCollected++;
@@ -1158,9 +1176,13 @@ void ACarChaseMiniGameState::UpdateCoins( TFLOAT a_fDeltaTime )
 				m_aMiniMaps[ 0 ].SetIconVisible( rCoin.iMapIcon, TFALSE );
 				AShadowManager::GetSingleton()->SetShadowEnabled( rCoin.pObject->GetModelInstance(), TFALSE );
 			}
+#ifdef BARNYARD_LATEST
+			else if ( fDistanceSq > 90000.0f )
+#else
 			else if ( fDistanceSq > 250000.0f )
+#endif
 			{
-				// Only show the coins closer than 500
+				// Only show the coins closer than 500 (JP Wii: 300)
 				m_aMiniMaps[ 0 ].SetIconVisible( rCoin.iMapIcon, TFALSE );
 				AShadowManager::GetSingleton()->SetShadowEnabled( rCoin.pObject->GetModelInstance(), TFALSE );
 			}
@@ -1180,6 +1202,8 @@ void ACarChaseMiniGameState::UpdateCoins( TFLOAT a_fDeltaTime )
 			rCoin.pObject->GetModelInstance()->SetTransform( matTransform );
 		}
 	}
+
+	// NOTE: the JP Wii build also calls m_aMiniMaps[ 0 ].Tick( a_fDeltaTime ) here (Wii GUI glue, not recovered)
 }
 
 #ifdef BARNYARD_COMMUNITY_PATCH

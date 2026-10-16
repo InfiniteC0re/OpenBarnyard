@@ -161,7 +161,7 @@ TBOOL AGUI2::OnCreate()
 TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 {
 #if defined( BARNYARD_LATEST ) && defined( BARNYARD_COMMUNITY_PATCH )
-	// Development: "-devxui <path to a XUI .trb>" loads the XUI resource 5 seconds after the start,
+	// Development: "-devxui <scene>" loads Data/XUI/<language>/<scene>.trb 5 seconds after the start,
 	// creates its first scene on the XUI canvas and logs the element tree (lines tagged [devxui])
 	static TFLOAT s_fDevXUITimer = 0.0f;
 
@@ -471,6 +471,12 @@ AGUI2XUIScene* AGUI2::CreateXUIScene( AGUI2XUIResource* a_pResource, TUINT32 a_u
 	return pScene;
 }
 
+// $BarnyardWiiJP: FUNCTION 803eb934
+void AGUI2::DeleteXUIResources()
+{
+	m_oXUI.DeleteResources();
+}
+
 // $BarnyardWiiJP: FUNCTION 803eb93c
 void AGUI2::UnloadXUIMaterialLibraries()
 {
@@ -526,20 +532,6 @@ const TCHAR* AGUI2::GetLanguage()
 
 #  ifdef BARNYARD_COMMUNITY_PATCH
 
-// A native file system that opens the files relative to its prefix (TNativeFileSystem opens them
-// relative to the working directory)
-class DevPrefixFileSystem : public TNativeFileSystem
-{
-public:
-	DevPrefixFileSystem( const TCHAR* a_szName )
-	    : TNativeFileSystem( a_szName ) {}
-
-	virtual TFile* CreateFile( const TString8& a_rcFileName, TFILEMODE a_eFileMode ) OVERRIDE
-	{
-		return TNativeFileSystem::CreateFile( MakeInternalPath( a_rcFileName ), a_eFileMode );
-	}
-};
-
 // Logs an element and its children
 static void DevLogXUIElement( AGUI2XUIElement* a_pElement, TINT a_iDepth )
 {
@@ -559,63 +551,35 @@ static void DevLogXUIElement( AGUI2XUIElement* a_pElement, TINT a_iDepth )
 
 void AGUI2::DevLoadXUIScene( const TCHAR* a_szArgs )
 {
-	// The path is the rest of the argument up to a space
-	TCHAR szPath[ 260 ];
+	// The scene name is the rest of the argument up to a space
+	TCHAR szName[ 128 ];
 	TINT  iLength = 0;
 
-	while ( a_szArgs[ iLength ] != '\0' && a_szArgs[ iLength ] != ' ' && iLength < 259 )
+	while ( a_szArgs[ iLength ] != '\0' && a_szArgs[ iLength ] != ' ' && iLength < TARRAYSIZE( szName ) - 1 )
 	{
-		szPath[ iLength ] = a_szArgs[ iLength ];
+		szName[ iLength ] = a_szArgs[ iLength ];
 		iLength++;
 	}
 
-	szPath[ iLength ] = '\0';
+	szName[ iLength ] = '\0';
+	TINFO( "[devxui] loading '%s'\n", szName );
 
-	TString8 strPath( szPath );
-
-	TINFO( "[devxui] loading '%s'\n", strPath.GetString() );
-
-	// <root>/Data/XUI/<lang>/<name>.trb: the root has the rest of the converted Wii data too
-	// (Data/Matlibs/XUI), so it's mounted as a file system that is searched before the game's
-	for ( TINT i = 0; i < strPath.Length(); i++ )
-	{
-		if ( strPath[ i ] == '\\' )
-			strPath[ i ] = '/';
-	}
-
-	TINT     iNameStart = strPath.FindReverse( '/' ) + 1;
-	TString8 strName    = strPath.Mid( iNameStart, strPath.Length() - iNameStart - 4 );
-
-	TString8 strLowerPath = strPath;
-	strLowerPath.MakeLower();
-	TINT iDataPos = strLowerPath.Find( "data/xui/" );
-
-	if ( iDataPos > 0 && !TFileManager::GetSingleton()->FindFileSystem( "devxui" ) )
-	{
-		TString8 strRoot = strPath.Mid( 0, iDataPos );
-		TINFO( "[devxui] data root '%s'\n", strRoot.GetString() );
-
-		( new DevPrefixFileSystem( "devxui" ) )->SetPrefix( strRoot );
-		TFileManager::GetSingleton()->SetSystemPath( "devxui;local" );
-	}
-
-	// What the Wii loading screen (8012a518) loads before its scene, except its two fonts
+	// What the Wii loading screens load before their scene
 	LoadXUIMaterialLibrary( "wii_icons128" );
-	AGUI2XUIText::ms_pIconMaterial = T2GUI::GetRenderer()->CreateMaterial( "..\\..\\..\\Texture\\wii_icons128.tga" );
 
-	AGUI2XUIResource* pResource = new AGUI2XUIResource();
+	if ( !AGUI2XUIText::ms_pIconMaterial )
+		AGUI2XUIText::ms_pIconMaterial = T2GUI::GetRenderer()->CreateMaterial( "..\\..\\..\\Texture\\wii_icons128.tga" );
 
-	// NOTE: no string table, the texts of the Wii XUI string tables (_xus) aren't supported
-	// (AGUI2XUIText takes the scene's English texts or the PC locale ones)
-	if ( !pResource->Load( strPath, TNULL, TTRUE, TNULL ) )
+	LoadXUIResource( szName );
+	AGUI2XUIResource* pResource = m_oXUI.FindResource( szName );
+
+	if ( !pResource )
 	{
 		TINFO( "[devxui] failed to load the resource\n" );
-		delete pResource;
 		return;
 	}
 
-	m_oXUI.SetMainResource( pResource );
-	LoadXUIMaterialLibrary( strName );
+	LoadXUIMaterialLibrary( szName );
 
 	AGUI2XUIScene* pScene = CreateXUIScene( pResource, 0 );
 	TINFO( "[devxui] scene 0: %p\n", pScene );

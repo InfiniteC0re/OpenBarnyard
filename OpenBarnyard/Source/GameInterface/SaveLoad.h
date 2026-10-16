@@ -34,11 +34,14 @@ public:
 	virtual void  StartSave( TBOOL a_bUnused, TBOOL a_bDontSave, TBOOL a_bTakeSnapshot ) = 0; // +0x74
 	virtual void  StartMode2()                                                           = 0; // +0x78
 	virtual void  StartMode3()                                                           = 0; // +0x7c
-	virtual void  OnLoaded();                                                                 // +0x80
+	virtual void  ApplyLoadedSave();                                                          // +0x80, NOTE: not AGameState::OnLoaded (+0x24)
 	virtual void  Unknown84() {}                                                              // +0x84, DOES_NOTHING
 	virtual TINT  GetResult() = 0;                                                            // +0x88
 
 	APlayerProgress* GetProgress() const { return m_pProgress; }
+
+	// TTRUE uses the language of the loaded save (the PS2 sets it at boot, AFrontEndLanguageState)
+	void SetUseSavedLanguage( TBOOL a_bUseSavedLanguage ) { m_bUseSavedLanguage = a_bUseSavedLanguage; }
 
 protected:
 	AGUI2TextBox*          m_pTextBox;          // 0xa4

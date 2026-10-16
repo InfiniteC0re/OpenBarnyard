@@ -131,6 +131,37 @@ public:
 
 	AInteractionActivity* GetActivity( TINT a_iIndex );
 
+#ifdef BARNYARD_LATEST
+	// NOTE: not in the original. TRUE if the interaction has the requirement a_iRequirement (index into
+	// AInteractionManager's requirements)
+	TBOOL HasRequirement( TINT a_iRequirement ) const
+	{
+		for ( TINT i = 0; i < m_iNumRequirements; i++ )
+		{
+			if ( m_auiRequirements[ i ] == a_iRequirement )
+				return TTRUE;
+		}
+
+		return TFALSE;
+	}
+
+	// NOTE: not in the original. Replaces the requirement a_iOld with a_iNew, used to apply data changes of the latest
+	// version to the PC data (see AInteractionManager::LoadInteractions). TRUE if the interaction had a_iOld.
+	TBOOL ReplaceRequirement( TINT a_iOld, TINT a_iNew )
+	{
+		for ( TINT i = 0; i < m_iNumRequirements; i++ )
+		{
+			if ( m_auiRequirements[ i ] == a_iOld )
+			{
+				m_auiRequirements[ i ] = TUINT16( a_iNew );
+				return TTRUE;
+			}
+		}
+
+		return TFALSE;
+	}
+#endif
+
 	// Tells the requirements that a sequence starts playing the interaction.
 	void OnSequenceStart( AInteractionParticipants* a_pParticipants, AInteractionSequence* a_pSequence );
 

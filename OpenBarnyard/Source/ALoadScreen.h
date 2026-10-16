@@ -6,6 +6,10 @@
 
 #include <Toshi/THPTimer.h>
 
+#ifdef BARNYARD_LATEST
+class AGUI2XUIScene;
+#endif
+
 class ALoadScreen
 {
 public:
@@ -23,6 +27,11 @@ public:
 	virtual ~ALoadScreen();
 
 	void Create();
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Shows the "Loading..." text of the current language (AFrontEndLanguageState). Not on PC
+	void UpdateLoadingText();
+#endif
 	void StartLoading( TINT a_iUnused, TBOOL a_bRender );
 	void SetLoadingState( TBOOL a_bIsLoading, TBOOL a_bUpdateUI );
 	void Update( TFLOAT a_fDeltaTime = 1.0f, TBOOL a_bRender = TTRUE );
@@ -36,7 +45,22 @@ public:
 	// Detaches the elements of the load screen from the GUI
 	void RemoveElements();
 
-	TBOOL IsLoadingScreen() const { return m_bIsLoadingScreen; }
+#ifdef BARNYARD_LATEST
+	// Wii: shows the scene a_uiIndex of the loaded XUI resource a_szName as the loading screen
+	AGUI2XUIScene* SetXUIScene( const TCHAR* a_szName, TUINT32 a_uiIndex );
+
+	// Wii: draws AGUISystem's background picture instead of the black canvas (the backdrop of the XUI scenes)
+	void ShowXUIBackground( TBOOL a_bShow, TBOOL a_bRender );
+
+	void DeleteXUIScene();
+
+	AGUI2XUIScene* GetXUIScene() const { return m_pXUIScene; }
+#endif
+
+	TBOOL IsLoadingScreen() const
+	{
+		return m_bIsLoadingScreen;
+	}
 
 private:
 	void UpdateUI( TBOOL a_bRender );
@@ -56,6 +80,10 @@ private:
 	// ...
 	TFLOAT m_fTimer;
 	TFLOAT m_fTotalTime;
+
+#ifdef BARNYARD_LATEST
+	AGUI2XUIScene* m_pXUIScene; // 0x580 (Wii)
+#endif
 };
 
 extern ALoadScreen g_oLoadScreen;

@@ -90,4 +90,10 @@ private:
 	TBOOL            m_bForceUpdate;        // 0x6a
 	TINT             m_iSavedStreamTime;    // 0x6c, time of the music while the start menu is open
 	TINT             m_iRainCue;            // 0x70
+
+#ifdef BARNYARD_LATEST
+	// The Wii picks a random day/bike track each time the current one ends (Wii +0x5c/+0x60)
+	Toshi::TPString8 m_strDayStream;
+	Toshi::TPString8 m_strBikeStream;
+#endif
 };

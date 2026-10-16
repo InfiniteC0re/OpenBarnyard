@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Render/TCameraObject.h"
 #include "AChickenFireMinigameState.h"
+#include "Helpers/APlayerProgress.h"
 #include "Animation/AAnimatableObject.h"
 #include "Animation/AAnimatableObjectManager.h"
 #include "Animation/AAnimatableObjectType.h"
@@ -87,18 +88,23 @@ TPSTRING8_DECLARE( barnbuck );
 TPSTRING8_DECLARE( idle_lp );
 TPSTRING8_DECLARE( AChickenFireMinigameState );
 
-static constexpr TINT   MAX_BOOSTS         = 5;      // 0x00773888
-static constexpr TINT   RING_SCORE         = 5;      // 0x007738a8
-static constexpr TFLOAT MAX_SPEED          = 3.0f;   // 0x0077388c
-static constexpr TFLOAT MIN_FLIGHT_SPEED   = 10.0f;  // 0x00773890
-static constexpr TFLOAT MAX_FLIGHT_SPEED   = 60.0f;  // 0x00773894
-static constexpr TFLOAT MAX_HEIGHT         = -50.0f; // 0x00773898, Y goes down
-static constexpr TFLOAT STALL_SPEED        = 0.2f;   // 0x0077389c
-static constexpr TFLOAT SLOW_SPEED         = 0.1f;   // 0x007738a0
-static constexpr TFLOAT TIME_BONUS_SECONDS = 45.0f;  // 0x007738a4
-static constexpr TFLOAT TEXT_REFRESH_TIME  = 0.2f;   // 0x00773884
-static constexpr TFLOAT PICKUP_DISTANCE    = 2.5f;
-static constexpr TINT   NUM_SCORECARDS     = 10;
+static constexpr TINT   MAX_BOOSTS        = 5;      // 0x00773888
+static constexpr TINT   RING_SCORE        = 5;      // 0x007738a8
+static constexpr TFLOAT MAX_SPEED         = 3.0f;   // 0x0077388c
+static constexpr TFLOAT MIN_FLIGHT_SPEED  = 10.0f;  // 0x00773890
+static constexpr TFLOAT MAX_FLIGHT_SPEED  = 60.0f;  // 0x00773894
+static constexpr TFLOAT MAX_HEIGHT        = -50.0f; // 0x00773898, Y goes down
+static constexpr TFLOAT STALL_SPEED       = 0.2f;   // 0x0077389c
+static constexpr TFLOAT SLOW_SPEED        = 0.1f;   // 0x007738a0
+static constexpr TFLOAT TEXT_REFRESH_TIME = 0.2f;   // 0x00773884
+static constexpr TFLOAT PICKUP_DISTANCE   = 2.5f;
+static constexpr TINT   NUM_SCORECARDS    = 10;
+
+static constexpr TFLOAT TIME_BONUS_SECONDS = 45.0f; // 0x007738a4
+#ifdef BARNYARD_LATEST
+// Latest version (Wii 806af1b0): 60. It makes the minigame easier (made for the Wii controls), so here it's only used on Easy.
+static constexpr TFLOAT TIME_BONUS_SECONDS_EASY = 60.0f;
+#endif
 
 // NOTE: 0x00782824 is a float in .bss that nothing writes, so the speed is clipped to 0.0f
 static constexpr TFLOAT MIN_SPEED = 0.0f;
@@ -1210,6 +1216,7 @@ void AChickenFireMinigameState::OnLandedOnBarn( TFLOAT a_fDistance )
 }
 
 // $Barnyard: FUNCTION 0047f2c0
+// $BarnyardWiiJP: FUNCTION 801a67fc
 void AChickenFireMinigameState::OnLandedInRing( TINT a_iHit )
 {
 	StopSounds( TFALSE );
@@ -1241,7 +1248,11 @@ void AChickenFireMinigameState::OnLandedInRing( TINT a_iHit )
 		ASoundManager::GetSingleton()->PlayCue( soundbank::LAUNCH_FREDDY_LAUNCH1 );
 	}
 
+#ifdef BARNYARD_LATEST
+	TINT iTimeBonus = TINT( ( APlayerProgress::GetSingleton()->IsEasyDifficulty() ? TIME_BONUS_SECONDS_EASY : TIME_BONUS_SECONDS ) - m_fFlightTime );
+#else
 	TINT iTimeBonus = TINT( TIME_BONUS_SECONDS - m_fFlightTime );
+#endif
 
 	if ( iTimeBonus > 0 )
 		m_iTimeBonus = iTimeBonus;

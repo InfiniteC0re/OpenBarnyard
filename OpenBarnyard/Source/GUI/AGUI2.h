@@ -57,6 +57,7 @@ public:
 	void           LoadXUIMaterialLibrary( const TCHAR* a_szName );
 	void           LoadXUIFont( const TCHAR* a_szName );
 	void           DeleteXUIScenes();
+	void           DeleteXUIResources();
 
 	AGUI2XUI&       GetXUI() { return m_oXUI; }
 	AGUI2XUICanvas* GetXUICanvas() const { return m_pXUICanvas; }

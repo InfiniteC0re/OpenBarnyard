@@ -324,8 +324,7 @@ private:
 	PlayerInput                             m_aInputs[ MAX_PLAYERS ];       // 0xec0
 	DepthSortedVector<200>                  m_vecObjects1;                  // 0xf10
 	DepthSortedVector<200>                  m_vecObjects2;                  // 0x1234
-	DepthSortedVector<240>                  m_vecObjects3;                  // 0x1558
-	TINT                                    m_iUnk_191C;                    // 0x191c
+	DepthSortedVector<241>                  m_vecObjects3;                  // 0x1558, NOTE: retail has 240 slots and an unused int after them (0x191c), the barnbucks variant has 241 coins and the last one goes into that int
 	Toshi::T2Vector<AAnimatableObject*, 10> m_vecObjects4;                  // 0x1920
 	AGUI2Portrait                           m_oPortrait;                    // 0x194c
 	AAnimatableObject*                      m_pPlayerModel;                 // 0x1f14, "cfp_americanm" / "cfp_americanf"

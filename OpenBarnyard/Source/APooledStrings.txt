@@ -54,6 +54,11 @@ AutoTransition
 BDeath
 BY_DAY
 BY_NIGHT
+BY_day02
+BY_day03
+BY_day04
+BY_day05
+BY_day06
 BackPack
 Background
 BarnyardMain
@@ -61,6 +66,7 @@ BaseThrowSpeed
 BashInc
 BashRed
 Bike
+Bike02
 BlendInTime
 BlendOutTime
 Bone
@@ -317,6 +323,7 @@ angry_lp
 animation
 animationset
 apple
+apple_pie
 aprojectilefirecamerahelper
 area
 arrow
@@ -1223,6 +1230,7 @@ pickup_l
 pickup_raccoon
 pig
 pig_loiter_around
+pigpiespawn
 pip
 player
 player_chickencoop

@@ -29,6 +29,13 @@ AGUISystem::AGUISystem()
 	m_pStrings      = new Toshi::TPString8[ 2 ];
 	m_pStrings[ 0 ] = TPS8( ParkManager );
 	m_pStrings[ 1 ] = TPS8( Start );
+
+#ifdef BARNYARD_LATEST
+	m_bShowBackgroundPicture = TFALSE;
+
+	// NOTE: the background picture is Wii data (bkg_Background)
+	m_oBackgroundPicture.SetWiiLayout( TTRUE );
+#endif
 }
 
 // $Barnyard: FUNCTION 0059e460
@@ -83,11 +90,18 @@ void AGUISystem::OnDestroy()
 }
 
 // $Barnyard: FUNCTION 0059de80
+// $BarnyardWiiJP: FUNCTION 80320d3c
 TBOOL __stdcall AGUISystem::OnGUIRender( AGUISystem* a_pGUISystem, ARenderer* a_pRenderer, TINT* a_pUnknown )
 {
 	if ( *a_pUnknown == 0 )
 	{
-		a_pGUISystem->m_MatLibPicture.Render();
+#ifdef BARNYARD_LATEST
+		// NOTE: the Wii build also skips both pictures while a Wii-only flag (806b502c) is set
+		if ( a_pGUISystem->m_bShowBackgroundPicture )
+			a_pGUISystem->m_oBackgroundPicture.Render();
+		else
+#endif
+			a_pGUISystem->m_MatLibPicture.Render();
 	}
 
 	return TTRUE;
@@ -143,3 +157,42 @@ void AGUISystem::ResetPicture()
 	m_MatLibPicture.Flush();
 	m_MatLibPicture.Create( TPString8() );
 }
+
+#ifdef BARNYARD_LATEST
+
+// $BarnyardWiiJP: FUNCTION 80321028
+void AGUISystem::SetBackgroundPicture( const TPString8& a_rName )
+{
+	TBOOL bChanged = TFALSE;
+
+	if ( !a_rName.IsEmpty() && a_rName.GetString8().Length() != 0 )
+		bChanged = ( a_rName != m_oBackgroundPicture.GetName() );
+
+	if ( bChanged )
+	{
+		if ( ATerrainInterface::IsSingletonCreated() )
+			ATerrainInterface::GetSingleton()->WaitUntilLoaded();
+
+		m_oBackgroundPicture.Create( a_rName );
+		m_oBackgroundPicture.Flush();
+		m_oBackgroundPicture.Cache();
+	}
+	else if ( a_rName.IsEmpty() || a_rName.GetString8().Length() == 0 )
+	{
+		m_oBackgroundPicture.Flush();
+		m_oBackgroundPicture.Create( a_rName );
+	}
+
+	m_bShowBackgroundPicture = TFALSE;
+}
+
+// $BarnyardWiiJP: FUNCTION 803211b8
+void AGUISystem::ShowBackgroundPicture( TBOOL a_bShow )
+{
+	m_bShowBackgroundPicture = a_bShow;
+
+	if ( a_bShow )
+		m_MatLibPicture.SetHidden();
+}
+
+#endif // BARNYARD_LATEST

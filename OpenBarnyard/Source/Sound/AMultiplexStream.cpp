@@ -44,6 +44,66 @@ AMultiplexStream::Stream::~Stream()
 	TFree( aiPans );
 }
 
+// Reads a "MultiplexStream" entry
+// NOTE: inlined in the constructor in retail; a function so that LoadWiiStreams can share it
+static void ReadStream( const PBProperties* a_pProperties, AMultiplexStream::Stream& a_rStream )
+{
+	a_pProperties->GetOptionalPropertyValue( a_rStream.strName, TPS8( Name ) );
+	a_pProperties->GetOptionalPropertyValue( a_rStream.strFSB, TPS8( FSB ) );
+
+	// The channels
+	const PBPropertyValueArray* pCategories  = a_pProperties->GetProperty( "ChannelCategories" )->GetArray();
+	const TINT                  iNumChannels = pCategories->GetSize();
+
+	a_rStream.iNumChannels = iNumChannels;
+	a_rStream.aCategories  = new TPString8[ iNumChannels ];
+	a_rStream.afVolumes    = TSTATICCAST( TFLOAT, TMalloc( sizeof( TFLOAT ) * iNumChannels ) );
+	a_rStream.afMaxVolumes = TSTATICCAST( TFLOAT, TMalloc( sizeof( TFLOAT ) * iNumChannels ) );
+	a_rStream.aiPans       = TSTATICCAST( TINT, TMalloc( sizeof( TINT ) * iNumChannels ) );
+
+	for ( TINT k = 0; k < iNumChannels; k++ )
+	{
+		a_rStream.aCategories[ k ] = pCategories->GetValue( k )->GetTPString8();
+		a_rStream.afVolumes[ k ]   = 1.0f;
+		a_rStream.aiPans[ k ]      = 128;
+	}
+
+	if ( const PBPropertyValue* pPans = a_pProperties->GetProperty( "ChannelPan" ) )
+	{
+		const PBPropertyValueArray* pArray = pPans->GetArray();
+
+		for ( TUINT k = 0; k < pArray->GetSize(); k++ )
+			a_rStream.aiPans[ k ] = pArray->GetValue( k )->GetInteger();
+	}
+
+	if ( const PBPropertyValue* pMaxVolumes = a_pProperties->GetProperty( "ChannelMaxVolumes" ) )
+	{
+		const PBPropertyValueArray* pArray = pMaxVolumes->GetArray();
+
+		for ( TUINT k = 0; k < pArray->GetSize(); k++ )
+		{
+			const PBPropertyValue* pValue = pArray->GetValue( k );
+
+			if ( pValue->GetType() == PBPropertyValue::Type::Float )
+				a_rStream.afMaxVolumes[ k ] = pValue->GetFloat();
+			else
+				a_rStream.afMaxVolumes[ k ] = TFLOAT( pValue->GetInteger() );
+
+			TMath::Clip( a_rStream.afMaxVolumes[ k ], 0.0f, 1.0f );
+		}
+	}
+	else
+	{
+		for ( TINT k = 0; k < iNumChannels; k++ )
+			a_rStream.afMaxVolumes[ k ] = 1.0f;
+	}
+
+	a_pProperties->GetOptionalPropertyValue( a_rStream.bLoop, TPS8( Loop ) );
+
+	a_rStream.iStreamBufferSize = 2000;
+	a_pProperties->GetOptionalPropertyValue( a_rStream.iStreamBufferSize, TPS8( StreamBufferSize ) );
+}
+
 // $Barnyard: FUNCTION 005d4160
 AMultiplexStream::AMultiplexStream()
     : m_pStream( TNULL )
@@ -66,63 +126,12 @@ AMultiplexStream::AMultiplexStream()
 		if ( T2String8::Compare( pProperty->GetName().GetString(), "MultiplexStream" ) != 0 )
 			continue;
 
-		const PBProperties* pStreamProperties = pProperty->GetValue()->GetProperties();
-
-		pStreamProperties->GetOptionalPropertyValue( rStream.strName, TPS8( Name ) );
-		pStreamProperties->GetOptionalPropertyValue( rStream.strFSB, TPS8( FSB ) );
-
-		// The channels
-		const PBPropertyValueArray* pCategories  = pStreamProperties->GetProperty( "ChannelCategories" )->GetArray();
-		const TINT                  iNumChannels = pCategories->GetSize();
-
-		rStream.iNumChannels = iNumChannels;
-		rStream.aCategories  = new TPString8[ iNumChannels ];
-		rStream.afVolumes    = TSTATICCAST( TFLOAT, TMalloc( sizeof( TFLOAT ) * iNumChannels ) );
-		rStream.afMaxVolumes = TSTATICCAST( TFLOAT, TMalloc( sizeof( TFLOAT ) * iNumChannels ) );
-		rStream.aiPans       = TSTATICCAST( TINT, TMalloc( sizeof( TINT ) * iNumChannels ) );
-
-		for ( TINT k = 0; k < iNumChannels; k++ )
-		{
-			rStream.aCategories[ k ] = pCategories->GetValue( k )->GetTPString8();
-			rStream.afVolumes[ k ]   = 1.0f;
-			rStream.aiPans[ k ]      = 128;
-		}
-
-		if ( const PBPropertyValue* pPans = pStreamProperties->GetProperty( "ChannelPan" ) )
-		{
-			const PBPropertyValueArray* pArray = pPans->GetArray();
-
-			for ( TUINT k = 0; k < pArray->GetSize(); k++ )
-				rStream.aiPans[ k ] = pArray->GetValue( k )->GetInteger();
-		}
-
-		if ( const PBPropertyValue* pMaxVolumes = pStreamProperties->GetProperty( "ChannelMaxVolumes" ) )
-		{
-			const PBPropertyValueArray* pArray = pMaxVolumes->GetArray();
-
-			for ( TUINT k = 0; k < pArray->GetSize(); k++ )
-			{
-				const PBPropertyValue* pValue = pArray->GetValue( k );
-
-				if ( pValue->GetType() == PBPropertyValue::Type::Float )
-					rStream.afMaxVolumes[ k ] = pValue->GetFloat();
-				else
-					rStream.afMaxVolumes[ k ] = TFLOAT( pValue->GetInteger() );
-
-				TMath::Clip( rStream.afMaxVolumes[ k ], 0.0f, 1.0f );
-			}
-		}
-		else
-		{
-			for ( TINT k = 0; k < iNumChannels; k++ )
-				rStream.afMaxVolumes[ k ] = 1.0f;
-		}
-
-		pStreamProperties->GetOptionalPropertyValue( rStream.bLoop, TPS8( Loop ) );
-
-		rStream.iStreamBufferSize = 2000;
-		pStreamProperties->GetOptionalPropertyValue( rStream.iStreamBufferSize, TPS8( StreamBufferSize ) );
+		ReadStream( pProperty->GetValue()->GetProperties(), rStream );
 	}
+
+#ifdef BARNYARD_LATEST
+	LoadWiiStreams( "data/sound/multiplexstreams_wii.trb" );
+#endif
 
 	m_oPauseListener.Connect( g_oSystemManager.GetPauseEmitter(), this, OnSystemPause, 0 );
 }
@@ -355,3 +364,132 @@ TBOOL AMultiplexStream::Play( TFLOAT a_fVolume )
 
 	return TTRUE;
 }
+
+#ifdef BARNYARD_LATEST
+
+// The Wii adds music streams: day tracks BY_day02..06, Bike02 and the car chase's Bike02Joyride
+// (AMusicManager::OnUpdate, ACarChaseMiniGameState::OnInsertion). Retail's multiplexstreams.trb
+// can't hold them (its exe has room for 17 streams), so they come from the converted Wii file
+// (ToshiResourceViewer -resave of the disc's Data/Sound/MultiplexStreams.trb), next to the retail
+// one. Streams retail already has keep their retail settings; only the ones it lacks are added,
+// and only when their FSB is there. The Wii also stops looping BY_DAY and Bike, so that the
+// music manager picks the next track when one ends: their Loop is taken from the Wii file, but
+// only when one of the added streams is a day or bike track.
+void AMultiplexStream::LoadWiiStreams( const TCHAR* a_szFileName )
+{
+	TTRB oTRB;
+
+	if ( oTRB.Load( a_szFileName, 0 ) != TTRB::ERROR_OK )
+		return;
+
+	const PBProperties* pMain = TSTATICCAST( const PBProperties, oTRB.GetSymbolAddress( "Main" ) );
+
+	if ( !pMain )
+		return;
+
+	TBOOL bAddedTracks = TFALSE;
+
+	// The streams retail has (their Loop may change below)
+	struct LoopOverride
+	{
+		TINT  iStream;
+		TBOOL bLoop;
+	};
+
+	LoopOverride aOverrides[ MAX_NUM_STREAMS ];
+	TINT         iNumOverrides = 0;
+
+	for ( TINT i = 0; i < pMain->GetPropertyCount(); i++ )
+	{
+		const PBProperties::PBProperty* pProperty = pMain->GetPropertyByIndex( i );
+
+		if ( T2String8::Compare( pProperty->GetName().GetString(), "MultiplexStream" ) != 0 )
+			continue;
+
+		const PBProperties* pProperties = pProperty->GetValue()->GetProperties();
+		TPString8           strName;
+		TPString8           strFSB;
+		pProperties->GetOptionalPropertyValue( strName, TPS8( Name ) );
+		pProperties->GetOptionalPropertyValue( strFSB, TPS8( FSB ) );
+
+		if ( strName.IsEmpty() )
+			continue;
+
+		TINT iExisting = -1;
+
+		for ( TINT k = 0; k < m_iNumStreams; k++ )
+		{
+			if ( T2String8::CompareNoCase( m_aStreams[ k ].strName.GetString(), strName.GetString() ) == 0 )
+			{
+				iExisting = k;
+				break;
+			}
+		}
+
+		if ( iExisting >= 0 )
+		{
+			TBOOL bLoop = m_aStreams[ iExisting ].bLoop;
+			pProperties->GetOptionalPropertyValue( bLoop, TPS8( Loop ) );
+
+			if ( bLoop != m_aStreams[ iExisting ].bLoop && iNumOverrides < MAX_NUM_STREAMS )
+				aOverrides[ iNumOverrides++ ] = { iExisting, bLoop };
+
+			continue;
+		}
+
+		if ( m_iNumStreams >= MAX_NUM_STREAMS )
+		{
+			TWARN( "AMultiplexStream: no room for the stream '%s'\n", strName.GetString() );
+			continue;
+		}
+
+		// Only streams whose music is there
+		TFile* pFile = TFile::Create( TString8( strFSB.GetString() ), TFILEMODE_READ );
+
+		if ( !pFile )
+		{
+			TWARN( "AMultiplexStream: '%s' needs '%s', which is missing\n", strName.GetString(), strFSB.GetString() );
+			continue;
+		}
+
+		pFile->Destroy();
+
+		ReadStream( pProperties, m_aStreams[ m_iNumStreams++ ] );
+		TINFO( "AMultiplexStream: added the Wii stream '%s' (%s)\n", strName.GetString(), strFSB.GetString() );
+
+		if ( T2String8::CompareNoCase( strName.GetString(), "BY_day", 6 ) == 0 || T2String8::CompareNoCase( strName.GetString(), "Bike02" ) == 0 )
+			bAddedTracks = TTRUE;
+	}
+
+	if ( bAddedTracks )
+	{
+		for ( TINT i = 0; i < iNumOverrides; i++ )
+			m_aStreams[ aOverrides[ i ].iStream ].bLoop = aOverrides[ i ].bLoop;
+	}
+
+	oTRB.Close();
+}
+
+TBOOL AMultiplexStream::HasStream( const TCHAR* a_szName ) const
+{
+	for ( TINT i = 0; i < m_iNumStreams; i++ )
+	{
+		if ( T2String8::CompareNoCase( m_aStreams[ i ].strName.GetString(), a_szName ) == 0 )
+			return TTRUE;
+	}
+
+	return TFALSE;
+}
+
+TBOOL AMultiplexStream::IsCurrentStream( const TPString8& a_rcName ) const
+{
+	return m_iCurrentStream >= 0 && m_iCurrentStream < m_iNumStreams && m_aStreams[ m_iCurrentStream ].strName == a_rcName;
+}
+
+// $BarnyardWiiJP: FUNCTION 8036a120
+TBOOL AMultiplexStream::IsChannelPlaying() const
+{
+	return m_iChannel != -1 && FSOUND_IsPlaying( m_iChannel );
+}
+
+#endif // BARNYARD_LATEST

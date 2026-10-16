@@ -163,7 +163,36 @@ public:
 	static const TCHAR* GetRoundUpChicksQuest();
 	static const TCHAR* GetCoyoteTippingQuest();
 
-	AQuest*    GetQuest( TINT a_iIndex ) const { return m_vecQuests[ a_iIndex ]; }
+#ifdef BARNYARD_LATEST
+	// Latest version (JP Wii, Data/Quests/tier_data_JP.trb): the quests of act 1 tiers 2-5 are in another order
+	// (Pip first, then Otis and the Pig, then Miles and Duke). LoadTierData puts the quests of the PC tier_data.trb in
+	// that order (see ms_aLatestAct1Quests). Saves keep the PC order, see SaveCompletedQuests and LoadCompletedQuests.
+	static constexpr TINT LATEST_ACT1_FIRST_TIER = 2;
+	static constexpr TINT LATEST_ACT1_LAST_TIER  = 5;
+	static constexpr TINT LATEST_ACT1_NUM_TIERS  = LATEST_ACT1_LAST_TIER - LATEST_ACT1_FIRST_TIER + 1;
+	static constexpr TINT LATEST_ACT1_NUM_QUESTS = 8;
+
+	struct LatestAct1Quest
+	{
+		const TCHAR* szQuest;
+		TINT         iTier;   // act 1 tier of the latest version
+		TINT         iPCTier; // act 1 tier of PC retail
+	};
+
+	// The quests of act 1 tiers 2-5 in the order of tier_data_JP.trb
+	static const LatestAct1Quest ms_aLatestAct1Quests[ LATEST_ACT1_NUM_QUESTS ];
+
+	// TRUE once LoadTierData has put the act 1 quests in the order of the latest version
+	static TBOOL IsLatestAct1Order();
+
+	// The act 1 tier of the quest a_szQuest in the latest version, a_iPCTier if the order doesn't change it
+	static TINT GetLatestAct1Tier( const TCHAR* a_szQuest, TINT a_iPCTier );
+#endif // BARNYARD_LATEST
+
+	AQuest* GetQuest( TINT a_iIndex ) const
+	{
+		return m_vecQuests[ a_iIndex ];
+	}
 	TINT       GetNumQuests() const { return m_vecQuests.Size(); }
 	TINT       GetNumAssignedQuests() const { return m_vecAssignedQuests.Size(); }
 	TINT       GetAct() const { return m_iAct; }
@@ -193,6 +222,21 @@ private:
 
 	TBOOL SaveCompletedQuests( AHackedQuickSave::Buffer* a_pBuffer );
 	TBOOL LoadCompletedQuests( AHackedQuickSave::Buffer* a_pBuffer );
+
+#ifdef BARNYARD_LATEST
+	// Puts the quests of act 1 tiers 2-5 in the order of the latest version (called by LoadTierData)
+	void ApplyLatestAct1Order();
+
+	// The completed mask of a_rcTier: the bits of its quests that are completed in m_aTiers (a_pCompletedTiers TNULL)
+	// or in a_pCompletedTiers (act 1 tiers 2-5 of the other order)
+	TUINT8 GetAct1CompletedMask( const QuestTier& a_rcTier, const QuestTier* a_pCompletedTiers ) const;
+
+	// The first act 1 tier between 2 and 5 of a_pTiers (tiers 2-5) that has a quest left, LATEST_ACT1_LAST_TIER + 1 if none
+	static TINT GetFirstIncompleteAct1Tier( const QuestTier* a_pTiers );
+
+	// TRUE if every quest of a_rcTier is completed
+	static TBOOL IsTierComplete( const QuestTier& a_rcTier );
+#endif // BARNYARD_LATEST
 
 	// Lets the quest givers of the tier a_iAbsTier offer their quests (AQuest::FLAGS a_uiFlags, 0 for all of them)
 	void OfferTierQuests( TINT a_iAbsTier, AQuest::FLAGS a_uiFlags );

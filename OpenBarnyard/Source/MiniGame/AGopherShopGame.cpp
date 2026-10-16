@@ -785,7 +785,8 @@ TBOOL AGopherShopGame::LoadPriceList()
 					pItem->IncreaseCount( 1 );
 			}
 
-			m_aCategories[ rPrice.iCategory ].AddItem( pItem );
+			// The tab of the shop (offset 0x18), not the kind of the item
+			m_aCategories[ rPrice.iShopCategory ].AddItem( pItem );
 		}
 	}
 

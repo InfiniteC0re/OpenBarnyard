@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ARacingCarSteer.h"
+#include "Helpers/APlayerProgress.h"
 #include "FX/AParticleEffectManager.h"
 #include "Units/AUnit.h"
 #include "Units/AUnitCarChaseCar.h"
@@ -27,7 +28,7 @@ TDEFINE_CLASS( ARacingCarSteer );
 
 static TFLOAT s_fPedalSpeed    = 2.0f;  // 0x00774390, how fast the gradual pedal inputs change per second
 static TFLOAT s_fBushEffectGap = 0.1f;  // 0x00774394, minimum time between two bushhit effects
-static TFLOAT s_fTorqueScale   = 1.65f; // 0x00774398, scales the torque of the engine of every car
+static TFLOAT s_fTorqueScale   = 1.65f; // 0x00774398 (JP Wii 0x806b0488), scales the torque of the engine of every car
 
 // Seat of the driver relative to the body of the car
 static TVector4 s_vSeatOffset       = { 0.0f, -0.93f, -0.2f, 1.0f }; // 0x00774340
@@ -123,6 +124,7 @@ TBOOL ARacingCarSteer::Create( AUnit* a_pOwner, const TVector4& a_rcPosition, co
 }
 
 // $Barnyard: FUNCTION 0056f210
+// $BarnyardWiiJP: FUNCTION 802dddb4
 void ARacingCarSteer::CreatePhysics( const TVector4& a_rcPosition, const TVector4& a_rcDirection )
 {
 	m_pCar = AVehicleManager::CreateCar();
@@ -155,20 +157,34 @@ void ARacingCarSteer::CreatePhysics( const TVector4& a_rcPosition, const TVector
 		vBoxCentre.Set( 0.0f, -1.35f, -0.1f, 1.0f );
 	}
 
+#ifdef BARNYARD_LATEST
+	// The JP Wii build retunes the handling for the Wii Remote steering (more grip, slower steering, less torque). It
+	// makes the trucks easier to drive, so here the Wii handling is only used on Easy; Normal keeps the PC retail handling.
+	const TBOOL bWiiHandling = APlayerProgress::GetSingleton()->IsEasyDifficulty();
+#endif
+
 	// The vehicle
 	APhysicsVehicleParams oVehicleParams;
 	oVehicleParams.fMass = 1000.0f;
 	oVehicleParams.vSize.Set( 2.6f, 2.0f, 5.0f, 1.0f );
-	oVehicleParams.fGearShiftDelay      = 0.75f;
-	oVehicleParams.fMaxSteeringAngle    = 0.6981317f;
+	oVehicleParams.fGearShiftDelay   = 0.75f;
+	oVehicleParams.fMaxSteeringAngle = 0.6981317f;
+#ifdef BARNYARD_LATEST
+	// The JP Wii build steers slower and the cops lose their faster steering
+	if ( bWiiHandling )
+		oVehicleParams.fSteeringSpeedFactor = ( eCarType == AUnitCarChaseCar::CARTYPE_PLAYER ) ? 0.0041f : 0.0037f;
+	else
+		oVehicleParams.fSteeringSpeedFactor = ( eCarType == AUnitCarChaseCar::CARTYPE_PLAYER || eCarType == AUnitCarChaseCar::CARTYPE_COP ) ? 0.005f : 0.0045f;
+#else
 	oVehicleParams.fSteeringSpeedFactor = ( eCarType == AUnitCarChaseCar::CARTYPE_PLAYER || eCarType == AUnitCarChaseCar::CARTYPE_COP ) ? 0.005f : 0.0045f;
-	oVehicleParams.fLowSpeed            = 6.9444447f;
-	oVehicleParams.iNumWheels           = 4;
-	oVehicleParams.fRollingResistance   = 0.01f;
-	oVehicleParams.fSurfaceDrag         = 0.0f;
-	oVehicleParams.fUnk30               = 0.005f;
-	oVehicleParams.fSurfaceDrag7        = 0.1f;
-	oVehicleParams.fSurfaceDrag0        = 0.002f;
+#endif
+	oVehicleParams.fLowSpeed          = 6.9444447f;
+	oVehicleParams.iNumWheels         = 4;
+	oVehicleParams.fRollingResistance = 0.01f;
+	oVehicleParams.fSurfaceDrag       = 0.0f;
+	oVehicleParams.fUnk30             = 0.005f;
+	oVehicleParams.fSurfaceDrag7      = 0.1f;
+	oVehicleParams.fSurfaceDrag0      = 0.002f;
 
 	// The car
 	APhysicsCarParams oCarParams;
@@ -191,6 +207,16 @@ void ARacingCarSteer::CreatePhysics( const TVector4& a_rcPosition, const TVector
 	oCarParams.fDownForce             = 0.5f;
 	oCarParams.vBoxExtents            = vBoxExtents;
 	oCarParams.vBoxCentre             = vBoxCentre;
+
+#ifdef BARNYARD_LATEST
+	// NOTE: the JP Wii build lowers the torque of the player's truck by writing the shared
+	// s_fTorqueScale, so every car created after it (the cops, Beady) also gets 1.5 instead
+	// of 1.65 until the game restarts. Kept as in the JP Wii build (see Docs/RetailBugs.md), on Easy only.
+	// NOTE: on Normal the player's truck sets it back to the PC value 1.65, which PC retail never changes, so a
+	// Normal game after an Easy one plays like PC retail.
+	if ( eCarType == AUnitCarChaseCar::CARTYPE_PLAYER )
+		s_fTorqueScale = bWiiHandling ? 1.5f : 1.65f;
+#endif // BARNYARD_LATEST
 
 	// The engine
 	APhysicsEngineParams oEngineParams;
@@ -223,7 +249,11 @@ void ARacingCarSteer::CreatePhysics( const TVector4& a_rcPosition, const TVector
 
 	// The front wheels (steerable)
 	APhysicsWheelParams oFrontWheel;
-	oFrontWheel.fGrip               = 2.0f;
+#ifdef BARNYARD_LATEST
+	oFrontWheel.fGrip = bWiiHandling ? 2.4f : 2.0f;
+#else
+	oFrontWheel.fGrip                   = 2.0f;
+#endif
 	oFrontWheel.fRadius             = 0.4f;
 	oFrontWheel.fSpringStiffness    = 15000.0f;
 	oFrontWheel.fCompressionDamping = fDamping;
@@ -235,11 +265,15 @@ void ARacingCarSteer::CreatePhysics( const TVector4& a_rcPosition, const TVector
 	oFrontWheel.fUnk24              = fFrontAxle;
 	oFrontWheel.fUnk28              = 1.0f;
 	oFrontWheel.vPosition.Set( fHalfTrack, 0.0f, fFrontAxle, 1.0f );
-	oFrontWheel.bSteerable     = TTRUE;
-	oFrontWheel.bUnk3D         = TFALSE;
-	oFrontWheel.fDownForce     = fRearAxle * 1000.0f / fAxles * 0.5f;
-	oFrontWheel.eType          = APhysicsWheelParams::TYPE_CAR;
-	oFrontWheel.fBrakeGripFast = 0.85f;
+	oFrontWheel.bSteerable = TTRUE;
+	oFrontWheel.bUnk3D     = TFALSE;
+	oFrontWheel.fDownForce = fRearAxle * 1000.0f / fAxles * 0.5f;
+	oFrontWheel.eType      = APhysicsWheelParams::TYPE_CAR;
+#ifdef BARNYARD_LATEST
+	oFrontWheel.fBrakeGripFast = bWiiHandling ? 0.9f : 0.85f;
+#else
+	oFrontWheel.fBrakeGripFast          = 0.85f;
+#endif
 	oFrontWheel.fBrakeGripSlow = 1.0f;
 
 	APhysicsWheelParams oFrontWheel2 = oFrontWheel;
@@ -248,7 +282,11 @@ void ARacingCarSteer::CreatePhysics( const TVector4& a_rcPosition, const TVector
 
 	// The rear wheels (driven by the engine)
 	APhysicsWheelParams oRearWheel;
-	oRearWheel.fGrip               = 2.0f;
+#ifdef BARNYARD_LATEST
+	oRearWheel.fGrip = bWiiHandling ? 2.4f : 2.0f;
+#else
+	oRearWheel.fGrip                    = 2.0f;
+#endif
 	oRearWheel.fRadius             = 0.4f;
 	oRearWheel.fSpringStiffness    = 15000.0f;
 	oRearWheel.fCompressionDamping = fDamping;
@@ -260,12 +298,17 @@ void ARacingCarSteer::CreatePhysics( const TVector4& a_rcPosition, const TVector
 	oRearWheel.fUnk24              = -fRearAxle;
 	oRearWheel.fUnk28              = 1.0f;
 	oRearWheel.vPosition.Set( fHalfTrack, 0.0f, -fRearAxle, 1.0f );
-	oRearWheel.bSteerable     = TFALSE;
-	oRearWheel.bUnk3D         = TTRUE;
-	oRearWheel.fDownForce     = fFrontAxle * 1000.0f / fAxles * 0.5f;
-	oRearWheel.eType          = APhysicsWheelParams::TYPE_CAR;
-	oRearWheel.fBrakeGripFast = 0.85f;
-	oRearWheel.fBrakeGripSlow = 0.3f;
+	oRearWheel.bSteerable = TFALSE;
+	oRearWheel.bUnk3D     = TTRUE;
+	oRearWheel.fDownForce = fFrontAxle * 1000.0f / fAxles * 0.5f;
+	oRearWheel.eType      = APhysicsWheelParams::TYPE_CAR;
+#ifdef BARNYARD_LATEST
+	oRearWheel.fBrakeGripFast = bWiiHandling ? 0.9f : 0.85f;
+	oRearWheel.fBrakeGripSlow = bWiiHandling ? 0.6f : 0.3f;
+#else
+	oRearWheel.fBrakeGripFast           = 0.85f;
+	oRearWheel.fBrakeGripSlow           = 0.3f;
+#endif
 
 	APhysicsWheelParams oRearWheel2 = oRearWheel;
 	oRearWheel2.fUnk1C              = -fHalfTrack;

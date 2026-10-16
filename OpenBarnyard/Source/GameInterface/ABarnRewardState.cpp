@@ -216,7 +216,7 @@ void ABarnRewardState::OnInsertion()
 		for ( TINT i = 0; i < TARRAYSIZE( m_aFlares ); i++ )
 		{
 			Flare& rFlare = m_aFlares[ i ];
-			rFlare.oRectangle.SetTextureSection( pFlareSection );
+			rFlare.oRectangle.SetTextureSection( *pFlareSection );
 			rFlare.oRectangle.SetAttachment( T2GUIATTACHMENT_MIDDLECENTER, T2GUIATTACHMENT_MIDDLECENTER );
 			rFlare.oRectangle.SetAlpha( 0.75f );
 

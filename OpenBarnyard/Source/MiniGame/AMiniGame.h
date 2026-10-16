@@ -53,6 +53,13 @@ public:
 	// Sharp Squirter: 2 and 3 move the variant to the Woods ones (APrecisionSquirt::OnInsertion)
 	TINT GetUnk18() const { return field6_0x18; }
 
+#ifdef BARNYARD_LATEST
+	// Wii: name of the XUI scene (Data/XUI/<language>/<name>.trb) shown while the minigame loads
+	void SetXUILoadScreen( const Toshi::TPString8& a_rcName );
+
+	const Toshi::TPString8& GetXUILoadScreen() const { return m_strXUILoadScreen; }
+#endif
+
 private:
 	Toshi::TPString8        m_strMiniGameName;
 	TINT                    m_eLocaleTitle;
@@ -73,4 +80,10 @@ private:
 	const TCHAR*            m_aszAlternativeStateNames[ MAX_NUM_VARIANTS ];
 	TINT                    m_eStartHudKind;
 	LOADFLAGS               m_eLoadFlags;
+
+#ifdef BARNYARD_LATEST
+	// NOTE: the Wii build also has the name of the Wii Remote instruction scene of the minigame at 0x108
+	// (ARevInstructionState, set by 80187158) and its number of pages at 0x10C. They aren't recovered.
+	Toshi::TPString8 m_strXUILoadScreen; // 0x104 (Wii)
+#endif
 };

@@ -218,6 +218,7 @@ void ASimState::OnRender( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 0043ed70
+// $BarnyardWiiJP: FUNCTION 8014e628
 void ASimState::OnLoaded()
 {
 	// Count the pick ups collected while the sim wasn't shown
@@ -236,7 +237,11 @@ void ASimState::OnLoaded()
 		if ( AGameLoader::IsBarnExploreMiniGame() || !AGameLoader::WasBarnExploreMiniGame() ||
 		     !AGameTimeManager::GetSingleton()->IsItNight() || ( !pNbBull && !AGameLoader::IsBarnExploreMiniGame() ) )
 		{
-			m_bPendingAutoSave = TTRUE;
+#ifdef BARNYARD_LATEST
+			// Latest version: no autosave while the player is brought back to the Pig with the apple pie
+			if ( !AGameLoader::IsPigApplePieReturn() )
+#endif
+				m_bPendingAutoSave = TTRUE;
 		}
 	}
 }
@@ -298,7 +303,7 @@ static void Dev_UpdateGameTime( TFLOAT a_fDeltaTime )
 	{
 		s_bDayPhaseSet = TTRUE;
 
-		if ( const TCHAR* szArg = TStringManager::String8FindString( GetCommandLineA(), "-devdayphase " ) )
+		if ( const TCHAR* szArg = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devdayphase " ) )
 		{
 			TINT iDayPhase = atoi( szArg + TStringManager::String8Length( "-devdayphase " ) );
 

@@ -8,7 +8,7 @@
 // a short burning animation (Wings_Hot1..4 -> Wing_Burnt), a regained one pops
 // in with a spinning flare.
 // Plain T2GUIElement (no TClass), size 0x568.
-// vtable 00739d78: +0x00 dtor 00639000, +0x04 Tick 006392d0.
+// vtable 00739d78: +0x00 dtor 00639000, +0x04 Tick 006392d0, +0x48 SetVisible 004048d0.
 // Name from the Wii build (AGUI2Feathers).
 // Used by AChickenFireMinigameState.
 //-----------------------------------------------------------------------------
@@ -26,6 +26,16 @@ public:
 	// Toshi::T2GUIElement
 	//-----------------------------------------------------------------------------
 	virtual void Tick( TFLOAT a_fDeltaTime ) override;
+
+	//-----------------------------------------------------------------------------
+	// AGUI2Feathers
+	//-----------------------------------------------------------------------------
+	// NOTE: retail adds this virtual (+0x48); its body is folded with T2GUIElement::SetVisible (004048d0)
+	virtual void SetVisible( TBOOL a_bVisible )
+	{
+		if ( a_bVisible ) Show();
+		else Hide();
+	}
 
 	// Creates a_iNumFeathers wings (all burnt until SetNumFeathers is called)
 	TBOOL Create( TINT a_iNumFeathers );

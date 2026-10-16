@@ -9,6 +9,7 @@
 #include "AAudioOptionsState.h"
 #include "ACameraOptionsState.h"
 #include "ADifficultyOptionState.h"
+#include "AFrontEndLanguageState.h"
 #include "SaveLoadSKU.h"
 #include "Helpers/APlayerProgress.h"
 
@@ -47,6 +48,20 @@ TBOOL AOptionsState::OnUpdate( TFLOAT a_fDeltaTime )
 	return BaseClass::OnUpdate( a_fDeltaTime );
 }
 
+// NOTE: inlined in OnInsertion
+const TWCHAR* AOptionsState::GetButtonText( TINT a_iButton )
+{
+#ifdef BARNYARD_LATEST
+	// NOTE: the Wii skips OPTIONSBUTTON_CONTROLS here (no mouse), the PC keeps it
+	if ( a_iButton == OPTIONSBUTTON_CAMERA )
+		return ACameraOptionsState::GetCameraText();
+	else if ( a_iButton == OPTIONSBUTTON_DIFFICULTY )
+		return ADifficultyOptionState::GetText( OPTIONSBUTTON_TEXTS[ a_iButton ] );
+#endif
+
+	return g_pLocaleManager->GetString( OPTIONSBUTTON_TEXTS[ a_iButton ] );
+}
+
 TPSTRING8_DECLARE( DialogInputMap );
 
 // $Barnyard: FUNCTION 00444fc0
@@ -58,19 +73,7 @@ void AOptionsState::OnInsertion()
 
 	for ( TINT i = 0; i < OPTIONSBUTTON_NUMOF; i++ )
 	{
-#ifdef BARNYARD_LATEST
-		// NOTE: the Wii skips OPTIONSBUTTON_CONTROLS here (no mouse), the PC keeps it
-		const TWCHAR* wszText;
-
-		if ( i == OPTIONSBUTTON_CAMERA )
-			wszText = ACameraOptionsState::GetCameraText();
-		else if ( i == OPTIONSBUTTON_DIFFICULTY )
-			wszText = ADifficultyOptionState::GetText( OPTIONSBUTTON_TEXTS[ i ] );
-		else
-			wszText = g_pLocaleManager->GetString( OPTIONSBUTTON_TEXTS[ i ] );
-#else
-		const TWCHAR* wszText = g_pLocaleManager->GetString( OPTIONSBUTTON_TEXTS[ i ] );
-#endif
+		const TWCHAR* wszText = GetButtonText( i );
 
 		m_aButtons[ i ].Create( pFont, pFont->GetTextWidth( wszText ), wszText, 10.0f );
 		m_aButtons[ i ].SetFocusedColour( AGUI2STYLE_COLOR_FOCUSED );
@@ -129,6 +132,10 @@ void AOptionsState::OnMenuClose()
 			pState = new AAudioOptionsState();
 		else if ( m_iActivatedButtonID == OPTIONSBUTTON_CONTROLS )
 			pState = new AControlOptionsState();
+#ifdef BARNYARD_COMMUNITY_PATCH
+		else if ( m_iActivatedButtonID == OPTIONSBUTTON_LANGUAGE )
+			pState = new AFrontEndLanguageState( TNULL, TFALSE );
+#endif
 #ifdef BARNYARD_LATEST
 		else if ( m_iActivatedButtonID == OPTIONSBUTTON_CAMERA )
 			pState = new ACameraOptionsState();
@@ -150,3 +157,33 @@ void AOptionsState::OnMenuClose()
 		ms_bSettingsChanged = TFALSE;
 	}
 }
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+// $BarnyardPS2EU: FUNCTION 001609b8
+void AOptionsState::UpdateTexts()
+{
+	for ( TINT i = 0; i < OPTIONSBUTTON_NUMOF; i++ )
+	{
+		m_aButtons[ i ].SetText( GetButtonText( i ), TTRUE );
+
+		// NOTE: the title is set again for every button
+		m_oDialogTitle.SetTextAndFitWidth( g_pLocaleManager->GetString( 284 ) );
+		m_oDialogTitleBackground.SetWidth( m_oDialogTitle.GetWidth() * 1.25f );
+	}
+
+	m_oMenu.ReflowChildrenVertically();
+
+	TFLOAT fMenuWidth, fMenuHeight;
+	m_oMenu.GetDimensions( fMenuWidth, fMenuHeight );
+
+	if ( fMenuHeight < 128.0f )
+		fMenuHeight = 128.0f;
+
+	if ( fMenuWidth < 384.0f )
+		fMenuWidth = 384.0f;
+
+	m_oDialog.SetDialogSize( fMenuWidth + 128.0f, fMenuHeight + 128.0f );
+}
+
+#endif // BARNYARD_COMMUNITY_PATCH

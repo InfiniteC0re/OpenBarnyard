@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "APhysicsCar.h"
+#include "Helpers/APlayerProgress.h"
 #include "ACollisionObject.h"
 #include "AVehicleManager.h"
 
@@ -14,18 +15,29 @@
 TOSHI_NAMESPACE_USING
 
 // Tweakables (retail globals)
-static TBOOL  s_bSimulate          = TTRUE;      // 0x0077999d
-static TBOOL  s_bClampAntiRoll     = TTRUE;      // 0x0077999c
-static TFLOAT s_fUprightAngle      = 1.0471976f; // 0x00779990, the car can only stop when it's tilted less than this
-static TFLOAT s_fBrakeStopSpeed    = 0.5f;       // 0x00779994, below it the brake stops the car at once
-static TFLOAT s_fAntiRollClamp     = 0.2f;       // 0x00779998, the anti-roll force is at most this part of the average spring force
-static TFLOAT s_fFlipTime          = 2.5f;       // 0x007799a0, time on the roof before the car is put back on its wheels
-static TBOOL  s_bSweptBoxCollision = TTRUE;      // 0x007b5f78
+static TBOOL  s_bSimulate       = TTRUE;      // 0x0077999d
+static TBOOL  s_bClampAntiRoll  = TTRUE;      // 0x0077999c
+static TFLOAT s_fUprightAngle   = 1.0471976f; // 0x00779990, the car can only stop when it's tilted less than this
+static TFLOAT s_fBrakeStopSpeed = 0.5f;       // 0x00779994, below it the brake stops the car at once
+static TFLOAT s_fAntiRollClamp  = 0.2f;       // 0x00779998, the anti-roll force is at most this part of the average spring force
+static TFLOAT s_fFlipTime       = 2.5f;       // 0x007799a0, time on the roof before the car is put back on its wheels
+#ifdef BARNYARD_LATEST
+// JP Wii 0x806b39c8 is 1.0. The faster recovery makes the car chase easier (made for the Wii controls), so here it's
+// only used on Easy.
+static TFLOAT s_fFlipTimeEasy = 1.0f;
+#endif
+static TBOOL s_bSweptBoxCollision = TTRUE; // 0x007b5f78
 
 // $Barnyard: FUNCTION 00657690
+// $BarnyardWiiJP: FUNCTION 8042a9dc
 APhysicsCar::APhysicsCar()
     : m_fFlipTimer( 0.0f )
     , m_bHandBrakeSlide( TFALSE )
+#ifdef BARNYARD_LATEST
+    , m_bHasRecoveryPoint( TFALSE )
+    , m_vRecoveryPoint( TVector4::VEC_ZERO )
+    , m_vRecoveryDirection( TVector4::VEC_ZERO )
+#endif // BARNYARD_LATEST
 {
 	m_oEventHandler.m_pBike = TNULL;
 }
@@ -39,6 +51,7 @@ APhysicsCar::~APhysicsCar()
 }
 
 // $Barnyard: FUNCTION 00656660
+// $BarnyardWiiJP: FUNCTION 8042aafc
 void APhysicsCar::Setup( const APhysicsCarParams& a_rcCarParams, const APhysicsVehicleParams& a_rcVehicleParams, const APhysicsEngineParams& a_rcEngineParams, const APhysicsWheelParams& a_rcWheel0, const APhysicsWheelParams& a_rcWheel1, const APhysicsWheelParams& a_rcWheel2, const APhysicsWheelParams& a_rcWheel3 )
 {
 	m_fMass                = a_rcVehicleParams.fMass;
@@ -119,6 +132,12 @@ void APhysicsCar::Setup( const APhysicsCarParams& a_rcCarParams, const APhysicsV
 	m_vCentreOfMass2.Set( 0.0f, m_oParams.vBoxCentre.y, 0.0f, 1.0f );
 	m_oEventHandler.m_pBike = this;
 	m_fFlipTimer            = 0.0f;
+
+#ifdef BARNYARD_LATEST
+	m_bHasRecoveryPoint  = TFALSE;
+	m_vRecoveryPoint     = TVector4::VEC_ZERO;
+	m_vRecoveryDirection = TVector4::VEC_ZERO;
+#endif // BARNYARD_LATEST
 }
 
 // $Barnyard: FUNCTION 00656650
@@ -215,6 +234,7 @@ void APhysicsCar::UpdateSuspension()
 }
 
 // $Barnyard: FUNCTION 006578b0
+// $BarnyardWiiJP: FUNCTION 8042bca0
 void APhysicsCar::FlipUpright()
 {
 	if ( !m_bFlipRecovery )
@@ -228,7 +248,11 @@ void APhysicsCar::FlipUpright()
 	else
 		m_fFlipTimer = m_fDeltaTime + m_fFlipTimer;
 
+#ifdef BARNYARD_LATEST
+	if ( m_fFlipTimer > ( APlayerProgress::GetSingleton()->IsEasyDifficulty() ? s_fFlipTimeEasy : s_fFlipTime ) )
+#else
 	if ( m_fFlipTimer > s_fFlipTime )
+#endif
 	{
 		// The car lies on its roof for too long, put it back on its wheels on the ground below it
 		ARigidBodyCollision oCollision;
@@ -244,20 +268,54 @@ void APhysicsCar::FlipUpright()
 			{
 				TMatrix44 matTransform = TMatrix44::IDENTITY;
 
-				TVector4 vUp;
-				vUp.Multiply( oCollision.m_vNormal, -1.0f );
+#ifdef BARNYARD_LATEST
+				if ( m_bHasRecoveryPoint )
+				{
+					// The JP Wii build puts the car back on the track, at its recovery point, facing along the track
+					TVector4 vPosition = m_vRecoveryPoint;
+					TVector4 vUp       = TVector4::VEC_POSY;
 
-				TVector4 vRight;
-				vRight.CrossProduct( vUp, m_oBody.m_oTransform.AsBasisVector4( BASISVECTOR_FORWARD ) );
-				vRight.Normalise();
+					TVector4 vRayOffset;
+					vRayOffset.Multiply( TVector4::VEC_POSY, 10.0f );
+					TVector4 vRayEnd   = m_vRecoveryPoint + vRayOffset;
+					TVector4 vRayStart = m_vRecoveryPoint - vRayOffset;
 
-				TVector4 vForward;
-				vForward.CrossProduct( vRight, vUp );
+					if ( AVehicleManager::CollideRay( vRayStart, vRayEnd, &oCollision, ~m_oBody.m_oMaterial.m_uiResponseTypes, TCollisionCommon::TOSHICGROUPFLAG( m_oBody.m_oMaterial.m_uiIgnoreGroups ) ) )
+					{
+						vPosition = oCollision.m_vPosition;
+						vUp.Multiply( oCollision.m_vNormal, -1.0f );
+					}
 
-				matTransform.AsBasisVector4( BASISVECTOR_RIGHT )       = vRight;
-				matTransform.AsBasisVector4( BASISVECTOR_UP )          = vUp;
-				matTransform.AsBasisVector4( BASISVECTOR_FORWARD )     = vForward;
-				matTransform.AsBasisVector4( BASISVECTOR_TRANSLATION ) = oCollision.m_vPosition;
+					TVector4 vRight;
+					vRight.CrossProduct( vUp, m_vRecoveryDirection );
+					vRight.Normalise();
+
+					TVector4 vForward;
+					vForward.CrossProduct( vRight, vUp );
+
+					matTransform.AsBasisVector4( BASISVECTOR_RIGHT )       = vRight;
+					matTransform.AsBasisVector4( BASISVECTOR_UP )          = vUp;
+					matTransform.AsBasisVector4( BASISVECTOR_FORWARD )     = vForward;
+					matTransform.AsBasisVector4( BASISVECTOR_TRANSLATION ) = vPosition;
+				}
+				else
+#endif // BARNYARD_LATEST
+				{
+					TVector4 vUp;
+					vUp.Multiply( oCollision.m_vNormal, -1.0f );
+
+					TVector4 vRight;
+					vRight.CrossProduct( vUp, m_oBody.m_oTransform.AsBasisVector4( BASISVECTOR_FORWARD ) );
+					vRight.Normalise();
+
+					TVector4 vForward;
+					vForward.CrossProduct( vRight, vUp );
+
+					matTransform.AsBasisVector4( BASISVECTOR_RIGHT )       = vRight;
+					matTransform.AsBasisVector4( BASISVECTOR_UP )          = vUp;
+					matTransform.AsBasisVector4( BASISVECTOR_FORWARD )     = vForward;
+					matTransform.AsBasisVector4( BASISVECTOR_TRANSLATION ) = oCollision.m_vPosition;
+				}
 
 				TQuaternion qOrientation;
 				TMatrix44::MatToQuat( qOrientation, matTransform );
@@ -270,6 +328,15 @@ void APhysicsCar::FlipUpright()
 				m_vPrevPosition    = m_oBody.m_oTransform.GetTranslation();
 				m_qPrevOrientation = m_oBody.m_qOrientation;
 				m_vPrevVelocity    = TVector4::VEC_ZERO;
+
+#ifdef BARNYARD_LATEST
+				if ( m_bHasRecoveryPoint )
+				{
+					// Drive on along the track at 27.78 m/s (100 km/h)
+					m_oBody.m_vVelocity.Multiply( m_vRecoveryDirection, 27.777779f );
+					m_vPrevVelocity = m_oBody.m_vVelocity;
+				}
+#endif // BARNYARD_LATEST
 
 				UpdateWheelContacts();
 			}

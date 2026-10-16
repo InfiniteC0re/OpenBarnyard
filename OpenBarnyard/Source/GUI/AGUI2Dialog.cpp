@@ -210,3 +210,47 @@ void AGUI2Dialog::AddChildToRectangle( T2GUIElement* a_pElement, T2GUIATTACHMENT
 {
 	m_aRectangles[ a_eRectangle ].AddChildTail( *a_pElement );
 }
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+// $BarnyardPS2: FUNCTION 003e3bb8
+void AGUI2Dialog::FitToContent()
+{
+	// NOTE: the maximum starts at FLT_MIN (the smallest positive float), not -FLT_MAX
+	TVector2 vecMins( TMath::MAXFLOAT, TMath::MAXFLOAT );
+	TVector2 vecMaxs( TMath::MINFLOAT, TMath::MINFLOAT );
+
+	T2GUIRectangle& rContent = m_aRectangles[ T2GUIATTACHMENT_MIDDLECENTER ];
+
+	for ( T2GUIElement* pChild = rContent.ChildRBegin(); pChild != TNULL; pChild = rContent.GetPrevChild( pChild ) )
+	{
+		TVector2 vecPoint;
+		TVector2 vecTransformed;
+
+		pChild->GetMins( vecPoint.x, vecPoint.y );
+		pChild->GetTransform().Transform( vecTransformed, vecPoint );
+		vecMins.x = TMath::Min( vecMins.x, vecTransformed.x );
+		vecMins.y = TMath::Min( vecMins.y, vecTransformed.y );
+
+		pChild->GetMaxs( vecPoint.x, vecPoint.y );
+		pChild->GetTransform().Transform( vecTransformed, vecPoint );
+		vecMaxs.x = TMath::Max( vecMaxs.x, vecTransformed.x );
+		vecMaxs.y = TMath::Max( vecMaxs.y, vecTransformed.y );
+	}
+
+	TFLOAT fWidth  = vecMaxs.x - vecMins.x;
+	TFLOAT fHeight = vecMaxs.y - vecMins.y;
+
+	m_aRectangles[ T2GUIATTACHMENT_TOPCENTER ].SetDimensions( fWidth, m_apTexTiles[ T2GUIATTACHMENT_TOPCENTER ]->GetHeight() );
+	m_aRectangles[ T2GUIATTACHMENT_MIDDLELEFT ].SetDimensions( m_apTexTiles[ T2GUIATTACHMENT_MIDDLELEFT ]->GetWidth(), fHeight );
+	m_aRectangles[ T2GUIATTACHMENT_MIDDLECENTER ].SetDimensions( fWidth, fHeight );
+	m_aRectangles[ T2GUIATTACHMENT_MIDDLERIGHT ].SetDimensions( m_apTexTiles[ T2GUIATTACHMENT_MIDDLERIGHT ]->GetWidth(), fHeight );
+	m_aRectangles[ T2GUIATTACHMENT_BOTTOMCENTER ].SetDimensions( fWidth, m_apTexTiles[ T2GUIATTACHMENT_BOTTOMCENTER ]->GetHeight() );
+
+	T2GUIElement::SetDimensions(
+	    fWidth + ( m_apTexTiles[ T2GUIATTACHMENT_MIDDLELEFT ]->GetWidth() + m_apTexTiles[ T2GUIATTACHMENT_MIDDLERIGHT ]->GetWidth() ),
+	    fHeight + ( m_apTexTiles[ T2GUIATTACHMENT_TOPCENTER ]->GetHeight() + m_apTexTiles[ T2GUIATTACHMENT_BOTTOMCENTER ]->GetHeight() )
+	);
+}
+
+#endif // BARNYARD_COMMUNITY_PATCH

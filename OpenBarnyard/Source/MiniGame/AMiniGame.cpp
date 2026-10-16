@@ -38,6 +38,9 @@ AMiniGame::AMiniGame( const AMiniGame& a_rcOther )
     , m_iNumStateNames( a_rcOther.m_iNumStateNames )
     , m_eStartHudKind( a_rcOther.m_eStartHudKind )
     , m_eLoadFlags( a_rcOther.m_eLoadFlags )
+#ifdef BARNYARD_LATEST
+    , m_strXUILoadScreen( a_rcOther.m_strXUILoadScreen )
+#endif
 {
 	TUtil::MemCopy( m_aVariants, a_rcOther.m_aVariants, sizeof( m_aVariants ) );
 	TUtil::MemCopy( m_aszAlternativeStateNames, a_rcOther.m_aszAlternativeStateNames, sizeof( m_aszAlternativeStateNames ) );
@@ -46,6 +49,16 @@ AMiniGame::AMiniGame( const AMiniGame& a_rcOther )
 AMiniGame::~AMiniGame()
 {
 }
+
+#ifdef BARNYARD_LATEST
+
+// $BarnyardWiiJP: FUNCTION 801870d8
+void AMiniGame::SetXUILoadScreen( const TPString8& a_rcName )
+{
+	m_strXUILoadScreen = a_rcName;
+}
+
+#endif // BARNYARD_LATEST
 
 const AMiniGame::Variant& AMiniGame::GetVariant( TINT a_iIndex )
 {

@@ -51,10 +51,12 @@ AFrontEndPlayersState::AFrontEndPlayersState()
 }
 
 //! Destructor.
+// $BarnyardPS2: FUNCTION 00113740
 AFrontEndPlayersState::~AFrontEndPlayersState()
 {
 }
 
+// $BarnyardPS2: FUNCTION 001137d8
 void AFrontEndPlayersState::OnInsertion()
 {
 	T2GUIFont* pFont = T2GUIFontManager::FindFont( "Rekord26" );
@@ -85,7 +87,8 @@ void AFrontEndPlayersState::OnInsertion()
 		rTextBox.SetShadowEnabled( TTRUE );
 		rTextBox.SetShadowColour( 0xa0000000 );
 		rTextBox.SetShadowAlpha( ABYardMenuState::s_fShadowAlpha );
-		rTextBox.SetShadowOffset( rTextBox.GetScale() * 5.0f, rTextBox.GetScale() * 5.0f );
+		// NOTE: the offset is stored as it is (PS2), SetShadowOffset would multiply it by the scale again
+		rTextBox.SetShadowOffsetUnscaled( rTextBox.GetScale() * 5.0f, rTextBox.GetScale() * 5.0f );
 
 		m_oMenu.AddMenuItem( m_aMenuItems[ i ] );
 	}
@@ -109,13 +112,14 @@ void AFrontEndPlayersState::OnInsertion()
 	m_oControllersPrompt.SetTextAndFitWidth( sMsg );
 	m_oControllersPrompt.Hide();
 	m_oControllersPrompt.SetAttachment( T2GUIATTACHMENT_BOTTOMCENTER, T2GUIATTACHMENT_BOTTOMCENTER );
-	m_oControllersPrompt.SetTransform( 0.0f, -30.0f );
+	m_oControllersPrompt.SetTranslation( 0.0f, -30.0f );
 
 	AGUI2::GetRootElement()->AddChildTail( m_oControllersPrompt );
 
 	BaseClass::OnInsertion();
 }
 
+// $BarnyardPS2: FUNCTION 00113a90
 void AFrontEndPlayersState::OnRemoval()
 {
 #ifdef BARNYARD_COMMUNITY_PATCH
@@ -129,6 +133,7 @@ void AFrontEndPlayersState::OnRemoval()
 	BaseClass::OnRemoval();
 }
 
+// $BarnyardPS2: FUNCTION 00113ab0
 TBOOL AFrontEndPlayersState::ProcessCommand( AInputCommand a_eInputCommand, const TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents )
 {
 	if ( m_eMenuState == MENUSTATE_MENU_VISIBLE && a_eInputCommand == AInputCommand_Cancel )
@@ -141,6 +146,7 @@ TBOOL AFrontEndPlayersState::ProcessCommand( AInputCommand a_eInputCommand, cons
 	return BaseClass::ProcessCommand( a_eInputCommand, a_pInputEvent, a_rStopEvents );
 }
 
+// $BarnyardPS2: FUNCTION 00113af8
 TBOOL AFrontEndPlayersState::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	UpdateMenuButtons( a_fDeltaTime );
@@ -216,6 +222,7 @@ TBOOL AFrontEndPlayersState::OnUpdate( TFLOAT a_fDeltaTime )
 	return BaseClass::OnUpdate( a_fDeltaTime );
 }
 
+// $BarnyardPS2: FUNCTION 00113cd8
 void AFrontEndPlayersState::OnActivate()
 {
 	m_iSelectedItem = 0;
@@ -250,6 +257,7 @@ void AFrontEndPlayersState::OnActivate()
 	m_eMenuState = MENUSTATE_MENU_APPEAR;
 }
 
+// $BarnyardPS2: FUNCTION 00113d70
 void AFrontEndPlayersState::OnDeactivate()
 {
 	/*
@@ -258,6 +266,7 @@ void AFrontEndPlayersState::OnDeactivate()
 	BaseClass::OnDeactivate();
 }
 
+// $BarnyardPS2: FUNCTION 00113d90
 void AFrontEndPlayersState::OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem )
 {
 	TVALIDPTR( a_pMenuItem );
@@ -284,6 +293,7 @@ void AFrontEndPlayersState::OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem )
 	m_eMenuState = MENUSTATE_MENU_VISIBLE;
 }
 
+// $BarnyardPS2: FUNCTION 00113e10
 void AFrontEndPlayersState::OnMenuItemFocused( AGUI2MenuItem& a_rOldFocus, AGUI2MenuItem& a_rNewFocus )
 {
 	m_iSelectedItem = TSTATICCAST( AGUI2Button, &a_rNewFocus )->GetId();
@@ -300,6 +310,7 @@ void AFrontEndPlayersState::OnMenuItemFocused( AGUI2MenuItem& a_rOldFocus, AGUI2
 	}
 }
 
+// $BarnyardPS2: FUNCTION 00113e80
 void AFrontEndPlayersState::OnMenuClose()
 {
 	if ( m_iSelectedItem >= 0 )
@@ -325,8 +336,13 @@ void AFrontEndPlayersState::OnMenuClose()
 		AMiniGameManager::GetSingleton()->ClearSessionResults();
 
 		// No AI or variant control in multiplayer
-		// NOTE: the original uses the default constructor of its branch, Antics mode is what's meant here
+#ifdef BARNYARD_COMMUNITY_PATCH
+		// NOTE: the PS2 build passes FALSE (the default argument of the original source), which is the debug
+		// mode of the minigame list: it resets the minigame player set on activation, dropping the players added above
 		AFrontEndMiniGameState2* pState = new AFrontEndMiniGameState2( TTRUE );
+#else
+		AFrontEndMiniGameState2* pState = new AFrontEndMiniGameState2( TFALSE );
+#endif
 		TVALIDPTR( pState );
 
 		AGameStateController::GetSingleton()->PushState( pState );

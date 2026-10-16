@@ -19,6 +19,8 @@
 #include "Helpers/AGameLoader.h"
 #include "GameInterface/AMessagePopupState.h"
 #include "GameInterface/AFrontEndMainMenuState2.h"
+#include "GameInterface/AFrontEndLanguageState.h"
+#include "Locale/ALocaleManager.h"
 #include "Sound/ASoundManager.h"
 #include "Movie/ABINKMoviePlayer.h"
 #include "ALoadScreen.h"
@@ -235,7 +237,12 @@ TBOOL ARootTask::OnUpdate( TFLOAT a_fDeltaTime )
 		if ( !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( ASlideshowState ) ) &&
 		     !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( SaveLoadSKU ) ) &&
 		     !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( AMovieState ) ) &&
-		     !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( AMessagePopupState ) ) )
+		     !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( AMessagePopupState ) )
+#ifdef BARNYARD_COMMUNITY_PATCH
+		     // NOTE: the EU PS2 builds wait for the language select screen too (see CreateStartupGameStates)
+		     && !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( AFrontEndLanguageState ) )
+#endif
+		)
 		{
 			if ( !m_bStartedGame )
 			{
@@ -349,6 +356,7 @@ void ARootTask::CreateStartupGameStates()
 		{
 			SaveLoadSKU* pSaveLoad = new SaveLoadSKU( APlayerProgress::GetSingleton(), TFALSE, TNULL );
 			pSaveLoad->StartLoad();
+			pSaveLoad->SetUseSavedLanguage( TTRUE );
 			AGameStateController::GetSingleton()->PushState( pSaveLoad );
 		}
 
@@ -401,7 +409,24 @@ void ARootTask::CreateStartupGameStates()
 #endif
 	SaveLoadSKU* pSaveLoad = new SaveLoadSKU( APlayerProgress::GetSingleton(), TTRUE, legalSlide );
 	pSaveLoad->StartLoad();
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: from the EU PS2 builds (SLES_543.78 0x00107cc8). Without a console language the disc has, they ask for
+	// the language before the save is loaded, otherwise the save's language is used (retail PC keeps English). The
+	// PC always has a default language, so here the language comes from the save (Options -> Language sets it)
+	if ( ALocaleManager::GetDefaultLanguage() == ALocaleManager::Lang_UNKNOWN )
+	{
+		AGameStateController::GetSingleton()->PushState( new AFrontEndLanguageState( pSaveLoad, TTRUE ) );
+	}
+	else
+	{
+		// NOTE: the PS2 also starts a memory card check here
+		pSaveLoad->SetUseSavedLanguage( TTRUE );
+		AGameStateController::GetSingleton()->PushState( pSaveLoad );
+	}
+#else
 	AGameStateController::GetSingleton()->PushState( pSaveLoad );
+#endif
 
 	m_bStartedGame = TTRUE;
 }

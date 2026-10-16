@@ -44,7 +44,8 @@ public:
 	//-----------------------------------------------------------------------------
 	// AGameState
 	//-----------------------------------------------------------------------------
-	// NOTE: ProcessInput (+0x0c) is a thunk to AGameState::ProcessInput (0043fc30)
+	// NOTE: folded with ASleepCycleState::ProcessInput (0043fc30), it only calls AGameState::ProcessInput
+	virtual TBOOL ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent ) OVERRIDE { return AGameState::ProcessInput( a_pInputEvent ); }   // +0x0c
 	virtual TBOOL ProcessCommand( AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents ) OVERRIDE; // +0x10
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) OVERRIDE;                                                                                                // +0x4c
 	virtual void  OnInsertion() OVERRIDE;                                                                                                                  // +0x50

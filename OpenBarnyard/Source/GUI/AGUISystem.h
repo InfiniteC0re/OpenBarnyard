@@ -23,6 +23,12 @@ public:
 	void SetPicture( const Toshi::TPString8& a_rName );
 	void ResetPicture();
 
+#ifdef BARNYARD_LATEST
+	// Wii: a second picture that stays loaded, drawn instead of the normal one behind the XUI load screens
+	void SetBackgroundPicture( const Toshi::TPString8& a_rName );
+	void ShowBackgroundPicture( TBOOL a_bShow );
+#endif
+
 	// DOES_NOTHING (AGameState::HUDParams::Apply)
 	void ApplyHUDParams() {}
 
@@ -52,6 +58,11 @@ private:
 	TUINT                                         m_Unk2;
 	TUINT                                         m_Unk3;
 	PGUITRRenderObject*                           m_pRenderObjects[ NUM_RENDER_OBJECTS ];
+
+#ifdef BARNYARD_LATEST
+	AGUIMatlibPicture m_oBackgroundPicture;     // 0x78 (Wii)
+	TBOOL             m_bShowBackgroundPicture; // 0x94 (Wii)
+#endif
 };
 
 TSINGLETON_DECLARE_ALIAS( AGUISystem, GUISystem );

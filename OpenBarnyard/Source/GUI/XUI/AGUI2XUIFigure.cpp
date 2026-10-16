@@ -369,7 +369,15 @@ TBOOL AGUI2XUIFigure::SetupFill( AGUI2XUIResource& a_rResource, XURXUIFillData* 
 
 			TString8       strTexture( a_rResource.GetString( a_pFill->m_usTextureFileName ) );
 			T2GUIRenderer* pRenderer = T2GUI::GetRenderer();
-			m_pMaterial              = pRenderer->CreateMaterial( pRenderer->GetTexture( strTexture ) );
+			TTexture*      pTexture  = pRenderer->GetTexture( strTexture );
+
+#  ifdef BARNYARD_COMMUNITY_PATCH
+			// The textures of the XUI material libraries might not be loaded (UpdateUVs reads the size)
+			if ( !pTexture )
+				pTexture = TRenderInterface::GetSingleton()->GetInvalidTexture();
+#  endif
+
+			m_pMaterial = pRenderer->CreateMaterial( pTexture );
 			break;
 		}
 		default:

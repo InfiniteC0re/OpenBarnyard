@@ -98,8 +98,12 @@ void AGUIMatlibPicture::Cache()
 
 	for ( TINT i = 0; i < m_iNumRects1; i++ )
 	{
+#ifdef BARNYARD_LATEST
+		const SplitRule* pRule = GetLayoutSplitRule( i );
+#else
 		const SplitRule* pRule = GetSplitRule( i );
-		Rectangle*       pRect = &m_pRectangles[ i ];
+#endif
+		Rectangle* pRect = &m_pRectangles[ i ];
 
 		pRect->ppMaterial = &m_pImages[ pRule->iImageIndex ].pMaterial;
 		pRect->Pos1.x     = pRule->Pos1.x;

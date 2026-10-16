@@ -53,6 +53,11 @@ public:
 	virtual void OnMenuItemFocused( AGUI2MenuItem& a_rOldFocus, AGUI2MenuItem& a_rNewFocus ) OVERRIDE {} // +0x70, DOES_NOTHING
 	virtual void OnMenuClose() OVERRIDE;
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Shows the button texts of the current language (AFrontEndLanguageState). Not on PC
+	void UpdateTexts();
+#endif
+
 private:
 	// Quits the game if Yes was chosen in the quit popup
 	static TBOOL __stdcall OnQuitPopupResponse( AFrontEndMainMenuState2* a_pState, AMessagePopupState* a_pPopup, AMessagePopupState::ResponseEvent* a_pEvent );

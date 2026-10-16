@@ -19,7 +19,7 @@ public:
 	TDECLARE_CLASS( ADartFireHudElement, AHudElement );
 
 	// Renders the aim bars and the bullseye (which aren't its children) before its children
-	// NOTE: plain T2GUIElement subclass, vtable 0071bfd8
+	// NOTE: retail inherits T2GUIElement at 0x14 (vtable 0071bfd8, deleting dtor thunk 00451d50), modelled as a member
 	class Canvas
 	    : public Toshi::T2GUIElement
 	{

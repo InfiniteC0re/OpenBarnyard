@@ -13,10 +13,10 @@ struct AGopherShopPrice
 	const TCHAR* szModel;         // 0x00, the animatable object type (and the inventory type of category 3)
 	const TCHAR* szInventoryType; // 0x04, category 3: the inventory type, otherwise the second name of the item
 	const TCHAR* szName2;         // 0x08
-	TINT         iCategory;       // 0x0c, see AGopherShopGame::CATEGORY
+	TINT         iCategory;       // 0x0c, the kind of item (3: sold from the inventory, 5: not in the shop)
 	TINT         iTextId;         // 0x10, the locale string of the name, also the id of the item (-1: 101)
 	TINT         iPrice;          // 0x14
-	TINT         iUnk18;          // 0x18, unused
+	TINT         iShopCategory;   // 0x18, the tab of the shop it is listed in (AGopherShopGame::m_aCategories)
 	TFLOAT       fScale;          // 0x1c
 	TFLOAT       fRotX;           // 0x20, degrees
 	TFLOAT       fRotY;           // 0x24

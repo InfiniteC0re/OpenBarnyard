@@ -46,7 +46,15 @@ public:
 	static const TCHAR* GetLanguageName( Lang a_eLang );
 
 	// $Barnyard: FUNCTION 00402870
-	static TBOOL IsLanguageSupported( Lang a_eLang ) { return a_eLang == Lang_EnglishUK; }
+	static TBOOL IsLanguageSupported( Lang a_eLang )
+	{
+#ifdef BARNYARD_COMMUNITY_PATCH
+		// NOTE: the PC data has every locale, the fonts lack the Japanese glyphs (AFrontEndLanguageState)
+		return a_eLang >= 0 && a_eLang < Lang_NUMOF && a_eLang != Lang_Japanese;
+#else
+		return a_eLang == Lang_EnglishUK;
+#endif
+	}
 
 	// NOTE: 004c4a20 is a shared function that returns 1
 	static Lang GetDefaultLanguage() { return Lang_EnglishUK; }

@@ -575,6 +575,32 @@ TBOOL ARegrowthManager::LoadTRB()
 	m_iNumModels     = *m_oTRB.CastSymbol<TINT>( "NumberModels" );
 	m_pCrateSchemas  = m_oTRB.CastSymbol<CrateSchema>( "CrateSchema" );
 
+#ifdef BARNYARD_LATEST
+	// Latest version: the wild flowers regrow faster. The Wii treeregrowth.trb raises their fStagesPerSecond
+	// (5x, treasurebells 2x). We load the PC data, so the rates are set here, checked by unit type.
+	static constexpr struct
+	{
+		TINT         iType;
+		const TCHAR* szUnitType;
+		TFLOAT       fStagesPerSecond;
+	} s_aFlowerRates[] = {
+		{ 27, "snowdrops", 0.0025f },
+		{ 28, "bluebells", 0.00125f },
+		{ 29, "foxgloves", 0.0025f },
+		{ 30, "cownip", 0.00125f },
+		{ 31, "oxeyeddaisy", 0.0025f },
+		{ 32, "treasurebells", 0.0025f },
+	};
+
+	for ( TINT i = 0; i < TARRAYSIZE( s_aFlowerRates ); i++ )
+	{
+		GrowthMapping& rMapping = m_pGrowthMapping[ s_aFlowerRates[ i ].iType ];
+
+		if ( rMapping.szUnitType && T2String8::Compare( rMapping.szUnitType, s_aFlowerRates[ i ].szUnitType ) == 0 )
+			rMapping.fStagesPerSecond = s_aFlowerRates[ i ].fStagesPerSecond;
+	}
+#endif
+
 	ms_pTypes->Load( &m_oTRB );
 	m_oTRB.DeleteSymbolTable();
 

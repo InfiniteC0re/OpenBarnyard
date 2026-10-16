@@ -1623,6 +1623,7 @@ void ABarnExploreMinigameState::SpawnAtBones()
 }
 
 // $Barnyard: FUNCTION 004a1240
+// $BarnyardWiiJP: FUNCTION 801ccc48
 void ABarnExploreMinigameState::SpawnAtBones( AAnimatableObject* a_pObject )
 {
 	AModelInstance*  pModel   = a_pObject->GetModelInstance();
@@ -1703,6 +1704,16 @@ void ABarnExploreMinigameState::SpawnAtBones( AAnimatableObject* a_pObject )
 			if ( iAct == iDukeAct && iTier == iDukeTier )
 				continue;
 		}
+
+#ifdef BARNYARD_LATEST
+		// Latest version: Otis, Bud, Igg and Eddy are away in act 3 tiers 10-11 (Tease Mrs Beady, Joy Ride 5)
+		// NOTE: act 3 is numbered the same on the Wii
+		if ( AQuestManager::GetSingleton()->GetAct() == 3 &&
+		     ( AQuestManager::GetSingleton()->GetTier() == 10 || AQuestManager::GetSingleton()->GetTier() == 11 ) &&
+		     ( TStringManager::String8Compare( "nb_otis", szName ) == 0 || TStringManager::String8Compare( "nb_bud", szName ) == 0 ||
+		       TStringManager::String8Compare( "nb_igg", szName ) == 0 || TStringManager::String8Compare( "nb_eddy", szName ) == 0 ) )
+			continue;
+#endif
 
 		// And Otis at the end of act 3
 		if ( TStringManager::String8Compare( "nb_otis", szName ) == 0 && AQuestManager::GetSingleton()->GetAct() == 3 &&

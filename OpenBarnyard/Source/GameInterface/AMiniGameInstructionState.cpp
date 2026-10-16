@@ -10,6 +10,7 @@
 #include "MiniGame/AMiniGameManager.h"
 #include "Helpers/AGameLoader.h"
 #include "GUI/AGUISlideshow.h"
+#include "Render/ARenderer.h"
 
 #include <Input/TInputDeviceController.h>
 #include <Input/TInputDeviceKeyboard.h>
@@ -111,6 +112,7 @@ TBOOL AMiniGameInstructionState::OnUpdate( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 0046c830
+// $BarnyardWiiJP: FUNCTION 8018ba0c
 void AMiniGameInstructionState::OnInsertion()
 {
 	AGameState::OnInsertion();
@@ -154,7 +156,21 @@ void AMiniGameInstructionState::OnInsertion()
 
 	TPString8 strPicture;
 
-	if ( bIsShowdown )
+#ifdef BARNYARD_LATEST
+	// Wii: the XUI load screen of the minigame stays until the player dismisses it (the loader already
+	// shows it, see AGameLoader's ShowXUILoadScreen). The prompt (m_oTextFrame) is drawn over it.
+	TPString8 strXUILoadScreen = bIsShowdown ? TPString8( "CoyoteShowdown_LoadScreen" ) : pMiniGameManager->GetXUILoadScreenName( iMiniGame );
+
+	if ( !strXUILoadScreen.IsEmpty() && AGUI2::GetSingleton()->GetXUI().FindResource( strXUILoadScreen.GetString() ) )
+	{
+		g_oLoadScreen.ShowXUIBackground( TTRUE, TFALSE );
+		g_oLoadScreen.SetXUIScene( strXUILoadScreen.GetString(), 0 );
+		ARenderer::GetSingleton()->ForceUpdate30FPS();
+	}
+	// NOTE: the Wii build always has the scene. On PC the Wii data is optional: without it, the PC picture is shown
+	else
+#endif
+	    if ( bIsShowdown )
 	{
 		AGUISlideshow::LocaliseBackgroundFileName( strPicture, TPS8( bkg_Showdown ) );
 		g_oLoadScreen.SetPicture( strPicture, TTRUE );

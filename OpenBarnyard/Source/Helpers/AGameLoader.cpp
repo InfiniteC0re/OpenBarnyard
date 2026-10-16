@@ -43,6 +43,11 @@
 #include <Input/TInputDeviceKeyboard.h>
 #include <Input/TInputDeviceMouse.h>
 #include "GUI/AGUI2.h"
+
+#ifdef BARNYARD_LATEST
+#  include "GUI/AGUISystem.h"
+#  include "GUI/XUI/AGUI2XUIText.h"
+#endif
 #include "Units/AAnimalPopulationManager.h"
 #include "Units/AInteractionManager.h"
 #include "Render/ARainRenderer.h"
@@ -172,6 +177,11 @@ static TBOOL s_bLoadingSavedGame = TFALSE; // 0x00781106
 // Goal the sim player is placed at once the main game is loaded (SetPlayerStartGoal sets it), used while s_bPlacePlayerAtStartGoal is set.
 static TPString8 s_strPlayerStartGoal; // 0x00781710
 
+#ifdef BARNYARD_LATEST
+// Latest version: see IsPigApplePieReturn
+static TBOOL s_bPigApplePieReturn = TFALSE; // 0x806b4aa1 (Wii)
+#endif
+
 // NOTE: CreateObject 006dc070, CreateObjectInPlace 0054d8b0 (RETURNS_ZERO)
 Toshi::TClass AGameLoader::ms_oClass( "AGameLoader", &TGetClass( TObject ), TNULL, TNULL, AGameLoader::InitialiseClass, AGameLoader::DeinitialiseClass, 0, 1, 4, 1 );
 
@@ -199,6 +209,61 @@ static TINT s_iMainGameStartVIS = -1; // 0x00772818
 // A bit for every sim loading screen picture (s_aSimLoadingPictures) that can be shown.
 // Unlocked by ABarnRewardState and the FSM native EnableInstructionScreen (UnlockSimLoadingPicture)
 static TUINT s_uiSimLoadingPictures = 0; // 0x007817ec
+
+#ifdef BARNYARD_LATEST
+
+// Wii: loads the XUI scene a_rcName (Data/XUI/<language>/<name>.trb, its material library and the
+// button icons of its texts) and shows it as the loading screen, in front of AGUISystem's background
+// picture. a_bLoadResource is TFALSE when the resource is already loaded (RestartMiniGame).
+// NOTE: inlined into the loaders of the Wii build (LoadMiniGameImpl 8012a518, LoadGameStateImpl 8012b160,
+// LoadMainGameImpl 80129a2c and RestartMiniGame 80128590)
+static TBOOL ShowXUILoadScreen( const TPString8& a_rcName, TBOOL a_bLoadResource )
+{
+	AGUI2* pGUI = AGUI2::GetSingleton();
+
+#  ifdef BARNYARD_COMMUNITY_PATCH
+	// The Wii data is optional on PC: without the scene, the loader shows the PC picture
+	if ( a_bLoadResource )
+	{
+		TString8 strPath;
+		strPath.Format( "Data/XUI/%s/%s.trb", AGUI2::GetLanguage(), a_rcName.GetString() );
+
+		TFile* pFile = TFile::Create( strPath, TFILEMODE_READ );
+
+		if ( !pFile )
+			return TFALSE;
+
+		pFile->Destroy();
+	}
+	else if ( !pGUI->GetXUI().FindResource( a_rcName.GetString() ) )
+	{
+		return TFALSE;
+	}
+#  endif
+
+	if ( a_bLoadResource )
+	{
+		pGUI->LoadXUIFont( "HGPSoeiKakupoptai_24" );
+		pGUI->LoadXUIFont( "HGPSoeiKakupoptai_48" );
+		pGUI->LoadXUIMaterialLibrary( "wii_icons128" );
+
+		// NOTE: the Wii build creates it every time (the material of the previous load screen is destroyed
+		// with the asset pack that is unloaded before, see AAssetLoader::DestroyAssetPackOfLibrary)
+		if ( !AGUI2XUIText::ms_pIconMaterial )
+			AGUI2XUIText::ms_pIconMaterial = T2GUI::GetRenderer()->CreateMaterial( "..\\..\\..\\Texture\\wii_icons128.tga" );
+
+		pGUI->LoadXUIResource( a_rcName.GetString() );
+		pGUI->LoadXUIMaterialLibrary( a_rcName.GetString() );
+	}
+
+	g_oLoadScreen.ShowXUIBackground( TTRUE, TFALSE );
+	g_oLoadScreen.SetXUIScene( a_rcName.GetString(), 0 );
+	ARenderer::GetSingleton()->ForceUpdate30FPS();
+
+	return TTRUE;
+}
+
+#endif // BARNYARD_LATEST
 
 //-----------------------------------------------------------------------------
 // Scripted sequences
@@ -238,6 +303,7 @@ static TPString8     s_strDevTierSequenceGoal;
 
 static void  Dev_StartDevTierGame();
 static TBOOL Dev_ApplyDevTier();
+static void  Dev_PopulateDevTier();
 #endif
 
 // $Barnyard: FUNCTION 004232c0
@@ -265,6 +331,10 @@ TPSTRING8_DECLARE( player );
 TPSTRING8_DECLARE( simplayer );
 TPSTRING8_DECLARE( park2 );
 TPSTRING8_DECLARE( park2_goals_playerstart );
+#ifdef BARNYARD_LATEST
+TPSTRING8_DECLARE( pigpiespawn );
+TPSTRING8_DECLARE( apple_pie );
+#endif
 TPSTRING8_DECLARE( waveflag );
 
 TPSTRING8_DECLARE( ui );
@@ -547,6 +617,7 @@ void AGameLoader::RestoreSimBike()
 }
 
 // $Barnyard: FUNCTION 00426370
+// $BarnyardWiiJP: FUNCTION 8012a518
 static TBOOL LoadMiniGameImpl()
 {
 	AGameTimeFXManager::GetSingleton()->StopAmbientEffects();
@@ -656,13 +727,23 @@ static TBOOL LoadMiniGameImpl()
 	TPString8 strStateClassName;
 	TBOOL     bIsShowdown = pMiniGameManager->GetStateClassName( strStateClassName, s_iCurrMiniGame ) == TPS8( ACowTippingMiniGameState ) && pMiniGameManager->GetMiniGameVariant() == 2;
 
-	TPString8 strPicture;
-	if ( bIsShowdown )
-		AGUISlideshow::LocaliseBackgroundFileName( strPicture, TPS8( bkg_Showdown ) );
-	else
-		pMiniGameManager->GetLoadingScreenName( strPicture, s_iCurrMiniGame );
+#ifdef BARNYARD_LATEST
+	// Wii: the XUI load screen of the minigame replaces the picture
+	// NOTE: the Wii build also loads the fonts and the button icons when the minigame only has a Wii Remote
+	// instruction scene (ARevInstructionState, not recovered)
+	TPString8 strXUILoadScreen = bIsShowdown ? TPString8( "CoyoteShowdown_LoadScreen" ) : pMiniGameManager->GetXUILoadScreenName( s_iCurrMiniGame );
 
-	g_oLoadScreen.SetPicture( strPicture, TTRUE );
+	if ( strXUILoadScreen.IsEmpty() || !ShowXUILoadScreen( strXUILoadScreen, TTRUE ) )
+#endif
+	{
+		TPString8 strPicture;
+		if ( bIsShowdown )
+			AGUISlideshow::LocaliseBackgroundFileName( strPicture, TPS8( bkg_Showdown ) );
+		else
+			pMiniGameManager->GetLoadingScreenName( strPicture, s_iCurrMiniGame );
+
+		g_oLoadScreen.SetPicture( strPicture, TTRUE );
+	}
 
 	pMiniGameManager->SetNextMiniGameIndex( s_iCurrMiniGame );
 	AGameTimeManager::GetSingleton()->PushUpdateState();
@@ -704,6 +785,7 @@ static TBOOL LoadMiniGameImpl()
 	g_oLoadScreen.Update();
 
 	// NOTE: the original calls DOES_NOTHING (005acd80) on AShadowManager here
+	// NOTE: the Wii build loads the Wii Remote instruction scene of the minigame here (ARevInstructionState, not recovered)
 
 	// Create and push the minigame state
 	AGameState* pMiniGameState = TSTATICCAST( AGameState, pMiniGameManager->GetStateClass( s_iCurrMiniGame )->CreateObject() );
@@ -808,6 +890,7 @@ static void OnVISGroupChanged( ATerrainSection* a_pCurrent, ATerrainSection* a_p
 }
 
 // $Barnyard: FUNCTION 004271f0
+// $BarnyardWiiJP: FUNCTION 8012ba9c
 static TBOOL ReturnToFrontEndImpl()
 {
 	AMiniGameManager::ms_bHasFade = TFALSE;
@@ -846,6 +929,14 @@ static TBOOL ReturnToFrontEndImpl()
 
 	AHudManager::GetSingleton()->OnUpdate( 1.0f / 30.0f );
 	g_oLoadScreen.Update();
+
+#ifdef BARNYARD_LATEST
+	AGUI2* pGUI = AGUI2::GetSingleton();
+	pGUI->DeleteXUIScenes();
+	pGUI->DeleteXUIResources();
+	pGUI->UnloadXUIMaterialLibraries();
+	pGUI->CloseXUIFonts();
+#endif
 
 	// Unload the assets of the state that is left
 	if ( s_bInMiniGame == TTRUE )
@@ -964,6 +1055,51 @@ static TPString8* s_aSimLoadingPictures[] = {
 	&TPS8( bkg_SIM_recipe ),
 	&TPS8( bkg_SIM_sunglasses ),
 }; // 0x007733f8
+
+#ifdef BARNYARD_LATEST
+
+// Indices of s_aSimLoadingPictures
+static constexpr TINT SIMLOADINGPICTURE_GOPHER = 7;
+static constexpr TINT SIMLOADINGPICTURE_RECIPE = 11;
+
+// Wii: the XUI help scenes shown instead of s_aSimLoadingPictures (the same order)
+// NOTE: the Wii table (80505260) has one more scene, Wii_Gameplay_Help (how to use the Wii Remote motion
+// tutorials of ARevInstructionState), as its 5th entry, so from bkg_SIM_barn_champ on the scenes are one
+// entry further than the pictures. The Wii build still unlocks the pictures by name with the PC indices
+// (EnableInstructionScreen, 80132ee4), so there bkg_SIM_barn_champ unlocks Wii_Gameplay_Help and bkg_SIM_party
+// unlocks Wii_Milkweed (it also always unlocks Wii_Gameplay_Help); ABarnRewardState uses the Wii indices.
+// The PC indices are kept here, so saves stay compatible.
+// NOTE: the help pages that teach the Wii Remote and Nunchuk controls aren't used (TNULL): their PC picture,
+// with the PC controls, is shown instead.
+static const TCHAR* s_aSimLoadingXUIScenes[] = {
+	TNULL, // Wii_Move_Around
+	TNULL, // Wii_Inventory
+	"Wii_Complete_Missions",
+	TNULL, // Wii_Text_Messages
+	"Wii_Barnyard_Champion",
+	TNULL, // Wii_Bike
+	TNULL, // Wii_Gold_Rush
+	"Wii_The_Gopher_Shop",
+	TNULL, // Wii_Metal_Detector
+	TNULL, // Wii_Milkweed
+	"Wii_Party_Animal",
+	TNULL, // Wii_Recipes
+	TNULL, // Wii_Sunglasses
+};
+
+TSTATICASSERT( TARRAYSIZE( s_aSimLoadingXUIScenes ) == TARRAYSIZE( s_aSimLoadingPictures ) );
+
+// Shows the XUI help scene of the sim loading picture a_iPicture, returns TFALSE if it has none
+// NOTE: inlined into LoadMainGameImpl and LoadGameStateImpl in the Wii build (the scene names come from 80133088)
+static TBOOL ShowSimLoadingXUIScene( TINT a_iPicture )
+{
+	if ( !s_aSimLoadingXUIScenes[ a_iPicture ] )
+		return TFALSE;
+
+	return ShowXUILoadScreen( TPString8( s_aSimLoadingXUIScenes[ a_iPicture ] ), TTRUE );
+}
+
+#endif // BARNYARD_LATEST
 
 // Picks a random picture out of the ones enabled in s_uiSimLoadingPictures, returns -1 if there's none
 // $Barnyard: FUNCTION 0042ab90
@@ -1137,6 +1273,7 @@ void AGameLoader::SpawnSimPlayer()
 
 // Loads the main game: lib_maingame, EnvMain, the sim player, then pushes ASimState
 // $Barnyard: FUNCTION 00425bc0
+// $BarnyardWiiJP: FUNCTION 80129a2c
 static TBOOL LoadMainGameImpl()
 {
 	s_pPrevGameStateClass = TNULL;
@@ -1204,8 +1341,14 @@ static TBOOL LoadMainGameImpl()
 
 	if ( iPicture != -1 )
 	{
-		TPString8 strPicture;
-		g_oLoadScreen.SetPicture( AGameLoader::GetSimLoadingPicture( strPicture, iPicture ), TTRUE );
+#ifdef BARNYARD_LATEST
+		// Wii: the XUI help scene of the picture
+		if ( !ShowSimLoadingXUIScene( iPicture ) )
+#endif
+		{
+			TPString8 strPicture;
+			g_oLoadScreen.SetPicture( AGameLoader::GetSimLoadingPicture( strPicture, iPicture ), TTRUE );
+		}
 	}
 
 	// Load the assets of the main game
@@ -1287,6 +1430,37 @@ static TBOOL LoadMainGameImpl()
 			s_strPlayerStartGoal      = TPS8( park2_goals_playerstart );
 			s_bPlacePlayerAtStartGoal = TTRUE;
 		}
+#ifdef BARNYARD_LATEST
+		else if ( AQuestManager::GetSingleton()->GetNumAssignedQuests() > 0 )
+		{
+			// Latest version: back from fetching the apple pie of "Pig Apple Pie", the player starts at the Pig
+			AQuestInstance* pQuest = AQuestManager::GetSingleton()->GetAssignedQuest( 0 );
+
+			if ( pQuest->GetQuest()->GetName() == TPS8D( "Pig Apple Pie" ) )
+			{
+				AUnit*                    pPlayer    = APlayerManager::GetSingleton()->GetPlayerSet( APlayerManager::PLAYERSET_SIM )->GetHumanPlayerUnit( 0 );
+				AInventoryGroupComponent* pInventory = TSTATICCAST( AInventoryGroupComponent, pPlayer->FindComponent( &TGetClass( AInventoryGroupComponent ) ) );
+
+#  ifdef BARNYARD_COMMUNITY_PATCH
+				// NOTE: the Wii also does it when the quest can't be done at this time of the day (at night): the Pig then
+				// can't be talked to, so the screen stays black and the controls are held until the morning
+				if ( pInventory->FindItemByType( TPS8( apple_pie ) ) && !AQuestManager::GetSingleton()->IsQuestUnavailable( pQuest->GetQuest() ) )
+#  else
+				if ( pInventory->FindItemByType( TPS8( apple_pie ) ) )
+#  endif
+				{
+					s_strPlayerStartGoal      = TPS8( pigpiespawn );
+					s_bPlacePlayerAtStartGoal = TTRUE;
+
+					ATerrainInterface* pTerrain = ATerrainInterface::GetSingleton();
+					pTerrain->ForceSection( pTerrain->GetSectionIndex( "barnnorth" ), TTRUE );
+					AGameLoader::Terrain_Load();
+
+					s_bPigApplePieReturn = TTRUE;
+				}
+			}
+		}
+#endif
 
 		// NOTE: the original doesn't check for a missing slot here
 		APlayerProgress::SaveSlot* pSlot = APlayerProgress::GetSingleton()->GetCurrentSlot();
@@ -1348,6 +1522,10 @@ static TBOOL LoadMainGameImpl()
 
 		if ( !bDevTier )
 			AQuestManager::GetSingleton()->SetQuestTier( 1, 1, TFALSE );
+#ifdef BARNYARD_COMMUNITY_PATCH
+		else
+			Dev_PopulateDevTier();
+#endif
 
 		AGameTimeManager::GetSingleton()->SetTime( 10, 0, 0, TFALSE, TTRUE );
 	}
@@ -1360,7 +1538,27 @@ static TBOOL LoadMainGameImpl()
 		s_bPlacePlayerAtStartGoal = TFALSE;
 
 		AUnit* pPlayer = APlayerManager::GetSingleton()->GetPlayerSet( APlayerManager::PLAYERSET_SIM )->GetPlayerUnit( 0 );
+#ifdef BARNYARD_LATEST
+		APlayerSteer* pSteer = TSTATICCAST( APlayerSteer, pPlayer->GetSteer() );
+
+		if ( s_strPlayerStartGoal == TPS8( pigpiespawn ) && !TSTATICCAST( AInteriorNetwork, pSteer->GetCurrentNetwork() )->HasGoal( s_strPlayerStartGoal ) )
+		{
+			// NOTE: "pigpiespawn" is only in the Wii park2 network (the Wii edits the network, PC retail files are never
+			// replaced), so the player is put at the place and facing of the Wii goal, next to the pig sty
+			AInteriorGoal oGoal;
+			oGoal.m_vForward   = TVector4( 0.387119f, 0.0f, 0.92203f, 1.0f );
+			oGoal.m_fPositionX = 14.827578f;
+			oGoal.m_fPositionY = -8.396326f;
+			oGoal.m_fPositionZ = 16.571123f;
+			pSteer->PlaceAtGoal( &oGoal, TTRUE, TFALSE );
+		}
+		else
+		{
+			pSteer->PlaceAtNamedGoal( s_strPlayerStartGoal, TTRUE, TTRUE );
+		}
+#else
 		TSTATICCAST( APlayerSteer, pPlayer->GetSteer() )->PlaceAtNamedGoal( s_strPlayerStartGoal, TTRUE, TTRUE );
+#endif
 	}
 
 	ACameraManager::GetSingleton()->GetCurrentCamera()->SetFOV( ACamera::sm_fCurrentFOV );
@@ -1395,6 +1593,7 @@ TPString8 AGameLoader::GetPrevGameStateName()
 }
 
 // $Barnyard: FUNCTION 00426b70
+// $BarnyardWiiJP: FUNCTION 8012b160
 static TBOOL LoadGameStateImpl()
 {
 	if ( s_bMainGameLoaded == TTRUE )
@@ -1470,6 +1669,20 @@ static TBOOL LoadGameStateImpl()
 	// Loading screen picture
 	TPString8 strPicture;
 
+#ifdef BARNYARD_LATEST
+	// Wii: the XUI help scene of the picture. The gopher shop and the cooking show their own one.
+	TINT iPicture;
+
+	if ( s_strCurrentStateName == TPS8( AGopherShopGame ) )
+		iPicture = SIMLOADINGPICTURE_GOPHER;
+	else if ( s_strCurrentStateName == TPS8( ACookingMiniGame ) )
+		iPicture = SIMLOADINGPICTURE_RECIPE;
+	else
+		iPicture = GetRandomSimLoadingPicture();
+
+	if ( iPicture != -1 && !ShowSimLoadingXUIScene( iPicture ) )
+		g_oLoadScreen.SetPicture( AGameLoader::GetSimLoadingPicture( strPicture, iPicture ), TTRUE );
+#else
 	if ( s_strCurrentStateName == TPS8( AGopherShopGame ) )
 	{
 		AGUISlideshow::LocaliseBackgroundFileName( strPicture, TPS8( bkg_SIM_gopher ) );
@@ -1487,6 +1700,7 @@ static TBOOL LoadGameStateImpl()
 		if ( iPicture != -1 )
 			g_oLoadScreen.SetPicture( AGameLoader::GetSimLoadingPicture( strPicture, iPicture ), TTRUE );
 	}
+#endif
 
 	// Load the assets of the state (the library is named after the class)
 	AAssetLoader::LoadAssetPackOfLibrary( s_strCurrentStateName.GetString8().GetString(), TTRUE );
@@ -1699,6 +1913,7 @@ void AGameLoader::SetTransitionToMainGame( TBOOL a_bLoadedGame )
 }
 
 // $Barnyard: FUNCTION 00424000
+// $BarnyardWiiJP: FUNCTION 80128590
 void AGameLoader::RestartMiniGame( TBOOL a_bImmediately )
 {
 	AGameStateController* pController = AGameStateController::GetSingleton();
@@ -1719,13 +1934,22 @@ void AGameLoader::RestartMiniGame( TBOOL a_bImmediately )
 	TPString8 strStateClassName;
 	TBOOL     bIsShowdown = pMiniGameManager->GetStateClassName( strStateClassName, s_iCurrMiniGame ) == TPS8( ACowTippingMiniGameState ) && pMiniGameManager->GetMiniGameVariant() == 2;
 
-	TPString8 strPicture;
-	if ( bIsShowdown )
-		AGUISlideshow::LocaliseBackgroundFileName( strPicture, TPS8( bkg_Showdown ) );
-	else
-		pMiniGameManager->GetLoadingScreenName( strPicture, s_iCurrMiniGame );
+#ifdef BARNYARD_LATEST
+	// Wii: the XUI load screen of the minigame (its resource is still loaded)
+	TPString8 strXUILoadScreen = bIsShowdown ? TPString8( "CoyoteShowdown_LoadScreen" ) : pMiniGameManager->GetXUILoadScreenName( s_iCurrMiniGame );
 
-	g_oLoadScreen.SetPicture( strPicture, TTRUE );
+	if ( strXUILoadScreen.IsEmpty() || !ShowXUILoadScreen( strXUILoadScreen, TFALSE ) )
+#endif
+	{
+		TPString8 strPicture;
+		if ( bIsShowdown )
+			AGUISlideshow::LocaliseBackgroundFileName( strPicture, TPS8( bkg_Showdown ) );
+		else
+			pMiniGameManager->GetLoadingScreenName( strPicture, s_iCurrMiniGame );
+
+		g_oLoadScreen.SetPicture( strPicture, TTRUE );
+	}
+
 	g_oLoadScreen.Update();
 
 	// Recreate the minigame state
@@ -2351,6 +2575,18 @@ TBOOL AGameLoader::ShouldPlacePlayerAtStartGoal()
 	return s_bPlacePlayerAtStartGoal;
 }
 
+#ifdef BARNYARD_LATEST
+TBOOL AGameLoader::IsPigApplePieReturn()
+{
+	return s_bPigApplePieReturn;
+}
+
+void AGameLoader::SetPigApplePieReturn( TBOOL a_bReturn )
+{
+	s_bPigApplePieReturn = a_bReturn;
+}
+#endif
+
 // $Barnyard: FUNCTION 004257b0
 void AGameLoader::SetPlayerStartGoal( const TPString8& a_rcGoal )
 {
@@ -2532,6 +2768,7 @@ void AGameLoader::Terrain_Load()
 
 
 // $Barnyard: FUNCTION 00427c40
+// $BarnyardWiiJP: FUNCTION 80127e30
 void AGameLoader::LoadFrontEnd()
 {
 	ASoundManager* pSoundManager = ASoundManager::GetSingleton();
@@ -2539,6 +2776,20 @@ void AGameLoader::LoadFrontEnd()
 	// Load ui & music soundbanks
 	pSoundManager->LoadSoundBank( TPS8( ui ), TFALSE, TTRUE );
 	pSoundManager->LoadSoundBank( TPS8( music ), TFALSE, TFALSE );
+
+#ifdef BARNYARD_LATEST
+	// Wii: the backdrop of the XUI load screens (Data/Matlibs/bkg_Background.ttl), it stays loaded
+#  ifdef BARNYARD_COMMUNITY_PATCH
+	// The Wii data is optional on PC
+	if ( TFile* pFile = TFile::Create( "Data/Matlibs/bkg_Background.ttl", TFILEMODE_READ ) )
+	{
+		pFile->Destroy();
+		AGUISystem::GetSingleton()->SetBackgroundPicture( TPString8( "bkg_Background" ) );
+	}
+#  else
+	AGUISystem::GetSingleton()->SetBackgroundPicture( TPString8( "bkg_Background" ) );
+#  endif
+#endif
 
 	AGameLoader::Debug_VerifyModelsInAssetPack( AAssetLoader::GetAssetTRB( AAssetType_Startup ) );
 
@@ -2574,7 +2825,7 @@ void AGameLoader::LoadFrontEnd()
 
 #ifdef BARNYARD_COMMUNITY_PATCH
 	// Development: "-devattract" starts at the title screen that retail never creates
-	if ( TStringManager::String8FindString( GetCommandLineA(), "-devattract" ) )
+	if ( TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devattract" ) )
 	{
 		delete pFrontEndState;
 		pFrontEndState = TNULL;
@@ -2629,12 +2880,71 @@ static const TCHAR* Dev_GetMiniGameArg( TCHAR* a_szOutName, TINT a_iSize )
 	return a_szOutName;
 }
 
+// The micro games of the sim aren't minigames of AMiniGameManager: the sim starts them (a lever, a kick, an item...).
+// "-minigame <micro game>" plays them in a new game of the sim, through the dev switches that start each of them
+struct DevMicroGame
+{
+	const TCHAR* szName;
+	const TCHAR* szSwitches; // TNULL: added by name to the sim 8 seconds after it has started (CreateAndAddChildState)
+};
+
+static const DevMicroGame s_aDevMicroGames[] = {
+	{ "ACoinPickupMicroGame", "-devgoldrush" },
+	{ "AShakeTreeMicroGame", "-devshake tree" },
+	{ "AMilkCanMicroGame", "-devnightbarn -devshake milkcan" },
+	{ "ATreasueHuntMicroGame", "-devtreasure" },
+	{ "ABarnExploreMinigameState", "-devnightbarn -devdayphase 4" },
+	{ "ACookingMiniGame", "-devnightbarn -devdayphase 4 -devcocktails 4" },
+	{ "ASuperSquirtMicroGame", TNULL },
+	{ "AFarmerTrainMicroGame", TNULL },
+};
+
+// The micro game of "-minigame", TNULL if there's none
+static const DevMicroGame* Dev_GetMicroGame()
+{
+	TCHAR szName[ 64 ];
+	Dev_GetMiniGameArg( szName, sizeof( szName ) );
+
+	for ( TINT i = 0; i < TARRAYSIZE( s_aDevMicroGames ); i++ )
+	{
+		if ( TStringManager::String8CompareNoCase( s_aDevMicroGames[ i ].szName, szName ) == 0 )
+			return &s_aDevMicroGames[ i ];
+	}
+
+	return TNULL;
+}
+
+const TCHAR* AGameLoader::Dev_GetCommandLine()
+{
+	static TString8 s_strCommandLine;
+	static TBOOL    s_bCreated = TFALSE;
+
+	if ( !s_bCreated )
+	{
+		s_bCreated       = TTRUE;
+		s_strCommandLine = GetCommandLineA();
+
+		if ( const DevMicroGame* pMicroGame = Dev_GetMicroGame() )
+		{
+			s_strCommandLine += " -simstate";
+
+			if ( pMicroGame->szSwitches )
+			{
+				s_strCommandLine += " ";
+				s_strCommandLine += pMicroGame->szSwitches;
+			}
+		}
+	}
+
+	return s_strCommandLine;
+}
+
 // Returns TTRUE if a_szSwitch is on the command line
 static TBOOL Dev_HasSwitch( const TCHAR* a_szSwitch, const TCHAR** a_ppOutArgs = TNULL )
 {
 	// The whole switch ("-devsave" isn't "-devsavefile"), a_ppOutArgs receives what follows it
 	const TINT   iLength = TStringManager::String8Length( a_szSwitch );
-	const TCHAR* szFound = GetCommandLineA();
+	const TCHAR* szFound = AGameLoader::Dev_GetCommandLine();
 
 	while ( ( szFound = TStringManager::String8FindString( szFound, a_szSwitch ) ) != TNULL )
 	{
@@ -2855,6 +3165,21 @@ static TBOOL Dev_ApplyDevTier()
 	return TTRUE;
 }
 
+// Called after the animals of a "-devtier" game are spawned. AQuestManager::SetQuestTier (Dev_ApplyDevTier) ran before
+// AAnimalPopulationManager::Populate, when the population manager ignores it (no spawn flags yet), so the story changes
+// of the population were missing until the next change of the phase of the day: Ben stayed alive after his death (act
+// 2 tier 19), Igg, Bud and Eddie weren't spawned, etc. Destroying Ben then, in the frame the night came, left a dying
+// unit that AFarmerTruck::SetSequenceMode found by name (crash in AAnimatedUnit::IsVisible, no animatable object).
+// The natural order of a new game is Populate, then SetQuestTier, like here
+static void Dev_PopulateDevTier()
+{
+	AQuestManager* pQuestManager = AQuestManager::GetSingleton();
+	AAnimalPopulationManager::GetSingleton()->SetQuestTier( pQuestManager->GetCurAbsQuestTier(), TFALSE, 0 );
+
+	// The units the story removed (Ben) are gone before the first frame, as in a loaded save
+	AUnitManager::GetSingleton()->DeleteDyingUnits();
+}
+
 TBOOL AGameLoader::Dev_IsMiniGameRequested()
 {
 	TCHAR szName[ 64 ];
@@ -2866,7 +3191,8 @@ void AGameLoader::Dev_UpdateMiniGameRequest()
 	static TBOOL s_bStarted           = TFALSE;
 	static DWORD s_uiInstructionStart = 0;
 
-	if ( !Dev_IsMiniGameRequested() )
+	// The micro games are started by the sim (Dev_UpdateSimStateRequest)
+	if ( !Dev_IsMiniGameRequested() || Dev_GetMicroGame() )
 		return;
 
 	if ( s_bStarted )
@@ -2931,7 +3257,7 @@ void AGameLoader::Dev_UpdateMiniGameRequest()
 	pPlayerSet->AddHumanPlayer( AInputHandler::GetSingleton()->GetMainController(), -1 );
 
 	// "-devplayers <n>": n human players sharing the main controller (multiplayer turn tests)
-	if ( const TCHAR* szPlayers = TStringManager::String8FindString( GetCommandLineA(), "-devplayers " ) )
+	if ( const TCHAR* szPlayers = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devplayers " ) )
 	{
 		TINT iNumPlayers = TMath::Min( atoi( szPlayers + TStringManager::String8Length( "-devplayers " ) ), pMiniGameManager->GetMiniGame( iMiniGame )->GetMaxNumPlayers() );
 		TINFO( "-devplayers: %d human players\n", iNumPlayers );
@@ -2957,7 +3283,7 @@ void AGameLoader::Dev_UpdateMiniGameRequest()
 		pMiniGameManager->SetMiniGameVariant( 0 );
 
 	// "-devvariant <n>": play variant n instead of the default one (as AFrontEndVariantSelectState does)
-	if ( const TCHAR* szVariant = TStringManager::String8FindString( GetCommandLineA(), "-devvariant " ) )
+	if ( const TCHAR* szVariant = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devvariant " ) )
 	{
 		TINT iVariant = atoi( szVariant + TStringManager::String8Length( "-devvariant " ) );
 		TINFO( "-devvariant: variant %d\n", iVariant );
@@ -3014,7 +3340,7 @@ static void Dev_SetupSavePath()
 	TCHAR szPath[ 260 ];
 
 #  ifndef TOSHI_FINAL
-	const TCHAR* szArg = TStringManager::String8FindString( GetCommandLineA(), "-devsavefile " );
+	const TCHAR* szArg = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devsavefile " );
 
 	if ( szArg )
 	{
@@ -3043,7 +3369,7 @@ static void Dev_SetupSavePath()
 TBOOL AGameLoader::Dev_SetupSaveFileAtBoot()
 {
 #  ifndef TOSHI_FINAL
-	if ( !TStringManager::String8FindString( GetCommandLineA(), "-devsavefile " ) )
+	if ( !TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devsavefile " ) )
 		return TFALSE;
 
 	Dev_SetupSavePath();
@@ -3282,7 +3608,7 @@ static void Dev_UpdateShake()
 		return;
 	}
 
-	const TCHAR* szArg    = TStringManager::String8FindString( GetCommandLineA(), "-devshake " ) + TStringManager::String8Length( "-devshake " );
+	const TCHAR* szArg    = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devshake " ) + TStringManager::String8Length( "-devshake " );
 	TBOOL        bTree    = TStringManager::String8Compare( szArg, "tree", 4 ) == 0;
 	TBOOL        bMilkCan = TStringManager::String8Compare( szArg, "milkcan", 7 ) == 0;
 
@@ -3649,7 +3975,7 @@ static void Dev_UpdateKeys()
 	{
 		s_iNumKeys = 0;
 
-		const TCHAR* szArg = TStringManager::String8FindString( GetCommandLineA(), "-devkeys " ) + TStringManager::String8Length( "-devkeys " );
+		const TCHAR* szArg = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devkeys " ) + TStringManager::String8Length( "-devkeys " );
 
 		while ( *szArg == '"' ) szArg++;
 
@@ -3728,7 +4054,7 @@ static void Dev_UpdateKeys()
 
 	// "-devmouse <dx>,<dy>:<start>-<end>" moves the mouse by dx, dy pixels every frame in that time (sent through the
 	// input event emitter like the mouse device does), e.g. to turn a camera. The switch can be given several times
-	for ( const TCHAR* szMouse = TStringManager::String8FindString( GetCommandLineA(), "-devmouse " ); szMouse; szMouse = TStringManager::String8FindString( szMouse + 1, "-devmouse " ) )
+	for ( const TCHAR* szMouse = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devmouse " ); szMouse; szMouse = TStringManager::String8FindString( szMouse + 1, "-devmouse " ) )
 	{
 		TINT   iDX = 0, iDY = 0;
 		TFLOAT fStart = 0.0f, fEnd = 0.0f;
@@ -4150,10 +4476,13 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 		static TFLOAT s_fBarnTime = 0.0f;
 		static TINT   s_iStage    = 0; // 0: in the sim, 1: entering, 2: in the barn, 3: leaving, 4: back in the sim
 
-		s_fBarnTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
 		AGameState* pCurrentState = AGameStateController::GetSingleton()->GetCurrentState();
 		TBOOL       bInBarn       = pCurrentState && pCurrentState->GetClass() == &TGetClass( ABarnExploreMinigameState );
+
+		// The 8 seconds only count while the sim is the current state: "-devtier" plays the scripted sequence of the tier
+		// first, and "-devdayphase" is only applied by the sim's update
+		if ( s_iStage != 0 || ( pCurrentState && pCurrentState->GetClass() == &TGetClass( ASimState ) ) )
+			s_fBarnTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
 
 		if ( s_iStage == 0 && s_bMainGameLoaded && s_fBarnTime >= 8.0f && APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) )
 		{
@@ -4172,7 +4501,7 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 		{
 			static TBOOL s_bLoft = TFALSE;
 
-			if ( const TCHAR* szArg = TStringManager::String8FindString( GetCommandLineA(), "-devbarnloft " ) )
+			if ( const TCHAR* szArg = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devbarnloft " ) )
 			{
 				if ( !s_bLoft && s_fBarnTime >= TFLOAT( atof( szArg + TStringManager::String8Length( "-devbarnloft " ) ) ) )
 				{
@@ -4187,7 +4516,7 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 			// "-devcocktails <N>": N seconds after entering the barn, the cocktails (ACookingMiniGame from the barn)
 			static TBOOL s_bCocktails = TFALSE;
 
-			if ( const TCHAR* szArg = TStringManager::String8FindString( GetCommandLineA(), "-devcocktails " ) )
+			if ( const TCHAR* szArg = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devcocktails " ) )
 			{
 				if ( !s_bCocktails && s_fBarnTime >= TFLOAT( atof( szArg + TStringManager::String8Length( "-devcocktails " ) ) ) )
 				{
@@ -4197,7 +4526,7 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 				}
 			}
 
-			if ( const TCHAR* szArg = TStringManager::String8FindString( GetCommandLineA(), "-devbarnleave " ) )
+			if ( const TCHAR* szArg = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devbarnleave " ) )
 			{
 				if ( s_fBarnTime >= TFLOAT( atof( szArg + TStringManager::String8Length( "-devbarnleave " ) ) ) )
 				{
@@ -4251,7 +4580,7 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 		}
 	}
 
-	if ( s_bStarted && s_bMainGameLoaded && TStringManager::String8FindString( GetCommandLineA(), "-devreplay " ) )
+	if ( s_bStarted && s_bMainGameLoaded && TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devreplay " ) )
 	{
 		// Development: "-devreplay <replay>" unlocks the first two variants of the replay and replays it 6 seconds after
 		// the sim has started (like its star does), then picks the second variant in AReplayVariantSelectState
@@ -4265,7 +4594,7 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 			s_iStage = 1;
 
 			TCHAR        szName[ 64 ];
-			const TCHAR* szArg   = TStringManager::String8FindString( GetCommandLineA(), "-devreplay " ) + TStringManager::String8Length( "-devreplay " );
+			const TCHAR* szArg   = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devreplay " ) + TStringManager::String8Length( "-devreplay " );
 			TINT         iLength = 0;
 
 			while ( szArg[ iLength ] != '\0' && szArg[ iLength ] != ' ' && iLength < TARRAYSIZE( szName ) - 1 )
@@ -4331,6 +4660,23 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 		}
 	}
 
+	if ( s_bStarted && s_bMainGameLoaded && Dev_GetMicroGame() && !Dev_GetMicroGame()->szSwitches )
+	{
+		// "-minigame <micro game>" of a micro game the sim adds by name (the "highsquirt" spots...): it's added
+		// 8 seconds after the sim has started, the way the script function CreateAndAddChildState does
+		static TFLOAT s_fMicroGameTime = 0.0f;
+		static TBOOL  s_bAdded         = TFALSE;
+
+		s_fMicroGameTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
+
+		if ( !s_bAdded && s_fMicroGameTime >= 8.0f && APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) )
+		{
+			s_bAdded = TTRUE;
+			TINFO( "-minigame: adding the micro game '%s' to the sim\n", Dev_GetMicroGame()->szName );
+			AGameStateController::GetSingleton()->AddChildStateByName( TPString8( Dev_GetMicroGame()->szName ) );
+		}
+	}
+
 	if ( s_bStarted && s_bMainGameLoaded && Dev_HasSwitch( "-devtreasure" ) )
 	{
 		// Development: "-devtreasure" gives the player a metal detector and starts the treasure hunt 6 seconds after
@@ -4383,7 +4729,7 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 		}
 	}
 
-	if ( s_bStarted && s_bMainGameLoaded && TStringManager::String8FindString( GetCommandLineA(), "-devgoldrush" ) )
+	if ( s_bStarted && s_bMainGameLoaded && TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devgoldrush" ) )
 	{
 		// Development: "-devgoldrush [N]" plays the gold rush at the coin spawner N (1 by default) 6 seconds after
 		// the sim has started: gives the player a token, puts them at the spawner and pushes the micro game the
@@ -4401,7 +4747,7 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 		{
 			s_bPushed = TTRUE;
 
-			const TCHAR* szArg    = TStringManager::String8FindString( GetCommandLineA(), "-devgoldrush" ) + TStringManager::String8Length( "-devgoldrush" );
+			const TCHAR* szArg    = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devgoldrush" ) + TStringManager::String8Length( "-devgoldrush" );
 			TINT         iSpawner = ( szArg[ 0 ] == ' ' && szArg[ 1 ] >= '1' && szArg[ 1 ] <= '8' ) ? szArg[ 1 ] - '1' : 0;
 			AUnit*       pStump   = ACoinPickupMicroGame::GetStump( iSpawner );
 
@@ -4502,12 +4848,12 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 	if ( s_bStarted && s_bMainGameLoaded && Dev_HasSwitch( "-devmilkweed" ) )
 		Dev_UpdateMilkweed();
 
-	if ( s_bStarted && TStringManager::String8FindString( GetCommandLineA(), "-devshake " ) )
+	if ( s_bStarted && TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devshake " ) )
 		Dev_UpdateShake();
 
 		// (also in minigames started with -minigame, the times are then counted from the minigame start, and in the barn of "-devnightbarn")
 #  ifndef TOSHI_FINAL
-	if ( ( ( s_bStarted && ( s_bMainGameLoaded || Dev_HasSwitch( "-devnightbarn" ) ) && Dev_IsSimStateRequested() ) || s_bInMiniGame ) && TStringManager::String8FindString( GetCommandLineA(), "-devkeys " ) )
+	if ( ( ( s_bStarted && ( s_bMainGameLoaded || Dev_HasSwitch( "-devnightbarn" ) ) && Dev_IsSimStateRequested() ) || s_bInMiniGame ) && TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devkeys " ) )
 		Dev_UpdateKeys();
 #  endif
 

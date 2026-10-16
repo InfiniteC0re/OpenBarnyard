@@ -122,6 +122,7 @@ AChickenCoopDefenderThief::~AChickenCoopDefenderThief()
 }
 
 // $Barnyard: FUNCTION 0051c460
+// $BarnyardWiiJP: FUNCTION 8026d1ec
 TBOOL AChickenCoopDefenderThief::Create( AUnitTransform* a_pTransform )
 {
 	if ( !AAnimatedUnit::Create( a_pTransform ) )
@@ -142,10 +143,26 @@ TBOOL AChickenCoopDefenderThief::Create( AUnitTransform* a_pTransform )
 	}
 	else if ( rcTypeName == TPS8( chickencoop_coyote ) )
 	{
+#ifdef BARNYARD_LATEST
+		// The Wii gives the coyote KO stars as well
+		AModelInstanceRef pModelInstance = GetAnimatableObject()->GetModelInstance();
+		m_iHeadBone                      = pModelInstance->GetSkeleton()->GetBoneID( "c_head", 0 );
+
+		m_iStarsEffect = AParticleEffectManager::FindEffect( "KO_stars" );
+#endif
 		m_eKind = KIND_COYOTE;
 	}
 	else if ( rcTypeName == TPS8( chickencoop_evilfreddy ) )
 	{
+#ifdef BARNYARD_LATEST
+		// The Wii makes Evil Freddy vanish in a flash once he's milked (see OnUnitAction).
+		// "Freddygone" is only in the Wii particle library; without the merged
+		// Data/Particles/pchasingchicks.trb this stays -1 and he behaves like on PC.
+		AModelInstanceRef pModelInstance = GetAnimatableObject()->GetModelInstance();
+		m_iHeadBone                      = pModelInstance->GetSkeleton()->GetBoneID( "c_pelvis", 0 );
+
+		m_iStarsEffect = AParticleEffectManager::FindEffect( "Freddygone" );
+#endif
 		m_eKind = KIND_FREDDY;
 	}
 
@@ -488,6 +505,7 @@ void AChickenCoopDefenderThief::UpdateScare( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 0051c740
+// $BarnyardWiiJP: FUNCTION 8026dbb0
 TBOOL AChickenCoopDefenderThief::SetState( STATE_ a_eState )
 {
 	switch ( a_eState )
@@ -528,6 +546,15 @@ TBOOL AChickenCoopDefenderThief::SetState( STATE_ a_eState )
 		}
 		case STATE_SEEK_LOOSE:
 		{
+#ifdef BARNYARD_LATEST
+			// The Wii also stops the stars here (the coyote has them now and doesn't go through UpdateMilked's raccoon path)
+			if ( m_pStars )
+			{
+				m_pStars->GetInstance()->Stop();
+				m_pStars = TNULL;
+			}
+#endif
+
 			if ( m_eKind == KIND_RACCOON )
 			{
 				// The closest loose egg
@@ -611,6 +638,15 @@ TBOOL AChickenCoopDefenderThief::SetState( STATE_ a_eState )
 			SetSpeed( SPEED_WALK );
 
 			m_eFlags |= FLAGS_MOVING;
+
+#ifdef BARNYARD_LATEST
+			// The Wii also stops the stars here (the coyote has them now and doesn't go through UpdateMilked's raccoon path)
+			if ( m_pStars )
+			{
+				m_pStars->GetInstance()->Stop();
+				m_pStars = TNULL;
+			}
+#endif
 			break;
 		}
 		case STATE_IN_COOP:
@@ -748,6 +784,15 @@ TBOOL AChickenCoopDefenderThief::SetState( STATE_ a_eState )
 			m_eSpeed = SPEED_IDLE;
 			SetMovement( TFALSE );
 
+#ifdef BARNYARD_LATEST
+			// The Wii also stops the stars here (the coyote has them now and doesn't go through UpdateMilked's raccoon path)
+			if ( m_pStars )
+			{
+				m_pStars->GetInstance()->Stop();
+				m_pStars = TNULL;
+			}
+#endif
+
 			if ( m_eState == STATE_ESCAPE )
 			{
 				// Got away with a hen/egg
@@ -817,7 +862,23 @@ TBOOL AChickenCoopDefenderThief::SetState( STATE_ a_eState )
 			m_pSteer->Command_CancelCurrentCommand();
 			m_eSpeed = SPEED_IDLE;
 
-			if ( m_eKind != KIND_RACCOON )
+#ifdef BARNYARD_LATEST
+			if ( m_eKind == KIND_COYOTE )
+			{
+				// The Wii puts the stars around the head of the coyote too
+				if ( !m_pStars && m_iStarsEffect >= 0 )
+				{
+					m_pStars = AParticleEffectManager::GetSingleton()->PlayEffect( m_iStarsEffect, TVector4::VEC_ZERO, TVector4::VEC_NEGY );
+
+					if ( m_pStars )
+						m_pStars->AttachToBone( GetAnimatableObject()->GetModelInstance(), m_iHeadBone, TTRUE, TFALSE );
+				}
+
+				GetAnimatableObject()->PlayAnimation( TPS8( yuk ) );
+			}
+			else
+#endif
+			    if ( m_eKind != KIND_RACCOON )
 			{
 				GetAnimatableObject()->PlayAnimation( TPS8( yuk ) );
 			}
@@ -875,6 +936,18 @@ TBOOL AChickenCoopDefenderThief::SetState( STATE_ a_eState )
 			m_pCarried = TNULL;
 
 			GetAnimatableObject()->GetToshiAnimInterface().SetAnimationSet( GetAnimatableObject()->GetObjectType()->FindAnimationSetOrDefault( TPS8( default ) ) );
+
+#ifdef BARNYARD_LATEST
+			// The coyote dropping a hen gets the stars too
+			if ( m_eKind == KIND_COYOTE && !m_pStars && m_iStarsEffect >= 0 )
+			{
+				m_pStars = AParticleEffectManager::GetSingleton()->PlayEffect( m_iStarsEffect, TVector4::VEC_ZERO, TVector4::VEC_NEGY );
+
+				if ( m_pStars )
+					m_pStars->AttachToBone( GetAnimatableObject()->GetModelInstance(), m_iHeadBone, TTRUE, TFALSE );
+			}
+#endif
+
 			GetAnimatableObject()->PlayAnimation( TPS8( yuk ) );
 			break;
 		}
@@ -1306,8 +1379,26 @@ void AChickenCoopDefenderThief::UpdateAttack( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 0051e590
+// $BarnyardWiiJP: FUNCTION 80271b00
 void AChickenCoopDefenderThief::OnUnitAction( AAnimationBreakpointUnitAction::Event* a_pEvent )
 {
+#ifdef BARNYARD_LATEST
+	// Milked, Evil Freddy vanishes in a flash at the "hd_throw_bp" breakpoint of his "yuk"
+	if ( a_pEvent->eAction == AAnimationBreakpointUnitAction::ACTION_HD_THROW && m_eKind == KIND_FREDDY && ( m_eState == STATE_MILKED || m_eState == STATE_MILKED_DROP ) )
+	{
+		// NOTE: the Wii plays the effect unchecked; without the Wii particle data Freddy keeps the PC behaviour
+		if ( m_iStarsEffect >= 0 )
+		{
+			TMatrix44 matBone;
+			GetAnimatableObject()->GetModelInstance()->GetBoneTransform( m_iHeadBone, matBone );
+			AParticleEffectManager::GetSingleton()->PlayEffect( m_iStarsEffect, matBone.GetTranslation(), TVector4::VEC_NEGY );
+			SetState( STATE_GONE );
+		}
+
+		return;
+	}
+#endif
+
 	if ( a_pEvent->eAction != AAnimationBreakpointUnitAction::ACTION_PICKUP )
 		return;
 

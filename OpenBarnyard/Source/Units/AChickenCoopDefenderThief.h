@@ -176,8 +176,8 @@ public:
 	Toshi::TPString8              m_strCarryBone;   // 0xe4
 	Toshi::TPString8              m_strCarriedBone; // 0xe8
 	Toshi::TVector4               m_vVelocity;      // 0xec, STATE_THROWN
-	TINT                          m_iHeadBone;      // 0xfc, "c_head" of the raccoons
-	TINT                          m_iStarsEffect;   // 0x100, "KO_stars"
+	TINT                          m_iHeadBone;      // 0xfc, "c_head" of the raccoons (BARNYARD_LATEST: and coyotes; Freddy "c_pelvis")
+	TINT                          m_iStarsEffect;   // 0x100, "KO_stars" (BARNYARD_LATEST: Freddy "Freddygone", -1 without the Wii particle data)
 	AParticleEffectHandle*        m_pStars;         // 0x104
 };
 

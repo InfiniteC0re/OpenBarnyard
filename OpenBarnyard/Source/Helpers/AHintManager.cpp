@@ -1054,6 +1054,7 @@ void AHintManager::UpdateMilkweedMarker()
 }
 
 // $Barnyard: FUNCTION 0041f0a0
+// $BarnyardWiiJP: FUNCTION 80121f70
 void AHintManager::UpdateZoneMarker( MARKER a_eMarker )
 {
 	m_abShowMarker[ a_eMarker ] = TFALSE;
@@ -1078,6 +1079,23 @@ void AHintManager::UpdateZoneMarker( MARKER a_eMarker )
 		case MARKER_BARN_ENTRANCE:
 			if ( AGameTimeManager::GetSingleton()->GetCurrentDayPhase() == AGameTimeManager::DAYPHASE_NIGHT )
 				return;
+
+#ifdef BARNYARD_LATEST
+			// Latest version: only once the story reaches act 1 tier 7 and "Pig Buttery Goodness" is assigned or done
+			// NOTE: act 1 tier 7 is the same on the Wii (its act 1 reorder only moves tiers 2-5)
+			{
+				AQuestManager* pQuestManager = AQuestManager::GetSingleton();
+				TINT           iAbsTier      = pQuestManager->GetCurAbsQuestTier();
+
+				if ( iAbsTier < 7 )
+					return;
+
+				if ( iAbsTier == 7 &&
+				     !pQuestManager->FindAssignedQuest( TPS8D( "Pig Buttery Goodness" ), 1 ) &&
+				     !pQuestManager->IsQuestComplete( TPS8D( "Pig Buttery Goodness" ), 1 ) )
+					return;
+			}
+#endif
 
 			szGoal = "hint_barn_entrance";
 			break;

@@ -19,6 +19,10 @@
 #include "FX/AParticleEffectLocatorManager.h"
 #include "UnitMovement/PathfindingNetworks/AInteriorNetworkManager.h"
 
+#ifdef BARNYARD_LATEST
+#  include "GUI/AGUI2.h"
+#endif
+
 #include <Toshi/TString8.h>
 #include <File/TTRB.h>
 #include <Plugins/PPropertyParser/PBProperties.h>
@@ -205,6 +209,15 @@ TBOOL AAssetLoader::DestroyAssetPackOfLibrary( const TCHAR* a_szLibraryName )
 			ASubtitleManager::GetSingleton()->UnloadSubtitles();
 			g_oLoadScreen.Update( 1.0f, TTRUE );
 		}
+
+#ifdef BARNYARD_LATEST
+		// Wii: the XUI scenes and what they loaded go with the asset pack
+		AGUI2* pGUI = AGUI2::GetSingleton();
+		pGUI->DeleteXUIScenes();
+		pGUI->DeleteXUIResources();
+		pGUI->UnloadXUIMaterialLibraries();
+		pGUI->CloseXUIFonts();
+#endif
 
 		Close( AAssetType_AssetPack );
 		g_oLoadScreen.Update( 1.0f, TTRUE );

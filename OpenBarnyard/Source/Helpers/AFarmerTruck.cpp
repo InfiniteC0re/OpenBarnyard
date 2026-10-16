@@ -311,6 +311,13 @@ void AFarmerTruck::SetSequenceMode( TBOOL a_bSequence )
 
 			AUnit* pUnit = AUnitNameManager::GetSingleton()->RetrieveByName( *ms_apHiddenCharacters[ i ] );
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+			// The original also uses a unit destroyed this frame, whose animatable object is already gone (e.g. Ben,
+			// destroyed by AAnimalPopulationManager::SetQuestTier in the frame the farmer arrives)
+			if ( pUnit && pUnit->IsDying() )
+				pUnit = TNULL;
+#endif
+
 			if ( pUnit )
 			{
 				AVisibleUnit* pVisibleUnit = TSTATICCAST( AVisibleUnit, pUnit );
@@ -338,6 +345,12 @@ void AFarmerTruck::SetSequenceMode( TBOOL a_bSequence )
 		for ( TINT i = 0; i < NUM_HIDDEN_CHARACTERS; i++ )
 		{
 			AUnit* pUnit = AUnitNameManager::GetSingleton()->RetrieveByName( *ms_apHiddenCharacters[ i ] );
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+			// See above
+			if ( pUnit && pUnit->IsDying() )
+				pUnit = TNULL;
+#endif
 
 			if ( pUnit )
 			{

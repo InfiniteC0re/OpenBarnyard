@@ -66,6 +66,12 @@ public:
 	// NOTE: retail places this function next to the state's (004d1ca0); the state (004d2180) uses it as well.
 	static TBOOL ClampToBallInHandArea( Toshi::TVector4 a_vPoint, Toshi::TVector4 a_vCenter, TFLOAT a_fRadius, Toshi::TVector4 a_vForward, Toshi::TVector4* a_pOutPoint );
 
+#ifdef BARNYARD_LATEST
+	// Latest version: how much the ball-in-hand area shrinks to the sides (1.0 = a circle).
+	// Set by ABarnYardPoolMiniGameState::ResetGame: 1.0 on the small table on Easy, else 0.65 (the PC constant).
+	static TFLOAT ms_fBallInHandShape; // Wii 806af864
+#endif
+
 	// $Barnyard: FUNCTION 004ce0b0
 	void SetBalls( TINT a_iNumBalls, const Toshi::TRef<AUnitProxy>* a_pBalls, TFLOAT a_fBallRadius )
 	{
