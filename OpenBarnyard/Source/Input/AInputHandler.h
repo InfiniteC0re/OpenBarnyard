@@ -164,9 +164,19 @@ public:
 		return TNULL;
 	}
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Starts a rumble effect on the controller, returns a handle for RemoveRumble (0 if none was started)
+	// NOTE: a stub on PC retail, reconstructed from the PS2 build
+	TINT SetRumble( Toshi::TInputDeviceController* a_pController, const RumbleParams* a_pParams );
+
+	// Stops one rumble effect started by SetRumble
+	// NOTE: a stub on PC retail, reconstructed from the PS2 build
+	void RemoveRumble( TINT a_iRumble, Toshi::TInputDeviceController* a_pController );
+#else
 	// Starts a rumble effect on the controller. Does nothing on PC.
 	// NOTE: shared folded stub (005cc080) that returns 0
 	TBOOL SetRumble( Toshi::TInputDeviceController* a_pController, const RumbleParams* a_pParams ) { return TFALSE; }
+#endif
 
 	// Sets the world position the rumble effects come from (a_pController is unused)
 	// $Barnyard: FUNCTION 005959f0

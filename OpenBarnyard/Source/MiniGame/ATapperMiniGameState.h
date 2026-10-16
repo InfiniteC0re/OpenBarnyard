@@ -1,5 +1,6 @@
 #pragma once
 #include "AMiniGameState.h"
+#include "Input/AInputHandler.h"
 #include "GUI/AGUI2FloatHudElement.h"
 #include "GUI/AGUI2FadingText.h"
 #include "GUI/AGUI2Portrait.h"
@@ -561,8 +562,12 @@ private:
 
 	static void __stdcall OnAnimEventCallback( ATapperMiniGameState* a_pCaller, AAnimationBreakpointUnitAction::Event* a_pEvent ); // 004e6df0
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	static void StopRumble( TINT a_iRumble, Toshi::TInputDeviceController* a_pController ) { AInputHandler::GetSingleton()->RemoveRumble( a_iRumble, a_pController ); }
+#else
 	// Empty function (0054df00) that is called with the rumble and the main controller
 	static void StopRumble( TINT a_iRumble, Toshi::TInputDeviceController* a_pController ) {} // DOES_NOTHING
+#endif
 
 private:
 	static Toshi::TVector4         s_vCameraPosition;  // 00773bb8

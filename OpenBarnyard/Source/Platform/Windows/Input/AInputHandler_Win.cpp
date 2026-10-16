@@ -10,6 +10,7 @@
 
 #ifdef TRENDERINTERFACE_DX8
 #  include <Platform/DX8/Input/TInputDeviceController_Win.h>
+#  include <Platform/DX8/Input/TInputDeviceController_XInput.h>
 #  include <Platform/DX8/Input/TInputDeviceMouse_Win.h>
 #endif
 
@@ -188,7 +189,7 @@ TBOOL AInputHandler::Rumble::Update( TFLOAT a_fDeltaTime )
 // $Barnyard: FUNCTION 00596010
 void AInputHandler::UpdateRumbles( TFLOAT a_fDeltaTime )
 {
-	// NOTE: m_pRumbleController is never set on PC (SetRumble is a stub), so this never does anything
+	// NOTE: m_pRumbleController is never set on PC retail (SetRumble is a stub)
 	if ( !m_bRumbleEnabled || !m_pRumbleController )
 		return;
 
@@ -210,9 +211,13 @@ void AInputHandler::UpdateRumbles( TFLOAT a_fDeltaTime )
 			pRumble->Remove();
 			m_llFreeRumbles.InsertTail( pRumble );
 		}
+#ifdef BARNYARD_COMMUNITY_PATCH
+		else if ( pRumble->fStrength > fStrongest )
+#else
 		else if ( pRumble->fStrength > 0.0f )
+#endif
 		{
-			// NOTE: not compared with the strongest one, the last active rumble is picked
+			// NOTE: retail doesn't compare it with the strongest one, the last active rumble is picked
 			fStrongest = pRumble->fStrength;
 			pStrongest = pRumble;
 		}
@@ -280,8 +285,12 @@ void AInputHandler::UpdateRumbles( TFLOAT a_fDeltaTime )
 	}
 	else if ( pStrongest )
 	{
+#ifdef BARNYARD_COMMUNITY_PATCH
+		m_pRumbleController->SetVibration( TInputDeviceController::VIBRATION_ACTUATOR_1, fStrongest, TFALSE );
+#else
 		// NOTE: the strongest rumble isn't positional, retail stops the vibration instead of applying it
 		m_pRumbleController->SetVibration( TInputDeviceController::VIBRATION_ACTUATOR_1, 0.0f, TFALSE );
+#endif
 	}
 	else
 	{
@@ -461,6 +470,80 @@ void AInputHandler::SetRumbleEnabled( TBOOL a_bEnabled )
 // $Barnyard: FUNCTION 00595a20
 void AInputHandler::StopRumble( TInputDeviceController* a_pController )
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: like the PS2 build, also drop the rumbles started by SetRumble and stop the motors
+	if ( !a_pController )
+		return;
+
+	while ( !m_llRumbles.IsEmpty() )
+	{
+		Rumble* pRumble = m_llRumbles.Head();
+		pRumble->Remove();
+		m_llFreeRumbles.InsertTail( pRumble );
+	}
+
+	if ( m_pRumbleController )
+	{
+		m_pRumbleController->SetVibration( TInputDeviceController::VIBRATION_ACTUATOR_0, 0.0f, TFALSE );
+		m_pRumbleController->SetVibration( TInputDeviceController::VIBRATION_ACTUATOR_1, 0.0f, TFALSE );
+	}
+#endif
+
 	if ( a_pController )
 		m_pRumbleController = TNULL;
 }
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+TINT AInputHandler::SetRumble( TInputDeviceController* a_pController, const RumbleParams* a_pParams )
+{
+	if ( !a_pController || !a_pController->IsForceFeedbackDevice() || !m_bRumbleEnabled )
+		return 0;
+
+	if ( m_llFreeRumbles.IsEmpty() )
+		return 0;
+
+	Rumble* pRumble = m_llFreeRumbles.Head();
+	pRumble->Remove();
+
+	pRumble->fMaxStrength = a_pParams->afUnk[ 0 ];
+	pRumble->fMinStrength = a_pParams->afUnk[ 1 ];
+	pRumble->fStrength    = a_pParams->afUnk[ 2 ];
+	pRumble->fDuration    = a_pParams->afUnk[ 3 ];
+	pRumble->fTime        = a_pParams->afUnk[ 4 ];
+	pRumble->fUnk1        = a_pParams->afUnk[ 5 ];
+	pRumble->fUnk2        = a_pParams->afUnk[ 6 ];
+	pRumble->eFade        = Rumble::FADE( a_pParams->iUnk );
+	pRumble->pController  = a_pController;
+
+	if ( m_pRumbleController && m_pRumbleController != a_pController )
+	{
+		// The rumbles of the previous controller are over
+		StopRumble( m_pRumbleController );
+	}
+
+	m_llRumbles.InsertTail( pRumble );
+	m_pRumbleController = a_pController;
+
+	return TINT( pRumble );
+}
+
+void AInputHandler::RemoveRumble( TINT a_iRumble, TInputDeviceController* a_pController )
+{
+	if ( a_iRumble == 0 )
+		return;
+
+	for ( auto it = m_llRumbles.Begin(); it != m_llRumbles.End(); it++ )
+	{
+		Rumble* pRumble = it;
+
+		if ( TINT( pRumble ) == a_iRumble && ( !a_pController || pRumble->pController == a_pController ) )
+		{
+			pRumble->Remove();
+			m_llFreeRumbles.InsertTail( pRumble );
+			return;
+		}
+	}
+}
+
+#endif // BARNYARD_COMMUNITY_PATCH
