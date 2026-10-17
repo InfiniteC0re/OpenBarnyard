@@ -54,6 +54,8 @@
 #  define TOSHI_NO_LOGS
 #endif
 
+// TODO check how to implement WASM here
+
 #ifdef TOSHI_DEBUG
 #  ifdef TOSHI_SKU_WINDOWS
 #	define TBREAK() __debugbreak()

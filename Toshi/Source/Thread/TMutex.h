@@ -1,5 +1,7 @@
 #pragma once
 
+// TODO check how to implement WASM here
+
 #if defined( TOSHI_SKU_WINDOWS ) && !defined( USE_ATOMIC )
 #  define USE_WIN32_MUTEX
 #endif // TOSHI_SKU_WINDOWS && !USE_ATOMIC

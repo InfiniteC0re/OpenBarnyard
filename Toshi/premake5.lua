@@ -7,7 +7,7 @@ project "Toshi"
 
 	pchheader "ToshiPCH.h"
 	pchsource "Source/ToshiPCH.cpp"
-	
+
 	files
 	{
 		"Source/ToshiPCH.cpp",
@@ -61,9 +61,9 @@ project "Toshi"
 	filter "files:Source/Profiler/**.*"
 		enablepch "Off"
 
-	filter "system:windows"
+	filter "options:platform=windows"
 		systemversion "latest"
-		
+
 		files
 		{
 			"Source/Platform/Windows/**.cpp",
@@ -74,7 +74,7 @@ project "Toshi"
 			"Resources/*.aps",
 			"Resources/*.rc"
 		}
-		
+
 		filter "options:renderer=DX8"
 			links
 			{
@@ -86,12 +86,12 @@ project "Toshi"
 				"winmm.lib",
 				"dinput8.lib"
 			}
-			
+
 			externalincludedirs 
 			{
 				"%{IncludeDir.dx8}"
 			}
-	
+
 			libdirs
 			{
 				"%{LibDir.dx8}"
@@ -103,7 +103,7 @@ project "Toshi"
 				"Source/Platform/DX8/**.c",
 				"Source/Platform/DX8/**.h"
 			}
-			
+
 		filter "options:renderer=GL"
 			links
 			{
@@ -111,13 +111,13 @@ project "Toshi"
 				"opengl32.lib",
 				"glew32s.lib"
 			}
-			
+
 			libdirs
 			{
 				"%{LibDir.sdl2}",
 				"%{LibDir.glew}"
 			}
-			
+
 			externalincludedirs
 			{
 				"%{IncludeDir.sdl2}",
@@ -136,6 +136,15 @@ project "Toshi"
 		defines
 		{
 			"TOSHI_SKU_WINDOWS"
+		}
+
+
+	filter "options:platform=wasm"
+		-- TODO
+
+		defines
+		{
+			"TOSHI_SKU_WASM"
 		}
 
 	filter "configurations:Debug"

@@ -13,6 +13,8 @@
 
 #include "Toshi/Toshi.h"
 
+// TODO check how to implement WASM here
+
 /* Platform specific headers */
 #ifdef TOSHI_SKU_WINDOWS
 #  include <WinSock2.h>

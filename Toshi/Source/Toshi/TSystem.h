@@ -7,15 +7,21 @@
 #  include "Platform/Windows/TSystemDLL_Win.h"
 #endif // TOSHI_SKU_WINDOWS
 
+#ifdef TOSHI_SKU_WASM
+#  include "" // TODO
+#endif // TOSHI_SKU_WASM
+
 TOSHI_NAMESPACE_START
 
 class TScheduler;
 class TPString8Pool;
 
 class TKernelInterfaceDLL :
-#ifdef TOSHI_SKU_WINDOWS
+#if defined(TOSHI_SKU_WINDOWS)
     public TSystemDLLWin
     ,
+#elif defined(TOSHI_SKU_WASM)
+	// TODO
 #else
 #  error Unsupported platform
 #endif
