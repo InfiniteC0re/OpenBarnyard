@@ -1,4 +1,6 @@
 #pragma once
+#include "Toshi/TStringManager.h"
+#include "Toshi/TUtil.h"
 
 TOSHI_NAMESPACE_START
 
@@ -44,6 +46,31 @@ public:
 	// $Barnyard: FUNCTION 006dd710
 	// $Barnyard: FUNCTION 006dd730
 	virtual ~TDebugText() {} // +0x10
+
+	// Adds a_szText to the log (left edge, one line below the previous log entry)
+	Entry* AddString( const TCHAR* a_szText, TUINT32 a_uiColour )
+	{
+		return PrintString( 0, 0, a_szText, a_uiColour, ENTRYFLAGS_LOG );
+	}
+
+	// Adds a_szText at a_iX, a_iY (pixels of the back buffer)
+	Entry* PrintString( TINT a_iX, TINT a_iY, const TCHAR* a_szText, TUINT32 a_uiColour, TUINT16 a_uiFlags = ENTRYFLAGS_NONE )
+	{
+		TUINT16 uiLength = TUINT16( TStringManager::String8Length( a_szText ) );
+		Entry*  pEntry   = AllocateEntry( uiLength + 1 );
+
+		if ( pEntry )
+		{
+			pEntry->iX       = TINT16( a_iX );
+			pEntry->iY       = TINT16( a_iY );
+			pEntry->uiLength = uiLength;
+			pEntry->uiFlags  = a_uiFlags;
+			pEntry->uiColour = a_uiColour;
+			TUtil::MemCopy( pEntry->szText, a_szText, uiLength + 1 );
+		}
+
+		return pEntry;
+	}
 
 	void  SetEnabled( TBOOL a_bEnabled ) { m_bEnabled = a_bEnabled; }
 	TBOOL IsEnabled() const { return m_bEnabled; }

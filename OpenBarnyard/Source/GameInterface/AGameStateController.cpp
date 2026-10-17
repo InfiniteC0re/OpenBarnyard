@@ -19,6 +19,7 @@
 #include "SaveLoadSKU.h"
 #include "Helpers/APlayerProgress.h"
 #include "Quests/AQuestManager.h"
+#include "Render/ADebugOverlay.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -727,6 +728,11 @@ TBOOL AGameStateController::ProcessInput( const TInputInterface::InputEvent* a_p
 			pCheatActivator->ResetCheatCodeInput();
 		}
 	}
+
+#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+	if ( ADebugOverlay::IsSingletonCreated() )
+		ADebugOverlay::GetSingleton()->ProcessInput( pGameState, a_pEvent );
+#endif
 
 	if ( pGameState->SendInputCommands( a_pEvent ) )
 	{

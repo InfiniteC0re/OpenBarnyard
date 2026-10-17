@@ -24,6 +24,7 @@ public:
 	TUINT16                    GetSequenceId() const { return m_pNamedAnimation->GetSequenceId(); }
 	ANamedAnimation*           GetNamedAnimation() const { return m_pNamedAnimation; }
 	ANamedAnimationTransition* GetTransition() const { return m_pTransition; }
+	TINT                       GetBreakpointIndex() const { return m_iBreakpointIndex; }
 
 private:
 	ANamedAnimation*           m_pNamedAnimation;

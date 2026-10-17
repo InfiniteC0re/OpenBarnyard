@@ -89,6 +89,9 @@ public:
 	TFLOAT     GetMachineTime();
 	TFLOAT     GetStateTime();
 
+	// Number of machines on the stack (the current one and its callers)
+	TINT GetStackDepth() { return m_llStack.Count(); }
+
 	PPropertyValue* GetVariable( TINT a_iIndex );
 	void            SetVariable( TINT a_iIndex, const PPropertyValue& a_rcValue );
 
@@ -99,7 +102,6 @@ public:
 private:
 	AFSMStackNode* CreateStackNode();
 	AFSMStackNode* GetCallerStackNode();
-	TINT           GetStackDepth() { return m_llStack.Count(); }
 
 	void Push( AFSM* a_pMachine, const PPropertyValueArray* a_pArgs );
 	void Pop();

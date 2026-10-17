@@ -22,6 +22,7 @@
 #include "Units/AUnitManager.h"
 #include "Units/AAnimalPopulationManager.h"
 #include "Render/ASunFlareEffect.h"
+#include "Render/ADebugOverlay.h"
 #include "FX/AParticleEffectManager.h"
 
 #include <Render/TNullResource.h>
@@ -444,6 +445,10 @@ TBOOL ARenderer::OnCreate()
 
 		g_pRenderD3D->SetDeviceLostCallback( OnRenderDeviceLost );
 		g_pRenderD3D->SetDeviceFoundCallback( OnRenderDeviceFound );
+
+#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+		ADebugOverlay::CreateSingleton();
+#endif
 	}
 
 	return bCreatedTRender;
@@ -465,6 +470,11 @@ static void DestroyShader()
 // $Barnyard: FUNCTION 0060b1d0
 void ARenderer::OnDestroy()
 {
+#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+	if ( ADebugOverlay::IsSingletonCreated() )
+		ADebugOverlay::DestroySingleton();
+#endif
+
 	if ( m_pSkyDome )
 		delete m_pSkyDome;
 
@@ -719,6 +729,11 @@ TBOOL ARenderer::OnUpdate( TFLOAT a_fDeltaTime )
 
 		if ( m_bRenderGUI )
 			RenderGUI();
+
+#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+		if ( ADebugOverlay::IsSingletonCreated() )
+			ADebugOverlay::GetSingleton()->Render( a_fDeltaTime );
+#endif
 
 		pRender->EndScene();
 
