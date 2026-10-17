@@ -214,9 +214,8 @@ void AProjectile::CalculateThrowVelocity( const TVector4& a_rcTarget, const TVec
 	}
 	else
 	{
-		// NOTE: retail reads the gravity from a global (0779a14) that is always 9.8
 		TFLOAT fTime     = fDistance / fSpeed;
 		a_rOutVelocity.w = 1.0f;
-		a_rOutVelocity.y = ( ( a_rcTarget.y - a_rcOrigin.y ) - 9.8f * fTime * fTime * 0.5f ) / fTime;
+		a_rOutVelocity.y = ( ( a_rcTarget.y - a_rcOrigin.y ) - ms_fTrajectoryGravity * fTime * fTime * 0.5f ) / fTime;
 	}
 }

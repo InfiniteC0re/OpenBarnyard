@@ -125,8 +125,6 @@ static TFORCEINLINE TVector4 GetModelPosition( AAnimatableObject* a_pObject )
 	return vPosition;
 }
 
-static constexpr TFLOAT GRAVITY = 9.8f; // flt_00779a14
-
 //-----------------------------------------------------------------------------
 // NOTE: 0066a920, 0066aa90 and 0066ab40 are projectile helpers of the engine area next to
 // AProjectile (0066a0d0..), only used by this minigame.
