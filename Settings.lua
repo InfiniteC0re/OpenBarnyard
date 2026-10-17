@@ -11,6 +11,17 @@ newoption
 
 newoption
 {
+	trigger = "platform",
+	description = "Choose platform you want to build for",
+	allowed = {
+		{ "windows", "Compile for Windows"},
+		{ "wasm", "Compile for Web"},
+	},
+	default = "windows"
+}
+
+newoption
+{
 	trigger = "renderer",
 	description = "Choose renderer API you want to build for",
 	allowed = {

@@ -15,6 +15,6 @@ TSTATICASSERT( sizeof( TUINT64 ) == 8 );
 // x64 is not supported
 //TSTATICASSERT( sizeof( void* ) == 4 );
 
-#ifndef TOSHI_SKU_WINDOWS
-#  error At the moment, Windows is the only supported OS
+#if !defined(TOSHI_SKU_WINDOWS) || !defined(TOSHI_SKU_WASM)
+#  error At the moment, only Windows and WASM are supported
 #endif
