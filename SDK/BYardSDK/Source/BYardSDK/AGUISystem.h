@@ -2,7 +2,7 @@
 #include "ARenderer.h"
 #include "THookedSingleton.h"
 
-#include <Plugins/GUI/PGUITRRenderObject.h>
+#include <Plugins/PGUIRenderer/PGUITRRenderObject.h>
 #include <Toshi/TPString8.h>
 #include <Toshi/TTask.h>
 

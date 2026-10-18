@@ -67,6 +67,27 @@ public:
 		TBOOL              bWindowed;
 	};
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+	struct MemBlockScope
+	{
+		TMemory::MemBlock* pOldBlock;
+
+		MemBlockScope()
+		{
+			pOldBlock = g_pMemory->GetGlobalBlock();
+
+			g_pMemory->SetGlobalBlock( TRenderInterface::GetSingleton()->GetMemBlock() );
+		}
+
+		~MemBlockScope()
+		{
+			g_pMemory->SetGlobalBlock( pOldBlock );
+		}
+	};
+
+#endif // BARNYARD_COMMUNITY_PATCH
+
 public:
 	TRenderInterface();
 	virtual ~TRenderInterface() = 0;
@@ -159,6 +180,10 @@ public:
 	TStack<TMatrix44, 20>&     GetTransforms() { return m_Transforms; }
 	TTexture*                  GetInvalidTexture() { return m_pInvalidTexture; }
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	TMemory::MemBlock* GetMemBlock() { return m_pMemBlock; }
+#endif // BARNYARD_COMMUNITY_PATCH
+
 	void DestroyAllShaderResources();
 
 	// Destroys every resource of a_pClass (or derived) in the tree that starts at a_pResource, including their children.
@@ -199,6 +224,11 @@ protected:
 	TGenericEmitter           m_BeginSceneEmitter;                    // 0x158
 	TGenericEmitter           m_EndSceneEmitter;                      // 0x164
 	TStack<TMatrix44, 20>     m_Transforms;                           // 0x170
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	TMemory::MemBlock* m_pMemBlock    = TNULL;
+	void*              m_pMemBlockRaw = TNULL;
+#endif // BARNYARD_COMMUNITY_PATCH
 };
 
 TSINGLETON_DECLARE_ALIAS( TRenderInterface, Render );

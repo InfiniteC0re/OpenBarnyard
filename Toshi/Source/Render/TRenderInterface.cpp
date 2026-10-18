@@ -61,6 +61,13 @@ TBOOL TRenderInterface::Create()
 	TASSERT( TFALSE == IsCreated(), "TRender already created" );
 	m_pCreatedContext = CreateRenderContext();
 
+#if defined( BARNYARD_COMMUNITY_PATCH ) && defined( TOSHI_SKU_WINDOWS )
+	constexpr TSIZE uiMemBlockSize = 256 * 1024 * 1024;
+
+	m_pMemBlockRaw = HeapAlloc( GetProcessHeap(), HEAP_ZERO_MEMORY, uiMemBlockSize );
+	m_pMemBlock    = g_pMemory->CreateMemBlockInPlace( m_pMemBlockRaw, uiMemBlockSize, "TRenderInterface" );
+#endif // BARNYARD_COMMUNITY_PATCH && TOSHI_SKU_WINDOWS
+
 	if ( m_pCreatedContext )
 	{
 		SetCurrentRenderContext( m_pCreatedContext );
@@ -76,6 +83,13 @@ TBOOL TRenderInterface::Create()
 TBOOL TRenderInterface::Destroy()
 {
 	TASSERT( TTRUE == IsCreated(), "TRender is not created" );
+
+#if defined( BARNYARD_COMMUNITY_PATCH ) && defined( TOSHI_SKU_WINDOWS )
+
+	g_pMemory->DestroyMemBlock( m_pMemBlock );
+	HeapFree( GetProcessHeap(), 0, m_pMemBlockRaw );
+
+#endif // BARNYARD_COMMUNITY_PATCH && TOSHI_SKU_WINDOWS
 
 	if ( m_Unk2 )
 	{

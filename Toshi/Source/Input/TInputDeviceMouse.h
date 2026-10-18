@@ -42,6 +42,27 @@ public:
 
 	virtual TBOOL        GetDoodadProperties( Doodad a_iDoodad, TInputDevice::DoodadProperties& props ) const override;
 	virtual const TCHAR* GetButtonFromDoodad( Doodad a_iDoodad ) const override;
+
+#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
+	// Development: the buttons -devkeys holds down count as down (IsDown), so their repeats are thrown
+	static void Dev_SetButtonDown( Doodad a_iDoodad, TBOOL a_bDown )
+	{
+		if ( a_iDoodad >= BUTTON_1 && a_iDoodad <= BUTTON_8 )
+		{
+			TUINT32 uiBit = 1U << ( a_iDoodad - BUTTON_1 );
+			ms_uiDevButtons = a_bDown ? ( ms_uiDevButtons | uiBit ) : ( ms_uiDevButtons & ~uiBit );
+		}
+	}
+
+	static TBOOL Dev_IsButtonDown( Doodad a_iDoodad ) { return a_iDoodad >= BUTTON_1 && a_iDoodad <= BUTTON_8 && ( ms_uiDevButtons & ( 1U << ( a_iDoodad - BUTTON_1 ) ) ); }
+	static TBOOL Dev_HasButtonsDown() { return ms_uiDevButtons != 0; }
+
+	// The repeats of the held buttons while the device isn't acquired (unfocused runs)
+	TINT Dev_ProcessRepeats( EventEmitter& a_rEmitter, TFLOAT a_fDeltaTime ) { return ProcessRepeats( a_rEmitter, a_fDeltaTime ); }
+
+protected:
+	inline static TUINT32 ms_uiDevButtons = 0;
+#endif
 };
 
 TOSHI_NAMESPACE_END

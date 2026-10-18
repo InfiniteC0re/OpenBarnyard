@@ -248,6 +248,11 @@ TBOOL TInputDXDeviceMouse::IsDown( TINT a_iDoodad ) const
 {
 	if ( ( 0x30000 < a_iDoodad ) && ( a_iDoodad < 0x30009 ) )
 	{
+#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
+		if ( Dev_IsButtonDown( a_iDoodad ) )
+			return TTRUE;
+#endif
+
 		return ( m_dwButtonCurrent & ( 1 << ( ( a_iDoodad - 1 ) & 0x1F ) ) );
 	}
 

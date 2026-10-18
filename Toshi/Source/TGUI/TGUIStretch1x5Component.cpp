@@ -1,0 +1,217 @@
+#include "ToshiPCH.h"
+#include "TGUIStretch1x5Component.h"
+#include "TGUIManager.h"
+#include "TGUIDisplayContext.h"
+
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
+TOSHI_NAMESPACE_START
+
+TDEFINE_CLASS_INIT( TGUIStretch1x5Component );
+
+TGUIComponentInfo TGUIStretch1x5Component::ms_component_info;
+
+// $NicktoonsPS2: FUNCTION 0037f700
+void TGUIStretch1x5Component::InitialiseClass()
+{
+	ms_component_info.AddElementName( TPString8( "left" ) );
+	ms_component_info.AddElementName( TPString8( "leftish" ) );
+	ms_component_info.AddElementName( TPString8( "middle" ) );
+	ms_component_info.AddElementName( TPString8( "rightish" ) );
+	ms_component_info.AddElementName( TPString8( "right" ) );
+	ms_component_info.SetComponentName( TPString8( "TGUIStretch1x5Component" ) );
+	ms_component_info.SetComponentLabel( TPString8( "1x5 Horizontal Stretch" ) );
+
+	TGUIManager::AddComponentClass( &ms_component_info );
+}
+
+// $NicktoonsPS2: FUNCTION 0037f980
+void TGUIStretch1x5Component::DeinitialiseClass()
+{
+	ms_component_info.Clear();
+}
+
+// $NicktoonsPS2: FUNCTION 0037f568
+TGUIStretch1x5Component::TGUIStretch1x5Component()
+{
+}
+
+// $NicktoonsPS2: FUNCTION 0037f5d8
+TGUIStretch1x5Component::TGUIStretch1x5Component( const TGUIStretch1x5Component& a_rcOther )
+    : TGUIComponent( a_rcOther )
+{
+	CopyElements( m_aElements, a_rcOther.m_aElements, Element_NUMOF );
+}
+
+// $NicktoonsPS2: FUNCTION 0037f668
+TGUIStretch1x5Component::~TGUIStretch1x5Component()
+{
+}
+
+// $NicktoonsPS2: FUNCTION 0037f9a0
+TGUIStretch1x5Component* TGUIStretch1x5Component::Clone() const
+{
+	return new TGUIStretch1x5Component( *this );
+}
+
+// $NicktoonsPS2: FUNCTION 0037f558
+const TGUIComponentInfo* TGUIStretch1x5Component::GetComponentInfo() const
+{
+	return &ms_component_info;
+}
+
+// $NicktoonsPS2: FUNCTION 003800f8
+TGUIElement* TGUIStretch1x5Component::GetElements()
+{
+	return m_aElements;
+}
+
+// NOTE: the "leftish" and "rightish" elements have no preferred size
+// $NicktoonsPS2: FUNCTION 0037ff48
+void TGUIStretch1x5Component::CalculateDimensions( PPropertyValue* a_pParameters, TINT& a_rHeight, TINT& a_rLeftWidth, TINT& a_rMiddleWidth, TINT& a_rRightWidth ) const
+{
+	TINT aWidths[ Element_NUMOF ];
+	TINT aHeights[ Element_NUMOF ];
+
+	for ( TINT i = 0; i < Element_NUMOF; i++ )
+		m_aElements[ i ].GetPreferredSize( a_pParameters, aWidths[ i ], aHeights[ i ] );
+
+	a_rHeight      = TMath::Max( aHeights[ Element_Left ], TMath::Max( aHeights[ Element_Middle ], aHeights[ Element_Right ] ) );
+	a_rLeftWidth   = aWidths[ Element_Left ];
+	a_rMiddleWidth = aWidths[ Element_Middle ];
+	a_rRightWidth  = aWidths[ Element_Right ];
+}
+
+// NOTE: Nicktoons adds the bottom margin to the width and the right margin to the height
+// $NicktoonsPS2: FUNCTION 0037f9d8
+TBOOL TGUIStretch1x5Component::GetPreferredSize( PPropertyValue* a_pParameters, TINT& a_rWidth, TINT& a_rHeight, TINT16 a_iMaxWidth, TINT16 a_iMaxHeight ) const
+{
+	TINT iHeight      = 0;
+	TINT iLeftWidth   = 0;
+	TINT iMiddleWidth = 0;
+	TINT iRightWidth  = 0;
+	CalculateDimensions( a_pParameters, iHeight, iLeftWidth, iMiddleWidth, iRightWidth );
+
+	a_rWidth  = iLeftWidth + iMiddleWidth + iRightWidth + m_iMarginLeft + m_iMarginBottom;
+	a_rHeight = iHeight + m_iMarginTop + m_iMarginRight;
+
+	return TTRUE;
+}
+
+// The middle element keeps its width in the centre, "leftish" and "rightish" fill the space around it
+// NOTE: with a function, the left and right elements are moved away by the size the function adds and they're
+// painted even if their width is 0
+// $NicktoonsPS2: FUNCTION 0037fa78
+void TGUIStretch1x5Component::Paint( TGUIDisplayContext* a_pDisplayContext, PPropertyValue* a_pParameters, const TGUIRectangle& a_rcRect, TGUIComponentCache* a_pCache ) const
+{
+	TINT iHeight      = 0;
+	TINT iLeftWidth   = 0;
+	TINT iMiddleWidth = 0;
+	TINT iRightWidth  = 0;
+	CalculateDimensions( a_pParameters, iHeight, iLeftWidth, iMiddleWidth, iRightWidth );
+
+	// The left and right elements shrink proportionally if they don't fit
+	TINT iAvailable = a_rcRect.m_iWidth - m_iMarginLeft - m_iMarginRight;
+
+	if ( iAvailable < iLeftWidth + iRightWidth )
+	{
+		TINT iSides = iLeftWidth + iRightWidth;
+		iLeftWidth  = TINT( TFLOAT( iLeftWidth ) * ( TFLOAT( iAvailable ) / TFLOAT( iSides ) ) );
+		iRightWidth = iAvailable - iLeftWidth;
+	}
+
+	TINT iSpace         = a_rcRect.m_iWidth - iLeftWidth - iMiddleWidth - iRightWidth - m_iMarginLeft - m_iMarginRight;
+	TINT iLeftishWidth  = iSpace / 2;
+	TINT iRightishWidth = iSpace - iLeftishWidth;
+
+	TINT iLeftX     = a_rcRect.m_iX + m_iMarginLeft;
+	TINT iLeftishX  = iLeftX + iLeftWidth;
+	TINT iMiddleX   = iLeftishX + iLeftishWidth;
+	TINT iRightishX = iMiddleX + iMiddleWidth;
+	TINT iRightX    = a_rcRect.m_iX + a_rcRect.m_iWidth - iRightWidth - m_iMarginRight;
+	TINT iY         = a_rcRect.m_iY + m_iMarginTop;
+	iHeight         = a_rcRect.m_iHeight - m_iMarginTop - m_iMarginBottom;
+
+	if ( !m_apFunctions[ Function_Alpha ] && !m_apFunctions[ Function_Size ] )
+	{
+		if ( iLeftWidth > 0 )
+		{
+			TGUIRectangle oRect( iLeftX, iY, iLeftWidth, iHeight );
+			m_aElements[ Element_Left ].Paint( a_pDisplayContext, a_pParameters, &oRect );
+		}
+
+		if ( iLeftishWidth > 0 )
+		{
+			TGUIRectangle oRect( iLeftishX, iY, iLeftishWidth, iHeight );
+			m_aElements[ Element_Leftish ].Paint( a_pDisplayContext, a_pParameters, &oRect );
+		}
+
+		if ( iMiddleWidth > 0 )
+		{
+			TGUIRectangle oRect( iMiddleX, iY, iMiddleWidth, iHeight );
+			m_aElements[ Element_Middle ].Paint( a_pDisplayContext, a_pParameters, &oRect );
+		}
+
+		if ( iRightishWidth > 0 )
+		{
+			TGUIRectangle oRect( iRightishX, iY, iRightishWidth, iHeight );
+			m_aElements[ Element_Rightish ].Paint( a_pDisplayContext, a_pParameters, &oRect );
+		}
+
+		if ( iRightWidth > 0 )
+		{
+			TGUIRectangle oRect( iRightX, iY, iRightWidth, iHeight );
+			m_aElements[ Element_Right ].Paint( a_pDisplayContext, a_pParameters, &oRect );
+		}
+
+		return;
+	}
+
+	TGUIRectangle oOffset( 0, 0, 0, 0 );
+	TGUIColour    oColour;
+
+	if ( m_apFunctions[ Function_Alpha ] )
+		oColour = TGUIColour( TUINT8( 255 ), TUINT8( 255 ), TUINT8( 255 ), TUINT8( ComputeAlphaFunction( a_pDisplayContext->GetCurrentTime() ) ) );
+
+	if ( m_apFunctions[ Function_Size ] )
+		ComputeSizeFunction( a_pDisplayContext->GetCurrentTime(), oOffset );
+
+	iLeftX -= oOffset.m_iWidth;
+	iRightX += oOffset.m_iWidth;
+
+	if ( iLeftWidth >= 0 )
+	{
+		TGUIRectangle oRect( iLeftX, iY, iLeftWidth, iHeight );
+		m_aElements[ Element_Left ].Paint( a_pDisplayContext, a_pParameters, &oRect, &oOffset, oColour );
+	}
+
+	if ( iLeftishWidth >= 0 )
+	{
+		TGUIRectangle oRect( iLeftishX, iY, iLeftishWidth, iHeight );
+		m_aElements[ Element_Leftish ].Paint( a_pDisplayContext, a_pParameters, &oRect, &oOffset, oColour );
+	}
+
+	if ( iMiddleWidth >= 0 )
+	{
+		TGUIRectangle oRect( iMiddleX, iY, iMiddleWidth, iHeight );
+		m_aElements[ Element_Middle ].Paint( a_pDisplayContext, a_pParameters, &oRect, &oOffset, oColour );
+	}
+
+	if ( iRightishWidth >= 0 )
+	{
+		TGUIRectangle oRect( iRightishX, iY, iRightishWidth, iHeight );
+		m_aElements[ Element_Rightish ].Paint( a_pDisplayContext, a_pParameters, &oRect, &oOffset, oColour );
+	}
+
+	if ( iRightWidth >= 0 )
+	{
+		TGUIRectangle oRect( iRightX, iY, iRightWidth, iHeight );
+		m_aElements[ Element_Right ].Paint( a_pDisplayContext, a_pParameters, &oRect, &oOffset, oColour );
+	}
+}
+
+TOSHI_NAMESPACE_END

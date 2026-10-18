@@ -1,0 +1,166 @@
+#include "ToshiPCH.h"
+#include "PGUITextBox.h"
+
+#include <TGUI/TGUIManager.h>
+#include <TGUI/TGUIWidgetInfo.h>
+#include <TGUI/TGUIStyle.h>
+
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
+TOSHI_NAMESPACE_USING
+
+TDEFINE_CLASS_INIT( PGUITextBox );
+
+TGUIDeserialisable::PropertySet* PGUITextBox::ms_oPropertySet        = TNULL;
+TGUIDeserialisable::PropertySet* PGUITextBox::ms_oPropertySetOrdered = TNULL;
+TGUIWidgetInfo*                  PGUITextBox::ms_pWidgetInfo         = TNULL;
+
+void PGUITextBox::InitialiseClass()
+{
+	ms_pWidgetInfo = new TGUIWidgetInfo();
+	CreatePropertySets( ms_oPropertySet, ms_oPropertySetOrdered, *TGUIWidget::ms_oPropertySet );
+
+	TINT iSortHint = 0;
+	DeclareStateVar( &TGetClass( PGUITextBox ), "InsertMode", State_InsertMode, TPString8( "State" ), iSortHint, ms_pWidgetInfo, ms_oPropertySet, ms_oPropertySetOrdered );
+
+	ms_pWidgetInfo->AddComponentName( TPString8( "background" ) );
+	ms_pWidgetInfo->AddComponentName( TPString8( "foreground" ) );
+	ms_pWidgetInfo->AddComponentName( TPString8( "cursor" ) );
+	ms_pWidgetInfo->SetWidgetName( TPString8( "PGUITextBox" ) );
+	ms_pWidgetInfo->SetWidgetLabel( TPString8( "Text Box" ) );
+	ms_pWidgetInfo->SetProperties( ms_oPropertySet, ms_oPropertySetOrdered );
+	ms_pWidgetInfo->AddStateVars( TGUIWidget::ms_pWidgetInfo->GetStateVarSet() );
+	ms_pWidgetInfo->SetConcrete( TTRUE );
+
+	TGUIManager::AddWidgetClass( ms_pWidgetInfo );
+}
+
+void PGUITextBox::DeinitialiseClass()
+{
+	ms_pWidgetInfo->Clear();
+	DestroyPropertySets( ms_oPropertySet, ms_oPropertySetOrdered );
+
+	delete ms_pWidgetInfo;
+	ms_pWidgetInfo = TNULL;
+}
+
+PGUITextBox::PGUITextBox()
+{
+}
+
+PGUITextBox::PGUITextBox( const PGUITextBox& a_rcOther )
+    : TGUIWidget( a_rcOther )
+{
+}
+
+PGUITextBox::~PGUITextBox()
+{
+}
+
+TBOOL PGUITextBox::Deserialise( const PProperties* a_pProperties )
+{
+	return TGUIWidget::Deserialise( a_pProperties );
+}
+
+TBOOL PGUITextBox::Serialise( PProperties* a_pProperties )
+{
+	return TGUIWidget::Serialise( a_pProperties );
+}
+
+TGUIDeserialisable::PropertySet* PGUITextBox::GetPropertyInfoSet() const
+{
+	return ms_oPropertySet;
+}
+
+TGUIDeserialisable::PropertySet* PGUITextBox::GetPropertyInfoOrderedSet() const
+{
+	return ms_oPropertySetOrdered;
+}
+
+const TGUIWidgetInfo* PGUITextBox::GetWidgetInfo() const
+{
+	return ms_pWidgetInfo;
+}
+
+PGUITextBox* PGUITextBox::Clone() const
+{
+	return new PGUITextBox( *this );
+}
+
+TBOOL PGUITextBox::AcceptsFocus() const
+{
+	return TTRUE;
+}
+
+// The background and the foreground fill the box, the cursor (its preferred size) follows the text
+void PGUITextBox::Pack()
+{
+	if ( m_pStyle )
+	{
+		SetComponentBBox( Component_Background, 0, 0, m_iWidth, m_iHeight );
+		SetComponentBBox( Component_Foreground, 0, 0, m_iWidth, m_iHeight );
+
+		TINT iTextWidth    = 0;
+		TINT iTextHeight   = 0;
+		TINT iCursorWidth  = 0;
+		TINT iCursorHeight = 0;
+		m_pStyle->GetComponentPreferredSize( Component_Foreground, m_pParameters, iTextWidth, iTextHeight );
+		m_pStyle->GetComponentPreferredSize( Component_Cursor, m_pParameters, iCursorWidth, iCursorHeight );
+
+		TINT iCursorX = TMath::Min( iTextWidth, m_iWidth - iCursorWidth );
+		SetComponentBBox( Component_Cursor, TMath::Max( iCursorX, 0 ), 0, iCursorWidth, m_iHeight );
+	}
+
+	m_bValidated = TTRUE;
+}
+
+// As PGUILabel: the size that isn't fixed is the largest preferred size of the background and the foreground
+void PGUITextBox::Layout( TINT16 a_iMaxWidth, TINT16 a_iMaxHeight )
+{
+	if ( m_eSizeModeHoriz == SizeMode_Fixed )
+		a_iMaxWidth = m_iWidth;
+
+	if ( m_eSizeModeVert == SizeMode_Fixed )
+		a_iMaxHeight = m_iHeight;
+
+	m_bLayoutValid = TTRUE;
+
+	if ( m_eSizeModeHoriz == SizeMode_Fixed && m_eSizeModeVert == SizeMode_Fixed )
+		return;
+
+	TINT iWidth  = 0;
+	TINT iHeight = 0;
+
+	if ( m_pStyle )
+	{
+		for ( TINT i = Component_Background; i <= Component_Foreground; i++ )
+		{
+			TINT  iPreferredWidth  = 0;
+			TINT  iPreferredHeight = 0;
+			TBOOL bAllKnown;
+
+			if ( m_pStyle->GetComponentPreferredSize( i, m_pParameters, iPreferredWidth, iPreferredHeight, a_iMaxWidth, a_iMaxHeight, bAllKnown ) )
+			{
+				if ( bAllKnown )
+				{
+					iWidth  = TMath::Max( iWidth, iPreferredWidth );
+					iHeight = TMath::Max( iHeight, iPreferredHeight );
+				}
+				else
+				{
+					m_bLayoutValid = TFALSE;
+				}
+			}
+		}
+	}
+
+	if ( m_eSizeModeHoriz != SizeMode_Fixed )
+		SetWidth( iWidth );
+
+	if ( m_eSizeModeVert != SizeMode_Fixed )
+		SetHeight( iHeight );
+}

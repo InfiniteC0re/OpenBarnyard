@@ -140,6 +140,13 @@ TINT TInputInterface::ProcessEvents( TFLOAT a_fDeltaTime )
 		{
 			iNumProcessed += it->ProcessEvents( m_InputEventEmitter, a_fDeltaTime );
 		}
+#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
+		// Development: the repeats of the mouse buttons -devkeys holds down
+		else if ( TInputDeviceMouse::Dev_HasButtonsDown() && it->IsA( &TGetClass( TInputDeviceMouse ) ) )
+		{
+			iNumProcessed += TSTATICCAST( TInputDeviceMouse, it.operator->() )->Dev_ProcessRepeats( m_InputEventEmitter, a_fDeltaTime );
+		}
+#endif
 	}
 
 	return iNumProcessed;

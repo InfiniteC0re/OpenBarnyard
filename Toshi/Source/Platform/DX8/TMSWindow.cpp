@@ -192,6 +192,18 @@ TBOOL TMSWindow::IsNoPauseMode()
 	return s_bNoPause;
 }
 
+void TMSWindow::Dev_SetKeepRunning( TBOOL a_bKeepRunning )
+{
+	ms_bDevKeepRunning = a_bKeepRunning;
+
+	// The game was deactivated meanwhile: pause it now, as the deactivation would have
+	if ( !a_bKeepRunning && ms_bDevSkippedPause )
+	{
+		ms_bDevSkippedPause = TFALSE;
+		g_oSystemManager.Pause( TTRUE );
+	}
+}
+
 #endif // BARNYARD_COMMUNITY_PATCH
 
 // $Barnyard: FUNCTION 006da8a0
@@ -288,6 +300,18 @@ LRESULT CALLBACK TMSWindow::WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 #ifdef BARNYARD_COMMUNITY_PATCH
 			// Background test runs keep running while another application is active
 			if ( IsBackgroundMode() || IsNoPauseMode() ) return 0;
+
+			// One-shot dev switches waiting for the sim keep a windowed game running (see Dev_SetKeepRunning)
+			if ( pWindow->m_bWindowed )
+			{
+				if ( wParam != TRUE && ms_bDevKeepRunning )
+				{
+					ms_bDevSkippedPause = TTRUE;
+					return 0;
+				}
+
+				ms_bDevSkippedPause = TFALSE;
+			}
 #endif
 
 			const TBOOL bPaused = wParam != TRUE;

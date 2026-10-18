@@ -65,6 +65,17 @@ public:
 
 	// Development: "-nopause" keeps a visible game running while it isn't the active application (watched test runs)
 	static TBOOL IsNoPauseMode();
+
+	// Development: while set, a windowed game keeps running when it isn't the active application (the game sets it
+	// while one-shot dev switches such as "-devcheat" wait for the sim). Clearing it while the game is inactive
+	// pauses the game as the deactivation would have done.
+	static void Dev_SetKeepRunning( TBOOL a_bKeepRunning );
+
+private:
+	inline static TBOOL ms_bDevKeepRunning  = TFALSE;
+	inline static TBOOL ms_bDevSkippedPause = TFALSE; // deactivated while ms_bDevKeepRunning was set
+
+public:
 #endif
 
 private:
