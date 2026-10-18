@@ -58,6 +58,8 @@ public:
 #ifdef BARNYARD_COMMUNITY_PATCH
 	// Shows the texts of the current language (AFrontEndLanguageState). Not on PC
 	void UpdateTexts();
+#else
+	void UpdateTexts() {}
 #endif
 
 private:

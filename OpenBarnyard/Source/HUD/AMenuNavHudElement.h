@@ -36,6 +36,8 @@ public:
 #ifdef BARNYARD_COMMUNITY_PATCH
 	// Sets the texts from strings (TNULL hides the text). Not on PC, used by AFrontEndLanguageState
 	void SetTextStrings( const TWCHAR* a_wszLeft, const TWCHAR* a_wszRight, const TWCHAR* a_wszCentre );
+#else
+	void SetTextStrings( const TWCHAR* a_wszLeft, const TWCHAR* a_wszRight, const TWCHAR* a_wszCentre ) {}
 #endif
 
 	// Shows the default "select" and "back" texts
