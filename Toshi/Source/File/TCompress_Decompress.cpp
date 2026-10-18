@@ -9,6 +9,8 @@
 
 TOSHI_NAMESPACE_START
 
+TBOOL TCompress::ms_bIsBigEndian = TFALSE;
+
 //-----------------------------------------------------------------------------
 // The compressed data is read through a small buffer on the stack of Decompress.
 // NOTE: names unknown, retail keeps the state in globals (007d3530..007d353c)

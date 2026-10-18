@@ -11,7 +11,7 @@ project "Toshi"
 	files
 	{
 		"Source/ToshiPCH.cpp",
-		"Source/ModCore/**.h",
+		"Source/Mod/**.h",
 		"Source/Core/**.h",
 		"Source/Core/**.cpp",
 		"Source/Toshi/**.h",

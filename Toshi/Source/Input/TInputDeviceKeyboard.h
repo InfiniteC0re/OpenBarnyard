@@ -14,7 +14,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TInputDeviceKeyboard : public TInputDevice
+class MODAPI TInputDeviceKeyboard : public TInputDevice
 {
 public:
 	TDECLARE_CLASS( TInputDeviceKeyboard, TInputDevice );

@@ -40,7 +40,7 @@ class ASysMesh;
 // NOTE: OnUpdate (00478800) replaces AMiniGameState::OnUpdate and runs its own
 // state machine (m_eGameState).
 //-----------------------------------------------------------------------------
-class AGolfMinigameState
+class MODAPI AGolfMinigameState
     : public AMiniGameState
 {
 public:
@@ -201,7 +201,11 @@ public:
 	Player& GetCurrentPlayer() { return m_aPlayers[ m_iCurrentPlayer ]; }
 
 	const CourseData* GetCourse() const { return m_pCourse; }
-	const HoleData*   GetHoleData() const { return m_ppHoleData[ m_pCourse->aHoles[ m_iCurrentHole ] - 1 ]; }
+
+	TINT GetCurrentHoleIndex() const { return m_iCurrentHole; }
+	void SetCurrentHoleIndex( TINT a_iHole ) { m_iCurrentHole = a_iHole; }
+	
+	const HoleData* GetHoleData() const { return m_ppHoleData[ m_pCourse->aHoles[ m_iCurrentHole ] - 1 ]; }
 
 	AUnit* GetPlayerUnit() const { return m_pPlayerUnit ? m_pPlayerUnit->GetUnit() : TNULL; }
 

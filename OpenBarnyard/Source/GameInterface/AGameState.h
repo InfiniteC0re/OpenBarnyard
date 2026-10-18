@@ -8,7 +8,7 @@
 #include <Input/TInputInterface.h>
 #include <GUI/T2GUIElement.h>
 
-class AGameState
+class MODAPI AGameState
     : public Toshi::TObject
     , public Toshi::T2DList<AGameState>::Node
 {

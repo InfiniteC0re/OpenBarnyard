@@ -8,7 +8,7 @@ TOSHI_NAMESPACE_START
 
 class T2GUIElement;
 
-class T2GUIElementNode
+class MODAPI T2GUIElementNode
 {
 public:
 	friend T2GUIElement;
@@ -76,7 +76,7 @@ enum T2GUIATTACHMENT
 	T2GUIATTACHMENT_NUMOF,
 };
 
-class T2GUIElement : public T2GUIElementNode
+class MODAPI T2GUIElement : public T2GUIElementNode
 {
 public:
 	using t_PostRender = void ( * )();

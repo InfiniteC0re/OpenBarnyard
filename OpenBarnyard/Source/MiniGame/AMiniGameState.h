@@ -29,7 +29,7 @@ class ACollisionObjectSimple;
 //    limit has run out.
 //  - When the game is over the state pushes AAnticGameOverState( GetResults() ).
 //-----------------------------------------------------------------------------
-class AMiniGameState
+class MODAPI AMiniGameState
     : public AGameState
     , public AInventoryAniEffect::CallBackInterface
 {

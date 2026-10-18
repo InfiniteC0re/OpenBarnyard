@@ -28,6 +28,7 @@
 #include "Units/AAnimalPopulationManager.h"
 #include "Units/ANPCBehaviourManager.h"
 #include "Units/APlayerControlComponent.h"
+#include "Mod/AModEvents.h"
 #include "Units/AUnit.h"
 #include "Units/AUnitPlayer.h"
 #include "Units/AUnitType.h"
@@ -1391,6 +1392,11 @@ AQuestInstance* AQuestManager::AssignQuest( AUnit* a_pQuestGiver, TPString8 a_st
 // $BarnyardWiiJP: FUNCTION 80361138
 void AQuestManager::RemoveQuest( AQuestInstance* a_pInstance, TBOOL a_bCompleted, TBOOL a_bAdvance )
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	const TINT iOldAct  = m_iAct;
+	const TINT iOldTier = m_iTier;
+#endif
+
 	a_pInstance->RemoveMarkers();
 
 	// NOTE: inlined HideTimeLeft (005cbfe0)
@@ -1470,6 +1476,11 @@ void AQuestManager::RemoveQuest( AQuestInstance* a_pInstance, TBOOL a_bCompleted
 		}
 	}
 #endif // BARNYARD_LATEST
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	if ( a_bAdvance && ( iOldAct < m_iAct || iOldTier < m_iTier ) )
+		FIRE_EVENT( AQuestManager::ProgressAdvanced, iOldAct, iOldTier, m_iAct, m_iTier );
+#endif
 
 	a_pInstance->Reset();
 	m_oInstancePool.DeleteObject( a_pInstance );

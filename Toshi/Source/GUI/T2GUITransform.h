@@ -3,7 +3,7 @@
 
 TOSHI_NAMESPACE_START
 
-class T2GUITransform
+class MODAPI T2GUITransform
 {
 public:
 	enum TUninitialised

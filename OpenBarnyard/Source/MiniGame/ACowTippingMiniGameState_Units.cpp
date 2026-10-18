@@ -14,6 +14,7 @@
 #include "FX/AParticleEffectManager.h"
 #include "FX/AParticleSystem.h"
 #include "Sound/ASoundManager.h"
+#include "Mod/AModEvents.h"
 
 #include <Render/TCameraObject.h>
 #include <Render/TRenderInterface.h>
@@ -1692,6 +1693,8 @@ TINT ACowTippingMiniGameState::EndGame()
 {
 	if ( m_eTurnEnd != TURNEND_NONE )
 		return m_eTurnEnd;
+
+	FIRE_EVENT( ACowTippingMiniGameState::EndGame, this );
 
 	ShowEndPopup( (void*)ALocaleManager::Interface()->GetString( 588 ) );
 	m_eTurnEnd = TURNEND_GAME_END;

@@ -5,7 +5,7 @@
 #include <Toshi/TEvent.h>
 #include "FSM/AFunctionTable.h"
 
-class APlayerManager
+class MODAPI APlayerManager
     : public Toshi::TObject
     , public Toshi::TSingleton<APlayerManager>
 {

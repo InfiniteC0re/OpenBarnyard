@@ -27,7 +27,7 @@ class ASimHudGroup;
 // Also shows the "new quest" / "quest complete" / "quest failed" banner and
 // plays the quest music.
 //-----------------------------------------------------------------------------
-class AQuestManager
+class MODAPI AQuestManager
     : public Toshi::TTask
     , public Toshi::TSingleton<AQuestManager>
 {

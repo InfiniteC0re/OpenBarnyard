@@ -23,7 +23,7 @@ private:
 // Use this class to establish communication between two different processes.
 // Note: Supports only one connection instance.
 //-----------------------------------------------------------------------------
-class T2NamedPipeServer
+class MODAPI T2NamedPipeServer
 {
 public:
 	friend T2NamedPipeServerThread;

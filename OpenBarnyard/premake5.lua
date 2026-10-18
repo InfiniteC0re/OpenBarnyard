@@ -12,6 +12,7 @@ project "OpenBarnyard"
 	{
 		"Toshi",
 		"OPCODE",
+		"MinHook",
 		"binkw32.lib"
 	}
 	
@@ -83,7 +84,14 @@ project "OpenBarnyard"
 		"Source/Units/**.h",
 		"Source/Units/**.cpp",
 		"Source/Quests/**.h",
-		"Source/Quests/**.cpp"
+		"Source/Quests/**.cpp",
+		"Source/Mod/**.h",
+		"Source/Mod/**.cpp",
+
+		-- Dear ImGui, exported to mods
+		"../Toshi/Vendor/imgui/*.h",
+		"../Toshi/Vendor/imgui/*.cpp",
+		"../Toshi/Vendor/imgui/backends/imgui_impl_win32.*"
 	}
 	
 	libdirs
@@ -100,7 +108,9 @@ project "OpenBarnyard"
 		"%{IncludeDir.fmod}",
 		"%{IncludeDir.bink}",
 		"%{IncludeDir.opcode}",
-		"%{IncludeDir.stb}"
+		"%{IncludeDir.stb}",
+		"%{IncludeDir.minhook}",
+		"%{IncludeDir.imgui}"
 	}
 	
 	prebuildcommands
@@ -113,6 +123,9 @@ project "OpenBarnyard"
 		"{COPYDIR} \"" .. ClientContentCommon  .. "\" \"%{wks.location}bin/" .. outputdir .. "/%{prj.name}/\"",
 		"{COPYDIR} \"" .. ClientContentArch    .. "\" \"%{wks.location}bin/" .. outputdir .. "/%{prj.name}/\"",
 	}
+
+	filter "files:**/Toshi/Vendor/imgui/**.cpp"
+		enablepch "Off"
 
 	filter "configurations:Debug"
 		kind "ConsoleApp"
@@ -139,7 +152,8 @@ project "OpenBarnyard"
 			files
 			{
 				"Source/Platform/DX8/**.cpp",
-				"Source/Platform/DX8/**.h"
+				"Source/Platform/DX8/**.h",
+				"../Toshi/Vendor/imgui/backends/imgui_impl_dx8.*"
 			}
 			
 		filter "options:renderer=GL"

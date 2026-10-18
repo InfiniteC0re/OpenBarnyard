@@ -7,7 +7,7 @@
 #include <Toshi/TEvent.h>
 
 // Owns the main player's profile (gender, costume, stamina...) and lowers its max stamina every new day.
-class APlayerProfileManager
+class MODAPI APlayerProfileManager
     : public Toshi::TObject
     , public Toshi::TSingleton<APlayerProfileManager>
 {

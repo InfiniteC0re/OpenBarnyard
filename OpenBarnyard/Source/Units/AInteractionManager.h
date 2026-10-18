@@ -115,7 +115,7 @@ public:
 	};
 
 	// Interactions that can be picked for a sequence, weighted by their chance.
-	struct Candidates
+	struct MODAPI Candidates
 	{
 		struct Candidate
 		{

@@ -24,6 +24,7 @@
 #include "Render/ASunFlareEffect.h"
 #include "Render/ADebugOverlay.h"
 #include "Render/AWorldDebugDraw.h"
+#include "Mod/AModEvents.h"
 #include "FX/AParticleEffectManager.h"
 
 #include <Render/TNullResource.h>
@@ -152,6 +153,8 @@ TBOOL ARenderer::CreateTRender()
 	TINFO( "  SupportsHardwareTnL=%s\n", pDevice->SupportsHardwareTransfomations() ? "Yes" : "No" );
 	TINFO( "  SupportsWindowed=%s, Using %s\n", pDevice->CanRenderWindowed() ? "Yes" : "No", displayParams.bWindowed == TTRUE ? "Windowed" : "Fullscreen" );
 	TINFO( "--------------\n" );
+
+	FIRE_EVENT( TRenderInterface::Created, pRenderer );
 
 	return TTRUE;
 }
@@ -365,6 +368,8 @@ void ARenderer::RenderGUI()
 // $Barnyard: FUNCTION 0060aff0
 static TBOOL OnRenderDeviceLost()
 {
+	FIRE_EVENT( TRenderInterface::DeviceLost );
+
 	if ( ASkyDome* pSkyDome = ARenderer::GetSingleton()->GetSkyDome() )
 	{
 		return TTRUE;
@@ -396,6 +401,8 @@ static TBOOL OnRenderDeviceFound()
 	{
 		pSkyDome->SetDirty();
 	}
+
+	FIRE_EVENT( TRenderInterface::DeviceFound );
 
 	return TTRUE;
 }
@@ -451,6 +458,8 @@ TBOOL ARenderer::OnCreate()
 		ADebugOverlay::CreateSingleton();
 		AWorldDebugDraw::CreateSingleton();
 #endif
+
+		FIRE_EVENT( ARenderer::Created, this );
 	}
 
 	return bCreatedTRender;

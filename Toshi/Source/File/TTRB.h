@@ -33,7 +33,7 @@ public:
 	TUINT32 Unk;
 };
 
-class TTSF
+class MODAPI TTSF
 {
 public:
 	static constexpr TUINT32 IDMAGICB = TFourCC( "TSFB" );
@@ -70,7 +70,7 @@ protected:
 	TFile*    m_pFile;     // 0x4
 };
 
-class TTSFI : public TTSF
+class MODAPI TTSFI : public TTSF
 {
 public:
 	friend class TTRB;
@@ -114,7 +114,7 @@ private:
 	TUINT32  m_ReadPos;        // 0x124
 };
 
-class TTSFO : public TTSF
+class MODAPI TTSFO : public TTSF
 {
 public:
 	typedef TUINT8 ERROR;
@@ -249,7 +249,7 @@ private:
 	TUINT32 m_Positions[ 32 ];
 };
 
-class TTRB
+class MODAPI TTRB
 {
 public:
 	typedef TUINT8 ERROR;

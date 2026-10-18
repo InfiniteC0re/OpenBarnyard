@@ -27,6 +27,7 @@
 #include "GUI/AGUI2.h"
 #include "CVar/AVarType.h"
 #include "Tasks/ARootTask.h"
+#include "Mod/AModLoader.h"
 #include "Assets/AAssetLoader.h"
 
 //-----------------------------------------------------------------------------
@@ -484,6 +485,13 @@ TBOOL AApplication::OnCreate( int argc, TCHAR** argv )
 	m_pInputTask->Create();
 	m_pInputTask->Activate( TTRUE );
 	m_pInputTask->SetName( "InputTask" );
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Load mods before the game systems are created, so they can hook them
+	AModLoader* pModLoader = pScheduler->CreateTask<AModLoader>();
+	pModLoader->Create();
+	pModLoader->Activate( TTRUE );
+#endif
 
 	m_pRootTask = pScheduler->CreateTask<ARootTask>();
 

@@ -8,7 +8,7 @@ TBOOL Terrain_SetMain( TBOOL a_bStreamCollision, TINT a_iStartVISGroup, TBOOL a_
 //-----------------------------------------------------------------------------
 class AFunctionTable;
 
-class AGameLoader
+class MODAPI AGameLoader
 {
 public:
 	// NOTE: AGameLoader has a TClass in the original (child of TObject, never instantiated, no GetClass)
@@ -326,6 +326,8 @@ public:
 	// Index of the scripted sequence (ScriptedSequence/SSxx) that is loaded, -1 if there's none
 	static TINT GetScriptedSequence();
 	static TINT GetTerrainVIS();
+
+	static Terrain GetCurrentTerrain();
 
 	static constexpr const TCHAR* GetTerrainName( Terrain a_eTerrain ) { return ms_aTerrains[ a_eTerrain ].szName; }
 

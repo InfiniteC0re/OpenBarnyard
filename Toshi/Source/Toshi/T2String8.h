@@ -6,7 +6,7 @@ TOSHI_NAMESPACE_START
 //-----------------------------------------------------------------------------
 // Purpose: Stores all common methods that let you operate with TCHAR* strings
 //-----------------------------------------------------------------------------
-class T2String8
+class MODAPI T2String8
 {
 public:
 	static constexpr TSIZE SCRATCH_MEM_SIZE = 2048;

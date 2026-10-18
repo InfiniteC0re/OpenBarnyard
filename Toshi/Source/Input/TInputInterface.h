@@ -17,7 +17,7 @@ TOSHI_NAMESPACE_START
 
 class TInputDevice;
 
-class TInputInterface : public TObject
+class MODAPI TInputInterface : public TObject
     , public TSingleton<TInputInterface>
 {
 public:
@@ -139,7 +139,7 @@ private:
 	DeviceStatusEmitter     m_DeviceStatusEmitter; // 0x24
 };
 
-class TInputDevice : public TObject
+class MODAPI TInputDevice : public TObject
     , public TNodeList<TInputDevice>::TNode
 {
 public:

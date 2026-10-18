@@ -5,7 +5,7 @@
 #include "GameInterface/AHackedQuickSave.h"
 
 // Base of the player profiles (APlayerSimProfile is the only one used by the game).
-class APlayerProfile
+class MODAPI APlayerProfile
     : public Toshi::TObject
     , public Toshi::T2DList<APlayerProfile>::Node
 {

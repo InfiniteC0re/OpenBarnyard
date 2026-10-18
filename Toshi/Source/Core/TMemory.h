@@ -32,7 +32,7 @@
 
 TOSHI_NAMESPACE_START
 
-extern class TMemory* g_pMemory;
+extern MODAPI class TMemory* g_pMemory;
 
 /**
  * @class TMemory
@@ -44,7 +44,7 @@ extern class TMemory* g_pMemory;
  * - Support for memory pools and sub-heaps
  * - Thread-safe operations
  */
-class TMemory
+class MODAPI TMemory
 {
 public:
 	/**
@@ -308,7 +308,7 @@ TOSHI_NAMESPACE_START
 // Purpose: A wrapper around TMemoryDL that makes it's API compatible to the
 // JPOG/Barnyard memory allocator.
 //-----------------------------------------------------------------------------
-class TMemory
+class MODAPI TMemory
 {
 public:
 	using MemBlock = TMemoryDLHeap;
@@ -367,7 +367,7 @@ public:
 	MemBlock*  m_pGlobalBlock;
 };
 
-extern TMemory* g_pMemory;
+extern MODAPI TMemory* g_pMemory;
 
 TOSHI_NAMESPACE_END
 
@@ -378,7 +378,7 @@ TOSHI_NAMESPACE_END
  * @param a_uiSize Size of memory to allocate
  * @return Pointer to allocated memory
  */
-void* TMalloc( TSIZE a_uiSize );
+MODAPI void* TMalloc( TSIZE a_uiSize );
 
 /**
  * Allocates memory with debug information
@@ -387,7 +387,7 @@ void* TMalloc( TSIZE a_uiSize );
  * @param a_iLineNum Source line number
  * @return Pointer to allocated memory
  */
-void* TMalloc( TSIZE a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum );
+MODAPI void* TMalloc( TSIZE a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum );
 
 /**
  * Allocates memory from a specific memory block
@@ -397,10 +397,10 @@ void* TMalloc( TSIZE a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum );
  * @param a_iLineNum Source line number (optional)
  * @return Pointer to allocated memory
  */
-void* TMalloc( TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHAR* a_szFileName = TNULL, TINT a_iLineNum = -1 );
+MODAPI void* TMalloc( TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHAR* a_szFileName = TNULL, TINT a_iLineNum = -1 );
 
 // Reallocation isn't supported, this only reports that the block is out of memory and returns TNULL
-void* TRealloc( void* a_pMem, TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock );
+MODAPI void* TRealloc( void* a_pMem, TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock );
 
 /**
  * Allocates aligned memory
@@ -408,7 +408,7 @@ void* TRealloc( void* a_pMem, TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBl
  * @param a_uiAlignment Alignment requirement
  * @return Pointer to allocated memory
  */
-void* TMemalign( TSIZE a_uiSize, TSIZE a_uiAlignment );
+MODAPI void* TMemalign( TSIZE a_uiSize, TSIZE a_uiAlignment );
 
 /**
  * Allocates aligned memory from a specific memory block
@@ -417,13 +417,13 @@ void* TMemalign( TSIZE a_uiSize, TSIZE a_uiAlignment );
  * @param a_pMemBlock Memory block to allocate from
  * @return Pointer to allocated memory
  */
-void* TMemalign( TSIZE a_uiAlignment, TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock );
+MODAPI void* TMemalign( TSIZE a_uiAlignment, TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock );
 
 /**
  * Frees previously allocated memory
  * @param a_pMem Pointer to memory to free
  */
-void TFree( void* a_pMem );
+MODAPI void TFree( void* a_pMem );
 
 /**
  * Constructs an object in place

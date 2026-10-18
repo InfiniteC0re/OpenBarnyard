@@ -4,7 +4,7 @@
 
 TOSHI_NAMESPACE_START
 
-class T2GUIFontManager
+class MODAPI T2GUIFontManager
 {
 public:
 	static constexpr TUINT MAX_NUM_LOADED_FONTS = 1;

@@ -25,6 +25,8 @@
 #define GLUE( x, y )               x y
 #define CALL_OVERLOAD( name, ... ) GLUE( OVERLOAD_MACRO( name, COUNT_ARGS_MAX5( __VA_ARGS__ ) ), ( __VA_ARGS__ ) )
 
+#include <Mod/ModAPI.h>
+
 #ifdef TOSHI_DYNAMIC_LINKING
 
 #  ifdef TOSHI_USER_ENGINE
@@ -39,11 +41,10 @@
 
 #else // TOSHI_DYNAMIC_LINKING
 
-#  define TOSHI_API
+// TODO: not used, should've got rid of it, but I'm lazy to do it now
+#  define TOSHI_API MODAPI
 
 #endif // !TOSHI_DYNAMIC_LINKING
-
-#include <ModCore/ModAPI.h>
 
 #define TOSHI_NAMESPACE       Toshi
 #define TOSHI_NAMESPACE_USING using namespace TOSHI_NAMESPACE;

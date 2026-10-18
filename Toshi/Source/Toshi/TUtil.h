@@ -11,7 +11,7 @@ TOSHI_NAMESPACE_START
 class TPString8Pool;
 class TLogFile;
 
-class TUtil : public TSingleton<TUtil>
+class MODAPI TUtil : public TSingleton<TUtil>
 {
 public:
 	//-----------------------------------------------------------------------------

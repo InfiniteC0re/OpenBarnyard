@@ -38,7 +38,7 @@ struct ATerrainLocator;
 // - The race starts with the SSBR_Main sequence, the result is the place of the
 //   player (won if no rival finished first).
 //-----------------------------------------------------------------------------
-class ABikeRaceMicroGame
+class MODAPI ABikeRaceMicroGame
     : public AMiniGameState
 {
 public:
@@ -223,6 +223,10 @@ private:
 
 public:
 	static const TrackInfo ms_aTracks[ NUM_TRACKS ];
+
+	const Biker&           GetBiker( TINT a_iBiker ) const { return m_aBikers[ a_iBiker ]; }
+	const Toshi::TVector4* GetWaypoints() const { return m_aWaypoints; }
+	TINT                   GetNumWaypoints() const { return m_iNumWaypoints; }
 
 private:
 	Toshi::TVector4          m_aWaypoints[ MAX_WAYPOINTS ];    // 0x0bac, the y of the waypoints is 0

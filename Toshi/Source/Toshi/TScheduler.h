@@ -8,7 +8,7 @@ TOSHI_NAMESPACE_START
 
 class TTask;
 
-class TScheduler
+class MODAPI TScheduler
 {
 public:
 	using t_DeltaTimeCalculator = TFLOAT ( * )( TFLOAT a_fRealDT );

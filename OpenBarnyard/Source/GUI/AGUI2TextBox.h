@@ -3,7 +3,7 @@
 #include <GUI/T2GUIElement.h>
 #include <GUI/T2GUIFont.h>
 
-class AGUI2TextBox : public Toshi::T2GUIElement
+class MODAPI AGUI2TextBox : public Toshi::T2GUIElement
 {
 public:
 	// constructors/destructor

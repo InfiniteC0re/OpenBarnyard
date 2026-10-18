@@ -22,6 +22,8 @@ IncludeDir.modcore = "%{wks.location}/SDK/BYModCore/Include"
 IncludeDir.openbarnyard = "%{wks.location}/OpenBarnyard/Source"
 IncludeDir.tracy = "%{wks.location}/Utils/TracyProfiler/Source"
 IncludeDir.curl = "%{wks.location}/Toshi/Vendor/curl/include"
+IncludeDir.minhook = "%{wks.location}/Toshi/Vendor/minhook/include"
+IncludeDir.imgui = "%{wks.location}/Toshi/Vendor/imgui"
 
 LibDir = {}
 LibDir.fmod = "%{wks.location}/Toshi/Vendor/fmod/lib"

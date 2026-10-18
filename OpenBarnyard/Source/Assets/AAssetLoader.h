@@ -13,7 +13,7 @@ enum AAssetType_ : AAssetType
 	AAssetType_NUMOF,
 };
 
-class AAssetLoader
+class MODAPI AAssetLoader
 {
 public:
 	AAssetLoader() = delete;

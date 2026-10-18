@@ -124,7 +124,7 @@ protected:
 	TFileLookupHandle m_NextFileHandle; // 0x1C
 };
 
-class TFile
+class MODAPI TFile
 {
 public:
 	TFile( TFileSystem* a_pFS );

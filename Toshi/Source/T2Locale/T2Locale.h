@@ -17,7 +17,7 @@ TOSHI_NAMESPACE_START
 
 using T2LocalisedString = TWCHAR*;
 
-class T2Locale : public Toshi::TSingleton<T2Locale>
+class MODAPI T2Locale : public Toshi::TSingleton<T2Locale>
 {
 public:
 	using Lang = TINT32;

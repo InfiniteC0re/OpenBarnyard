@@ -10,6 +10,7 @@
 #include "Helpers/AHintManager.h"
 #include "Sound/ASoundManager.h"
 #include "SoundBank/ui.h"
+#include "Mod/AModEvents.h"
 
 #include <GUI/T2GUITextureSectionManager.h>
 #include <Toshi/TDateTime.h>
@@ -261,6 +262,7 @@ void AFrontEndNewGameSelectState::StartNewGame()
 {
 	APlayerProfileManager::GetSingleton()->SetMainGender( APlayerProfile::GENDER_MALE );
 	AGameLoader::ResetSimLoadingPictures();
+	FIRE_EVENT( AGameLoader::NewGame );
 
 	// Once the screen has faded out, AGameStateController starts the SS01 intro sequence (AGameLoader::StartNewGame)
 	AGameStateController* pController = AGameStateController::GetSingleton();
@@ -278,6 +280,7 @@ TBOOL __stdcall AFrontEndNewGameSelectState::OnOverwritePopupResponse( AFrontEnd
 	{
 		APlayerProfileManager::GetSingleton()->SetMainGender( APlayerProfile::GENDER_MALE );
 		AGameLoader::ResetSimLoadingPictures();
+		FIRE_EVENT( AGameLoader::NewGame );
 		APlayerProgress::GetSingleton()->ClearCurrentSlot();
 
 		AGameStateController* pController = AGameStateController::GetSingleton();

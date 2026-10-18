@@ -19,7 +19,7 @@ TOSHI_NAMESPACE_START
 //-----------------------------------------------------------------------------
 // Purpose: Allows to easily operate with command line parameters
 //-----------------------------------------------------------------------------
-class T2CommandLine
+class MODAPI T2CommandLine
 {
 public:
 	T2CommandLine();

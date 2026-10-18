@@ -7,6 +7,7 @@
 #include "Locale/ALocaleManager.h"
 
 #include "Render/ARenderer.h"
+#include "Mod/AModEvents.h"
 
 #ifdef BARNYARD_LATEST
 #  include "GUI/XUI/AGUI2XUIScene.h"
@@ -123,6 +124,8 @@ void ALoadScreen::RemoveElements()
 // $Barnyard: FUNCTION 0042b160
 void ALoadScreen::StartLoading( TINT a_iUnused, TBOOL a_bRender )
 {
+	FIRE_EVENT( ALoadScreen::StateChanged, TTRUE );
+
 	m_bIsLoadingScreen = TTRUE;
 
 	if ( !m_bFlag )
@@ -151,6 +154,8 @@ void ALoadScreen::StartLoading( TINT a_iUnused, TBOOL a_bRender )
 // $Barnyard: FUNCTION 0042b100
 void ALoadScreen::SetLoadingState( TBOOL a_bIsLoading, TBOOL a_bUpdateUI )
 {
+	FIRE_EVENT( ALoadScreen::StateChanged, a_bIsLoading );
+
 	m_bIsLoadingScreen = a_bIsLoading;
 
 	if ( !m_bFlag )
@@ -227,6 +232,8 @@ void ALoadScreen::SetPicture( const TPString8& a_rcPicture, TBOOL a_bRender )
 // $BarnyardWiiJP: FUNCTION 801338e0
 void ALoadScreen::Reset()
 {
+	FIRE_EVENT( ALoadScreen::StateChanged, TFALSE );
+
 	if ( m_bFlag )
 	{
 		g_pGUISystem->SetPicture( TPString8() );

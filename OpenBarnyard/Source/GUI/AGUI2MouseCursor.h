@@ -44,6 +44,7 @@ public:
 	}
 
 	void                   SetMousePos( const Toshi::TVector2& a_rcPos ) { m_MousePos = a_rcPos; }
+	const Toshi::TVector2& GetMousePos() const { return m_MousePos; }
 	const Toshi::TVector2& GetCursorCenter() const { return m_CursorCenter; }
 	const Toshi::TVector2& GetCursorPos() const { return m_CursorPos; }
 

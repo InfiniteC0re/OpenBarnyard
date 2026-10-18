@@ -76,7 +76,11 @@ public:
 
 	// $Barnyard: FUNCTION 004293c0
 	AGameState* GetCurrentState() { return *m_oStates.Back(); }
-	TBOOL       IsCurrentState( Toshi::TClass* a_pClass ) { return GetCurrentState()->IsA( a_pClass ); }
+
+	AGameState* GetPreviousState() { return m_oStates.Size() > 1 ? m_oStates[ m_oStates.Size() - 2 ] : TNULL; }
+	TINT        GetNumStates() const { return m_oStates.Size(); }
+
+	TBOOL IsCurrentState( Toshi::TClass* a_pClass ) { return GetCurrentState()->IsA( a_pClass ); }
 
 	// Returns the first state on the stack whose class is called a_rcClassName, TNULL if there's none
 	AGameState* FindGameStateOnStack( const Toshi::TPString8& a_rcClassName );

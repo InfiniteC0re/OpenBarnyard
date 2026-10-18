@@ -10,7 +10,7 @@
 
 #include <Math/TOBBox.h>
 
-class ATerrainInterface : public Toshi::TSingleton<ATerrainInterface>
+class MODAPI ATerrainInterface : public Toshi::TSingleton<ATerrainInterface>
 {
 public:
 	constexpr static TUINT NUM_LIGHT_MAGS                = 12;

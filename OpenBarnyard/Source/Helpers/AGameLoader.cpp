@@ -2636,6 +2636,11 @@ TINT AGameLoader::GetTerrainVIS()
 	return s_iTerrainVISIndex;
 }
 
+AGameLoader::Terrain AGameLoader::GetCurrentTerrain()
+{
+	return s_eCurrentLevel;
+}
+
 // $Barnyard: FUNCTION 006c1e80
 void AGameLoader::Debug_VerifyModelsInAssetPack( Toshi::TTRB* a_pTRB )
 {

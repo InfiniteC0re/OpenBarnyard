@@ -21,6 +21,7 @@
 #include "Quests/AQuestManager.h"
 #include "ADebugMenuState.h"
 #include "GUI/AGUISystem.h"
+#include "Mod/ImGui/AImGui.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -706,6 +707,12 @@ void AGameStateController::ShowOverlay( TBOOL a_bShow, TBOOL a_bResetHUD, TFLOAT
 // $Barnyard: FUNCTION 004293d0
 TBOOL AGameStateController::ProcessInput( const TInputInterface::InputEvent* a_pEvent )
 {
+#if defined( BARNYARD_COMMUNITY_PATCH ) && defined( TRENDERINTERFACE_DX8 )
+	// The mod settings overlay takes the input before the game sees it
+	if ( AImGui::IsSingletonCreated() && AImGui::GetSingleton()->ProcessInput( a_pEvent ) )
+		return TTRUE;
+#endif
+
 	if ( m_eFlags.bIgnoreInput ) return TTRUE;
 
 	if ( m_oStates.Size() <= 1 )

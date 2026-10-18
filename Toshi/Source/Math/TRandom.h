@@ -18,7 +18,7 @@ MODIFIED:
 
 TOSHI_NAMESPACE_START
 
-class TRandom
+class MODAPI TRandom
 {
 public:
 	TRandom();

@@ -1,5 +1,6 @@
 include "Settings.lua"
 include "Dependencies.lua"
+include "Mods/ModProject.lua"
 
 workspace "OpenBarnyard"
 	cppdialect "C++20"
@@ -14,7 +15,8 @@ workspace "OpenBarnyard"
 	disablewarnings
 	{
 		"4996",
-		"4251"
+		"4251",
+		"4275"
 	}
 	
 	debugdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
@@ -132,6 +134,7 @@ group "Tools"
 
 group "Third-Party"
 	include "Toshi/Vendor/Opcode"
+	include "Toshi/Vendor/minhook"
 
 group "SDK"
 	include "SDK/BYardSDK"
@@ -143,6 +146,9 @@ group "SDK"
 	if _OPTIONS["renderer"] == 'GL' then
 		include "SDK/BYEnhanced"
 	end
+
+group "Mods"
+	include "Mods/BYSpeedrunHelper"
 
 if _OPTIONS["profiler"] == 'perf' or _OPTIONS["profiler"] == 'perfmem' then
 	group "Utils"

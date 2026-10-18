@@ -8,6 +8,7 @@
 #include "Units/AUnit.h"
 #include "UnitMovement/Steering/ASteer.h"
 #include "GameInterface/AHackedQuickSave.h"
+#include "Mod/AModEvents.h"
 
 #include <Toshi/TSystem.h>
 #include <GUI/T2GUIFontManager.h>
@@ -152,6 +153,8 @@ TBOOL AGUI2::OnCreate()
 
 	T2String8::Copy( AGUI2XUIText::ms_szDefaultFont, "Arial_14" );
 #endif // BARNYARD_LATEST
+
+	FIRE_EVENT( AGUI2::Created, this );
 
 	return TTRUE;
 }
@@ -402,6 +405,8 @@ void AGUI2::GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight )
 // $Barnyard: FUNCTION 00635410
 void AGUI2::MainPostRenderCallback()
 {
+	FIRE_EVENT( AGUI2::PostRender );
+
 	if ( AGUI2::GetSingleton()->IsCursorVisible() )
 	{
 		auto& mouseCursor = AGUI2::GetSingleton()->m_oMouseCursor;

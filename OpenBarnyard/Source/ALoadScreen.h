@@ -10,7 +10,7 @@
 class AGUI2XUIScene;
 #endif
 
-class ALoadScreen
+class MODAPI ALoadScreen
 {
 public:
 	static constexpr const TCHAR* ms_LoadTextures[] = {

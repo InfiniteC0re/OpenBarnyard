@@ -119,7 +119,7 @@ private:
 	TUINT32      m_Unk6;
 };
 
-class TSystemManager
+class MODAPI TSystemManager
 {
 public:
 	friend TScheduler;
@@ -199,6 +199,6 @@ private:
 	TSystemTimer*                   m_pSystemTimer;
 };
 
-extern TSystemManager g_oSystemManager;
+extern MODAPI TSystemManager g_oSystemManager;
 
 TOSHI_NAMESPACE_END

@@ -9,7 +9,7 @@ TOSHI_NAMESPACE_START
 // Purpose: uses atomic numbers to implement locking. Faster than TMutex, cause
 // doesn't trigger context switches on fast operations.
 //-----------------------------------------------------------------------------
-class T2AtomicMutex
+class MODAPI T2AtomicMutex
 {
 private:
 	using StateFlag = TINT32;
@@ -36,7 +36,7 @@ private:
 	volatile TUINT32 m_uiThreadDepth  = 0;
 };
 
-class T2AtomicMutexLock
+class MODAPI T2AtomicMutexLock
 {
 public:
 	T2AtomicMutexLock( T2AtomicMutex& mutex )

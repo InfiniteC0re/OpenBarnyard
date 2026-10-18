@@ -9,7 +9,7 @@
 
 // Profile of the player in the sim (free roam) part of the game: gender, costume,
 // stamina, the pick up counter shown on ASimPlayerPickUpHudElement and a few item lists.
-class APlayerSimProfile : public APlayerProfile
+class MODAPI APlayerSimProfile : public APlayerProfile
 {
 public:
 	// NOTE: retail registers the class with TObject as its parent, not APlayerProfile
