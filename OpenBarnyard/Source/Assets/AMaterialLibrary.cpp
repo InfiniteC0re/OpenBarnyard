@@ -2,6 +2,8 @@
 #include "AMaterialLibrary.h"
 #include "AMaterialLibraryManager.h"
 
+#include <Render/TRenderInterface.h>
+
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!
@@ -20,6 +22,12 @@ AMaterialLibrary::AMaterialLibrary()
 TBOOL AMaterialLibrary::LoadTTLData( void* a_pTTLData )
 {
 	TPROFILER_SCOPE();
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+	TANONYMOUSVAR( TRenderInterface::MemBlockScope );
+
+#endif // BARNYARD_COMMUNITY_PATCH
 
 	TTL* pTTL = TSTATICCAST( TTL, a_pTTLData );
 
@@ -60,10 +68,39 @@ TBOOL AMaterialLibrary::LoadTTLData( void* a_pTTLData )
 
 				if ( pTexture )
 				{
-					void* pData = TMalloc( pTexInfo->uiDataSize );
+					TUINT uiDataSize = pTexInfo->uiDataSize;
+					void* pDataSrc   = pTexInfo->pData;
 
-					Toshi::TUtil::MemCopy( pData, pTexInfo->pData, pTexInfo->uiDataSize );
-					pTexture->SetData( pData, pTexInfo->uiDataSize );
+#ifdef BARNYARD_COMMUNITY_PATCH
+					TFile* pTextureOverrideFile = TNULL;
+
+					static TBOOL s_bOverrideTextures = !TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-notexoverrides" );
+
+					if ( s_bOverrideTextures )
+					{
+						TString8 strOverridePath = "Data\\Textures\\";
+						strOverridePath += pTexInfo->szFileName;
+						FixPathSlashes( strOverridePath );
+
+						pTextureOverrideFile = TFile::Create( strOverridePath, TFILEMODE_READ );
+
+						if ( pTextureOverrideFile )
+						{
+							uiDataSize = pTextureOverrideFile->GetSize();
+						}
+					}
+#endif // BARNYARD_COMMUNITY_PATCH
+					
+					void* pData = TMalloc( uiDataSize );
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+					if ( pTextureOverrideFile )
+						pTextureOverrideFile->Read( pData, uiDataSize );
+					else
+#endif // BARNYARD_COMMUNITY_PATCH
+					Toshi::TUtil::MemCopy( pData, pDataSrc, uiDataSize );
+					
+					pTexture->SetData( pData, uiDataSize );
 					pTexture->Load();
 				}
 
