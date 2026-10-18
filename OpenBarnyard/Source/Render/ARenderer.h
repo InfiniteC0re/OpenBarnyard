@@ -12,7 +12,7 @@
 #include <Render/TRenderInterface.h>
 #include <Render/TRenderAdapter.h>
 
-class ARenderer : public Toshi::TTask
+class MODAPI ARenderer : public Toshi::TTask
     , public Toshi::TSingleton<ARenderer>
 {
 public:

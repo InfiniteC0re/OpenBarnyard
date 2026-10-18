@@ -9,6 +9,9 @@
 
 TOSHI_NAMESPACE_USING
 
+Toshi::TMemory::MemBlock* AMemory::s_aMemBlocks[ POOL_NUMOF ];
+AMemory::AllocatorList    AMemory::s_AllocatorList;
+
 // $Barnyard: FUNCTION 00402910
 void AMemory::CreatePool( POOL a_ePool )
 {

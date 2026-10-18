@@ -7,7 +7,7 @@ TOSHI_NAMESPACE_START
 
 class TScheduler;
 
-class TTask : public TObject
+class MODAPI TTask : public TObject
     , public TRefCounted
     , public TNodeTree<TTask>::TNode
 {

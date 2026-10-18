@@ -4,7 +4,7 @@ TOSHI_NAMESPACE_START
 
 class TObject;
 
-class TClass
+class MODAPI TClass
 {
 public:
 	using CreateObject_t        = TObject* (*)();

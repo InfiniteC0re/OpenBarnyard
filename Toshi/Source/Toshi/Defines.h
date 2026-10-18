@@ -43,6 +43,8 @@
 
 #endif // !TOSHI_DYNAMIC_LINKING
 
+#include <ModCore/ModAPI.h>
+
 #define TOSHI_NAMESPACE       Toshi
 #define TOSHI_NAMESPACE_USING using namespace TOSHI_NAMESPACE;
 #define TOSHI_NAMESPACE_START \

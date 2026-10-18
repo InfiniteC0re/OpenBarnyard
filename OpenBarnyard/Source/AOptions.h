@@ -1,7 +1,7 @@
 #pragma once
 #include <T2Locale/T2Locale.h>
 
-class AOptions : public Toshi::TObject
+class MODAPI AOptions : public Toshi::TObject
     , public Toshi::TSingleton<AOptions>
 {
 public:

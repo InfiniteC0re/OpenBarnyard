@@ -12,6 +12,10 @@
 
 TOSHI_NAMESPACE_START
 
+TModelManager::ModelNode*         TModelManager::ms_pEntries;
+T2DList<TModelManager::ModelNode> TModelManager::ms_oUsedList;
+T2DList<TModelManager::ModelNode> TModelManager::ms_oFreeList;
+
 // $Barnyard: FUNCTION 006c1c90
 TManagedModel::TManagedModel()
     : m_pModel( TNULL )

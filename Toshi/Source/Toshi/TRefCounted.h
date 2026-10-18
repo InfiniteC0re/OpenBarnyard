@@ -3,7 +3,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TRefCounted
+class MODAPI TRefCounted
 {
 public:
 	TRefCounted() { m_iRefCount = 0; }

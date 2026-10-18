@@ -18,7 +18,7 @@ class AGUI2XUIScene;
 class AGUI2XUICanvas;
 #endif // BARNYARD_LATEST
 
-class AGUI2
+class MODAPI AGUI2
     : public Toshi::TTask
     , public Toshi::TSingleton<AGUI2>
 {

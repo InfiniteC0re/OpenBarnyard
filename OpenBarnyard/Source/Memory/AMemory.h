@@ -45,8 +45,8 @@ public:
 		AMemoryPoolAllocator aAllocators[ POOL_NUMOF ];
 	};
 
-	inline static Toshi::TMemory::MemBlock* s_aMemBlocks[ POOL_NUMOF ];
-	inline static AllocatorList             s_AllocatorList;
+	static Toshi::TMemory::MemBlock* s_aMemBlocks[ POOL_NUMOF ];
+	static AllocatorList             s_AllocatorList;
 
 	inline static constexpr AMemoryPool s_aPools[ POOL_NUMOF ] = {
 #define DEFINE_MEMORY_POOL( NAME, SIZE, UNK1, UNK2 ) AMemoryPool( #NAME, NAME, SIZE, UNK1, UNK2 )

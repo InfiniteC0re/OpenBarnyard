@@ -50,7 +50,7 @@ public:
 	virtual size_t GetCapacity() const override;
 };
 
-extern T2GlobalAllocator ms_oGlobalAllocator;
+extern MODAPI T2GlobalAllocator ms_oGlobalAllocator;
 
 TFORCEINLINE T2Allocator* GetGlobalAllocator()
 {

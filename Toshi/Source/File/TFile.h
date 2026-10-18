@@ -243,7 +243,7 @@ private:
 	TFileSystem* m_pFileSystem;
 };
 
-class TFileManager : public TSingleton<TFileManager>
+class MODAPI TFileManager : public TSingleton<TFileManager>
 {
 public:
 	class TSysPathIter

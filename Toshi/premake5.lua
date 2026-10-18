@@ -11,6 +11,7 @@ project "Toshi"
 	files
 	{
 		"Source/ToshiPCH.cpp",
+		"Source/ModCore/**.h",
 		"Source/Core/**.h",
 		"Source/Core/**.cpp",
 		"Source/Toshi/**.h",
@@ -54,7 +55,8 @@ project "Toshi"
 	defines
 	{
 		"TOSHI_USER_ENGINE",
-		"_CRT_SECURE_NO_WARNINGS"
+		"_CRT_SECURE_NO_WARNINGS",
+		"MODAPI_HOST"
 	}
 	
 	filter "files:**.c"

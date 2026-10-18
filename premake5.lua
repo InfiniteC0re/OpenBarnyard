@@ -11,7 +11,11 @@ workspace "OpenBarnyard"
 	-- Enables fast builds
 	multiprocessorcompile "on"
 
-	disablewarnings { "4996" }
+	disablewarnings
+	{
+		"4996",
+		"4251"
+	}
 	
 	debugdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")

@@ -70,9 +70,9 @@ public:
 	static ModelNode* CreateModel( const TCHAR* a_szFileName, TManagedModel& a_rModelRef, TTRB* a_pAssetTRB );
 
 public:
-	inline static ModelNode*         ms_pEntries;
-	inline static T2DList<ModelNode> ms_oUsedList;
-	inline static T2DList<ModelNode> ms_oFreeList;
+	static ModelNode*         ms_pEntries;
+	static T2DList<ModelNode> ms_oUsedList;
+	static T2DList<ModelNode> ms_oFreeList;
 };
 
 class TManagedModel

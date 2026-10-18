@@ -22,7 +22,7 @@ project "OpenBarnyard"
 	
 	defines
 	{
-		
+		"MODAPI_HOST"
 	}
 
 	files

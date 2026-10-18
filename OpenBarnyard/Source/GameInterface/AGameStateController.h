@@ -9,7 +9,7 @@
 
 class AFunctionTable;
 
-class AGameStateController
+class MODAPI AGameStateController
     : public Toshi::TTask
     , public Toshi::TSingleton<AGameStateController>
 {

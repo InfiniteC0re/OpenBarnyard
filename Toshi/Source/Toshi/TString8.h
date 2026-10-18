@@ -17,7 +17,7 @@ TOSHI_NAMESPACE_START
 
 class TString16;
 
-class TString8
+class MODAPI TString8
 {
 public:
 	TString8();

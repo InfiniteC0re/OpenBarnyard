@@ -16,19 +16,18 @@
 // Declares default methods used to register class in the dynamic class system.
 // Note: Doesn't declare ms_oClass object (Use TDECLARE_CLASS to auto-declare).
 //-----------------------------------------------------------------------------
-#define TDECLARE_CLASS_BODY( THIS_CLASS, PARENT_CLASS )                       \
-public:                                                                       \
-	using ThisClass                             = THIS_CLASS;                 \
-	using BaseClass                             = PARENT_CLASS;               \
-	static constexpr Toshi::TClass* PARENTCLASS = &TGetClass( PARENT_CLASS ); \
-                                                                              \
-	virtual const Toshi::TClass* GetClass() const override;                   \
-                                                                              \
-	static Toshi::TObject* CreateTObject();                                   \
-	static Toshi::TObject* CreateTObjectInPlace( void* a_pPtr );              \
-	static void            InitialiseClass();                                 \
-	static void            DeinitialiseClass();                               \
-                                                                              \
+#define TDECLARE_CLASS_BODY( THIS_CLASS, PARENT_CLASS )          \
+public:                                                          \
+	using ThisClass = THIS_CLASS;                                \
+	using BaseClass = PARENT_CLASS;                              \
+                                                                 \
+	virtual const Toshi::TClass* GetClass() const override;      \
+                                                                 \
+	static Toshi::TObject* CreateTObject();                      \
+	static Toshi::TObject* CreateTObjectInPlace( void* a_pPtr ); \
+	static void            InitialiseClass();                    \
+	static void            DeinitialiseClass();                  \
+                                                                 \
 	static TFORCEINLINE const Toshi::TClass* GetClassStatic() { return std::addressof( TClassObjectName ); }
 
 //-----------------------------------------------------------------------------
@@ -37,8 +36,7 @@ public:                                                                       \
 //-----------------------------------------------------------------------------
 #define TDECLARE_CLASS_BODY_NO_PARENT( THIS_CLASS )              \
 public:                                                          \
-	using ThisClass                             = THIS_CLASS;    \
-	static constexpr Toshi::TClass* PARENTCLASS = TNULL;         \
+	using ThisClass = THIS_CLASS;                                \
                                                                  \
 	const Toshi::TClass* GetClass() const;                       \
                                                                  \
@@ -146,10 +144,10 @@ public:                                                          \
 #define TDEFINE_CLASS( ... ) CALL_OVERLOAD( TDEFINE_CLASS, __VA_ARGS__ )
 #define TDEFINE_CLASS1( CLASS ) \
 	TDEFINE_CLASS_FULL( CLASS ) \
-	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, 0, 1, sizeof( CLASS ), alignof( CLASS ) );
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, &TGetClass( CLASS::BaseClass ), CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, 0, 1, sizeof( CLASS ), alignof( CLASS ) );
 #define TDEFINE_CLASS3( CLASS, VER_MAJOR, VER_MINOR ) \
 	TDEFINE_CLASS_FULL( CLASS )                       \
-	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, VER_MAJOR, VER_MINOR, sizeof( CLASS ), alignof( CLASS ) );
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, &TGetClass( CLASS::BaseClass ), CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, VER_MAJOR, VER_MINOR, sizeof( CLASS ), alignof( CLASS ) );
 
 //-----------------------------------------------------------------------------
 // Defines all TObject methods and the ms_oClass object.
@@ -157,10 +155,10 @@ public:                                                          \
 //-----------------------------------------------------------------------------
 #define TDEFINE_CLASS_NORUNTIME1( CLASS ) \
 	TDEFINE_CLASS_FULL_NORUNTIME( CLASS ) \
-	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, 0, 1, sizeof( CLASS ), alignof( CLASS ) );
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, &TGetClass( CLASS::BaseClass ), CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, 0, 1, sizeof( CLASS ), alignof( CLASS ) );
 #define TDEFINE_CLASS_NORUNTIME3( CLASS, VER_MAJOR, VER_MINOR ) \
 	TDEFINE_CLASS_FULL_NORUNTIME( CLASS )                       \
-	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, VER_MAJOR, VER_MINOR, sizeof( CLASS ), alignof( CLASS ) );
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, &TGetClass( CLASS::BaseClass ), CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, VER_MAJOR, VER_MINOR, sizeof( CLASS ), alignof( CLASS ) );
 #define TDEFINE_CLASS_NORUNTIME( ... ) CALL_OVERLOAD( TDEFINE_CLASS_NORUNTIME, __VA_ARGS__ )
 
 //-----------------------------------------------------------------------------
@@ -170,10 +168,10 @@ public:                                                          \
 //-----------------------------------------------------------------------------
 #define TDEFINE_CLASS_INIT1( CLASS ) \
 	TDEFINE_CLASS_CORE( CLASS )      \
-	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, 0, 1, sizeof( CLASS ), alignof( CLASS ) );
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, &TGetClass( CLASS::BaseClass ), CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, 0, 1, sizeof( CLASS ), alignof( CLASS ) );
 #define TDEFINE_CLASS_INIT3( CLASS, VER_MAJOR, VER_MINOR ) \
 	TDEFINE_CLASS_CORE( CLASS )                            \
-	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, VER_MAJOR, VER_MINOR, sizeof( CLASS ), alignof( CLASS ) );
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, &TGetClass( CLASS::BaseClass ), CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, VER_MAJOR, VER_MINOR, sizeof( CLASS ), alignof( CLASS ) );
 #define TDEFINE_CLASS_INIT( ... ) CALL_OVERLOAD( TDEFINE_CLASS_INIT, __VA_ARGS__ )
 
 //-----------------------------------------------------------------------------
@@ -183,10 +181,10 @@ public:                                                          \
 //-----------------------------------------------------------------------------
 #define TDEFINE_CLASS_INIT_NORUNTIME1( CLASS ) \
 	TDEFINE_CLASS_CORE_NORUNTIME( CLASS )      \
-	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, 0, 1, sizeof( CLASS ), alignof( CLASS ) );
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, &TGetClass( CLASS::BaseClass ), CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, 0, 1, sizeof( CLASS ), alignof( CLASS ) );
 #define TDEFINE_CLASS_INIT_NORUNTIME3( CLASS, VER_MAJOR, VER_MINOR ) \
 	TDEFINE_CLASS_CORE_NORUNTIME( CLASS )                            \
-	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, VER_MAJOR, VER_MINOR, sizeof( CLASS ), alignof( CLASS ) );
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, &TGetClass( CLASS::BaseClass ), CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, VER_MAJOR, VER_MINOR, sizeof( CLASS ), alignof( CLASS ) );
 #define TDEFINE_CLASS_INIT_NORUNTIME( ... ) CALL_OVERLOAD( TDEFINE_CLASS_INIT_NORUNTIME, __VA_ARGS__ )
 
 //-----------------------------------------------------------------------------
@@ -205,14 +203,13 @@ public:                                                          \
 
 TOSHI_NAMESPACE_START
 
-class TObject
+class MODAPI TObject
 {
 public:
 	enum
 	{
 		IsTObject = TTRUE
 	};
-	static constexpr Toshi::TClass* PARENTCLASS = TNULL;
 
 public:
 	virtual const Toshi::TClass* GetClass() const;
