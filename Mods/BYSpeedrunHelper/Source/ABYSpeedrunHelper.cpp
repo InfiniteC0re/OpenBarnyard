@@ -22,7 +22,6 @@
 #include <Math/TRandom.h>
 #include <Input/TInputDeviceKeyboard.h>
 #include <T2Locale/T2Locale.h>
-#include <File/TTRB.h>
 #include <GUI/T2GUIFontManager.h>
 #include <ToshiTools/T2CommandLine.h>
 
@@ -32,7 +31,6 @@ TOSHI_NAMESPACE_USING
 
 AGUI2TextBox* g_pExperimentalModeText = TNULL;
 
-const T2CommandLine* g_pCommandLine;
 TBOOL                g_bIsExperimentalMode = TFALSE;
 TBOOL                g_bIsFunCategory      = TFALSE;
 
@@ -95,7 +93,6 @@ struct GolfMiniGameSettings
 
 	TBOOL bChangeLevel = TFALSE;
 	TINT  iLevel       = 1;
-	TINT  iTargetLevel = -1;
 
 } g_oGolfMiniGameSettings;
 
@@ -250,9 +247,6 @@ public:
 
 			// Don't waste stamina in main game
 			InstallHook<APlayerProfileManager_UpdateMainProfile>();
-
-			// Load overrides with minigames settings
-			m_oOverridesTRB.Load( TString8::VarArgs( "%sBYSpeedrunHelper\\Fun\\Overrides.trb", AModLoader::GetModsDirectory() ) );
 		}
 
 		// TODO: ACollisionInspector (-experimental) isn't ported yet
@@ -676,8 +670,6 @@ public:
 	}
 
 private:
-	TTRB m_oOverridesTRB;
-
 	ABikeRaceMicroGame* m_pBikeRace = TNULL;
 };
 
@@ -685,9 +677,8 @@ extern "C"
 {
 	MOD_EXPORT AModInstance* CreateModInstance( const T2CommandLine* a_pCommandLine )
 	{
-		g_pCommandLine        = a_pCommandLine;
-		g_bIsExperimentalMode = g_pCommandLine->HasParameter( "-experimental" );
-		g_bIsFunCategory      = g_pCommandLine->HasParameter( "-fun" );
+		g_bIsExperimentalMode = a_pCommandLine->HasParameter( "-experimental" );
+		g_bIsFunCategory      = a_pCommandLine->HasParameter( "-fun" );
 
 		return new ABYSpeedrunHelper();
 	}

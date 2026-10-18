@@ -112,13 +112,6 @@ AImGui::AImGui()
 	m_oDisplayParams = *pRender->GetCurrentDisplayParams();
 }
 
-AImGui::~AImGui()
-{
-	ImGui_ImplDX8_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
-}
-
 void AImGui::Subscribe()
 {
 	SUBSCRIBE_EVENT( ARenderer::Created, OnRendererCreated );

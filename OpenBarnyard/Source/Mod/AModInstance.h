@@ -3,7 +3,6 @@
 #include <Toshi/TString8.h>
 #include <Toshi/TVersion.h>
 #include <ToshiTools/T2CommandLine.h>
-#include <Plugins/PPropertyParser/PBProperties.h>
 
 class AImGui;
 
@@ -19,7 +18,7 @@ class AImGui;
 //
 // Only CreateModInstance is required.
 //
-// Game events (AGUI2 render, new game, ...) are named events, see AModEvents.h.
+// Game events (AGUI2 render, new game, ...) are in AModEventList.h.
 //-----------------------------------------------------------------------------
 #define MOD_EXPORT __declspec( dllexport )
 
@@ -68,10 +67,8 @@ public:
 
 	const TCHAR*    GetName() const { return m_strName.GetString(); }
 	Toshi::TVersion GetVersion() const { return m_uiVersion; }
-	HMODULE         GetModule() const { return m_hModule; }
 
 private:
-	HMODULE         m_hModule = TNULL;
 	Toshi::TString8 m_strName;
 	Toshi::TVersion m_uiVersion;
 };

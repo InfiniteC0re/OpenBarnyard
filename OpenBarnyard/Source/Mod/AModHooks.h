@@ -8,20 +8,18 @@
 //
 // Hooks are declared with the macros below and point at real game functions:
 //
-//   MEMBER_HOOK( &AOptions::LoadSettings, AOptions, AOptions_LoadSettings, void )
+//   MEMBER_HOOK( &APlayerProfileManager::UpdateMainProfile, APlayerProfileManager, APlayerProfileManager_UpdateMainProfile, TBOOL, TFLOAT a_fDeltaTime )
 //   {
-//       CallOriginal();
+//       return CallOriginal( a_fDeltaTime );
 //   }
 //
-//   InstallHook<AOptions_LoadSettings>();
+//   InstallHook<APlayerProfileManager_UpdateMainProfile>();
 //
 // The target must be exported from the game (MODAPI on its class or itself),
 // otherwise the mod fails to link.
 //
-// Virtual functions: &Class::Func of a virtual function points to a small
-// thunk compiled into the mod, not to the game code. Install those hooks with
-// InstallHook<Hook>( pAnyInstance ), so the implementation is taken from the
-// instance's vtable.
+// NOTE: virtual functions can't be hooked this way, &Class::Func of a virtual
+// function points to a small thunk compiled into the mod, not to the game code.
 //-----------------------------------------------------------------------------
 
 namespace AModHooks
@@ -33,10 +31,6 @@ MODAPI void* Install( void* a_pTarget, void* a_pDetour );
 
 // Removes a hook installed by Install
 MODAPI TBOOL Remove( void* a_pTarget );
-
-// Returns the implementation of a virtual function, taken from the vtable of a_pInstance.
-// a_pVirtualThunk is the address of &Class::VirtualFunc as seen by the mod.
-MODAPI void* ResolveVirtual( const void* a_pInstance, void* a_pVirtualThunk );
 
 // Returns the code address of a function or a member function pointer
 template <class T>
@@ -61,28 +55,14 @@ inline TBOOL InstallHook()
 	return HOOK::_orig_func_ptr != TNULL;
 }
 
-// Installs a hook on a virtual function, using the vtable of a_pInstance to find it
-template <class HOOK>
-inline TBOOL InstallHook( const void* a_pInstance )
-{
-	void* pTarget = AModHooks::ResolveVirtual( a_pInstance, HOOK::GetTarget() );
-	if ( !pTarget ) return TFALSE;
-
-	HOOK::_resolved_target = pTarget;
-	HOOK::_orig_func_ptr   = AModHooks::Install( pTarget, HOOK::GetDetour() );
-	return HOOK::_orig_func_ptr != TNULL;
-}
-
 template <class HOOK>
 inline TBOOL RemoveHook()
 {
 	if ( !HOOK::_orig_func_ptr ) return TFALSE;
 
-	void* pTarget = HOOK::_resolved_target ? HOOK::_resolved_target : HOOK::GetTarget();
-	if ( !AModHooks::Remove( pTarget ) ) return TFALSE;
+	if ( !AModHooks::Remove( HOOK::GetTarget() ) ) return TFALSE;
 
-	HOOK::_orig_func_ptr   = TNULL;
-	HOOK::_resolved_target = TNULL;
+	HOOK::_orig_func_ptr = TNULL;
 	return TTRUE;
 }
 
@@ -92,8 +72,7 @@ inline TBOOL RemoveHook()
 // works for any calling convention as long as the hook has the same signature.
 //-----------------------------------------------------------------------------
 #define _MODHOOK_DECLARE_COMMON()                 \
-	static inline void* _orig_func_ptr   = TNULL; \
-	static inline void* _resolved_target = TNULL; \
+	static inline void* _orig_func_ptr = TNULL; \
 	static void*        GetDetour() { return AModHooks::GetFunctionAddress( &_hook_obj::_hook_func ); }
 
 #define _MODHOOK_DECLARE_MEMBER( TARGET, OBJECT, NAME, CONST, RETURN, ... )                                       \

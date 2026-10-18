@@ -17,7 +17,6 @@ class MODAPI AImGui
 {
 public:
 	AImGui();
-	~AImGui();
 
 	// Subscribes to the events that create and drive the overlay
 	static void Subscribe();

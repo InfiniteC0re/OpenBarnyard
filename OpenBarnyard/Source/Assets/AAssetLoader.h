@@ -54,6 +54,7 @@ private:
 	// Builds Data/<library>.trb path, a_rOutLibName receives the library variant that should be used
 	static void GetLibraryFileName( Toshi::TString8& a_rOutLibName, Toshi::TString8& a_rOutFileName, const TCHAR* a_szLibraryName, TINT a_iMainGameAct );
 
+public:
 	// Loads/unloads matlib, keylibs and animatable object types of the main player's gender and costume ("playercharacter" property)
 	static void LoadPlayerCharacter( const PBPropertyValue* a_pProperty );
 	static void UnloadPlayerCharacter( const PBPropertyValue* a_pProperty );

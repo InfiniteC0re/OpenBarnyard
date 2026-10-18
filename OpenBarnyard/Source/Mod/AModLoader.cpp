@@ -52,7 +52,6 @@ void AModLoader::OnDestroy()
 {
 	UnloadMods();
 
-	// NOTE: AImGui is never destroyed, the renderer (and its D3D device) can be gone by now
 	AModEvents::Reset();
 
 	TTask::OnDestroy();
@@ -137,7 +136,6 @@ void AModLoader::LoadMod( const TCHAR* a_szPath )
 		return;
 	}
 
-	pModInstance->m_hModule   = hModule;
 	pModInstance->m_strName   = fnGetModName ? fnGetModName() : a_szPath;
 	pModInstance->m_uiVersion = fnGetModVersion ? fnGetModVersion() : TVERSION( 1, 0 );
 
