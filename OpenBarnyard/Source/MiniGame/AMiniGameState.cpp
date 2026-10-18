@@ -30,6 +30,7 @@
 #include "Animation/AAnimatableObject.h"
 #include "Physics/ACollisionObjectSimple.h"
 #include "Locale/ALocaleManager.h"
+#include "Render/ADebugOverlay.h"
 
 #include <Toshi/TStringManager.h>
 
@@ -211,6 +212,8 @@ TBOOL AMiniGameState::OnUpdate( TFLOAT a_fDeltaTime )
 		m_pPlayerAi->Update( a_fDeltaTime );
 		UpdateGame( a_fDeltaTime );
 	}
+
+	ADEBUGLINE( LINE_STATE, ADebugOverlay::INFO_COLOUR, "Time = %.3f", m_fElapsedTime );
 
 	if ( IsGameOver() || ( 0.0f < m_fTimeLimit && m_fTimeLimit < m_fElapsedTime ) )
 		UpdateGameOver( a_fDeltaTime );

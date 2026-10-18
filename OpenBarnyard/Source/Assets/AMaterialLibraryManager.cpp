@@ -267,6 +267,12 @@ void AMaterialLibraryManager::DestroyAllLibraries( TBOOL a_bUpdateGUIMaterials )
 // $Barnyard: FUNCTION 00613d90
 void AMaterialLibraryManager::UnloadTexturesOfLibrary( AMaterialLibrary* a_pMaterialLibrary )
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: Barnyard route added on top: the TGUI screen of AGUISystem drops the materials of the textures
+	if ( g_pGUISystem )
+		g_pGUISystem->OnTGUIMaterialLibrariesChanged( TTRUE );
+#endif
+
 	for ( auto it = m_UsedTextures.Begin(); it != m_UsedTextures.End(); )
 	{
 		auto pNextNode = it->Next();
@@ -315,6 +321,12 @@ void AMaterialLibraryManager::CreateTextures( AMaterialLibrary* a_pMatLibrary )
 // $Barnyard: FUNCTION 00613b20
 void AMaterialLibraryManager::OnLibraryLoaded( TBOOL a_bUpdateGUIMaterials )
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: Barnyard route added on top: the TGUI screen of AGUISystem finds the new textures
+	if ( g_pGUISystem )
+		g_pGUISystem->OnTGUIMaterialLibrariesChanged( TFALSE );
+#endif
+
 	TRenderInterface::GetSingleton()->FlushDyingResources();
 	TRenderInterface::GetSingleton()->FlushDyingResources();
 

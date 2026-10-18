@@ -2,6 +2,9 @@
 #include "AGameTimeManager.h"
 #include "FX/AGameTimeFXManager.h"
 #include "FSM/AMethodPointer.h"
+#include "Render/ADebugOverlay.h"
+
+#include <Toshi/TSystem.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -110,6 +113,22 @@ TBOOL AGameTimeManager::Reset()
 // $Barnyard: FUNCTION 00546a30
 TBOOL AGameTimeManager::OnUpdate( TFLOAT a_fDeltaTime )
 {
+#ifdef ADEBUGOVERLAY
+	// Development: the time on the debug overlay (once a frame, "-devtimescale" updates the time again)
+	static TUINT s_uiPrintFrame = 0;
+
+	if ( ADebugOverlay::IsPrinting() && s_uiPrintFrame != g_oSystemManager.GetFrameCount() )
+	{
+		s_uiPrintFrame = g_oSystemManager.GetFrameCount();
+
+		ADEBUGLINE( LINE_GAME_TIME, ADebugOverlay::INFO_COLOUR, "Total Actual Time = %.3f", GetTotalTime() );
+		ADEBUGLINE( LINE_GAME_TIME, ADebugOverlay::INFO_COLOUR, "Time of Day: %.3f", GetDayTime() );
+		ADEBUGLINE( LINE_GAME_TIME, ADebugOverlay::INFO_COLOUR, "Day/Month/Year: %d/%d/%d", GetDay(), GetMonth(), GetYear() );
+		ADEBUGLINE( LINE_GAME_TIME, ADebugOverlay::INFO_COLOUR, "Day Phase: %d", GetCurrentDayPhase() );
+		ADEBUGLINE( LINE_GAME_TIME, ADebugOverlay::INFO_COLOUR, "Hour/Minute/Second: %d:%d:%d", GetCurrentHour(), GetCurrentMinute(), GetCurrentSecond() );
+	}
+#endif
+
 	if ( m_bStopUpdate )
 		return TFALSE;
 

@@ -75,6 +75,11 @@ public:
 	TBOOL Update( TFLOAT a_fDeltaTime );
 	void  UpdateAnimControllers( TFLOAT a_fDeltaTime );
 
+#ifndef TOSHI_FINAL
+	// Development: prints a line per animation on the debug overlay (ADebugOverlay)
+	void DebugPrintAnimations();
+#endif
+
 	// Starts animation immediately if possible, or schedules it to play later. Return TTRUE if started immediately.
 	TBOOL PlayAnimation( const Toshi::TPString8& a_strName );
 

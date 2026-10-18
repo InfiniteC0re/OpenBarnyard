@@ -16,6 +16,8 @@
 #include "UnitMovement/Steering/APlayerSteer.h"
 #include "Animation/AAnimatableObject.h"
 #include "Animation/ANamedAnimationSet.h"
+#include "Player/APlayerManager.h"
+#include "Render/ADebugOverlay.h"
 
 #include <Math/TMatrix44.h>
 
@@ -110,6 +112,12 @@ TBOOL AProjectileLauncher::Update( TFLOAT a_fDeltaTime )
 {
 	m_fFireTimer += a_fDeltaTime;
 	m_pAmmo->Update( a_fDeltaTime );
+
+#ifdef ADEBUGOVERLAY
+	// Development: the milk of the player on the debug overlay
+	if ( ADebugOverlay::IsPrinting() && APlayerManager::IsSingletonCreated() && GetOwnerUnit() == APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) )
+		ADEBUGLINE( LINE_PLAYER, ADebugOverlay::INFO_COLOUR, "Charge: %f.2, of %f.2 / %f.2", m_pAmmo->GetAmmo(), TFLOAT( m_pAmmo->GetMaxAmmo() ), m_pAmmo->GetRechargeRate() );
+#endif
 
 	return TFALSE;
 }

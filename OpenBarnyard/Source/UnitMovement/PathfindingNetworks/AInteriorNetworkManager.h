@@ -65,6 +65,12 @@ public:
 	// The network used by units that aren't connected to any other network
 	AInteriorNetwork* GetDefaultNetwork() const { return m_pDefaultNetwork; }
 
+	// NOTE: ours (the network editor): the default network, else the first loaded one
+	AInteriorNetwork* GetAnyNetwork() { return m_pDefaultNetwork ? m_pDefaultNetwork : ( m_llNetworks.IsEmpty() ? TNULL : m_llNetworks.Head() ); }
+
+	// NOTE: ours (the world debug drawing)
+	Toshi::TDList<AInteriorNetwork>& GetNetworks() { return m_llNetworks; }
+
 private:
 	NetworkPool*                    m_pNetworkPool;    // 0x20
 	Toshi::TDList<AInteriorNetwork> m_llNetworks;      // 0x24

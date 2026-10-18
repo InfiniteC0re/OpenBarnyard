@@ -16,6 +16,7 @@
 #include "AMultiCameraHelper.h"
 #include "AProjectileFireCameraHelper.h"
 #include "ACarChaseCamera.h"
+#include "Render/ADebugOverlay.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -131,6 +132,15 @@ TBOOL ACameraManager::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	if ( ARootTask::GetSingleton()->IsPaused() )
 		return TTRUE;
+
+#ifdef ADEBUGOVERLAY
+	// Development: the camera on the debug overlay
+	if ( ADebugOverlay::IsPrinting() && GetCurrentCamera() )
+	{
+		const TVector4& rcPosition = GetCurrentCamera()->GetMatrix().GetTranslation();
+		ADEBUGLINE( LINE_CAMERA, ADebugOverlay::INFO_COLOUR, "Camera Position(%f,%f,%f)", rcPosition.x, rcPosition.y, rcPosition.z );
+	}
+#endif
 
 	if ( !m_bIsPosLerping )
 	{

@@ -284,6 +284,23 @@ void ASimState::OnCollisionModelLoaded( void* a_pCollisionModel, void* a_pGroupI
 // Development, tests the day/night cycle of the sim:
 //  "-devdayphase <N>":  changes the phase of the day to N (0 dawn, 1 morning, 2 afternoon, 3 dusk, 4 night) once the sim runs
 //  "-devtimescale <N>": the game time runs N times faster while the sim is the current state
+static TFLOAT s_fTimeScale = -1.0f;
+
+#  ifndef TOSHI_FINAL
+
+void ASimState::Dev_SetTimeScale( TFLOAT a_fScale )
+{
+	s_fTimeScale = a_fScale;
+	TINFO( "[devtime] game time scale %.2f\n", s_fTimeScale );
+}
+
+TFLOAT ASimState::Dev_GetTimeScale()
+{
+	return s_fTimeScale < 0.0f ? 1.0f : s_fTimeScale;
+}
+
+#  endif
+
 static void Dev_UpdateGameTime( TFLOAT a_fDeltaTime )
 {
 	static TBOOL s_bDayPhaseSet = TFALSE;
@@ -314,8 +331,6 @@ static void Dev_UpdateGameTime( TFLOAT a_fDeltaTime )
 			}
 		}
 	}
-
-	static TFLOAT s_fTimeScale = -1.0f;
 
 	if ( s_fTimeScale < 0.0f )
 	{

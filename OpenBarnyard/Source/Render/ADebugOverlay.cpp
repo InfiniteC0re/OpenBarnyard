@@ -4,25 +4,18 @@
 #if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
 #  include "ARenderer.h"
 #  include "Cameras/ACameraManager.h"
-#  include "GameInterface/AGameState.h"
-#  include "Input/AInputMapManager.h"
 #  include "Tasks/ARootTask.h"
-#  include "Helpers/AGameTimeManager.h"
-#  include "Player/APlayerManager.h"
-#  include "Animation/AAnimatableObject.h"
+#  include "Units/AUnit.h"
 #  include "Units/AUnitManager.h"
 #  include "Units/AUnitNameManager.h"
-#  include "Units/AAnimatedUnit.h"
 #  include "Units/AUnitBehaviour.h"
-#  include "Units/AUnitPlayer.h"
 #  include "Units/AUnitType.h"
-#  include "Units/Projectiles/AProjectileLauncher.h"
-#  include "Units/Projectiles/ALaunchAmmo.h"
 #  include "UnitMovement/Steering/ASteer.h"
-#  include "UnitMovement/Steering/ASteerKinematics.h"
 #  include "FSM/AFSMState.h"
 
 #  include <Platform/DX8/TRenderInterface_DX8.h>
+
+#  include <stdarg.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -34,8 +27,9 @@ TOSHI_NAMESPACE_USING
 
 ADebugOverlay::ADebugOverlay()
     : m_pDebugText( TNULL )
-    , m_fGroundTime( 0.0f )
     , m_bEnabled( TFALSE )
+    , m_iNumLines( 0 )
+    , m_iNumShownLines( 0 )
 {
 	// "-debugoverlay" starts with the overlay on
 	if ( TStringManager::String8FindString( GetCommandLineA(), "-debugoverlay" ) )
@@ -53,201 +47,116 @@ ADebugOverlay::~ADebugOverlay()
 
 void ADebugOverlay::SetEnabled( TBOOL a_bEnabled )
 {
-	m_bEnabled = a_bEnabled;
+	m_bEnabled       = a_bEnabled;
+	m_iNumLines      = 0;
+	m_iNumShownLines = 0;
 }
 
-void ADebugOverlay::ProcessInput( AGameState* a_pGameState, const TInputInterface::InputEvent* a_pEvent )
+TDebugText* ADebugOverlay::GetDebugText()
 {
-	if ( a_pEvent->GetEventType() != TInputInterface::EVENT_TYPE_GONE_DOWN || !a_pGameState->GetInputMap() )
+	if ( !m_pDebugText )
+		m_pDebugText = TRenderD3DInterface::Interface()->CreateDebugText();
+
+	return m_pDebugText;
+}
+
+void ADebugOverlay::PrintLine( LINE a_eLine, TUINT32 a_uiColour, const TCHAR* a_szFormat, ... )
+{
+	if ( m_iNumLines >= MAX_LINES )
 		return;
 
-	// The controls file binds DebugMenu to the ` key (and the pad's Select) in almost every input map
-	AInputMapManager* pInputManager = AInputMapManager::GetSingleton();
-	pInputManager->PushInputMap( a_pGameState->GetInputMap() );
+	Line& rLine    = m_aLines[ m_iNumLines ];
+	rLine.eLine    = a_eLine;
+	rLine.uiColour = a_uiColour;
 
-	AInputCommandArray oCommands;
-	pInputManager->GetEventCommands( a_pEvent, oCommands );
-	pInputManager->PopInputMap();
+	va_list args;
+	va_start( args, a_szFormat );
+	_vsnprintf_s( rLine.szText, MAX_LINE_LENGTH, _TRUNCATE, a_szFormat, args );
+	va_end( args );
 
-	for ( TINT i = 0; i < oCommands.iNumCommands; i++ )
+	// The systems updated more than once a frame print the same line again
+	for ( TINT i = 0; i < m_iNumLines; i++ )
 	{
-		if ( oCommands.aCommands[ i ] == AInputCommand_DebugMenu )
-		{
-			SetEnabled( !m_bEnabled );
-			break;
-		}
+		if ( m_aLines[ i ].eLine == a_eLine && !TStringManager::String8Compare( m_aLines[ i ].szText, rLine.szText ) )
+			return;
 	}
 
-	oCommands.Clear();
+	m_iNumLines++;
+}
+
+void ADebugOverlay::PrintWorldText( ACamera* a_pCamera, const TVector4& a_rcPosition, const TCHAR* a_szText, TUINT32 a_uiColour )
+{
+	TDebugText* pDebugText = GetDebugText();
+	TVector2    vScreenPos;
+
+	if ( !pDebugText || !ARenderer::GetSingleton()->ProjectToScreen( a_pCamera, a_rcPosition, vScreenPos ) )
+		return;
+
+	TRenderInterface::DISPLAYPARAMS* pDisplayParams = TRenderD3DInterface::Interface()->GetCurrentDisplayParams();
+
+	if ( vScreenPos.x < 0.0f || vScreenPos.x >= TFLOAT( pDisplayParams->uiWidth ) || vScreenPos.y < 0.0f || vScreenPos.y >= TFLOAT( pDisplayParams->uiHeight ) )
+		return;
+
+	pDebugText->PrintString( TINT( vScreenPos.x ), TINT( vScreenPos.y ), a_szText, a_uiColour, TDebugText::ENTRYFLAGS_CENTERED );
 }
 
 void ADebugOverlay::Render( TFLOAT a_fDeltaTime )
 {
+	// The lines of a paused frame are the ones of the last frame that wasn't (most systems don't update)
+	if ( !ARootTask::GetSingleton()->IsPaused() )
+	{
+		for ( TINT i = 0; i < m_iNumLines; i++ )
+			m_aShownLines[ i ] = m_aLines[ i ];
+
+		m_iNumShownLines = m_iNumLines;
+	}
+
+	m_iNumLines = 0;
+
 	if ( !m_bEnabled )
+	{
+		// The labels of the world debug drawing
+		if ( m_pDebugText )
+			m_pDebugText->Render();
+
+		return;
+	}
+
+	TDebugText* pDebugText = GetDebugText();
+
+	if ( !pDebugText )
 		return;
 
-	TRenderD3DInterface* pRender = TRenderD3DInterface::Interface();
-
-	if ( !m_pDebugText )
+	// The lines, by group
+	for ( TINT iGroup = 0; iGroup < LINE_NUMOF; iGroup++ )
 	{
-		m_pDebugText = pRender->CreateDebugText();
-
-		if ( !m_pDebugText )
-			return;
+		for ( TINT i = 0; i < m_iNumShownLines; i++ )
+		{
+			if ( m_aShownLines[ i ].eLine == iGroup )
+				pDebugText->AddString( m_aShownLines[ i ].szText, m_aShownLines[ i ].uiColour );
+		}
 	}
 
 	ARootTask* pRootTask = ARootTask::GetSingleton();
 
-	if ( pRootTask->IsGameSystemCreated() )
+	if ( pRootTask->IsGameSystemCreated() && pRootTask->IsRenderWorld() && ACameraManager::IsSingletonCreated() )
 	{
-		RenderPlayer( a_fDeltaTime );
-
-		if ( AGameTimeManager::IsSingletonCreated() )
-			RenderGameTime();
-
-		ACamera* pCamera = ACameraManager::IsSingletonCreated() ? ACameraManager::GetSingleton()->GetCurrentCamera() : TNULL;
-
-		if ( pCamera )
-		{
-			const TVector4& rcCameraPos = pCamera->GetMatrix().GetTranslation();
-
-			TCHAR szLine[ 128 ];
-			TStringManager::String8Format( szLine, TARRAYSIZE( szLine ), "Camera Position(%f,%f,%f)", rcCameraPos.x, rcCameraPos.y, rcCameraPos.z );
-			m_pDebugText->AddString( szLine, INFO_COLOUR );
-
-			// Names and states of the units
-			if ( pRootTask->IsRenderWorld() )
-				RenderUnitLabels( pCamera );
-		}
+		// Names and states of the units
+		if ( ACamera* pCamera = ACameraManager::GetSingleton()->GetCurrentCamera() )
+			RenderUnitLabels( pCamera );
 	}
 
 	// Frame time and FPS at the bottom
 	if ( a_fDeltaTime > 0.0f )
 	{
-		TRenderInterface::DISPLAYPARAMS* pDisplayParams = pRender->GetCurrentDisplayParams();
+		TRenderInterface::DISPLAYPARAMS* pDisplayParams = TRenderD3DInterface::Interface()->GetCurrentDisplayParams();
 
 		TCHAR szLine[ 64 ];
 		TStringManager::String8Format( szLine, TARRAYSIZE( szLine ), "Total = %.3f (%.1f FPS)", a_fDeltaTime * 1000.0f, 1.0f / a_fDeltaTime );
-		m_pDebugText->PrintString( pDisplayParams->uiWidth / 2, pDisplayParams->uiHeight - LINE_HEIGHT * 2, szLine, INFO_COLOUR, TDebugText::ENTRYFLAGS_CENTERED );
+		pDebugText->PrintString( pDisplayParams->uiWidth / 2, pDisplayParams->uiHeight - LINE_HEIGHT * 2, szLine, INFO_COLOUR, TDebugText::ENTRYFLAGS_CENTERED );
 	}
 
-	m_pDebugText->Render();
-}
-
-void ADebugOverlay::RenderPlayer( TFLOAT a_fDeltaTime )
-{
-	AUnit* pPlayer = APlayerManager::IsSingletonCreated() ? APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) : TNULL;
-
-	if ( !pPlayer )
-		return;
-
-	TCHAR szLine[ 128 ];
-
-	// Time since the player landed
-	ASteerKinematics* pKinematics = pPlayer->GetSteer() ? pPlayer->GetSteer()->GetKinematics() : TNULL;
-
-	if ( pKinematics )
-	{
-		// Same limit as the jump check of APlayerSteer
-		if ( pKinematics->GetAirTime() >= 0.2f )
-			m_fGroundTime = 0.0f;
-		else
-			m_fGroundTime += a_fDeltaTime;
-
-		TStringManager::String8Format( szLine, TARRAYSIZE( szLine ), "GroundTime = [%f]", m_fGroundTime );
-		m_pDebugText->AddString( szLine, INFO_COLOUR );
-	}
-
-	// Milk of the active launcher
-	AProjectileLauncher* pLauncher = pPlayer->IsA( &TGetClass( AUnitPlayer ) ) ? TSTATICCAST( AUnitPlayer, pPlayer )->GetActiveLauncher() : TNULL;
-
-	if ( pLauncher && pLauncher->GetAmmo() )
-	{
-		ALaunchAmmo* pAmmo = pLauncher->GetAmmo();
-
-		TStringManager::String8Format( szLine, TARRAYSIZE( szLine ), "Charge: %f.2, of %f.2 / %f.2", pAmmo->GetAmmo(), TFLOAT( pAmmo->GetMaxAmmo() ), pAmmo->GetRechargeRate() );
-		m_pDebugText->AddString( szLine, INFO_COLOUR );
-	}
-
-	// Animations
-	if ( pPlayer->IsA( &TGetClass( AAnimatedUnit ) ) )
-	{
-		AAnimatableObject* pObject = TSTATICCAST( AAnimatedUnit, pPlayer )->GetAnimatableObject();
-
-		if ( pObject )
-			RenderAnimations( pObject );
-	}
-
-	// The velocity the player's steer is asked for (the movement input turned into a direction and a speed)
-	if ( pKinematics )
-	{
-		const TVector4* pFacing = pKinematics->GetDesiredFacing();
-		TFLOAT          fSpeed  = pKinematics->GetDesiredSpeed();
-
-		TStringManager::String8Format( szLine, TARRAYSIZE( szLine ), "ManualSteer(%f,%f,%f)", pFacing->x * fSpeed, pFacing->y * fSpeed, pFacing->z * fSpeed );
-		m_pDebugText->AddString( szLine, STEER_COLOUR );
-	}
-}
-
-void ADebugOverlay::RenderAnimations( AAnimatableObject* a_pObject )
-{
-	AToshiAnimationInterface& rAnimInterface = a_pObject->GetToshiAnimInterface();
-
-	for ( TINT i = 0; i < 2; i++ )
-	{
-		TBOOL                        bOverlay = ( i == 1 );
-		T2DList<AToshiAnimationRef>& rList    = bOverlay ? rAnimInterface.GetOverlayAnimRefs() : rAnimInterface.GetAnimRefs();
-
-		for ( auto it = rList.Begin(); it != rList.End(); it++ )
-		{
-			AToshiAnimationRef* pRef       = it;
-			ANamedAnimation*    pNamedAnim = pRef->GetNamedAnimation();
-
-			if ( !pNamedAnim )
-				continue;
-
-			// [Base] idle_lp (Idle) [Time = 0.796 / 1.833] [Weight = 1.000] [Speed = 1] (Loop) [Next Break = 0]
-			TCHAR szLine[ 256 ];
-			TStringManager::String8Format(
-			    szLine,
-			    TARRAYSIZE( szLine ),
-			    "[%s] %s (%s) [Time = %.3f / %.3f] [Weight = %.3f] [Speed = %g] (%s) [Next Break = %d]",
-			    bOverlay ? "Overlay" : "Base",
-			    pNamedAnim->GetName().GetString(),
-			    pNamedAnim->GetExportedName().GetString(),
-			    rAnimInterface.GetAnimTime( pRef ),
-			    rAnimInterface.GetAnimDuration( pRef ),
-			    rAnimInterface.GetAnimWeight( pRef ),
-			    rAnimInterface.GetAnimSpeed( pRef ),
-			    rAnimInterface.IsAnimLooping( pRef ) ? "Loop" : "Once",
-			    pRef->GetBreakpointIndex()
-			);
-
-			m_pDebugText->AddString( szLine, ANIMATION_COLOUR );
-		}
-	}
-}
-
-void ADebugOverlay::RenderGameTime()
-{
-	AGameTimeManager* pTimeManager = AGameTimeManager::GetSingleton();
-
-	TCHAR szLine[ 128 ];
-
-	TStringManager::String8Format( szLine, TARRAYSIZE( szLine ), "Total Actual Time = %.3f", pTimeManager->GetTotalTime() );
-	m_pDebugText->AddString( szLine, INFO_COLOUR );
-
-	TStringManager::String8Format( szLine, TARRAYSIZE( szLine ), "Time of Day: %.3f", pTimeManager->GetDayTime() );
-	m_pDebugText->AddString( szLine, INFO_COLOUR );
-
-	TStringManager::String8Format( szLine, TARRAYSIZE( szLine ), "Day/Month/Year: %d/%d/%d", pTimeManager->GetDay(), pTimeManager->GetMonth(), pTimeManager->GetYear() );
-	m_pDebugText->AddString( szLine, INFO_COLOUR );
-
-	TStringManager::String8Format( szLine, TARRAYSIZE( szLine ), "Day Phase: %d", pTimeManager->GetCurrentDayPhase() );
-	m_pDebugText->AddString( szLine, INFO_COLOUR );
-
-	TStringManager::String8Format( szLine, TARRAYSIZE( szLine ), "Hour/Minute/Second: %d:%d:%d", pTimeManager->GetCurrentHour(), pTimeManager->GetCurrentMinute(), pTimeManager->GetCurrentSecond() );
-	m_pDebugText->AddString( szLine, INFO_COLOUR );
+	pDebugText->Render();
 }
 
 void ADebugOverlay::RenderUnitLabels( ACamera* a_pCamera )

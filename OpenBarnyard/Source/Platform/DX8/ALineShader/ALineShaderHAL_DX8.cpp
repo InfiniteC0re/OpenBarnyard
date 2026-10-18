@@ -138,7 +138,11 @@ void ALineShaderHAL::FlushLines()
 
 	TRenderD3DInterface* pRender  = TRenderD3DInterface::Interface();
 	IDirect3DDevice8*    pDevice  = pRender->GetDirect3DDevice();
-	TRenderContextD3D*   pContext = TRenderContextD3D::Upcast( pRender->GetCreatedContext() );
+#ifdef BARNYARD_COMMUNITY_PATCH
+	TRenderContextD3D* pContext = TRenderContextD3D::Upcast( pRender->GetCurrentContext() );
+#else
+	TRenderContextD3D* pContext = TRenderContextD3D::Upcast( pRender->GetCreatedContext() );
+#endif
 
 	TMatrix44 oViewMatrix = TMatrix44::IDENTITY;
 	pDevice->SetTransform( D3DTS_VIEW, TREINTERPRETCAST( const D3DMATRIX*, &oViewMatrix ) );

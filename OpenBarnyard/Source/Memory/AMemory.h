@@ -36,7 +36,7 @@ public:
 		POOL_Debug,
 		POOL_MemTrace,
 		POOL_Viewport,
-		POOL_NUMOF = 8
+		POOL_NUMOF
 	};
 
 	struct AllocatorList

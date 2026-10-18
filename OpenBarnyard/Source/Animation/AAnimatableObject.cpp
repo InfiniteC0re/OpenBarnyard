@@ -6,6 +6,7 @@
 #include "UnitMovement/Steering/AInteriorSteer.h"
 #include "Units/AAnimatedUnit.h"
 #include "FSM/AMethodPointer.h"
+#include "Render/ADebugOverlay.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -708,3 +709,43 @@ void AAnimatableObject::SetGlow( TBOOL a_bGlow )
 
 	m_pModelInstance->SetGlow( a_bGlow );
 }
+
+#ifdef ADEBUGOVERLAY
+
+void AAnimatableObject::DebugPrintAnimations()
+{
+	AToshiAnimationInterface& rAnimInterface = GetToshiAnimInterface();
+
+	for ( TINT i = 0; i < 2; i++ )
+	{
+		TBOOL                        bOverlay = ( i == 1 );
+		T2DList<AToshiAnimationRef>& rList    = bOverlay ? rAnimInterface.GetOverlayAnimRefs() : rAnimInterface.GetAnimRefs();
+
+		for ( auto it = rList.Begin(); it != rList.End(); it++ )
+		{
+			AToshiAnimationRef* pRef       = it;
+			ANamedAnimation*    pNamedAnim = pRef->GetNamedAnimation();
+
+			if ( !pNamedAnim )
+				continue;
+
+			// [Base] idle_lp (Idle) [Time = 0.796 / 1.833] [Weight = 1.000] [Speed = 1] (Loop) [Next Break = 0]
+			ADEBUGLINE(
+			    LINE_ANIMATION,
+			    ADebugOverlay::ANIMATION_COLOUR,
+			    "[%s] %s (%s) [Time = %.3f / %.3f] [Weight = %.3f] [Speed = %g] (%s) [Next Break = %d]",
+			    bOverlay ? "Overlay" : "Base",
+			    pNamedAnim->GetName().GetString(),
+			    pNamedAnim->GetExportedName().GetString(),
+			    rAnimInterface.GetAnimTime( pRef ),
+			    rAnimInterface.GetAnimDuration( pRef ),
+			    rAnimInterface.GetAnimWeight( pRef ),
+			    rAnimInterface.GetAnimSpeed( pRef ),
+			    rAnimInterface.IsAnimLooping( pRef ) ? "Loop" : "Once",
+			    pRef->GetBreakpointIndex()
+			);
+		}
+	}
+}
+
+#endif // ADEBUGOVERLAY

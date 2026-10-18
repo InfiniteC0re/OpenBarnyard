@@ -62,6 +62,7 @@
 #include "UnitMovement/PathfindingNetworks/AInteriorNetwork.h"
 #include "UnitMovement/PathfindingNetworks/AInteriorArea.h"
 #include "GameInterface/AInventoryState2.h"
+#include "GameInterface/AInteriorNetworkPlacementState.h"
 #include "Cameras/ACamera.h"
 #include "Units/AUnitManager.h"
 #include "Units/AUnitNameManager.h"
@@ -3952,7 +3953,8 @@ static void Dev_PressKey( TInputDevice::Doodad a_iDoodad, TBOOL a_bDown )
 		return;
 	}
 
-	// Mouse buttons (Button1-Button8) are thrown straight to the input interface's emitter
+	// Mouse buttons (Button1-Button8) are thrown straight to the input interface's emitter (and count as down for the repeats)
+	TInputDeviceMouse::Dev_SetButtonDown( a_iDoodad, a_bDown );
 	TInputDeviceMouse* pMouse = TInputInterface::GetSingleton()->GetDeviceByIndex<TInputDeviceMouse>();
 
 	if ( pMouse )
@@ -4107,6 +4109,24 @@ void AGameLoader::Dev_UpdateDevTierSequence()
 
 // Development: "-simstate" starts a new game of the sim like the New Game menu does, but without
 // the save slot selection and the SS01 intro sequence
+// One-shot dev switches done (see Dev_IsRequestPending)
+static TBOOL s_bDevShopOpened   = TFALSE;
+static TBOOL s_bDevCoinsSpilled = TFALSE;
+
+TBOOL AGameLoader::Dev_IsRequestPending()
+{
+	if ( ACheatActivator::Dev_IsPending() )
+		return TTRUE;
+
+	if ( Dev_HasSwitch( "-devgophershop" ) && !s_bDevShopOpened )
+		return TTRUE;
+
+	if ( Dev_HasSwitch( "-devcoins" ) && !s_bDevCoinsSpilled )
+		return TTRUE;
+
+	return TFALSE;
+}
+
 void AGameLoader::Dev_UpdateSimStateRequest()
 {
 	static TBOOL s_bStarted = TFALSE;
@@ -4820,13 +4840,12 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 		// Development: "-devgophershop" opens the gopher shop 26 seconds (after "-devcheat") after the sim has started, the way
 		// the activity of the gopher does (agamestatecontroller::startgamestate), see AGopherShopGame for the rest
 		static TFLOAT s_fShopTime = 0.0f;
-		static TBOOL  s_bOpened   = TFALSE;
 
 		s_fShopTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
 
-		if ( !s_bOpened && s_fShopTime >= 26.0f && APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) )
+		if ( !s_bDevShopOpened && s_fShopTime >= 26.0f && APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) )
 		{
-			s_bOpened = TTRUE;
+			s_bDevShopOpened = TTRUE;
 			TINFO( "[devgophershop] opening the shop\n" );
 			// Close the screens on top of the sim (the message of -devcheat), the shop returns to the state it was started from
 			AGameStateController::GetSingleton()->ReturnToNamedState( TPS8D( "ASimState" ) );
@@ -4836,7 +4855,7 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 
 		static TBOOL s_bLogged = TFALSE;
 
-		if ( s_bOpened && !s_bLogged && AGopherShopGame::ms_iDevBoughtId != -1 && APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) &&
+		if ( s_bDevShopOpened && !s_bLogged && AGopherShopGame::ms_iDevBoughtId != -1 && APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) &&
 		     !AGameStateController::GetSingleton()->FindGameStateOnStack( TPS8( AGopherShopGame ) ) )
 		{
 			s_bLogged = TTRUE;
@@ -4867,13 +4886,12 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 	{
 		// Development: "-devcoins" spills 10 coins in front of the player 8 seconds after the sim has started
 		static TFLOAT s_fCoinTime = 0.0f;
-		static TBOOL  s_bSpilled  = TFALSE;
 
 		s_fCoinTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
 
-		if ( !s_bSpilled && s_fCoinTime >= 8.0f && APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) )
+		if ( !s_bDevCoinsSpilled && s_fCoinTime >= 8.0f && APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) )
 		{
-			s_bSpilled = TTRUE;
+			s_bDevCoinsSpilled = TTRUE;
 
 			ASteer*  pSteer      = APlayerManager::GetSingleton()->GetPlayerUnit( 0 )->GetSteer();
 			TVector4 vecPosition = *pSteer->GetPosition();

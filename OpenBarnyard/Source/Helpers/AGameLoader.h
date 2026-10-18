@@ -237,6 +237,10 @@ public:
 	static TBOOL Dev_IsSimStateRequested();
 	static void  Dev_UpdateSimStateRequest();
 
+	// Development: a one-shot dev switch ("-devcheat", "-devgophershop", "-devcoins") hasn't done its
+	// job yet. The game then keeps running while its window isn't active, so they don't wait for it to be reactivated
+	static TBOOL Dev_IsRequestPending();
+
 	// Development: plays the scripted sequence "-devtier" asked for while the main game was loading
 	static void Dev_UpdateDevTierSequence();
 

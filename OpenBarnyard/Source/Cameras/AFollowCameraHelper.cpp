@@ -5,6 +5,7 @@
 #include "Player/APlayerManager.h"
 #include "Units/AUnit.h"
 #include "UnitMovement/Steering/ASteer.h"
+#include "Render/ADebugOverlay.h"
 
 #include <Math/TQuaternion.h>
 
@@ -61,6 +62,8 @@ TBOOL AFollowCameraHelper::OnUpdate( TFLOAT a_fDeltaTime )
 		m_iZoom = m_iZoomInput;
 
 	UpdateCamera( a_fDeltaTime );
+
+	ADEBUGLINE( LINE_FOLLOW_CAMERA, ADebugOverlay::INFO_COLOUR, "Follow Vector(%f,%f,%f)", m_vDirection.x, m_vDirection.y, m_vDirection.z );
 
 	// Remember the released input
 	if ( !m_iYawInput && m_iYaw )

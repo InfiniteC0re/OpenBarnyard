@@ -23,6 +23,7 @@
 #include "Units/AAnimalPopulationManager.h"
 #include "Render/ASunFlareEffect.h"
 #include "Render/ADebugOverlay.h"
+#include "Render/AWorldDebugDraw.h"
 #include "FX/AParticleEffectManager.h"
 
 #include <Render/TNullResource.h>
@@ -448,6 +449,7 @@ TBOOL ARenderer::OnCreate()
 
 #if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
 		ADebugOverlay::CreateSingleton();
+		AWorldDebugDraw::CreateSingleton();
 #endif
 	}
 
@@ -473,6 +475,9 @@ void ARenderer::OnDestroy()
 #if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
 	if ( ADebugOverlay::IsSingletonCreated() )
 		ADebugOverlay::DestroySingleton();
+
+	if ( AWorldDebugDraw::IsSingletonCreated() )
+		AWorldDebugDraw::DestroySingleton();
 #endif
 
 	if ( m_pSkyDome )
@@ -624,6 +629,15 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 
 		if ( ATerrainInterface::GetSingleton() )
 			ATerrainInterface::GetSingleton()->RenderGlowModels();
+
+#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+		// Development: the world debug drawing, with the depth of the scene
+		if ( AWorldDebugDraw::IsSingletonCreated() )
+		{
+			pRender->FlushShaders();
+			AWorldDebugDraw::GetSingleton()->Render();
+		}
+#endif
 
 		pViewport->GetRenderContext()->SetCameraObject( pOldCameraObject );
 		rTransformStack.Pop();

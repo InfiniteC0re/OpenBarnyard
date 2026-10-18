@@ -8,6 +8,7 @@
 #include "UnitMovement/Steering/ASteerTraits.h"
 #include "Player/APlayerProfileManager.h"
 #include "Terrain/ATerrainInterface.h"
+#include "Render/ADebugOverlay.h"
 #include "Physics/ACollisionManager.h"
 #include "Physics/APhysics.h"
 
@@ -52,6 +53,8 @@ void ASimplePlayerControlComponent::UpdateAI( TFLOAT a_fDeltaTime )
 
 	if ( !pOwner->GetSteer()->GetClass()->IsA( &TGetClass( APlayerSteer ) ) )
 		pOwner->ChangeSteer( &TGetClass( APlayerSteer ) );
+
+	ADEBUGLINE( LINE_INPUT, ADebugOverlay::INFO_COLOUR, "Stick Input (%f , %f)", m_vMovement.x, m_vMovement.y );
 
 	if ( m_bMovementEnabled )
 		UpdateMovement( a_fDeltaTime, 0.0f );

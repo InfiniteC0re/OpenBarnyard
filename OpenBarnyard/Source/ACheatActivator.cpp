@@ -621,12 +621,44 @@ void ACheatActivator::OnInteractionManagerEventCallback( void* a_pReceiver, cons
 
 #ifdef BARNYARD_COMMUNITY_PATCH
 
+static TBOOL s_bDevCheatEntered = TFALSE;
+
+#  ifndef TOSHI_FINAL
+
+void ACheatActivator::Dev_TriggerCheat( CHEAT a_eCheat )
+{
+	if ( !IsSingletonCreated() )
+		return;
+
+	if ( GetCurrentStateMask() & ms_aCheats[ a_eCheat ].eAllowedStates )
+	{
+		TINFO( "[debugmenu] cheat %d\n", a_eCheat );
+		GetSingleton()->TriggerCheat( a_eCheat );
+	}
+	else if ( !( ms_aCheats[ a_eCheat ].eAllowedStates & STATEMASK_SIM ) )
+	{
+		// The unlocks are typed in the menus of the front end, where the debug menu doesn't open: applied without the popup
+		TINFO( "[debugmenu] cheat %d (front end cheat, no popup)\n", a_eCheat );
+		GetSingleton()->ActivateCheat( a_eCheat );
+	}
+	else
+	{
+		TWARN( "[debugmenu] cheat %d only works in the sim\n", a_eCheat );
+	}
+}
+
+#  endif
+
+TBOOL ACheatActivator::Dev_IsPending()
+{
+	return !s_bDevCheatEntered && TStringManager::String8FindString( GetCommandLineA(), "-devcheat " ) != TNULL;
+}
+
 void ACheatActivator::Dev_Update()
 {
-	static TBOOL s_bEntered   = TFALSE;
 	static DWORD s_uiSimStart = 0;
 
-	if ( s_bEntered || !IsSingletonCreated() )
+	if ( s_bDevCheatEntered || !IsSingletonCreated() )
 		return;
 
 	const TCHAR* szArg = TStringManager::String8FindString( GetCommandLineA(), "-devcheat " );
@@ -648,7 +680,7 @@ void ACheatActivator::Dev_Update()
 	if ( GetTickCount() - s_uiSimStart < 20000 )
 		return;
 
-	s_bEntered = TTRUE;
+	s_bDevCheatEntered = TTRUE;
 	szArg += TStringManager::String8Length( "-devcheat " );
 
 	TINFO( "-devcheat: entering the cheat\n" );

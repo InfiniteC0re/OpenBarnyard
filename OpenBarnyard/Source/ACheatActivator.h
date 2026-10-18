@@ -110,6 +110,14 @@ public:
 #ifdef BARNYARD_COMMUNITY_PATCH
 	// Development: "-devcheat <WORD>" enters the cheat once the sim has been running for a few seconds
 	static void Dev_Update();
+
+	// Is "-devcheat" on the command line and the cheat not entered yet
+	static TBOOL Dev_IsPending();
+
+#  ifndef TOSHI_FINAL
+	// Development (the debug menu): activates a_eCheat as if its code was typed
+	static void Dev_TriggerCheat( CHEAT a_eCheat );
+#  endif
 #endif
 
 private:

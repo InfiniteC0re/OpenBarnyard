@@ -38,6 +38,8 @@
 #include "GameInterface/AGameStateController.h"
 #include "MiniGame/ATreasueHuntMicroGame.h"
 #include "Helpers/AGameLoader.h"
+#include "Player/APlayerManager.h"
+#include "Render/ADebugOverlay.h"
 #include "Cameras/AGTAStyleCameraHelper.h"
 #include "Input/AInputHandler.h"
 #include "Player/APlayerProfileManager.h"
@@ -401,6 +403,30 @@ TBOOL APlayerSteer::Create( AUnit* a_pOwner, const TVector4& a_rcPosition, const
 TBOOL APlayerSteer::Update( TFLOAT a_fDeltaTime )
 {
 	TFLOAT fDeltaTime = a_fDeltaTime;
+
+#ifdef ADEBUGOVERLAY
+	// Development: the lines of the player on the debug overlay
+	if ( ADebugOverlay::IsPrinting() && APlayerManager::IsSingletonCreated() && &GetParentUnit() == APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) )
+	{
+		static TFLOAT s_fGroundTime = 0.0f;
+
+		// Same limit as the jump check
+		if ( m_pKinematics->GetAirTime() >= 0.2f )
+			s_fGroundTime = 0.0f;
+		else
+			s_fGroundTime += a_fDeltaTime;
+
+		ADEBUGLINE( LINE_PLAYER, ADebugOverlay::INFO_COLOUR, "GroundTime = [%f]", s_fGroundTime );
+
+		if ( AAnimatableObject* pObject = TSTATICCAST( AAnimatedUnit, &GetParentUnit() )->GetAnimatableObject() )
+			pObject->DebugPrintAnimations();
+
+		// The velocity the steer is asked for (the movement input turned into a direction and a speed)
+		const TVector4* pFacing = m_pKinematics->GetDesiredFacing();
+		TFLOAT          fSpeed  = m_pKinematics->GetDesiredSpeed();
+		ADEBUGLINE( LINE_STEER, ADebugOverlay::STEER_COLOUR, "ManualSteer(%f,%f,%f)", pFacing->x * fSpeed, pFacing->y * fSpeed, pFacing->z * fSpeed );
+	}
+#endif
 
 	if ( UpdateGoal() )
 		return TTRUE;

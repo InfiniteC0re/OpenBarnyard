@@ -19,7 +19,8 @@
 #include "SaveLoadSKU.h"
 #include "Helpers/APlayerProgress.h"
 #include "Quests/AQuestManager.h"
-#include "Render/ADebugOverlay.h"
+#include "ADebugMenuState.h"
+#include "GUI/AGUISystem.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -729,9 +730,16 @@ TBOOL AGameStateController::ProcessInput( const TInputInterface::InputEvent* a_p
 		}
 	}
 
-#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
-	if ( ADebugOverlay::IsSingletonCreated() )
-		ADebugOverlay::GetSingleton()->ProcessInput( pGameState, a_pEvent );
+#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
+	// NOTE: development: the DebugMenu command opens and closes the debug menu
+	if ( ADebugMenuState::ProcessDebugMenuInput( pGameState, a_pEvent ) )
+		return TTRUE;
+#endif
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: Barnyard route added on top: the TGUI screen of AGUISystem gets the input while it shows a widget
+	if ( AGUISystem::IsSingletonCreated() && AGUISystem::GetSingleton()->NotifyTGUIInputEvent( a_pEvent ) )
+		return TTRUE;
 #endif
 
 	if ( pGameState->SendInputCommands( a_pEvent ) )

@@ -90,6 +90,13 @@ public:
 	void StartTomatoLauncherSequence();
 #endif
 
+#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
+	// Development: the game time runs a_fScale times faster while the sim is the current state ("-devtimescale <N>",
+	// the debug menu)
+	static void   Dev_SetTimeScale( TFLOAT a_fScale );
+	static TFLOAT Dev_GetTimeScale();
+#endif
+
 private:
 	void  RefreshPlayerProxy();
 	void  UpdateFarmerTruck();
