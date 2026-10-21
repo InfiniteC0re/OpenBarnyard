@@ -15,7 +15,7 @@ newoption
 	description = "Choose renderer API you want to build for",
 	allowed = {
 		{ "DX8", "DirectX 8"},
-		{ "GL", "OpenGL"},
+		{ "DX11", "DirectX 11"}
 	},
 	default = "DX8"
 }

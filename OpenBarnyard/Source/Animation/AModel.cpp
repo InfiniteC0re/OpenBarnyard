@@ -11,13 +11,7 @@
 #include "Helpers/AInstanceLightingHelper.h"
 #include "Render/ASkinShader/ASkinMaterial.h"
 
-#ifdef TOSHI_SKU_WINDOWS
-#  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
-#endif
-
-#ifdef TRENDERINTERFACE_DX8
-#  include "Platform/DX8/ASkinShader/ASkinMaterial_DX8.h"
-#endif
+#include "Render/ABackend.h"
 
 #include <Render/TRenderInterface.h>
 #include <Toshi/T2String8.h>

@@ -10,7 +10,7 @@
 
 #  include <Input/TInputDeviceKeyboard.h>
 #  include <Input/TInputDeviceMouse.h>
-#  include <Platform/DX8/TRenderInterface_DX8.h>
+#  include <Render/TBackend.h>
 
 #  include <backends/imgui_impl_dx8.h>
 #  include <backends/imgui_impl_win32.h>

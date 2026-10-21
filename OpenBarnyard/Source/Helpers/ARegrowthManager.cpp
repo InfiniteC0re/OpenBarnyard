@@ -25,9 +25,7 @@
 #include <Render/TSkeleton.h>
 #include <Math/TSphere.h>
 
-#ifdef TRENDERINTERFACE_DX8
-#  include "Platform/DX8/ASkinShader/ASkinMaterial_DX8.h"
-#endif
+#include "Render/ABackend.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

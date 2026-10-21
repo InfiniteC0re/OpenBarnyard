@@ -92,12 +92,10 @@ workspace "OpenBarnyard"
 			"TRENDERINTERFACE_DX8"
 		}
 		
-	filter "options:renderer=GL"
+	filter "options:renderer=DX11"
 		defines
 		{
-			"TRENDERINTERFACE_GL",
-			"GLEW_STATIC",
-			"GLM_FORCE_LEFT_HANDED"
+			"TRENDERINTERFACE_DX11"
 		}
 
 	filter "configurations:Debug"
@@ -136,16 +134,14 @@ group "Third-Party"
 	include "Toshi/Vendor/Opcode"
 	include "Toshi/Vendor/minhook"
 
-group "SDK"
-	include "SDK/BYardSDK"
-	include "SDK/BYModCore"
-	include "SDK/BYSpeedrunHelper"
-	include "SDK/BYTexturePacks"
-	include "SDK/BYWinterMod"
-
-	if _OPTIONS["renderer"] == 'GL' then
-		include "SDK/BYEnhanced"
-	end
+if _OPTIONS["renderer"] ~= 'DX11' then
+	group "SDK"
+		include "SDK/BYardSDK"
+		include "SDK/BYModCore"
+		include "SDK/BYSpeedrunHelper"
+		include "SDK/BYTexturePacks"
+		include "SDK/BYWinterMod"
+end
 
 group "Mods"
 	include "Mods/BYSpeedrunHelper"

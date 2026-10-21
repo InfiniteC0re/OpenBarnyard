@@ -13,7 +13,7 @@
 #  include "UnitMovement/Steering/ASteer.h"
 #  include "FSM/AFSMState.h"
 
-#  include <Platform/DX8/TRenderInterface_DX8.h>
+#  include <Render/TBackend.h>
 
 #  include <stdarg.h>
 

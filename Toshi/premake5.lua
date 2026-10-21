@@ -108,33 +108,23 @@ project "Toshi"
 				"Source/Platform/DX8/**.h"
 			}
 			
-		filter "options:renderer=GL"
+		filter "options:renderer=DX11"
 			links
 			{
-				"SDL2.lib",
-				"opengl32.lib",
-				"glew32s.lib"
-			}
-			
-			libdirs
-			{
-				"%{LibDir.sdl2}",
-				"%{LibDir.glew}"
-			}
-			
-			externalincludedirs
-			{
-				"%{IncludeDir.sdl2}",
-				"%{IncludeDir.glm}",
-				"%{IncludeDir.glew}"
+				"d3d11.lib",
+				"dxgi.lib",
+				"d3dcompiler.lib",
+				"dxguid.lib",
+				"legacy_stdio_definitions.lib",
+				"winmm.lib",
+				"dinput8.lib"
 			}
 
 			files
 			{
-				"Source/Platform/GL/**.cpp",
-				"Source/Platform/GL/**.h",
-				"Source/Platform/SDL/**.cpp",
-				"Source/Platform/SDL/**.h"
+				"Source/Platform/DX11/**.cpp",
+				"Source/Platform/DX11/**.c",
+				"Source/Platform/DX11/**.h"
 			}
 
 		defines

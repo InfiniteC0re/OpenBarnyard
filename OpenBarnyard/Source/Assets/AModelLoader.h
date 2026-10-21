@@ -11,9 +11,10 @@
 #include <Render/TCollisionCommon.h>
 #include <File/TTRB.h>
 
+#include <Render/TBackend.h>
+
 #ifdef TOSHI_SKU_WINDOWS
 #  include <Render/TTMDWin.h>
-#  include <Platform/DX8/T2Texture_DX8.h>
 #endif
 
 class AModelLoader

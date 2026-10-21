@@ -11,10 +11,7 @@
 // NOTE: Opcode defines PI
 #undef PI
 
-#ifdef TRENDERINTERFACE_DX8
-#  include "Platform/DX8/TRenderInterface_DX8.h"
-#  include "Platform/DX8/ASkinShader/ASkinMaterial_DX8.h"
-#endif // TRENDERINTERFACE_DX8
+#include "Render/ABackend.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

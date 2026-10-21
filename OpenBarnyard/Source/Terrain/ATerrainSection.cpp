@@ -9,11 +9,7 @@
 
 #include <Toshi/TScheduler.h>
 
-#ifdef TOSHI_SKU_WINDOWS
-#  include "Platform/DX8/AWorldShader/AWorldMaterial_DX8.h"
-#  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
-#  include "Platform/DX8/TRenderInterface_DX8.h"
-#endif // TOSHI_SKU_WINDOWS
+#include "Render/ABackend.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

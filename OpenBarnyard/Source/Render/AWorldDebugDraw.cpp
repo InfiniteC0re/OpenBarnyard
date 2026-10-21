@@ -21,7 +21,7 @@
 #    include "GameInterface/AInteriorNetworkPlacementState.h"
 #  endif
 
-#  include <Platform/DX8/TRenderInterface_DX8.h>
+#  include <Render/TBackend.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

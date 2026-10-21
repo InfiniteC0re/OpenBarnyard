@@ -41,9 +41,7 @@
 #include <Toshi/TSystem.h>
 #include "SoundBank/pool.h"
 
-#ifdef TRENDERINTERFACE_DX8
-#  include <Platform/DX8/TRenderInterface_DX8.h>
-#endif
+#include <Render/TBackend.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

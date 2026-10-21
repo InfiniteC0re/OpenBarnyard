@@ -28,10 +28,7 @@
 #include "Units/AAnimatedUnit.h"
 #include "UnitMovement/Steering/ASteer.h"
 
-#ifdef TRENDERINTERFACE_DX8
-#  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
-#  include "Platform/DX8/AWorldShader/AWorldMaterial_DX8.h"
-#endif
+#include "Render/ABackend.h"
 
 #include "Physics/ACollisionManager.h"
 #include "Physics/ACollisionObject.h"

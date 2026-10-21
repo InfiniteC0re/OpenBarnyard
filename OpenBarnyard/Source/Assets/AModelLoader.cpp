@@ -7,17 +7,10 @@
 #include "Render/AFOBShader/AFOBShader.h"
 #include "Render/AFOBShader/AFOBMaterial.h"
 
-#ifdef TOSHI_SKU_WINDOWS
-#  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
-#  include "Platform/DX8/AWorldShader/AWorldMaterial_DX8.h"
-#  include "Platform/DX8/ASkinShader/ASkinShader_DX8.h"
-#  include "Platform/DX8/AGrassShader/AGrassShaderHAL_DX8.h"
-#  include "Platform/DX8/AFXShader/AFXShader_DX8.h"
-#  include "Platform/DX8/AFXShader/AFXMaterial_DX8.h"
+#include "Render/ABackend.h"
 
+#ifdef TOSHI_SKU_WINDOWS
 #  include <Render/TTMDWin.h>
-#  include <Platform/DX8/TRenderInterface_DX8.h>
-#  include <Platform/DX8/TTextureResourceHAL_DX8.h>
 #endif // TOSHI_SKU_WINDOWS
 
 //-----------------------------------------------------------------------------
@@ -353,11 +346,16 @@ TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMa
 
 	TVALIDPTR( pTexture );
 
+#if defined( TRENDERINTERFACE_DX8 )
 	auto        eTextureFormat = pTexture->GetImageInfo().Format;
 	const TBOOL bIsAlpha       = eTextureFormat == D3DFMT_A8R8G8B8 ||
 	    eTextureFormat == D3DFMT_A4R4G4B4 ||
 	    eTextureFormat == D3DFMT_A8R3G3B2 ||
 	    eTextureFormat == D3DFMT_DXT5;
+#elif defined( TRENDERINTERFACE_DX11 )
+	TTODO( "DX11" );
+	const TBOOL bIsAlpha = TFALSE;
+#endif
 
 	if ( a_pShader->IsA( &TGetClass( ASkinShader ) ) )
 	{

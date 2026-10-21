@@ -1,8 +1,6 @@
 #include "pch.h"
 
-#ifdef TOSHI_SKU_WINDOWS
-#  include "Platform/DX8/TTextureResourceHAL_DX8.h"
-#endif // TOSHI_SKU_WINDOWS
+#include "Render/TBackend.h"
 
 #include "ABINKMoviePlayer.h"
 
@@ -34,7 +32,9 @@ ABINKMoviePlayer::ABINKMoviePlayer()
 	m_bPlaying  = TFALSE;
 	m_bPaused   = TFALSE;
 	m_bVisible  = TFALSE;
+#if defined( TRENDERINTERFACE_DX8 )
 	m_pSurface  = TNULL;
+#endif
 	m_iNumRects = 0;
 }
 
@@ -112,6 +112,7 @@ TBOOL ABINKMoviePlayer::OnUpdate( TFLOAT a_fDeltaTime )
 	{
 		if ( BinkDoFrame( m_Bink ) == 0 )
 		{
+#if defined( TRENDERINTERFACE_DX8 )
 			if ( !m_bVideoFitsBackBuffer || !m_pSurface )
 			{
 				if ( !m_pRects )
@@ -144,6 +145,9 @@ TBOOL ABINKMoviePlayer::OnUpdate( TFLOAT a_fDeltaTime )
 					}
 				}
 			}
+#elif defined( TRENDERINTERFACE_DX11 )
+			TTODO( "DX11" );
+#endif
 		}
 
 		BinkNextFrame( m_Bink );
@@ -193,6 +197,7 @@ TBOOL ABINKMoviePlayer::PlayMovie( const TCHAR* a_szFileName, PLAYFLAGS a_eFlags
 // $Barnyard: FUNCTION 00606070
 TBOOL ABINKMoviePlayer::CreateSurfaces()
 {
+#if defined( TRENDERINTERFACE_DX8 )
 	auto pRender = TRenderD3DInterface::Interface();
 	auto pDevice = pRender->GetDirect3DDevice();
 
@@ -247,6 +252,10 @@ TBOOL ABINKMoviePlayer::CreateSurfaces()
 	}
 
 	return hRes == S_OK;
+#elif defined( TRENDERINTERFACE_DX11 )
+	TTODO( "DX11" );
+	return TFALSE;
+#endif
 }
 
 // $Barnyard: FUNCTION 00606040
@@ -287,10 +296,13 @@ void ABINKMoviePlayer::Render( TFLOAT a_fDeltaTime )
 {
 	if ( IsMoviePlaying() && m_bVisible )
 	{
+#if defined( TRENDERINTERFACE_DX8 )
 		auto pDevice = TRenderD3DInterface::Interface()->GetDirect3DDevice();
+#endif
 
 		if ( m_bVideoFitsBackBuffer )
 		{
+#if defined( TRENDERINTERFACE_DX8 )
 			IDirect3DSurface8* pSurface;
 			auto               hRes = pDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pSurface );
 
@@ -299,6 +311,9 @@ void ABINKMoviePlayer::Render( TFLOAT a_fDeltaTime )
 				pDevice->CopyRects( m_pSurface, TNULL, 0, pSurface, TNULL );
 				pSurface->Release();
 			}
+#elif defined( TRENDERINTERFACE_DX11 )
+			TTODO( "DX11" );
+#endif
 		}
 		else
 		{
@@ -323,6 +338,7 @@ void ABINKMoviePlayer::SetMovieFile( const TCHAR* a_szFile )
 	TStringManager::String8Format( m_szMoviePath, sizeof( m_szMoviePath ), "Data/Movies/%s.bik", a_szFile );
 }
 
+#if defined( TRENDERINTERFACE_DX8 )
 // $Barnyard: FUNCTION 00605d50
 TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D3DFORMAT a_eFormat )
 {
@@ -419,15 +435,20 @@ TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D
 
 	return hRes == S_OK;
 }
+#endif // TRENDERINTERFACE_DX8
 
 // $Barnyard: FUNCTION 00605d00
 void ABINKMoviePlayer::DestroySurfaces()
 {
+#if defined( TRENDERINTERFACE_DX8 )
 	if ( m_pSurface )
 	{
 		m_pSurface->Release();
 		m_pSurface = TNULL;
 	}
+#elif defined( TRENDERINTERFACE_DX11 )
+	TTODO( "DX11" );
+#endif
 
 	delete[] m_pRects;
 	m_pRects    = TNULL;

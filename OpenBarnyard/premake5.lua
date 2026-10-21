@@ -156,16 +156,9 @@ project "OpenBarnyard"
 				"../Toshi/Vendor/imgui/backends/imgui_impl_dx8.*"
 			}
 			
-		filter "options:renderer=GL"
-			libdirs
-			{
-				"%{LibDir.sdl2}"
-			}
-			
+		filter "options:renderer=DX11"
 			files
 			{
-				"Source/Platform/GL/**.cpp",
-				"Source/Platform/GL/**.h",
-				"Source/Platform/SDL/**.cpp",
-				"Source/Platform/SDL/**.h"
+				"Source/Platform/DX11/**.cpp",
+				"Source/Platform/DX11/**.h"
 			}

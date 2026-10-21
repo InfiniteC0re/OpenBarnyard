@@ -3,9 +3,7 @@
 #include "GUI/AGUI2.h"
 #include "GUI/T2GUIMaterial.h"
 
-#ifdef TOSHI_SKU_WINDOWS
-#  include "Platform/DX8/TRenderInterface_DX8.h"
-#endif // TOSHI_SKU_WINDOWS
+#include "Render/TBackend.h"
 
 #include <bink.h>
 
@@ -56,7 +54,9 @@ public:
 
 private:
 	TBOOL CreateSurfaces();
+#if defined( TRENDERINTERFACE_DX8 )
 	TBOOL CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D3DFORMAT a_eFormat );
+#endif
 
 	void DestroySurfaces();
 
@@ -66,7 +66,9 @@ private:
 	TBOOL              m_bPaused;
 	TBOOL              m_bVisible;
 	TCHAR              m_szMoviePath[ 64 ];
+#if defined( TRENDERINTERFACE_DX8 )
 	IDirect3DSurface8* m_pSurface;
+#endif
 	TUINT              m_eFormat;
 	TBOOL              m_bVideoFitsBackBuffer;
 	Rect*              m_pRects;

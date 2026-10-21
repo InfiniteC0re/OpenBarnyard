@@ -44,7 +44,7 @@
 #include "Physics/APhysicsCar.h"
 
 #include <Render/TRenderInterface.h>
-#include <Platform/DX8/TRenderInterface_DX8.h>
+#include <Render/TBackend.h>
 #include <GUI/T2GUIFontManager.h>
 #include <GUI/T2GUITextureSectionManager.h>
 #include <Toshi/TStringManager.h>

@@ -1,11 +1,7 @@
 #include "pch.h"
 #include "AModelLoader.h"
 
-#ifdef TOSHI_SKU_WINDOWS
-#  include "Platform/DX8/ASkinShader/ASkinMesh_DX8.h"
-#  include "Platform/DX8/ASkinShader/ASkinShader_DX8.h"
-#  include "Platform/DX8/ASkinShader/ASkinMaterial_DX8.h"
-#endif // TOSHI_SKU_WINDOWS
+#include "Render/ABackend.h"
 
 #include <Toshi/T2String.h>
 #include <Render/TRenderInterface.h>

@@ -6,11 +6,10 @@
 #include "Render/ARainRenderer.h"
 #include "Render/ASunFlareEffect.h"
 
+#include "Render/ABackend.h"
+
 #ifdef TOSHI_SKU_WINDOWS
-
-#  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
 #  include "Render/ARenderer.h"
-
 #endif // TOSHI_SKU_WINDOWS
 
 #include <Render/TRenderInterface.h>

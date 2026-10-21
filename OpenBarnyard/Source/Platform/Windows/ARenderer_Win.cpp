@@ -29,20 +29,7 @@
 
 #include <Render/TNullResource.h>
 
-#ifdef TOSHI_SKU_WINDOWS
-#  include "Platform/DX8/TVertexFactoryResource_DX8.h"
-#  include "Platform/DX8/TIndexFactoryResource_DX8.h"
-#  include "Platform/DX8/TTextureFactoryHAL_DX8.h"
-#  include "Platform/DX8/TRenderInterface_DX8.h"
-#  include "Platform/DX8/TViewport_DX8.h"
-
-#  include "Platform/DX8/ASysShader/ASysShader_DX8.h"
-#  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
-#  include "Platform/DX8/ASkinShader/ASkinShader_DX8.h"
-#  include "Platform/DX8/AGrassShader/AGrassShaderHAL_DX8.h"
-#  include "Platform/DX8/AStaticInstanceShader/AStaticInstanceShaderHAL_DX8.h"
-#  include "Platform/DX8/ALineShader/ALineShaderHAL_DX8.h"
-#endif // TOSHI_SKU_WINDOWS
+#include "Render/ABackend.h"
 
 #include <resource.h>
 
@@ -71,7 +58,7 @@ ARenderer::ARenderer()
 // $Barnyard: FUNCTION 006154c0
 TBOOL ARenderer::CreateTRender()
 {
-#if defined( TOSHI_SKU_WINDOWS ) && defined( TRENDERINTERFACE_DX8 )
+#if defined( TOSHI_SKU_WINDOWS ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) )
 	TString8 strRenderInterfaceName = "TRenderD3DInterface";
 #endif
 

@@ -4,13 +4,7 @@
 #include "AAssetLoader.h"
 #include "AMaterialLibraryManager.h"
 
-#ifdef TOSHI_SKU_WINDOWS
-#  include "Platform/DX8/AWorldShader/AWorldMesh_DX8.h"
-#  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
-#  include "Platform/DX8/AGrassShader/AGrassMeshHAL_DX8.h"
-#  include "Platform/DX8/AGrassShader/AGrassShaderHAL_DX8.h"
-#  include "Platform/DX8/AGrassShader/AGrassMaterialHAL_DX8.h"
-#endif // TOSHI_SKU_WINDOWS
+#include "Render/ABackend.h"
 
 #include <Render/TRenderInterface.h>
 

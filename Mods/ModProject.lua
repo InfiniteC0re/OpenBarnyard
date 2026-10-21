@@ -46,13 +46,5 @@ function ModProject( name )
 	filter "files:**/Toshi/Source/Mod/ModMemory.cpp"
 		enablepch "Off"
 
-	filter "options:renderer=GL"
-		externalincludedirs
-		{
-			"%{IncludeDir.sdl2}",
-			"%{IncludeDir.glm}",
-			"%{IncludeDir.glew}"
-		}
-
 	filter {}
 end

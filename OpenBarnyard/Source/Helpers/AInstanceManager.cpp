@@ -8,9 +8,7 @@
 #include "Helpers/AInstanceLightingHelper.h"
 #include "MiniGame/ABarnExploreMinigameState.h"
 
-#ifdef TRENDERINTERFACE_DX8
-#  include "Platform/DX8/ASkinShader/ASkinMaterial_DX8.h"
-#endif
+#include "Render/ABackend.h"
 
 #include <Render/TRenderInterface.h>
 

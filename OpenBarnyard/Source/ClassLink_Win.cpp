@@ -99,8 +99,8 @@
 #include "Units/AHysteresisDriveFunction.h"
 #include "Units/ATestDriveFunction.h"
 
-#include <Platform/DX8/Input/TInputInterface_Win.h>
-#include <Platform/DX8/TTextureFactoryHAL_DX8.h>
+#include <Platform/Windows/Input/TInputInterface_Win.h>
+#include <Render/TBackend.h>
 #include "Quests/AQuestManager.h"
 #include "Quests/ADummyQuestElement.h"
 #include "Quests/AGameEventQuestElement.h"
@@ -129,13 +129,6 @@
 #include "Units/AWorldPositionActivityMessage.h"
 #include "UnitMovement/PathfindingNetworks/AInteriorNetwork.h"
 #include "UnitMovement/Steering/AInteriorSteer.h"
-
-#include <Platform/DX8/TRenderInterface_DX8.h>
-#include <Platform/DX8/TTextureResourceHAL_DX8.h>
-#include <Platform/DX8/TIndexFactoryResource_DX8.h>
-#include <Platform/DX8/TIndexPoolResource_DX8.h>
-#include <Platform/DX8/TVertexFactoryResource_DX8.h>
-#include <Platform/DX8/TVertexPoolResource_DX8.h>
 
 // NOTE: includes the physics headers (Opcode defines PI), keep it last
 #include "MiniGame/ADartMiniGame.h"

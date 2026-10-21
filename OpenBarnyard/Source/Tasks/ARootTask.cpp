@@ -42,9 +42,7 @@
 #include <Toshi/TScheduler.h>
 #include <Toshi/T2ObjectPool.h>
 
-#if defined( BARNYARD_COMMUNITY_PATCH ) && defined( TRENDERINTERFACE_DX8 )
-#  include <Platform/DX8/TMSWindow.h>
-#endif
+#include <Render/TBackend.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -273,10 +271,11 @@ TBOOL ARootTask::OnUpdate( TFLOAT a_fDeltaTime )
 		ACheatActivator::Dev_Update();
 	}
 
-#  ifdef TRENDERINTERFACE_DX8
+#  if defined( TOSHI_SKU_WINDOWS )
 	// The one-shot dev switches keep counting while the window isn't active (retail pauses the whole game then)
 	TMSWindow::Dev_SetKeepRunning( AGameLoader::Dev_IsRequestPending() );
-#  endif
+#  endif // TOSHI_SKU_WINDOWS
+
 #endif
 
 	// Keep updating the transition until it reports it's done

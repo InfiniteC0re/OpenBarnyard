@@ -3,9 +3,6 @@
 #include "Render/TRenderInterface.h"
 #include "Toshi/TString8.h"
 
-#include <dbt.h>
-#include <windowsx.h>
-
 TOSHI_NAMESPACE_START
 
 class TMSWindow : public TObject

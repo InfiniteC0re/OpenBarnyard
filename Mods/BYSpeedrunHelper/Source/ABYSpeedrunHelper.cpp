@@ -25,8 +25,6 @@
 #include <GUI/T2GUIFontManager.h>
 #include <ToshiTools/T2CommandLine.h>
 
-#include <Platform/DX8/TRenderContext_DX8.h>
-
 TOSHI_NAMESPACE_USING
 
 AGUI2TextBox* g_pExperimentalModeText = TNULL;

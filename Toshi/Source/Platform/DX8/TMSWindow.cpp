@@ -3,10 +3,13 @@
 #include "Toshi/TApplication.h"
 #include "Toshi/TSystem.h"
 
-#include "Platform/DX8/Input/TInputInterface_Win.h"
-#include "Platform/DX8/Input/TInputDeviceMouse_Win.h"
+#include "Platform/Windows/Input/TInputInterface_Win.h"
+#include "Platform/Windows/Input/TInputDeviceMouse_Win.h"
 #include "Platform/DX8/TRenderInterface_DX8.h"
 #include "Platform/DX8/TMouse_D3D8_Win.h"
+
+#include <dbt.h>
+#include <windowsx.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

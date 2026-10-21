@@ -8,10 +8,10 @@
 
 #include <Input/TInputInterface.h>
 
-#ifdef TRENDERINTERFACE_DX8
-#  include <Platform/DX8/Input/TInputDeviceController_Win.h>
-#  include <Platform/DX8/Input/TInputDeviceController_XInput.h>
-#  include <Platform/DX8/Input/TInputDeviceMouse_Win.h>
+#ifdef TOSHI_SKU_WINDOWS
+#  include <Platform/Windows/Input/TInputDeviceController_Win.h>
+#  include <Platform/Windows/Input/TInputDeviceController_XInput.h>
+#  include <Platform/Windows/Input/TInputDeviceMouse_Win.h>
 #endif
 
 //-----------------------------------------------------------------------------
@@ -68,7 +68,7 @@ TBOOL AInputHandler::OnCreate()
 	m_pMouseDevice    = pInputInterface->GetDeviceByIndex<TInputDeviceMouse>( 0 );
 	m_pKeyboardDevice = pInputInterface->GetDeviceByIndex<TInputDeviceKeyboard>( 0 );
 
-#ifdef TRENDERINTERFACE_DX8
+#ifdef TOSHI_SKU_WINDOWS
 	if ( AOptions::GetSingleton()->IsControllerEnabled() )
 	{
 		// Remember the controllers
@@ -391,7 +391,7 @@ TBOOL AInputHandler::OnDeviceStatusChanged( Toshi::TInputInterface* a_pInputInte
 
 	if ( a_pEvent->eStatus == TInputInterface::DEVICESTATUS_CONNECTED )
 	{
-#if defined( BARNYARD_COMMUNITY_PATCH ) && defined( TRENDERINTERFACE_DX8 )
+#if defined( BARNYARD_COMMUNITY_PATCH ) && defined( TOSHI_SKU_WINDOWS )
 		if ( pDevice->GetClass()->IsA( &TGetClass( TInputXInputDeviceController ) ) &&
 		     pDevice == m_pLostMainController && m_pMainController == TNULL &&
 		     m_Devices.Find( pDevice ) == m_Devices.End() )
@@ -437,7 +437,7 @@ TBOOL AInputHandler::OnPause( Toshi::TSystemManager* a_pSystemManager, TBOOL* a_
 {
 	m_bIsPaused = *a_pPause;
 
-#ifdef TRENDERINTERFACE_DX8
+#ifdef TOSHI_SKU_WINDOWS
 	if ( !m_bIsPaused )
 	{
 		// Move the cursor to where the mouse is now
