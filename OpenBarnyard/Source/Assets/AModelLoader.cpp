@@ -353,8 +353,10 @@ TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMa
 	    eTextureFormat == D3DFMT_A8R3G3B2 ||
 	    eTextureFormat == D3DFMT_DXT5;
 #elif defined( TRENDERINTERFACE_DX11 )
-	TTODO( "DX11" );
-	const TBOOL bIsAlpha = TFALSE;
+	auto        eTextureFormat = pTexture->GetImageInfo().Format;
+	const TBOOL bIsAlpha       = eTextureFormat == DXGI_FORMAT_B8G8R8A8_UNORM ||
+	    eTextureFormat == DXGI_FORMAT_B4G4R4A4_UNORM ||
+	    eTextureFormat == DXGI_FORMAT_BC3_UNORM;
 #endif
 
 	if ( a_pShader->IsA( &TGetClass( ASkinShader ) ) )

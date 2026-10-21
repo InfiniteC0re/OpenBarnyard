@@ -499,9 +499,7 @@ void AModelInstance::SetEnvironmentMap( const TCHAR* a_szTextureName, TINT a_iNu
 
 			if ( !bExcluded )
 			{
-#ifdef TRENDERINTERFACE_DX8
 				TSTATICCAST( ASkinMaterialHAL, pMaterial )->SetSomeTexture( AMaterialLibraryManager::GetSingleton()->FindTexture( a_szTextureName ) );
-#endif
 			}
 		}
 	}
@@ -524,9 +522,7 @@ void AModelInstance::SetUnlit()
 
 			if ( pMaterial->GetClass()->IsA( &TGetClass( ASkinMaterial ) ) )
 			{
-#ifdef TRENDERINTERFACE_DX8
 				TSTATICCAST( ASkinMaterialHAL, pMaterial )->SetHDLighting( TFALSE );
-#endif
 				pMaterial->SetTextureNum( 1 );
 			}
 		}
@@ -652,7 +648,11 @@ void AModelInstance::RenderInstanceCallback( TModelInstance* a_pInstance, void* 
 	// Check if it's a world model
 	if ( pLOD->iNumMeshes > 0 )
 	{
+#ifdef BARNYARD_COMMUNITY_PATCH
+		bIsWorldMesh = pLOD->ppMeshes[ 0 ]->GetClass()->IsA( &TGetClass( AWorldShader ) );
+#else  // BARNYARD_COMMUNITY_PATCH
 		bIsWorldMesh = pLOD->ppMeshes[ 0 ]->GetClass() == &TGetClass( AWorldShaderHAL );
+#endif // !BARNYARD_COMMUNITY_PATCH 
 	}
 
 	// Check if object can be affected by any light sources

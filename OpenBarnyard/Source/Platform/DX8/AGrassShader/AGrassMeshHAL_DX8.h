@@ -2,7 +2,7 @@
 #include "Render/AGrassShader/AGrassMesh.h"
 #include "World/AWorld.h"
 
-class AGrassMeshHAL
+class MODAPI AGrassMeshHAL
     : public AGrassMesh
 {
 public:

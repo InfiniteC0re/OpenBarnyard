@@ -7,7 +7,7 @@ TOSHI_NAMESPACE_START
 class TSceneObject;
 class TManagedModel;
 
-class TModelManager
+class MODAPI TModelManager
 {
 public:
 	class ModelNode : public T2DList<ModelNode>::Node
@@ -75,7 +75,7 @@ public:
 	static T2DList<ModelNode> ms_oFreeList;
 };
 
-class TManagedModel
+class MODAPI TManagedModel
 {
 public:
 	friend TModelManager;

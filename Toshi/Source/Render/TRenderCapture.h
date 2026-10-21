@@ -6,7 +6,7 @@ TOSHI_NAMESPACE_START
 // Purpose: Copies the contents of the screen into a buffer.
 // Usage: Create, Request, then Poll until the buffer is ready and ObtainBuffer.
 //-----------------------------------------------------------------------------
-class TRenderCapture
+class MODAPI TRenderCapture
 {
 public:
 	enum FORMAT : TUINT32

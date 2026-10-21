@@ -103,7 +103,7 @@ public:
 	TSkeletonSequenceBone* m_pSeqBones;
 };
 
-class TSkeletonBone
+class MODAPI TSkeletonBone
 {
 public:
 	TQuaternion&       GetRotation() { return m_Rotation; }
@@ -130,7 +130,7 @@ public:
 	TVector3    m_Position;
 };
 
-class TSkeleton
+class MODAPI TSkeleton
 {
 public:
 	using t_fnQuatLerp = void ( * )( TQuaternion& a_rOut, const TQuaternion& a_rStart, const TQuaternion& a_rEnd, TFLOAT a_fProgress );
@@ -203,7 +203,7 @@ struct TSkeletonInstanceBone
 	TMatrix44   m_Transform;
 };
 
-class TSkeletonInstance
+class MODAPI TSkeletonInstance
 {
 public:
 	friend TSkeleton;

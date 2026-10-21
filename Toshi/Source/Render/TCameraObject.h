@@ -6,7 +6,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TCameraObject
+class MODAPI TCameraObject
 {
 public:
 	inline static constexpr TFLOAT s_kMinFOV = ( 1.0f / 180.0f ) * TMath::PI;

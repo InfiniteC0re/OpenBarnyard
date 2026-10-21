@@ -730,9 +730,7 @@ void ARegrowthManager::LoadModels()
 
 			for ( TINT j = 0; j < rLOD.iNumMeshes; j++ )
 			{
-#ifdef TRENDERINTERFACE_DX8
 				TSTATICCAST( ASkinMaterialHAL, rLOD.ppMeshes[ j ]->GetMaterial() )->SetHDLighting( TFALSE );
-#endif
 			}
 		}
 	}

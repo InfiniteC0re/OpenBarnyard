@@ -63,12 +63,10 @@ static void DisableHDLighting( AModelInstance* a_pModel )
 
 		for ( TINT k = 0; k < rLOD.iNumMeshes; k++ )
 		{
-#ifdef TRENDERINTERFACE_DX8
 			TMaterial* pMaterial = rLOD.ppMeshes[ k ]->GetMaterial();
 
 			if ( pMaterial->IsA( &TGetClass( ASkinMaterialHAL ) ) )
 				TSTATICCAST( ASkinMaterialHAL, pMaterial )->SetHDLighting( TFALSE );
-#endif
 		}
 	}
 }

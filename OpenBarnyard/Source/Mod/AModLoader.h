@@ -5,7 +5,7 @@
 #include <Toshi/TSingleton.h>
 
 //-----------------------------------------------------------------------------
-// Loads mods from Mods\OpenBarnyard\*.dll and updates them every frame.
+// Loads mods from Mods\Native\*.dll and updates them every frame.
 //
 // The DLLs live in a subfolder because the Mods folder itself belongs to the
 // legacy BYModCore, whose mods would crash this build. Mod data stays in

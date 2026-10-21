@@ -92,7 +92,7 @@ TENUM_TO_STRING_ITEM( TTEX_FMT_REV_CI8_RGB5A3 )
 TENUM_TO_STRING_ITEM( TTEX_FMT_REV_CI8_IA8 )
 TENUM_TO_STRING_END() // TTEXTURE_FORMAT
 
-class TTexture : public TResource
+class MODAPI TTexture : public TResource
 {
 public:
 	TDECLARE_CLASS( TTexture, TResource );

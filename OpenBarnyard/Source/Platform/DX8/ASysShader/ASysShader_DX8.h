@@ -3,7 +3,7 @@
 
 #include <Render/TOrderTable.h>
 
-class ASysShaderHAL : public ASysShader
+class MODAPI ASysShaderHAL : public ASysShader
 {
 public:
 	TDECLARE_CLASS( ASysShaderHAL, ASysShader );

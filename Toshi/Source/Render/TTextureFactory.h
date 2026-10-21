@@ -9,7 +9,7 @@ TOSHI_NAMESPACE_START
 class TTexture;
 class T2Texture;
 
-class TTextureFactory : public TResource
+class MODAPI TTextureFactory : public TResource
 {
 public:
 	TDECLARE_CLASS( TTextureFactory, TResource );

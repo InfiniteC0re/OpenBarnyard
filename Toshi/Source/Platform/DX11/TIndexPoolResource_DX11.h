@@ -1,0 +1,44 @@
+#pragma once
+#include "TIndexBlockResource_DX11.h"
+#include "Render/TIndexPoolResourceInterface.h"
+
+TOSHI_NAMESPACE_START
+
+class TIndexBlockResource;
+
+class MODAPI TIndexPoolResource : public TIndexPoolResourceInterface
+{
+public:
+	TDECLARE_CLASS( TIndexPoolResource, TIndexPoolResourceInterface );
+
+public:
+	friend TIndexBlockResource;
+
+public:
+	TIndexPoolResource();
+	~TIndexPoolResource();
+
+	virtual TBOOL Validate() override;
+	virtual void  Invalidate() override;
+	virtual void  OnDestroy() override;
+	virtual TBOOL Lock( LockBuffer* a_pLockBuffer ) override;
+	virtual void  Unlock( TUINT16 a_uiNewNumIndices ) override;
+	virtual TBOOL Create( TIndexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxIndices, TUINT16 a_uiFlags ) override;
+
+	TUINT16* GetIndices();
+
+	TResource*           GetParent();
+	TIndexBlockResource* GetIndexBlock();
+
+	TBOOL GetHALBuffer( TIndexBlockResource::HALBuffer* a_pHALBuffer );
+
+#ifndef TOSHI_MODLOADER_CLIENT
+private:
+#endif
+
+	TUINT16     m_uiIndexOffset;
+	TIndexType* m_pIndices;
+	TUINT       m_uiNumLocksAllTime;
+};
+
+TOSHI_NAMESPACE_END

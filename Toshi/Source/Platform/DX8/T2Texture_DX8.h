@@ -5,7 +5,7 @@
 
 TOSHI_NAMESPACE_START
 
-class T2Texture
+class MODAPI T2Texture
 {
 public:
 	T2Texture();

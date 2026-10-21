@@ -32,9 +32,7 @@ ABINKMoviePlayer::ABINKMoviePlayer()
 	m_bPlaying  = TFALSE;
 	m_bPaused   = TFALSE;
 	m_bVisible  = TFALSE;
-#if defined( TRENDERINTERFACE_DX8 )
 	m_pSurface  = TNULL;
-#endif
 	m_iNumRects = 0;
 }
 
@@ -112,7 +110,6 @@ TBOOL ABINKMoviePlayer::OnUpdate( TFLOAT a_fDeltaTime )
 	{
 		if ( BinkDoFrame( m_Bink ) == 0 )
 		{
-#if defined( TRENDERINTERFACE_DX8 )
 			if ( !m_bVideoFitsBackBuffer || !m_pSurface )
 			{
 				if ( !m_pRects )
@@ -126,6 +123,7 @@ TBOOL ABINKMoviePlayer::OnUpdate( TFLOAT a_fDeltaTime )
 				}
 			}
 
+#if defined( TRENDERINTERFACE_DX8 )
 			auto ppRenderSurface = &m_pSurface;
 
 			if ( m_bVideoFitsBackBuffer ||
@@ -146,7 +144,29 @@ TBOOL ABINKMoviePlayer::OnUpdate( TFLOAT a_fDeltaTime )
 				}
 			}
 #elif defined( TRENDERINTERFACE_DX11 )
-			TTODO( "DX11" );
+			if ( m_bVideoFitsBackBuffer )
+			{
+				ID3D11DeviceContext*     pDeviceContext = TRenderD3DInterface::Interface()->GetDeviceContext();
+				D3D11_MAPPED_SUBRESOURCE oMapped;
+
+				if ( SUCCEEDED( pDeviceContext->Map( m_pSurface, 0, D3D11_MAP_WRITE, 0, &oMapped ) ) )
+				{
+					BinkCopyToBuffer( m_Bink, oMapped.pData, oMapped.RowPitch, m_Bink->Height, 0, 0, m_eFormat );
+					m_eFormat &= ~BINKCOPYALL;
+					pDeviceContext->Unmap( m_pSurface, 0 );
+				}
+			}
+			else
+			{
+				TTexture::LOCKSTATE oLockState;
+
+				if ( m_pRects[ 0 ].pTexture->Lock( oLockState ) )
+				{
+					BinkCopyToBuffer( m_Bink, oLockState.pBits, oLockState.Pitch, m_Bink->Height, 0, 0, m_eFormat );
+					m_eFormat &= ~BINKCOPYALL;
+					m_pRects[ 0 ].pTexture->Unlock();
+				}
+			}
 #endif
 		}
 
@@ -253,8 +273,52 @@ TBOOL ABINKMoviePlayer::CreateSurfaces()
 
 	return hRes == S_OK;
 #elif defined( TRENDERINTERFACE_DX11 )
-	TTODO( "DX11" );
-	return TFALSE;
+	auto pRender = TRenderD3DInterface::Interface();
+
+	D3D11_TEXTURE2D_DESC desc;
+	pRender->GetRenderTargetTexture()->GetDesc( &desc );
+
+	switch ( desc.Format )
+	{
+		case DXGI_FORMAT_R8G8B8A8_UNORM:
+			m_eFormat = BINKSURFACE32R;
+			break;
+		case DXGI_FORMAT_B8G8R8A8_UNORM:
+			m_eFormat = BINKSURFACE32A;
+			break;
+		case DXGI_FORMAT_B8G8R8X8_UNORM:
+			m_eFormat = BINKSURFACE32;
+			break;
+		case DXGI_FORMAT_B5G6R5_UNORM:
+			m_eFormat = BINKSURFACE565;
+			break;
+		case DXGI_FORMAT_B5G5R5A1_UNORM:
+			m_eFormat = BINKSURFACE5551;
+			break;
+		case DXGI_FORMAT_B4G4R4A4_UNORM:
+			m_eFormat = BINKSURFACE4444;
+			break;
+	}
+
+	HRESULT hRes = S_OK;
+
+	if ( desc.Width == m_Bink->Width && desc.Height == m_Bink->Height )
+	{
+		m_bVideoFitsBackBuffer = TTRUE;
+
+		desc.Usage          = D3D11_USAGE_STAGING;
+		desc.BindFlags      = 0;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		desc.MiscFlags      = 0;
+		hRes                = pRender->GetDevice()->CreateTexture2D( &desc, TNULL, &m_pSurface );
+	}
+	else
+	{
+		m_bVideoFitsBackBuffer = TFALSE;
+		CreateAGUISurfaces( desc.Width, desc.Height, desc.Format );
+	}
+
+	return hRes == S_OK;
 #endif
 }
 
@@ -312,7 +376,8 @@ void ABINKMoviePlayer::Render( TFLOAT a_fDeltaTime )
 				pSurface->Release();
 			}
 #elif defined( TRENDERINTERFACE_DX11 )
-			TTODO( "DX11" );
+			auto pRender = TRenderD3DInterface::Interface();
+			pRender->GetDeviceContext()->CopyResource( pRender->GetRenderTargetTexture(), m_pSurface );
 #endif
 		}
 		else
@@ -435,6 +500,99 @@ TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D
 
 	return hRes == S_OK;
 }
+#elif defined( TRENDERINTERFACE_DX11 )
+TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, DXGI_FORMAT a_eFormat )
+{
+	{
+		TUINT uiWidth            = m_Bink->Width;
+		TUINT uiHeight           = m_Bink->Height;
+		TUINT uiMaxTextureWidth  = D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION;
+		TUINT uiMaxTextureHeight = D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION;
+
+		m_iNumRects = ( ( uiHeight - 1 ) + uiMaxTextureHeight ) / uiMaxTextureHeight * ( ( uiWidth - 1 ) + uiMaxTextureWidth ) / uiMaxTextureWidth;
+		m_pRects    = new Rect[ m_iNumRects ];
+
+		auto pDisplayParams = TRenderD3DInterface::Interface()->GetCurrentDisplayParams();
+
+		TFLOAT fWidth, fHeight;
+		AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
+
+		TFLOAT fScaleX = a_uiWidth / ( ( pDisplayParams->uiWidth / fWidth ) * m_Bink->Width );
+		TFLOAT fScaleY = a_uiHeight / ( ( pDisplayParams->uiHeight / fHeight ) * m_Bink->Height );
+
+		TTEXTURERESOURCEFORMAT eFormat;
+
+		// NOTE: the textures are B8G8R8A8/B8G8R8X8 like on D3D8, which the back buffer (R8G8B8A8) isn't
+		if ( a_eFormat == DXGI_FORMAT_B8G8R8A8_UNORM )
+		{
+			eFormat   = TTEXTURERESOURCEFORMAT::R8G8B8A8;
+			m_eFormat = BINKSURFACE32A;
+		}
+		else if ( a_eFormat == DXGI_FORMAT_B8G8R8X8_UNORM || a_eFormat == DXGI_FORMAT_R8G8B8A8_UNORM )
+		{
+			eFormat   = TTEXTURERESOURCEFORMAT::R8G8B8;
+			m_eFormat = BINKSURFACE32;
+		}
+		else if ( a_eFormat == DXGI_FORMAT_B5G5R5A1_UNORM )
+		{
+			eFormat = TTEXTURERESOURCEFORMAT::R5G5B5A1;
+		}
+		else
+		{
+			return TFALSE;
+		}
+
+		TFLOAT fVideoWidth  = TMath::Abs( TFLOAT( m_Bink->Width ) );
+		TFLOAT fVideoHeight = TMath::Abs( TFLOAT( m_Bink->Height ) );
+
+		TUINT uiPosY      = 0;
+		TUINT uiRectIndex = 0;
+
+		TUINT uiLeftHeight = uiHeight;
+		while ( 0 < TINT( uiLeftHeight ) )
+		{
+			TUINT uiRectHeight = TMath::Min( uiLeftHeight, uiMaxTextureHeight );
+			uiWidth            = m_Bink->Width;
+
+			TUINT uiPosX      = 0;
+			TUINT uiLeftWidth = m_Bink->Width;
+
+			while ( 0 < TINT( uiLeftWidth ) )
+			{
+				TUINT uiRectWidth = TMath::Min( uiLeftWidth, uiMaxTextureWidth );
+				TBOOL bCreated    = m_pRects[ uiRectIndex ].Create(
+                    uiPosX,
+                    uiPosY,
+                    uiRectWidth,
+                    uiRectHeight,
+                    ( uiPosX + fVideoWidth * -0.5f ) * fScaleX,
+                    ( uiPosY + fVideoHeight * -0.5f ) * fScaleY,
+                    uiRectWidth * fScaleX,
+                    uiRectHeight * fScaleY,
+                    eFormat
+                );
+
+				if ( !bCreated )
+				{
+					TASSERT( TFALSE, "ABINKMoviePlayer: Unable to create rectangle" );
+					delete[] m_pRects;
+					m_pRects = TNULL;
+					return TFALSE;
+				}
+
+				uiPosX += TMath::Min( uiWidth, uiMaxTextureWidth );
+
+				uiLeftWidth -= uiRectWidth;
+				uiRectIndex++;
+			}
+
+			uiPosY += uiRectHeight;
+			uiLeftHeight -= uiRectHeight;
+		}
+	}
+
+	return TTRUE;
+}
 #endif // TRENDERINTERFACE_DX8
 
 // $Barnyard: FUNCTION 00605d00
@@ -447,7 +605,11 @@ void ABINKMoviePlayer::DestroySurfaces()
 		m_pSurface = TNULL;
 	}
 #elif defined( TRENDERINTERFACE_DX11 )
-	TTODO( "DX11" );
+	if ( m_pSurface )
+	{
+		m_pSurface->Release();
+		m_pSurface = TNULL;
+	}
 #endif
 
 	delete[] m_pRects;

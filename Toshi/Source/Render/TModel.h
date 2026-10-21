@@ -31,7 +31,7 @@ struct TModelLOD
 struct TTMD;
 class TModel;
 
-class TModelInstance
+class MODAPI TModelInstance
 {
 public:
 	friend class TModel;
@@ -68,7 +68,7 @@ private:
 	TINT32             m_iCurrentLOD;
 };
 
-class TModel
+class MODAPI TModel
 {
 public:
 	using Flags = TUINT32;

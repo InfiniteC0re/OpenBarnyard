@@ -24,6 +24,7 @@ IncludeDir.tracy = "%{wks.location}/Utils/TracyProfiler/Source"
 IncludeDir.curl = "%{wks.location}/Toshi/Vendor/curl/include"
 IncludeDir.minhook = "%{wks.location}/Toshi/Vendor/minhook/include"
 IncludeDir.imgui = "%{wks.location}/Toshi/Vendor/imgui"
+IncludeDir.directxtex = "%{wks.location}/Toshi/Vendor/DirectXTex"
 
 LibDir = {}
 LibDir.fmod = "%{wks.location}/Toshi/Vendor/fmod/lib"

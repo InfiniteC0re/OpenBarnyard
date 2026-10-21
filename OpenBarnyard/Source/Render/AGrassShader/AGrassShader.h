@@ -5,7 +5,7 @@
 #include <Toshi/Toshi.h>
 #include <Render/TShader.h>
 
-class AGrassShader
+class MODAPI AGrassShader
     : public Toshi::TShader
     , public Toshi::TSingleton<AGrassShader>
 {

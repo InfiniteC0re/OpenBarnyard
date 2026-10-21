@@ -6,7 +6,7 @@
 
 #include "Platform/DX8/ASkinShader/ASkinLowEnd_DX8.h"
 
-class AWorldShaderHAL : public AWorldShader
+class MODAPI AWorldShaderHAL : public AWorldShader
 {
 public:
 	TDECLARE_CLASS( AWorldShaderHAL, AWorldShader );

@@ -3,7 +3,7 @@
 
 #include <Render/TMaterial.h>
 
-class ASysMaterial : public Toshi::TMaterial
+class MODAPI ASysMaterial : public Toshi::TMaterial
 {
 public:
 	TDECLARE_CLASS( ASysMaterial, Toshi::TMaterial );

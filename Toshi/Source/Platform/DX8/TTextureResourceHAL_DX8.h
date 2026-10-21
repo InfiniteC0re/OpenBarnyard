@@ -7,7 +7,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TTextureResourceHAL : public TTexture
+class MODAPI TTextureResourceHAL : public TTexture
 {
 public:
 	TDECLARE_CLASS( TTextureResourceHAL, TTexture );

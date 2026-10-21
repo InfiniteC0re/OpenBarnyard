@@ -5,7 +5,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TIndexFactoryResource : public TIndexFactoryResourceInterface
+class MODAPI TIndexFactoryResource : public TIndexFactoryResourceInterface
 {
 public:
 	TDECLARE_CLASS( TIndexFactoryResource, TIndexFactoryResourceInterface );

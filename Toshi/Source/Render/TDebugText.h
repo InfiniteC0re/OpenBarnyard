@@ -7,7 +7,7 @@ TOSHI_NAMESPACE_START
 class TRenderInterface;
 
 // Buffered on-screen debug text. Entries are added to the buffer and drawn (then cleared) by Render.
-class TDebugText
+class MODAPI TDebugText
 {
 public:
 	enum ENTRYFLAGS_ : TUINT16

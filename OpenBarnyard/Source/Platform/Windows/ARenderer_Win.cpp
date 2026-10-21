@@ -394,6 +394,18 @@ static TBOOL OnRenderDeviceFound()
 	return TTRUE;
 }
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+void ARenderer::CreateDefaultShaders( SHADERS a_eShaders )
+{
+	if ( a_eShaders & SHADERS_LINE ) ( new ALineShaderHAL() )->Create();
+	if ( a_eShaders & SHADERS_WORLD ) ( new AWorldShaderHAL() )->Create();
+	if ( a_eShaders & SHADERS_SKIN ) ( new ASkinShaderHAL() )->Create();
+	if ( a_eShaders & SHADERS_GRASS ) ( new AGrassShaderHAL() )->Create();
+	if ( a_eShaders & SHADERS_STATICINSTANCE ) ( new AStaticInstanceShaderHAL() )->Create();
+	if ( a_eShaders & SHADERS_SYS ) ( new ASysShaderHAL() )->Create();
+}
+#endif // BARNYARD_COMMUNITY_PATCH
+
 // $Barnyard: FUNCTION 0060c7c0
 TBOOL ARenderer::OnCreate()
 {
@@ -404,12 +416,20 @@ TBOOL ARenderer::OnCreate()
 
 	if ( bCreatedTRender )
 	{
+#ifdef BARNYARD_COMMUNITY_PATCH
+		if ( ms_fnCreateShadersCb )
+			ms_fnCreateShadersCb( this );
+		else
+			CreateDefaultShaders( SHADERS_ALL );
+#else
 		( new ALineShaderHAL() )->Create();
 		( new AWorldShaderHAL() )->Create();
 		( new ASkinShaderHAL() )->Create();
 		( new AGrassShaderHAL() )->Create();
 		( new AStaticInstanceShaderHAL() )->Create();
 		( new ASysShaderHAL() )->Create();
+#endif // BARNYARD_COMMUNITY_PATCH
+
 		CreateMainViewport();
 
 		AModelLoader::CreateSingleton();
@@ -441,8 +461,11 @@ TBOOL ARenderer::OnCreate()
 		g_pRenderD3D->SetDeviceLostCallback( OnRenderDeviceLost );
 		g_pRenderD3D->SetDeviceFoundCallback( OnRenderDeviceFound );
 
-#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+#if !defined( TOSHI_FINAL ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) )
 		ADebugOverlay::CreateSingleton();
+#endif
+
+#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
 		AWorldDebugDraw::CreateSingleton();
 #endif
 
@@ -468,10 +491,12 @@ static void DestroyShader()
 // $Barnyard: FUNCTION 0060b1d0
 void ARenderer::OnDestroy()
 {
-#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+#if !defined( TOSHI_FINAL ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) )
 	if ( ADebugOverlay::IsSingletonCreated() )
 		ADebugOverlay::DestroySingleton();
+#endif
 
+#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
 	if ( AWorldDebugDraw::IsSingletonCreated() )
 		AWorldDebugDraw::DestroySingleton();
 #endif
@@ -740,7 +765,7 @@ TBOOL ARenderer::OnUpdate( TFLOAT a_fDeltaTime )
 		if ( m_bRenderGUI )
 			RenderGUI();
 
-#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+#if !defined( TOSHI_FINAL ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) )
 		if ( ADebugOverlay::IsSingletonCreated() )
 			ADebugOverlay::GetSingleton()->Render( a_fDeltaTime );
 #endif

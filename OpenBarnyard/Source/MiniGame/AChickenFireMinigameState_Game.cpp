@@ -1327,7 +1327,6 @@ void AChickenFireMinigameState::CreateRings()
 		m_vecObjects2.Push( pInner );
 	}
 
-#ifdef TRENDERINTERFACE_DX8
 	// The rings are drawn in the 4th order table of the world shader
 	TModel*          pModel  = pType->GetModel()->GetManagedModel()->GetModel();
 	AWorldShaderHAL* pShader = TSTATICCAST( AWorldShaderHAL, AWorldShader::GetSingleton() );
@@ -1339,7 +1338,6 @@ void AChickenFireMinigameState::CreateRings()
 		for ( TINT k = 0; k < rLOD.iNumMeshes; k++ )
 			TSTATICCAST( AWorldMaterialHAL, rLOD.ppMeshes[ k ]->GetMaterial() )->SetOrderTable( pShader->GetOrderTable( 3 ) );
 	}
-#endif
 }
 
 // $Barnyard: FUNCTION 0047fa60

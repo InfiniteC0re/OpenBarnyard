@@ -3,7 +3,7 @@
 
 #include <d3d8.h>
 
-class ALineMaterialHAL
+class MODAPI ALineMaterialHAL
     : public ALineMaterial
 {
 public:
@@ -14,7 +14,7 @@ public:
 	~ALineMaterialHAL();
 };
 
-class ALineMeshHAL
+class MODAPI ALineMeshHAL
     : public ALineMesh
 {
 public:
@@ -25,7 +25,7 @@ public:
 	~ALineMeshHAL();
 };
 
-class ALineShaderHAL
+class MODAPI ALineShaderHAL
     : public ALineShader
 {
 public:

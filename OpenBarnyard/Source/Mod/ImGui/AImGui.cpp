@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#ifdef TRENDERINTERFACE_DX8
+#if defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 )
 #  include "AImGui.h"
 #  include "AImGuiState.h"
 #  include "Mod/AModEvents.h"
@@ -12,7 +12,11 @@
 #  include <Input/TInputDeviceMouse.h>
 #  include <Render/TBackend.h>
 
-#  include <backends/imgui_impl_dx8.h>
+#  ifdef TRENDERINTERFACE_DX8
+#    include <backends/imgui_impl_dx8.h>
+#  else
+#    include <backends/imgui_impl_dx11.h>
+#  endif
 #  include <backends/imgui_impl_win32.h>
 
 //-----------------------------------------------------------------------------
@@ -106,7 +110,11 @@ AImGui::AImGui()
 
 	TRenderD3DInterface* pRender = TRenderD3DInterface::Interface();
 
+#  ifdef TRENDERINTERFACE_DX8
 	ImGui_ImplDX8_Init( pRender->GetDirect3DDevice() );
+#  else
+	ImGui_ImplDX11_Init( pRender->GetDevice(), pRender->GetDeviceContext() );
+#  endif
 	ImGui_ImplWin32_Init( pRender->GetMSWindow()->GetHWND() );
 
 	m_oDisplayParams = *pRender->GetCurrentDisplayParams();
@@ -173,7 +181,11 @@ void AImGui::RenderFrame()
 
 void AImGui::BeginScene()
 {
+#  ifdef TRENDERINTERFACE_DX8
 	ImGui_ImplDX8_NewFrame();
+#  else
+	ImGui_ImplDX11_NewFrame();
+#  endif
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
@@ -197,7 +209,17 @@ void AImGui::BeginScene()
 void AImGui::EndScene()
 {
 	ImGui::Render();
+
+#  ifdef TRENDERINTERFACE_DX8
 	ImGui_ImplDX8_RenderDrawData( ImGui::GetDrawData() );
+#  else
+	// The backend draws into the bound render target and restores the device state after,
+	// the renderer only has to send its own state first and forget it after
+	TRenderD3DInterface* pRender = TRenderD3DInterface::Interface();
+	pRender->ApplyDesiredState();
+	ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData() );
+	pRender->InvalidateStateCache();
+#  endif
 }
 
 void AImGui::RenderSettings()
@@ -339,13 +361,25 @@ void AImGui::OnPostRender( const ModEvent::AGUI2::PostRender& a_rEvent, void* a_
 void AImGui::OnDeviceLost( const ModEvent::TRenderInterface::DeviceLost& a_rEvent, void* a_pUserData )
 {
 	if ( IsSingletonCreated() )
+	{
+#  ifdef TRENDERINTERFACE_DX8
 		ImGui_ImplDX8_InvalidateDeviceObjects();
+#  else
+		ImGui_ImplDX11_InvalidateDeviceObjects();
+#  endif
+	}
 }
 
 void AImGui::OnDeviceFound( const ModEvent::TRenderInterface::DeviceFound& a_rEvent, void* a_pUserData )
 {
 	if ( IsSingletonCreated() )
+	{
+#  ifdef TRENDERINTERFACE_DX8
 		ImGui_ImplDX8_CreateDeviceObjects();
+#  else
+		ImGui_ImplDX11_CreateDeviceObjects();
+#  endif
+	}
 }
 
-#endif // TRENDERINTERFACE_DX8
+#endif // TRENDERINTERFACE_DX8 || TRENDERINTERFACE_DX11

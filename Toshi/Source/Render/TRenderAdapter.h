@@ -5,7 +5,7 @@ TOSHI_NAMESPACE_START
 
 class TString8;
 
-class TRenderAdapter : public TNodeList<TRenderAdapter>::TNode
+class MODAPI TRenderAdapter : public TNodeList<TRenderAdapter>::TNode
 {
 public:
 	class Mode : public TNodeList<Mode>::TNode

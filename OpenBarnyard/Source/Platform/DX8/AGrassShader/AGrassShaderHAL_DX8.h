@@ -3,7 +3,7 @@
 
 #include <Render/TOrderTable.h>
 
-class AGrassShaderHAL
+class MODAPI AGrassShaderHAL
     : public AGrassShader
 {
 public:

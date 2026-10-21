@@ -3,7 +3,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TTextureFactoryHAL : public TTextureFactory
+class MODAPI TTextureFactoryHAL : public TTextureFactory
 {
 public:
 	TDECLARE_CLASS( TTextureFactoryHAL, TTextureFactory );

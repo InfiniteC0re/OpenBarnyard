@@ -1,7 +1,7 @@
 #pragma once
 #include "Render/ASysShader/ASysMesh.h"
 
-class ASysMeshHAL : public ASysMesh
+class MODAPI ASysMeshHAL : public ASysMesh
 {
 public:
 	TDECLARE_CLASS( ASysMeshHAL, ASysMesh );

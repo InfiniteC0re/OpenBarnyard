@@ -1,6 +1,7 @@
 #pragma once
 
 #if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+#  define AWORLDDEBUGDRAW // the world debug drawing is compiled (development builds)
 #  include <Toshi/TSingleton.h>
 #  include <Math/TVector4.h>
 

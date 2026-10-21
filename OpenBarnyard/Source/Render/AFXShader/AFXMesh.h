@@ -6,7 +6,7 @@
 
 // NOTE: A copy of ASkinMesh in the original code, it uses the same ASkinSubMesh.
 // Most of its methods are folded with the ASkinMesh/AWorldMesh ones.
-class AFXMesh : public Toshi::TMesh
+class MODAPI AFXMesh : public Toshi::TMesh
 {
 public:
 	TDECLARE_CLASS( AFXMesh, Toshi::TMesh );

@@ -14,7 +14,7 @@ TOSHI_NAMESPACE_START
  * DirectX 8 implementation of the render interface
  * Handles DirectX 8 specific rendering functionality and device management
  */
-class TRenderD3DInterface : public TRenderInterface
+class MODAPI TRenderD3DInterface : public TRenderInterface
 {
 public:
 	TDECLARE_CLASS( TRenderD3DInterface, TRenderInterface );

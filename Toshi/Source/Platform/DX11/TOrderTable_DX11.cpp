@@ -1,6 +1,6 @@
 #include "ToshiPCH.h"
+#include "TRenderInterface_DX11.h"
 #include "Render/TOrderTable.h"
-#include "Platform/GL/T2Render_GL.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -16,7 +16,7 @@ TBOOL TOrderTable::Create( TShader* a_pShader, TINT a_iPriority )
 	m_pShader     = a_pShader;
 
 	TNode::SetPriority( a_iPriority );
-	g_pRenderGL->RegisterOrderTable( this );
+	TRenderD3DInterface::Interface()->RegisterOrderTable( this );
 
 	return TTRUE;
 }

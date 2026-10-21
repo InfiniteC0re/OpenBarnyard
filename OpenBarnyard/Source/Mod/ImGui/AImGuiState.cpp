@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#ifdef TRENDERINTERFACE_DX8
+#if defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 )
 #  include "AImGuiState.h"
 #  include "AImGui.h"
 #  include "Tasks/ARootTask.h"
@@ -63,4 +63,4 @@ void AImGuiState::OnDeactivate()
 	BaseClass::OnDeactivate();
 }
 
-#endif // TRENDERINTERFACE_DX8
+#endif // TRENDERINTERFACE_DX8 || TRENDERINTERFACE_DX11

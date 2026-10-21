@@ -4,7 +4,7 @@
 #include <Render/TOrderTable.h>
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>
 
-class ASkinMaterialHAL : public ASkinMaterial
+class MODAPI ASkinMaterialHAL : public ASkinMaterial
 {
 public:
 	TDECLARE_CLASS( ASkinMaterialHAL, ASkinMaterial );

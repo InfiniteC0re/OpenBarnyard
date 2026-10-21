@@ -5,7 +5,7 @@
 class ASkinMaterial;
 class ASkinMesh;
 
-class ASkinShader : public Toshi::TShader
+class MODAPI ASkinShader : public Toshi::TShader
     , public Toshi::TSingleton<ASkinShader>
 {
 public:

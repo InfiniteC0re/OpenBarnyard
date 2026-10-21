@@ -4,7 +4,7 @@
 #include <Toshi/Toshi.h>
 #include <Render/TMaterial.h>
 
-class AGrassMaterial
+class MODAPI AGrassMaterial
     : public Toshi::TMaterial
 {
 public:

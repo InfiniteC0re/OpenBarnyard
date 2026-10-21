@@ -14,7 +14,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TShader : public TObject
+class MODAPI TShader : public TObject
 {
 public:
 	TDECLARE_CLASS( TShader, TObject );

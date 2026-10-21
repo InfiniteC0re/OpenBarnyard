@@ -37,7 +37,7 @@ enum WORLDPLANE_ : WORLDPLANE
 
 using TFrustum = TPlane[ WORLDPLANE_NUMOF ];
 
-class TRenderContext
+class MODAPI TRenderContext
 {
 public:
 	typedef TUINT32 FLAG;

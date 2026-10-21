@@ -4,7 +4,7 @@
 class ASysMaterial;
 class ASysMesh;
 
-class ASysShader : public Toshi::TShader
+class MODAPI ASysShader : public Toshi::TShader
     , public Toshi::TSingleton<ASysShader>
 {
 public:

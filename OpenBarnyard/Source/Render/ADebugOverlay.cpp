@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ADebugOverlay.h"
 
-#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+#if !defined( TOSHI_FINAL ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) )
 #  include "ARenderer.h"
 #  include "Cameras/ACameraManager.h"
 #  include "Tasks/ARootTask.h"
@@ -227,4 +227,4 @@ void ADebugOverlay::RenderUnitLabels( ACamera* a_pCamera )
 	}
 }
 
-#endif // !TOSHI_FINAL && TRENDERINTERFACE_DX8
+#endif // !TOSHI_FINAL && ( TRENDERINTERFACE_DX8 || TRENDERINTERFACE_DX11 )

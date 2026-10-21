@@ -56,6 +56,8 @@ private:
 	TBOOL CreateSurfaces();
 #if defined( TRENDERINTERFACE_DX8 )
 	TBOOL CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D3DFORMAT a_eFormat );
+#elif defined( TRENDERINTERFACE_DX11 )
+	TBOOL CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, DXGI_FORMAT a_eFormat );
 #endif
 
 	void DestroySurfaces();
@@ -68,6 +70,8 @@ private:
 	TCHAR              m_szMoviePath[ 64 ];
 #if defined( TRENDERINTERFACE_DX8 )
 	IDirect3DSurface8* m_pSurface;
+#elif defined( TRENDERINTERFACE_DX11 )
+	ID3D11Texture2D* m_pSurface;
 #endif
 	TUINT              m_eFormat;
 	TBOOL              m_bVideoFitsBackBuffer;

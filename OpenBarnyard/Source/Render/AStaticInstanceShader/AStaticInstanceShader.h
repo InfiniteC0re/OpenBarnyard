@@ -10,7 +10,7 @@
 // NOTE: the singleton (0x0079aba4) is only used to destroy the shader, the
 // meshes and materials are created through the shader passed to AModelLoader.
 //-----------------------------------------------------------------------------
-class AStaticInstanceShader
+class MODAPI AStaticInstanceShader
     : public Toshi::TShader
     , public Toshi::TSingleton<AStaticInstanceShader>
 {

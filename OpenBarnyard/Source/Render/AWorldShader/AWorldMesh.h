@@ -3,7 +3,7 @@
 #include <Render/TVertexPoolResourceInterface.h>
 #include <Render/TIndexPoolResourceInterface.h>
 
-class AWorldMesh : public Toshi::TMesh
+class MODAPI AWorldMesh : public Toshi::TMesh
 {
 public:
 	TDECLARE_CLASS( AWorldMesh, Toshi::TMesh );

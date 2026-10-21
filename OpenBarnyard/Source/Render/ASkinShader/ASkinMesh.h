@@ -3,7 +3,7 @@
 #include <Render/TVertexPoolResourceInterface.h>
 #include <Render/TIndexPoolResourceInterface.h>
 
-class ASkinSubMesh
+class MODAPI ASkinSubMesh
 {
 public:
 	ASkinSubMesh();
@@ -23,7 +23,7 @@ public:
 	TINT                                aBones[ 28 ];
 };
 
-class ASkinMesh : public Toshi::TMesh
+class MODAPI ASkinMesh : public Toshi::TMesh
 {
 public:
 	TDECLARE_CLASS( ASkinMesh, Toshi::TMesh );

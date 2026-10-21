@@ -29,7 +29,7 @@ TOSHI_NAMESPACE_START
 
 class TViewport;
 
-class TRenderInterface
+class MODAPI TRenderInterface
     : public TObject
     , public TSingleton<TRenderInterface>
     , public TRefCounted

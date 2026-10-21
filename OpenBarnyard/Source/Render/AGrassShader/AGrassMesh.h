@@ -6,7 +6,7 @@
 #include <Render/TVertexPoolResourceInterface.h>
 #include <Render/TIndexPoolResourceInterface.h>
 
-class AGrassMesh
+class MODAPI AGrassMesh
     : public Toshi::TMesh
 {
 public:

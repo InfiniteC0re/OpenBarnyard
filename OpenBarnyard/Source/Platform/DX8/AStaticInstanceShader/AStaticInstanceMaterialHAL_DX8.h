@@ -1,7 +1,7 @@
 #pragma once
 #include "Render/AStaticInstanceShader/AStaticInstanceMaterial.h"
 
-class AStaticInstanceMaterialHAL
+class MODAPI AStaticInstanceMaterialHAL
     : public AStaticInstanceMaterial
 {
 public:

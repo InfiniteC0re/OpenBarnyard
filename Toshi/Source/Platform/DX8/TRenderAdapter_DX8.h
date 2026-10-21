@@ -8,7 +8,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TD3DAdapter : public TRenderAdapter
+class MODAPI TD3DAdapter : public TRenderAdapter
 {
 public:
 	class Mode : public TRenderAdapter::Mode

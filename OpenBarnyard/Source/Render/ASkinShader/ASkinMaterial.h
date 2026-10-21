@@ -1,7 +1,7 @@
 #pragma once
 #include <Render/TMaterial.h>
 
-class ASkinMaterial : public Toshi::TMaterial
+class MODAPI ASkinMaterial : public Toshi::TMaterial
 {
 	TDECLARE_CLASS( ASkinMaterial, Toshi::TMaterial );
 

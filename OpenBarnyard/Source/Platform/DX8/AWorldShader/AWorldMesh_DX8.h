@@ -1,7 +1,7 @@
 #pragma once
 #include "Render/AWorldShader/AWorldMesh.h"
 
-class AWorldMeshHAL : public AWorldMesh
+class MODAPI AWorldMeshHAL : public AWorldMesh
 {
 public:
 	TDECLARE_CLASS( AWorldMeshHAL, AWorldMesh );

@@ -26,6 +26,23 @@ public:
 		SCREENCAPTURE_READY,
 	};
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	using CreateShaders_t = void ( * )( ARenderer* );
+
+	// The shaders of the game, in the order OnCreate creates them
+	using SHADERS = TUINT32;
+	enum SHADERS_ : SHADERS
+	{
+		SHADERS_LINE           = BITFLAG( 0 ),
+		SHADERS_WORLD          = BITFLAG( 1 ),
+		SHADERS_SKIN           = BITFLAG( 2 ),
+		SHADERS_GRASS          = BITFLAG( 3 ),
+		SHADERS_STATICINSTANCE = BITFLAG( 4 ),
+		SHADERS_SYS            = BITFLAG( 5 ),
+		SHADERS_ALL            = SHADERS_LINE | SHADERS_WORLD | SHADERS_SKIN | SHADERS_GRASS | SHADERS_STATICINSTANCE | SHADERS_SYS,
+	};
+#endif // BARNYARD_COMMUNITY_PATCH
+
 public:
 	ARenderer();
 	~ARenderer();
@@ -104,6 +121,12 @@ public:
 	TFLOAT GetNear() const { return m_fNear; }
 	TFLOAT GetFar() const { return m_fFar; }
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	static void SetCreateShadersFunction( CreateShaders_t a_fnCallback ) { ms_fnCreateShadersCb = a_fnCallback; }
+
+	static void CreateDefaultShaders( SHADERS a_eShaders = SHADERS_ALL );
+#endif // BARNYARD_COMMUNITY_PATCH
+
 private:
 	void CreateMainViewport();
 	void RenderGUI();
@@ -132,4 +155,8 @@ private:
 	TINT                               m_iScreenshotIndex; // 0x84
 	TBOOL                              m_bRenderGUI;
 	ADisplayModes_Win                  m_DisplayModes;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	inline static CreateShaders_t ms_fnCreateShadersCb = TNULL;
+#endif // BARNYARD_COMMUNITY_PATCH
 };

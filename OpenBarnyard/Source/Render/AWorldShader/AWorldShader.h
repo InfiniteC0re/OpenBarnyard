@@ -5,7 +5,7 @@
 class AWorldMaterial;
 class AWorldMesh;
 
-class AWorldShader : public Toshi::TShader
+class MODAPI AWorldShader : public Toshi::TShader
     , public Toshi::TSingleton<AWorldShader>
 {
 public:

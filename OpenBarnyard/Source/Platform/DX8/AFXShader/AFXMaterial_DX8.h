@@ -1,7 +1,7 @@
 #pragma once
 #include "Render/AFXShader/AFXMaterial.h"
 
-class AFXMaterialHAL : public AFXMaterial
+class MODAPI AFXMaterialHAL : public AFXMaterial
 {
 public:
 	TDECLARE_CLASS( AFXMaterialHAL, AFXMaterial );

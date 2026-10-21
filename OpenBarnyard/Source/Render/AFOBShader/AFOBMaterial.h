@@ -7,7 +7,7 @@
 // AModelLoader treats it like AWorldMaterial: Create( BLENDMODE ) at +0x1C and
 // the first texture at 0x4C.
 //-----------------------------------------------------------------------------
-class AFOBMaterial : public Toshi::TMaterial
+class MODAPI AFOBMaterial : public Toshi::TMaterial
 {
 public:
 	TDECLARE_CLASS( AFOBMaterial, Toshi::TMaterial );

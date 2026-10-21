@@ -3,7 +3,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TModelHAL : public TModel
+class MODAPI TModelHAL : public TModel
 {
 public:
 	TModelHAL();

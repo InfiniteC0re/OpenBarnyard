@@ -13,7 +13,7 @@ class AFXMesh;
 // mostly identical HAL code). Nothing in the retail game creates an AFXShaderHAL,
 // AModelLoader::CreateMaterial only handles it if it exists.
 //-----------------------------------------------------------------------------
-class AFXShader
+class MODAPI AFXShader
     : public Toshi::TShader
     , public Toshi::TSingleton<AFXShader>
 {

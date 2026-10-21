@@ -3,7 +3,7 @@
 
 #include <Render/TMaterial.h>
 
-class AStaticInstanceMaterial
+class MODAPI AStaticInstanceMaterial
     : public Toshi::TMaterial
 {
 public:

@@ -6,7 +6,7 @@
 
 #include "ASkinLowEnd_DX8.h"
 
-class ASkinShaderHAL : public ASkinShader
+class MODAPI ASkinShaderHAL : public ASkinShader
 {
 public:
 	TDECLARE_CLASS( ASkinShaderHAL, ASkinShader );

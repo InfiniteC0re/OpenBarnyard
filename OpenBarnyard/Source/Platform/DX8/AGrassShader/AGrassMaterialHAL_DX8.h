@@ -1,7 +1,7 @@
 #pragma once
 #include "Render/AGrassShader/AGrassMaterial.h"
 
-class AGrassMaterialHAL
+class MODAPI AGrassMaterialHAL
     : public AGrassMaterial
 {
 public:

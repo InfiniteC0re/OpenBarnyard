@@ -240,7 +240,9 @@ TBOOL ADebugMenuState::CreateMenu()
 	PGUIMenuTreeItem* pToggles = AddItem( pMenu, "Toggles", ACTION_NONE, 0 );
 #  ifdef ADEBUGOVERLAY
 	AddItem( pToggles, "Debug overlay", ACTION_TOGGLE_OVERLAY, 0 );
+#  endif
 
+#  ifdef AWORLDDEBUGDRAW
 	for ( TINT i = 0; i < AWorldDebugDraw::LAYER_NUMOF; i++ )
 		AddItem( pToggles, AWorldDebugDraw::GetLayerName( AWorldDebugDraw::LAYER( i ) ), ACTION_TOGGLE_LAYER, i );
 #  endif
@@ -332,6 +334,8 @@ void ADebugMenuState::UpdateLabels()
 			case ACTION_TOGGLE_OVERLAY:
 				iOn = ADebugOverlay::IsSingletonCreated() && ADebugOverlay::GetSingleton()->IsEnabled();
 				break;
+#  endif
+#  ifdef AWORLDDEBUGDRAW
 			case ACTION_TOGGLE_LAYER:
 				iOn = AWorldDebugDraw::IsSingletonCreated() && AWorldDebugDraw::GetSingleton()->IsLayerEnabled( AWorldDebugDraw::LAYER( rItem.iValue ) );
 				break;
@@ -373,6 +377,8 @@ TBOOL ADebugMenuState::DoAction( ACTION a_eAction, TINT a_iValue )
 			if ( ADebugOverlay::IsSingletonCreated() )
 				ADebugOverlay::GetSingleton()->SetEnabled( !ADebugOverlay::GetSingleton()->IsEnabled() );
 			break;
+#  endif
+#  ifdef AWORLDDEBUGDRAW
 		case ACTION_TOGGLE_LAYER:
 			if ( AWorldDebugDraw::IsSingletonCreated() )
 			{

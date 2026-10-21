@@ -3,7 +3,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TRenderContextD3D : public TRenderContext
+class MODAPI TRenderContextD3D : public TRenderContext
 {
 public:
 	TRenderContextD3D( TRenderInterface* a_pRenderer );

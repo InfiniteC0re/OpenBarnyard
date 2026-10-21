@@ -4,7 +4,7 @@
 
 #include <Render/TOrderTable.h>
 
-class ASysMaterialHAL : public ASysMaterial
+class MODAPI ASysMaterialHAL : public ASysMaterial
 {
 public:
 	TDECLARE_CLASS( ASysMaterialHAL, ASysMaterial );

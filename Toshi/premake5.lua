@@ -61,6 +61,9 @@ project "Toshi"
 	
 	filter "files:**.c"
 		enablepch "Off"
+
+	filter "files:Vendor/DirectXTex/**"
+		enablepch "Off"
 		
 	filter "files:Source/Profiler/**.*"
 		enablepch "Off"
@@ -120,11 +123,19 @@ project "Toshi"
 				"dinput8.lib"
 			}
 
+			includedirs
+			{
+				"%{IncludeDir.directxtex}"
+			}
+
 			files
 			{
 				"Source/Platform/DX11/**.cpp",
 				"Source/Platform/DX11/**.c",
-				"Source/Platform/DX11/**.h"
+				"Source/Platform/DX11/**.h",
+				"Vendor/DirectXTex/*.cpp",
+				"Vendor/DirectXTex/*.h",
+				"Vendor/DirectXTex/*.inl"
 			}
 
 		defines

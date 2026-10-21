@@ -5,7 +5,7 @@
 #include <Render/TVertexPoolResourceInterface.h>
 #include <Render/TIndexPoolResourceInterface.h>
 
-class ASysMesh : public Toshi::TMesh
+class MODAPI ASysMesh : public Toshi::TMesh
 {
 public:
 	TDECLARE_CLASS( ASysMesh, Toshi::TMesh );

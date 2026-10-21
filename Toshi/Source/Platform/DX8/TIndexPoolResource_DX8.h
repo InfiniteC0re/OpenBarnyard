@@ -6,7 +6,7 @@ TOSHI_NAMESPACE_START
 
 class TIndexBlockResource;
 
-class TIndexPoolResource : public TIndexPoolResourceInterface
+class MODAPI TIndexPoolResource : public TIndexPoolResourceInterface
 {
 public:
 	TDECLARE_CLASS( TIndexPoolResource, TIndexPoolResourceInterface );

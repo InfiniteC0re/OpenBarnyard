@@ -160,5 +160,6 @@ project "OpenBarnyard"
 			files
 			{
 				"Source/Platform/DX11/**.cpp",
-				"Source/Platform/DX11/**.h"
+				"Source/Platform/DX11/**.h",
+				"../Toshi/Vendor/imgui/backends/imgui_impl_dx11.*"
 			}

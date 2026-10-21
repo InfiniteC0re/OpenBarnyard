@@ -6,7 +6,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TRenderPacket
+class MODAPI TRenderPacket
 {
 public:
 	TRenderPacket();

@@ -1,6 +1,6 @@
 #pragma once
 
-#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+#if !defined( TOSHI_FINAL ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) )
 #  define ADEBUGOVERLAY // the overlay is compiled (development builds)
 #  include <Toshi/TSingleton.h>
 #  include <Render/TDebugText.h>
@@ -98,4 +98,4 @@ private:
 	  do                                  \
 	  {                                   \
 	  } while ( 0 )
-#endif // !TOSHI_FINAL && TRENDERINTERFACE_DX8
+#endif // !TOSHI_FINAL && ( TRENDERINTERFACE_DX8 || TRENDERINTERFACE_DX11 )

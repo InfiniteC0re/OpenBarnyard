@@ -2,7 +2,7 @@
 #include <Render/TMaterial.h>
 #include <Render/TTexture.h>
 
-class AFXMaterial : public Toshi::TMaterial
+class MODAPI AFXMaterial : public Toshi::TMaterial
 {
 public:
 	TDECLARE_CLASS( AFXMaterial, Toshi::TMaterial );

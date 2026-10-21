@@ -223,10 +223,8 @@ void AChickenCoopDefenderHotSpot::Create( AChickenCoopDefenderGame* a_pGame, TIN
 		TMaterial*      pMaterial = pInstance->GetModel()->GetLOD( pInstance->GetLOD() ).ppMeshes[ 0 ]->GetMaterial();
 		pMaterial->SetFlags( TMaterial::FLAGS_NO_CULL, TFALSE );
 
-#ifdef TRENDERINTERFACE_DX8
 		if ( pMaterial->IsA( &TGetClass( ASkinMaterialHAL ) ) )
 			TSTATICCAST( ASkinMaterial, pMaterial )->SetBlendMode( ASkinMaterial::BLENDMODE_ALPHA );
-#endif
 	}
 }
 

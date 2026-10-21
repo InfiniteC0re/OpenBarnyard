@@ -5,7 +5,7 @@ TOSHI_NAMESPACE_START
 
 class TShader;
 
-class TMesh : public TObject
+class MODAPI TMesh : public TObject
 {
 public:
 	TDECLARE_CLASS( TMesh, TObject );

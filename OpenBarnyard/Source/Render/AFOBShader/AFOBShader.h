@@ -15,7 +15,7 @@ class AFOBMesh;
 // AFOBShaderHAL/AFOBMaterialHAL/AFOBMeshHAL and TSingleton<AFOBShader>.
 // The virtuals mirror AWorldShader: AModelLoader calls CreateMaterial at +0x54.
 //-----------------------------------------------------------------------------
-class AFOBShader
+class MODAPI AFOBShader
     : public Toshi::TShader
     , public Toshi::TSingleton<AFOBShader>
 {

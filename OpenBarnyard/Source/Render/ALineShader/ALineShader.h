@@ -6,7 +6,7 @@
 #include <Render/TMesh.h>
 #include <Math/TVector3.h>
 
-class ALineMaterial
+class MODAPI ALineMaterial
     : public Toshi::TMaterial
 {
 public:
@@ -17,7 +17,7 @@ public:
 	~ALineMaterial();
 };
 
-class ALineMesh
+class MODAPI ALineMesh
     : public Toshi::TMesh
 {
 public:
@@ -31,7 +31,7 @@ public:
 // Purpose: Draws lists of coloured lines and triangles (debug drawing).
 // Note: The game creates it but never adds any lines.
 //-----------------------------------------------------------------------------
-class ALineShader
+class MODAPI ALineShader
     : public Toshi::TShader
     , public Toshi::TSingleton<ALineShader>
 {

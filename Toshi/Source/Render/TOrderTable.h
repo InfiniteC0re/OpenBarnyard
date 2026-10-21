@@ -9,7 +9,7 @@ class TOrderTable;
 //-----------------------------------------------------------------------------
 // Purpose: tracks all of the buffered render commands of specified TMaterial
 //-----------------------------------------------------------------------------
-class TRegMaterial : public TNodeList<TRegMaterial>::TNode
+class MODAPI TRegMaterial : public TNodeList<TRegMaterial>::TNode
 {
 public:
 	typedef TUINT32 State;
@@ -61,7 +61,7 @@ private:
 // Purpose: helps to order rendering models of specified shader using priority.
 // Registers TMaterial instances to render all render packets attached to them.
 //-----------------------------------------------------------------------------
-class TOrderTable : public TPriList<TOrderTable>::TNode
+class MODAPI TOrderTable : public TPriList<TOrderTable>::TNode
 {
 public:
 	using t_PreFlushCallback  = void ( * )( void* a_pCustomData );

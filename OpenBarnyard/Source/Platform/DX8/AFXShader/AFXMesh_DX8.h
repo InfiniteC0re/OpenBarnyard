@@ -1,7 +1,7 @@
 #pragma once
 #include "Render/AFXShader/AFXMesh.h"
 
-class AFXMeshHAL : public AFXMesh
+class MODAPI AFXMeshHAL : public AFXMesh
 {
 public:
 	TDECLARE_CLASS( AFXMeshHAL, AFXMesh );

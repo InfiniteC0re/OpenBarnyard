@@ -6,7 +6,7 @@
 #include <Toshi/T2SList.h>
 #include <Render/TOrderTable.h>
 
-class AFXShaderHAL : public AFXShader
+class MODAPI AFXShaderHAL : public AFXShader
 {
 public:
 	TDECLARE_CLASS( AFXShaderHAL, AFXShader );

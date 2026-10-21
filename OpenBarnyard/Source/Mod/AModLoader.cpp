@@ -27,7 +27,7 @@ AModLoader::~AModLoader()
 
 TBOOL AModLoader::OnCreate()
 {
-#ifdef TRENDERINTERFACE_DX8
+#if defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 )
 	// The overlay is created once the renderer is
 	AImGui::Subscribe();
 #endif

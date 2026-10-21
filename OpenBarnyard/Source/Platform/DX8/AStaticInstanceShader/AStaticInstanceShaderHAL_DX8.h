@@ -3,7 +3,7 @@
 
 #include <Render/TOrderTable.h>
 
-class AStaticInstanceShaderHAL
+class MODAPI AStaticInstanceShaderHAL
     : public AStaticInstanceShader
 {
 public:

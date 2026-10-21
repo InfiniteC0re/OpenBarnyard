@@ -707,7 +707,7 @@ void AGameStateController::ShowOverlay( TBOOL a_bShow, TBOOL a_bResetHUD, TFLOAT
 // $Barnyard: FUNCTION 004293d0
 TBOOL AGameStateController::ProcessInput( const TInputInterface::InputEvent* a_pEvent )
 {
-#if defined( BARNYARD_COMMUNITY_PATCH ) && defined( TRENDERINTERFACE_DX8 )
+#if defined( BARNYARD_COMMUNITY_PATCH )
 	// The mod settings overlay takes the input before the game sees it
 	if ( AImGui::IsSingletonCreated() && AImGui::GetSingleton()->ProcessInput( a_pEvent ) )
 		return TTRUE;

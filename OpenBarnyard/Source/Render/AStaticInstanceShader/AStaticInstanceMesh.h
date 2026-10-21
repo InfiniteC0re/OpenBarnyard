@@ -3,7 +3,7 @@
 #include <Render/TVertexPoolResourceInterface.h>
 #include <Render/TIndexPoolResourceInterface.h>
 
-class AStaticInstanceMesh
+class MODAPI AStaticInstanceMesh
     : public Toshi::TMesh
 {
 public:

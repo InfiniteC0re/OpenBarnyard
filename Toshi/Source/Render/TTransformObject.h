@@ -5,7 +5,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TTransformObject
+class MODAPI TTransformObject
 {
 public:
 	enum class Mode

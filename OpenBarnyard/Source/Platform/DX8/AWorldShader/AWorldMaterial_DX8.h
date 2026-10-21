@@ -3,7 +3,7 @@
 
 #include <Render/TOrderTable.h>
 
-class AWorldMaterialHAL : public AWorldMaterial
+class MODAPI AWorldMaterialHAL : public AWorldMaterial
 {
 public:
 	TDECLARE_CLASS( AWorldMaterialHAL, AWorldMaterial );

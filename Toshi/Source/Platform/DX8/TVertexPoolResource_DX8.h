@@ -7,7 +7,7 @@ TOSHI_NAMESPACE_START
 
 class TVertexBlockResource;
 
-class TVertexPoolResource : public TVertexPoolResourceInterface
+class MODAPI TVertexPoolResource : public TVertexPoolResourceInterface
 {
 public:
 	TDECLARE_CLASS( TVertexPoolResource, TVertexPoolResourceInterface );

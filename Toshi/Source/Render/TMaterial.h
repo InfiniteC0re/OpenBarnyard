@@ -8,7 +8,7 @@ class TRegMaterial;
 class TShader;
 class TMesh;
 
-class TMaterial : public TObject
+class MODAPI TMaterial : public TObject
 {
 public:
 	TDECLARE_CLASS( TMaterial, TObject );
