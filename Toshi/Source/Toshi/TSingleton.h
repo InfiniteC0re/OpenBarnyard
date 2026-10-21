@@ -17,6 +17,12 @@ TOSHI_NAMESPACE_START
 		operator CLASS*() { return TSTATICCAST( CLASS, PARENT::GetSingleton() ); }   \
 	} g_p##NAME
 
+#ifdef MODAPI_MOD
+#  define TSINGLETON_INLINE TNOINLINE
+#else
+#  define TSINGLETON_INLINE TFORCEINLINE
+#endif
+
 template <typename T>
 class TSingleton
 {
@@ -28,45 +34,45 @@ public:
 
 	// Creates Singleton instance and returns it
 	template <typename... Args>
-	TFORCEINLINE static T* CreateSingleton( Args&&... args )
+	TSINGLETON_INLINE static T* CreateSingleton( Args&&... args )
 	{
 		return new T( std::forward<Args>( args )... );
 	}
 
 	// Creates Singleton instance for a derived class and returns it
 	template <typename D, typename... Args>
-	TFORCEINLINE static D* CreateSingleton( Args&&... args )
+	TSINGLETON_INLINE static D* CreateSingleton( Args&&... args )
 	{
 		TSTATICASSERT( std::is_base_of_v<T, D> == TTRUE );
 		return new D( std::forward<Args>( args )... );
 	}
 
-	TFORCEINLINE static void DestroySingleton()
+	TSINGLETON_INLINE static void DestroySingleton()
 	{
 		delete GetSingletonSafe();
 		ms_pSingleton = TNULL;
 	}
 
 	// Returns pointer and asserts if it's not allocated
-	TFORCEINLINE static T* GetSingletonSafe()
+	TSINGLETON_INLINE static T* GetSingletonSafe()
 	{
 		TASSERT( ms_pSingleton != TNULL, "Singleton instance is not created" );
 		return ms_pSingleton;
 	}
 
-	TFORCEINLINE static TBOOL IsSingletonCreated()
+	TSINGLETON_INLINE static TBOOL IsSingletonCreated()
 	{
 		return ms_pSingleton != TNULL;
 	}
 
 	// Returns pointer even if it's not allocated
-	TFORCEINLINE static T* GetSingleton()
+	TSINGLETON_INLINE static T* GetSingleton()
 	{
 		return ms_pSingleton;
 	}
 
 #if defined( TOSHI_MODLOADER ) || defined( TOSHI_MODLOADER_CLIENT )
-	TFORCEINLINE static T* SetSingletonExplicit( T* a_pPtr )
+	TSINGLETON_INLINE static T* SetSingletonExplicit( T* a_pPtr )
 	{
 		ms_pSingleton = a_pPtr;
 		return ms_pSingleton;
@@ -74,7 +80,7 @@ public:
 #endif
 
 protected:
-	TFORCEINLINE TSingleton()
+	TSINGLETON_INLINE TSingleton()
 	{
 		TASSERT( ms_pSingleton == TNULL, "Singleton instance is already created" );
 		ms_pSingleton = TSTATICCAST( T, this );
@@ -170,12 +176,14 @@ protected:
 	// $Barnyard: FUNCTION 0054ba20
 	// $Barnyard: FUNCTION 0054c5b0
 	// $Barnyard: FUNCTION 00555220
-	TFORCEINLINE ~TSingleton() { ms_pSingleton = TNULL; }
+	TSINGLETON_INLINE ~TSingleton() { ms_pSingleton = TNULL; }
 
 	static T* ms_pSingleton;
 };
 
 template <typename T>
 T* TSingleton<T>::ms_pSingleton = TNULL;
+
+#undef TSINGLETON_INLINE
 
 TOSHI_NAMESPACE_END

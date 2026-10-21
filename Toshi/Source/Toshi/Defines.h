@@ -77,6 +77,7 @@
 #define TALIGNAS( VALUE )                 alignas( VALUE )
 #define TINLINE                           inline
 #define TFORCEINLINE                      __forceinline
+#define TNOINLINE                         __declspec( noinline )
 #define TNODISCARD                        [[nodiscard]]
 
 #define TANONYMOUSVAR_1( Y )                CONCATTOKEN( _anonymous, Y )
