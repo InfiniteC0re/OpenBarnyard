@@ -3,6 +3,8 @@
 #include "Physics/ACollisionObjectSimple.h"
 #include "Terrain/ATerrainLocator.h"
 
+#include <Math/TSphere.h>
+
 #include <Toshi/T2SList.h>
 #include <Toshi/TNodeList.h>
 #include <Render/TAnimation.h>
@@ -10,7 +12,7 @@
 class ACollisionModelSet;
 class ACollisionModelInstance;
 
-class ATreeManager
+class MODAPI ATreeManager
     : public Toshi::TSingleton<ATreeManager>
 {
 public:
@@ -85,6 +87,10 @@ public:
 	inline static constexpr TINT MAX_INSTANCES      = 1302;
 	inline static constexpr TINT MAX_COLLISION_SETS = 5;
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	inline static TBOOL ms_bFOBSelector = TFALSE;
+#endif
+
 public:
 	ATreeManager();
 	~ATreeManager();
@@ -98,6 +104,13 @@ public:
 	void DestroyInstances( ATerrainLocatorList* a_pLocatorList );
 
 	void Render();
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// The FOBs (foliage billboards) get the light exposure and the colour of their tree in the light
+	// colour of the render packets: x = exposure (0..1), y = colour (0..3), z = -1 marks it. For shaders
+	// that tint them like the Wii build does
+	static void SetFOBSelectorEnabled( TBOOL a_bEnabled ) { ms_bFOBSelector = a_bEnabled; }
+#endif
 
 	// $Barnyard: FUNCTION 005edd20
 	void GetDistances( TFLOAT& a_rLODSwitchDistance, TFLOAT& a_rRenderDistance, TFLOAT& a_rBlendingDistance ) const
@@ -135,6 +148,40 @@ public:
 
 	// World position of the FOB a_iFOB of a_pTree
 	Toshi::TVector4 GetFOBPosition( const TreeInstance* a_pTree, TINT a_iFOB ) const;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// For a mod that culls and draws the trees on the GPU
+	struct CullTree
+	{
+		Toshi::TMatrix44 matWorld; // with the scale of the locator
+		Toshi::TSphere   oBounds;  // as Render tests it
+		TINT             iTrunk;
+		TUINT            uiLocator;
+		TUINT8           uiFlags; // the sun exposure of the locator (0-15) and the colour of the tree << 4
+	};
+
+	// The trees, at most a_iMaxTrees
+	TINT GetCullTrees( CullTree* a_pOutTrees, TINT a_iMaxTrees ) const;
+
+	TINT                     GetNumTrunks() const { return m_iNumTrunks; }
+	Toshi::TSceneObject*     GetTrunkSceneObject( TINT a_iTrunk ) const { return m_pTrunks[ a_iTrunk ].m_pSceneObject; }
+	Toshi::TSceneObject*     GetTrunkFOBSceneObject( TINT a_iTrunk ) const { return m_pFOBs[ m_pTrunks[ a_iTrunk ].m_uiID * 2 ].m_pSceneObject; }
+	TINT                     GetTrunkNumFOBs( TINT a_iTrunk ) const { return m_pTrunks[ a_iTrunk ].m_iNumFOBs; }
+	const Toshi::TMatrix44&  GetTrunkFOBMatrix( TINT a_iTrunk, TINT a_iFOB ) const { return m_pTrunks[ a_iTrunk ].m_pFOBMatrices[ a_iFOB ]; }
+	TFLOAT                   GetLODSwitchDistance() const { return m_fLODSwitchDistance; }
+
+	// Changes whenever the trees or their models do
+	static TUINT GetVersion() { return ms_uiVersion; }
+
+	// Set by a mod that draws the trees itself, Render then only places the collisions of the trunks
+	static void SetDrawingHidden( TBOOL a_bHidden ) { ms_bDrawingHidden = a_bHidden; }
+
+private:
+	inline static TUINT ms_uiVersion      = 0;
+	inline static TBOOL ms_bDrawingHidden = TFALSE;
+
+public:
+#endif
 
 private:
 	// Destroys the models, the keyframe libraries and the collisions of the trees

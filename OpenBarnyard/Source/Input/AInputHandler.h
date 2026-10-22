@@ -9,7 +9,7 @@
 #include <Toshi/TScheduler.h>
 #include <Math/TVector4.h>
 
-class AInputHandler : public Toshi::TTask
+class MODAPI AInputHandler : public Toshi::TTask
     , public Toshi::TSingleton<AInputHandler>
 {
 public:

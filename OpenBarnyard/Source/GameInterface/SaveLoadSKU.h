@@ -2,7 +2,7 @@
 #include "GameInterface/SaveLoad.h"
 
 // Windows part of SaveLoad: the save data is the file Save\savedata.by next to the executable.
-class SaveLoadSKU
+class MODAPI SaveLoadSKU
     : public SaveLoad
 {
 public:

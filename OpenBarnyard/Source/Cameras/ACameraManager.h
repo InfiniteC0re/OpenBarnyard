@@ -9,7 +9,7 @@
 //
 // TClass 0x007822e4 (size 0xe4), vtable 0x0071c918.
 //-----------------------------------------------------------------------------
-class ACameraManager : public Toshi::TTask
+class MODAPI ACameraManager : public Toshi::TTask
     , public Toshi::TSingleton<ACameraManager>
 {
 public:

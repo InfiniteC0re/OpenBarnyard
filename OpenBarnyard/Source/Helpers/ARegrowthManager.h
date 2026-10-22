@@ -37,7 +37,7 @@ class TManagedModel;
 // TClass 0x007922b0 (version 1.0, size 0x1342c), singleton at 0x007922e0,
 // vtable 0x00734220.
 //-----------------------------------------------------------------------------
-class ARegrowthManager
+class MODAPI ARegrowthManager
     : public Toshi::TObject
     , public Toshi::TSingleton<ARegrowthManager>
 {

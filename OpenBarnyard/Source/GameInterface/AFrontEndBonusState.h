@@ -7,7 +7,7 @@
 // MODE_BONUSES: art gallery, movie gallery and credits.
 // MODE_TRAILERS: the two trailers (nothing opens this mode in the PC retail).
 //-----------------------------------------------------------------------------
-class AFrontEndBonusState : public ABYardMenuState
+class MODAPI AFrontEndBonusState : public ABYardMenuState
 {
 public:
 	TDECLARE_CLASS( AFrontEndBonusState, ABYardMenuState );

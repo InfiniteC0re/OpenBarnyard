@@ -5,7 +5,7 @@
 #include <Toshi/TTask.h>
 #include <Toshi/TString8.h>
 
-class ARootTask
+class MODAPI ARootTask
     : public Toshi::TTask
     , public Toshi::TSingleton<ARootTask>
 {

@@ -17,7 +17,7 @@ class AGameState;
 //
 // Size 0x74, created by AGameSystemManager.
 //-----------------------------------------------------------------------------
-class AMusicManager
+class MODAPI AMusicManager
     : public Toshi::TTask
     , public Toshi::TSingleton<AMusicManager>
 {

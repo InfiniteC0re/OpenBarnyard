@@ -4,7 +4,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TSceneObject
+class MODAPI TSceneObject
 {
 public:
 	using FLAGS = TUINT8;

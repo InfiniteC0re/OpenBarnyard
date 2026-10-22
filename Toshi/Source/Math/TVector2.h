@@ -2,7 +2,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TVector2
+class MODAPI TVector2
 {
 public:
 	constexpr TVector2() = default;

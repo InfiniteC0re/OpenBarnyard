@@ -270,6 +270,36 @@ void AFrontEndNewGameSelectState::StartNewGame()
 	pController->SetFlags( AGameStateController::FLAGS_AWAITING_TRANSITION | AGameStateController::FLAGS_FADE_SOUND );
 }
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+// NOTE: OnMenuItemActivated, OnMenuClose and OnOverwritePopupResponse in one
+TBOOL AFrontEndNewGameSelectState::StartNewGameInSlot( TINT a_iSlot, TBOOL a_bOverwrite )
+{
+	APlayerProgress* pProgress = APlayerProgress::GetSingleton();
+	const TBOOL      bInUse    = pProgress->GetSlot( a_iSlot )->bOccupied == 1;
+
+	if ( bInUse && !a_bOverwrite )
+		return TFALSE;
+
+	AHighScoreManager::ScoreReset( TFALSE );
+	AHintManager::ResetState();
+	pProgress->SetCurrentSlotIndex( a_iSlot );
+
+	APlayerProfileManager::GetSingleton()->SetMainGender( APlayerProfile::GENDER_MALE );
+	AGameLoader::ResetSimLoadingPictures();
+	FIRE_EVENT( AGameLoader::NewGame );
+
+	if ( bInUse )
+		pProgress->ClearCurrentSlot();
+
+	AGameStateController* pController = AGameStateController::GetSingleton();
+	pController->AddFlags( AGameStateController::FLAGS_START_NEW_GAME );
+	pController->SetFlags( AGameStateController::FLAGS_AWAITING_TRANSITION | AGameStateController::FLAGS_FADE_SOUND );
+	return TTRUE;
+}
+
+#endif // BARNYARD_COMMUNITY_PATCH
+
 // $Barnyard: FUNCTION 0040ca20
 // $Barnyard: FUNCTION 0040c9c0
 TBOOL __stdcall AFrontEndNewGameSelectState::OnOverwritePopupResponse( AFrontEndNewGameSelectState* a_pState, AMessagePopupState* a_pPopup, AMessagePopupState::ResponseEvent* a_pEvent )

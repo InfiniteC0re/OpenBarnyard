@@ -4,7 +4,7 @@
 #include <Math/TMatrix44.h>
 #include <GUI/T2GUIRenderer.h>
 
-class AGUI2RendererDX8
+class MODAPI AGUI2RendererDX8
     : public Toshi::T2GUIRenderer
 {
 public:
@@ -52,6 +52,16 @@ public:
 	virtual void ResetZCoordinate() OVERRIDE;
 
 	void UpdateTransform();
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// The transform of the element being drawn as the world transform of the render interface, for a mod
+	// that draws with its own shaders
+	void ApplyTransform()
+	{
+		if ( m_bIsTransformDirty )
+			UpdateTransform();
+	}
+#endif
 
 private:
 	static void SetupProjectionMatrix( Toshi::TMatrix44& a_rOutMatrix, TINT a_iLeft, TINT a_iRight, TINT a_iTop, TINT a_iBottom );

@@ -20,7 +20,7 @@ class AUnit;
 // Created by AGameSystemManager, the sim (ASimState) activates it.
 // TClass 00780b40 (size 0x334), vtable 00718ea8, singleton DAT_00780b00.
 //-----------------------------------------------------------------------------
-class AHintManager
+class MODAPI AHintManager
     : public Toshi::TTask
     , public Toshi::TSingleton<AHintManager>
 {

@@ -10,7 +10,7 @@
 #include <Toshi/T2Vector.h>
 #include <Render/TModel.h>
 
-class AInstanceManager
+class MODAPI AInstanceManager
     : public Toshi::TSingleton<AInstanceManager>
 {
 public:
@@ -150,6 +150,45 @@ public:
 
 	// Removes the instances and the collisions created from a_pLocatorList
 	void DestroyInstances( ATerrainLocatorList* a_pLocatorList );
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// For a mod that culls and draws the static instances on the GPU
+	struct CullInstance
+	{
+		Toshi::TMatrix44 matWorld; // with the scale of the locator
+		Toshi::TSphere   oBounds;  // as FillRenderList_Visible tests it
+		TINT             iModel;
+		TUINT            uiLocator;
+		TUINT8           uiExposure; // the baked sun exposure of the locator (0-15)
+	};
+
+	// The static instances, at most a_iMaxInstances
+	TINT GetCullInstances( CullInstance* a_pOutInstances, TINT a_iMaxInstances ) const;
+
+	// The [start, end) locator ranges of the terrain sections visible from the current one, as
+	// FillRenderList_Visible tests them. -1 when every locator is
+	TINT GetCullVISRanges( TUINT* a_pOutRanges, TINT a_iMaxRanges ) const;
+
+	// The same without the interior mode, the trees use it too
+	static TINT GetTerrainVISRanges( TUINT* a_pOutRanges, TINT a_iMaxRanges );
+
+	TINT                 GetNumModels() const { return m_iNumModels; }
+	Toshi::TSceneObject* GetModelSceneObject( TINT a_iModel ) const { return m_pModels[ a_iModel ].pSceneObject; }
+	TFLOAT               GetLOD0Distance() const { return m_flLOD0Distance; }
+	TBOOL                IsInteriorMode() const { return ( m_uiFlags & FLAGS_INTERIOR ) != 0; }
+
+	// Changes whenever the instances or their models do
+	static TUINT GetVersion() { return ms_uiVersion; }
+
+	// Set by a mod that draws the static instances itself, Render then only draws the dynamic ones
+	static void SetStaticInstancesHidden( TBOOL a_bHidden ) { ms_bStaticInstancesHidden = a_bHidden; }
+
+private:
+	inline static TUINT ms_uiVersion              = 0;
+	inline static TBOOL ms_bStaticInstancesHidden = TFALSE;
+
+public:
+#endif
 
 private:
 	void FillRenderList_All( const Toshi::T2SList<StaticInstanceEntry>& a_rcInstanceList, const Toshi::TMatrix44& a_rcWorldTransform, RenderListEntry* a_pOutRenderData, TINT& a_rNumInstances, TBOOL a_bDynamic );

@@ -15,7 +15,7 @@
 
 TOSHI_NAMESPACE_START
 
-class T2GenericRedBlackTreeNode
+class MODAPI T2GenericRedBlackTreeNode
 {
 public:
 	friend class T2GenericRedBlackTree;
@@ -47,7 +47,7 @@ protected:
 	T2GenericRedBlackTreeNode* m_pParent;
 };
 
-class T2GenericRedBlackTree
+class MODAPI T2GenericRedBlackTree
 {
 protected:
 	// $Barnyard: FUNCTION 006cefc0

@@ -86,6 +86,7 @@ public:
 	virtual void  SetUnknown2( TINT a_Unknown );
 
 	void SetAlphaRef( TINT a_iAlphaRef );
+	TINT GetAlphaRef() const { return m_iAlphaRef; }
 
 	Toshi::TOrderTable* GetOrderTable( TUINT a_uiIndex )
 	{

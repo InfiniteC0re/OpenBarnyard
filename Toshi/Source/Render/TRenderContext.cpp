@@ -59,6 +59,9 @@ TRenderContext::TRenderContext( TRenderInterface* a_pRenderer )
     , m_fShadeCoeff( 0.0f )
     , PADDING4( TFALSE )
     , m_pCurrentCameraObject( TNULL )
+#ifndef TOSHI_SDK
+    , m_bHasLightingBounds( TFALSE )
+#endif
 {
 	// Setup viewport parameters
 	if ( m_pRenderer->GetCurrentDevice() != TNULL )
@@ -328,6 +331,10 @@ const TMatrix44& TRenderContext::GetWorldModelMatrix()
 void TRenderContext::ClearLightIDs()
 {
 	m_oLightIds.Reset();
+
+#ifndef TOSHI_SDK
+	m_bHasLightingBounds = TFALSE;
+#endif
 }
 
 // $Barnyard: FUNCTION 006ceb50

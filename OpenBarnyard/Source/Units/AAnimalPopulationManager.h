@@ -27,7 +27,7 @@ class T2GUIElement;
 // (quest tiers) and the assigned quests. Also manages the "!", "?" and arrow
 // markers floating above the units that have something to say.
 //-----------------------------------------------------------------------------
-class AAnimalPopulationManager
+class MODAPI AAnimalPopulationManager
     : public Toshi::TTask
     , public Toshi::TSingleton<AAnimalPopulationManager>
 {

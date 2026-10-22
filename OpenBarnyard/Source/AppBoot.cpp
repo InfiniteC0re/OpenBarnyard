@@ -39,7 +39,12 @@
 // destructors (TClass, free lists of the engine...) rely on the memory being still there.
 static int __cdecl InitialiseMemory()
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: twice the 128 MB of retail, big levels (the merged world of the remaster) run out of it
+	Toshi::TMemory::Initialise( 256 * 1024 * 1024, 0 );
+#else
 	Toshi::TMemory::Initialise( 0, 0 );
+#endif
 	return 0;
 }
 
@@ -192,7 +197,7 @@ extern "C" __declspec( allocate( ".CRT$XTU" ) ) void( __cdecl* g_pfnDeinitialise
 // Handle to the BARNYARD mutex
 static HANDLE s_hBarnyardHandle;
 
-AApplication g_oTheApp;
+MODAPI AApplication g_oTheApp;
 
 TOSHI_NAMESPACE_USING
 
@@ -441,9 +446,16 @@ TBOOL AApplication::OnCreate( int argc, TCHAR** argv )
 	PProperties::SetupFreeList( 100, 0 );
 	PProperty::SetupFreeList( 100, 0 );
 	TPooledString8::SetupFreeList( 0, 0 ); // prevent the freelist from being used
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: retail can't go past these counts, big levels (the merged world of the remaster) need more
+	TTextureResourceHAL::SetupFreeList( 690, 64 );
+	TVertexBlockResource::SetupFreeList( 500, 64 );
+	TIndexBlockResource::SetupFreeList( 350, 64 );
+#else
 	TTextureResourceHAL::SetupFreeList( 690, 0 );
 	TVertexBlockResource::SetupFreeList( 500, 0 );
 	TIndexBlockResource::SetupFreeList( 350, 0 );
+#endif
 
 	TModelManager::Initialise();
 	pLocaleManager->SetLanguage(

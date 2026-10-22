@@ -3,7 +3,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TPlane
+class MODAPI TPlane
 {
 public:
 	enum PlaneComparison

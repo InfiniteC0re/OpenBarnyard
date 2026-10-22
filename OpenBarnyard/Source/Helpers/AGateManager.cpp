@@ -280,8 +280,14 @@ void AGateManager::Create()
 		// NOTE: retail doesn't stop at the end of the name if there's no other number
 		const TCHAR* pAngle = pIndex + 2;
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+		// NOTE: the gates of the merged world of the remaster have names without an angle
+		while ( *pAngle && !isdigit( TUINT8( *pAngle ) ) )
+			pAngle++;
+#else
 		while ( !isdigit( *pAngle ) )
 			pAngle++;
+#endif
 
 		if ( *pAngle )
 		{

@@ -66,6 +66,9 @@ distribution.
 #	define TINYXML2_LIB __declspec( dllexport )
 #  elif defined( TINYXML2_IMPORT )
 #	define TINYXML2_LIB __declspec( dllimport )
+#  elif defined( MODAPI )
+// Exported from the game to the mods
+#	define TINYXML2_LIB MODAPI
 #  else
 #	define TINYXML2_LIB
 #  endif

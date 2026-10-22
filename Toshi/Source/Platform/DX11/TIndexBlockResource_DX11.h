@@ -22,7 +22,7 @@ public:
 	}
 
 public:
-	struct HALBuffer
+	struct MODAPI HALBuffer
 	{
 		TUINT16                uiIndexOffset = 0;
 		TUINT16                uiUnknown;

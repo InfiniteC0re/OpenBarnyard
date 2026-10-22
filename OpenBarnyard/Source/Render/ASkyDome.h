@@ -8,7 +8,7 @@ class ASysMaterial;
 class AMaterialLibrary;
 class AModelInstance;
 
-class ASkyDome
+class MODAPI ASkyDome
 {
 public:
 	struct DomeVertex
@@ -51,6 +51,10 @@ public:
 
 	// $Barnyard: FUNCTION 0042c940
 	void SetStarsOpacity( TFLOAT a_fOpacity ) { m_fStarsOpacity = a_fOpacity; }
+	TFLOAT GetStarsOpacity() const { return m_fStarsOpacity; }
+
+	// The dome is drawn once its meshes are created
+	TBOOL IsCreated() const { return m_pFancyDome != TNULL; }
 
 	void SetRotationSpeed( TFLOAT a_fSpeed ) { m_fRotationSpeed = a_fSpeed; }
 	void SetSunDirection( const Toshi::TVector4& a_rcDirection ) { m_vSunDirection = a_rcDirection; }

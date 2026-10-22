@@ -9,7 +9,7 @@ class ACollisionObjectMesh;
 // the wind and the blades spin), the weather vane, the water wheel and the
 // barn sign (swings in heavy rain). Size 0x98, vtable 0x007247a4.
 //-----------------------------------------------------------------------------
-class AWindmillHelper
+class MODAPI AWindmillHelper
     : public ASimAnimModelHelper
 {
 public:

@@ -88,7 +88,7 @@ public:
 		TFLOAT fMaxZ;
 	};
 
-	struct PROJECTIONPARAMS
+	struct MODAPI PROJECTIONPARAMS
 	{
 		TVector2 m_Centre;
 		TVector2 m_Proj;
@@ -118,6 +118,18 @@ public:
 	void ClearLightIDs();
 	void AddLight( TLightID a_iLightId );
 
+	const TLightIDList& GetLightIDs() const { return m_oLightIds; }
+
+#ifndef TOSHI_SDK
+	void SetLightingBounds( const TSphere& a_rcBounds )
+	{
+		m_oLightingBounds    = a_rcBounds;
+		m_bHasLightingBounds = TTRUE;
+	}
+
+	const TSphere* GetLightingBounds() const { return m_bHasLightingBounds ? &m_oLightingBounds : TNULL; }
+#endif // !TOSHI_SDK
+
 	const PROJECTIONPARAMS& GetProjectionParams() const { return m_oProjParams; }
 	void                    SetProjectionParams( const PROJECTIONPARAMS& a_rParams );
 
@@ -136,7 +148,10 @@ public:
 	TFLOAT GetWidth() const { return m_oViewportParams.fWidth; }
 	TFLOAT GetHeight() const { return m_oViewportParams.fHeight; }
 
-	TBOOL IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
+	TBOOL           IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
+	const TVector4& GetFogColor() const { return m_FogColor; }
+	TFLOAT          GetFogDistanceStart() const { return m_fFogDistanceStart; }
+	TFLOAT          GetFogDistanceEnd() const { return m_fFogDistanceEnd; }
 	FLAG  GetFlags() const { return m_eFlags; }
 	// $Barnyard: FUNCTION 006ce980
 	TBOOL IsDirty() const { return m_eFlags & FLAG_DIRTY; }
@@ -235,6 +250,11 @@ protected:
 
 	TLightIDList   m_oLightIds;            // 0x03B5
 	TCameraObject* m_pCurrentCameraObject; // 0x03BC
+
+#ifndef TOSHI_SDK
+	TSphere m_oLightingBounds;
+	TBOOL   m_bHasLightingBounds;
+#endif // !TOSHI_SDK
 };
 
 TOSHI_NAMESPACE_END

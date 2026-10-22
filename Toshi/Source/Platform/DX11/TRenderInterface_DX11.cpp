@@ -144,18 +144,19 @@ TRenderD3DInterface::TRenderD3DInterface()
 	m_uiVSConstantBufferSlots = 0;
 	m_uiPSConstantBufferSlots = 0;
 	m_pBackBufferRTView  = TNULL;
-	m_pDepthStencilView  = TNULL;
-	m_pReadOnlyDepthStencilView = TNULL;
-	m_pDepthStencilSRV          = TNULL;
-	m_pSceneTexture             = TNULL;
-	m_pSceneRTView              = TNULL;
-	m_pSceneSRV                 = TNULL;
-	m_bSceneTargetEnabled       = TFALSE;
-	m_bSceneTargetActive        = TFALSE;
-	m_bSkipSceneCopy            = TFALSE;
+	m_oDepth             = {};
+	m_pSceneTexture      = TNULL;
+	m_pSceneRTView       = TNULL;
+	m_pSceneSRV          = TNULL;
+	m_oSceneDepth        = {};
+	m_eSceneFormat       = DXGI_FORMAT_UNKNOWN;
+	m_uiSceneSampleCount = 1;
+	m_bSceneTargetActive = TFALSE;
 	m_uiBackBufferWidth  = 0;
 	m_uiBackBufferHeight = 0;
 	m_bOccluded          = TFALSE;
+
+	m_pSecondaryRenderTargetOwner = TNULL;
 
 	m_pConstantBufferData    = TNULL;
 	m_uiConstantBufferSize   = 0;
@@ -422,14 +423,8 @@ TBOOL TRenderD3DInterface::BeginScene()
 	{
 		ResetStateCache();
 
-		if ( m_bSceneTargetEnabled && !m_pSceneTexture )
-			CreateSceneTarget();
-		else if ( !m_bSceneTargetEnabled && m_pSceneTexture )
-			DestroySceneTarget();
-
-		m_bSceneTargetActive = m_pSceneTexture != TNULL;
-		m_bSkipSceneCopy     = TFALSE;
-		SetRenderTargets( GetRenderTargetView(), m_pDepthStencilView );
+		m_bSceneTargetActive = TFALSE;
+		SetRenderTargets( m_pBackBufferRTView, m_oDepth.pView );
 
 		D3D11_VIEWPORT viewport = {
 			.TopLeftX = 0.0f,
@@ -457,9 +452,7 @@ TBOOL TRenderD3DInterface::EndScene()
 	if ( IsInScene() )
 	{
 		m_EndSceneEmitter.Throw( TNULL );
-
-		if ( m_bSceneTargetActive && !m_bSkipSceneCopy )
-			m_pDeviceContext->CopyResource( m_pBackBuffer, m_pSceneTexture );
+		TASSERT( !m_bSceneTargetActive && "EndSceneTarget wasn't called" );
 
 #if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
 		// Development: "-devshot" saves the finished frame (GUI included) before it's presented
@@ -1219,10 +1212,10 @@ void TRenderD3DInterface::ClearRegion( TINT a_iX, TINT a_iY, TINT a_iWidth, TINT
 		uiDepthFlags |= D3D11_CLEAR_STENCIL;
 	}
 
-	if ( uiDepthFlags != 0 && m_pDepthStencilView )
+	if ( uiDepthFlags != 0 && GetDepthStencilView() )
 	{
 		// TODO: clear only the region
-		m_pDeviceContext->ClearDepthStencilView( m_pDepthStencilView, uiDepthFlags, a_fZ, TUINT8( a_uiStencil ) );
+		m_pDeviceContext->ClearDepthStencilView( GetDepthStencilView(), uiDepthFlags, a_fZ, TUINT8( a_uiStencil ) );
 	}
 }
 
@@ -1421,6 +1414,18 @@ TBOOL TRenderD3DInterface::CreateBackBufferViews()
 		return TFALSE;
 	}
 
+	if ( !CreateDepthTarget( 1, m_oDepth ) )
+		return TFALSE;
+
+	const FLOAT aBlack[ 4 ] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	m_pDeviceContext->ClearRenderTargetView( m_pBackBufferRTView, aBlack );
+	m_pDeviceContext->ClearDepthStencilView( m_oDepth.pView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0 );
+
+	return TTRUE;
+}
+
+TBOOL TRenderD3DInterface::CreateDepthTarget( UINT a_uiSampleCount, DEPTHTARGET& a_rTarget )
+{
 	// The texture is typeless so shaders can read it through a view of the matching colour format
 	const DXGI_FORMAT eDepthFormat = TD3DAdapter::Mode::Device::DEPTHSTENCILFORMATS[ m_oDisplayParams.eDepthStencilFormat ];
 	DXGI_FORMAT       eTypelessFormat;
@@ -1444,42 +1449,44 @@ TBOOL TRenderD3DInterface::CreateBackBufferViews()
 			break;
 	}
 
+	const TBOOL bMultisampled = a_uiSampleCount > 1;
+
 	D3D11_TEXTURE2D_DESC oDepthDesc = {};
 	oDepthDesc.Width                = m_uiBackBufferWidth;
 	oDepthDesc.Height               = m_uiBackBufferHeight;
 	oDepthDesc.MipLevels            = 1;
 	oDepthDesc.ArraySize            = 1;
 	oDepthDesc.Format               = eTypelessFormat;
-	oDepthDesc.SampleDesc.Count     = 1;
+	oDepthDesc.SampleDesc.Count     = a_uiSampleCount;
 	oDepthDesc.SampleDesc.Quality   = 0;
 	oDepthDesc.Usage                = D3D11_USAGE_DEFAULT;
 	oDepthDesc.BindFlags            = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 
 	ID3D11Texture2D* pDepthTexture = TNULL;
-	hRes                           = m_pDevice11->CreateTexture2D( &oDepthDesc, TNULL, &pDepthTexture );
+	HRESULT          hRes          = m_pDevice11->CreateTexture2D( &oDepthDesc, TNULL, &pDepthTexture );
 
 	if ( SUCCEEDED( hRes ) )
 	{
 		D3D11_DEPTH_STENCIL_VIEW_DESC oViewDesc = {};
 		oViewDesc.Format                        = eDepthFormat;
-		oViewDesc.ViewDimension                 = D3D11_DSV_DIMENSION_TEXTURE2D;
-		hRes                                    = m_pDevice11->CreateDepthStencilView( pDepthTexture, &oViewDesc, &m_pDepthStencilView );
+		oViewDesc.ViewDimension                 = bMultisampled ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
+		hRes                                    = m_pDevice11->CreateDepthStencilView( pDepthTexture, &oViewDesc, &a_rTarget.pView );
 
 		if ( SUCCEEDED( hRes ) )
 		{
 			D3D11_SHADER_RESOURCE_VIEW_DESC oSRVDesc = {};
 			oSRVDesc.Format                          = eReadFormat;
-			oSRVDesc.ViewDimension                   = D3D11_SRV_DIMENSION_TEXTURE2D;
+			oSRVDesc.ViewDimension                   = bMultisampled ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
 			oSRVDesc.Texture2D.MipLevels             = 1;
-			hRes                                     = m_pDevice11->CreateShaderResourceView( pDepthTexture, &oSRVDesc, &m_pDepthStencilSRV );
+			hRes                                     = m_pDevice11->CreateShaderResourceView( pDepthTexture, &oSRVDesc, &a_rTarget.pSRV );
 		}
 
 		if ( SUCCEEDED( hRes ) && m_pDevice11->GetFeatureLevel() >= D3D_FEATURE_LEVEL_11_0 )
 		{
 			oViewDesc.Flags = uiReadOnlyFlags;
 
-			if ( FAILED( m_pDevice11->CreateDepthStencilView( pDepthTexture, &oViewDesc, &m_pReadOnlyDepthStencilView ) ) )
-				m_pReadOnlyDepthStencilView = TNULL;
+			if ( FAILED( m_pDevice11->CreateDepthStencilView( pDepthTexture, &oViewDesc, &a_rTarget.pReadOnlyView ) ) )
+				a_rTarget.pReadOnlyView = TNULL;
 		}
 
 		pDepthTexture->Release();
@@ -1488,28 +1495,81 @@ TBOOL TRenderD3DInterface::CreateBackBufferViews()
 	if ( FAILED( hRes ) )
 	{
 		PrintError( hRes, "Failed to create the depth buffer!" );
+		DestroyDepthTarget( a_rTarget );
 		return TFALSE;
 	}
 
-	const FLOAT aBlack[ 4 ] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	m_pDeviceContext->ClearRenderTargetView( m_pBackBufferRTView, aBlack );
-	m_pDeviceContext->ClearDepthStencilView( m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0 );
-
 	return TTRUE;
+}
+
+void TRenderD3DInterface::DestroyDepthTarget( DEPTHTARGET& a_rTarget )
+{
+	if ( m_oCurrent.pDepthStencilView == a_rTarget.pView || m_oCurrent.pDepthStencilView == a_rTarget.pReadOnlyView )
+		m_oCurrent.pDepthStencilView = TNULL;
+
+	if ( a_rTarget.pSRV )
+	{
+		InvalidateShaderResource( a_rTarget.pSRV );
+		a_rTarget.pSRV->Release();
+	}
+
+	if ( a_rTarget.pReadOnlyView )
+		a_rTarget.pReadOnlyView->Release();
+
+	if ( a_rTarget.pView )
+		a_rTarget.pView->Release();
+
+	a_rTarget = {};
+}
+
+void TRenderD3DInterface::SetSceneTargetFormat( DXGI_FORMAT a_eFormat, UINT a_uiSampleCount )
+{
+	TASSERT( !m_bSceneTargetActive );
+
+	if ( a_eFormat != m_eSceneFormat || a_uiSampleCount != m_uiSceneSampleCount )
+	{
+		m_eSceneFormat       = a_eFormat;
+		m_uiSceneSampleCount = TMath::Max( a_uiSampleCount, 1u );
+		DestroySceneTarget();
+	}
+}
+
+TBOOL TRenderD3DInterface::BeginSceneTarget()
+{
+	TASSERT( IsInScene() && !m_bSceneTargetActive );
+
+	if ( !m_pSceneTexture && !CreateSceneTarget() )
+		return TFALSE;
+
+	m_bSceneTargetActive = TTRUE;
+	SetRenderTargets( m_pSceneRTView, m_oSceneDepth.pView );
+	return TTRUE;
+}
+
+void TRenderD3DInterface::EndSceneTarget()
+{
+	TASSERT( m_bSceneTargetActive );
+
+	m_bSceneTargetActive = TFALSE;
+	SetRenderTargets( m_pBackBufferRTView, m_oDepth.pView );
 }
 
 TBOOL TRenderD3DInterface::CreateSceneTarget()
 {
 	D3D11_TEXTURE2D_DESC oDesc;
 	m_pBackBuffer->GetDesc( &oDesc );
-	oDesc.Usage          = D3D11_USAGE_DEFAULT;
-	oDesc.BindFlags      = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	oDesc.CPUAccessFlags = 0;
-	oDesc.MiscFlags      = 0;
+	oDesc.Format             = ( m_eSceneFormat != DXGI_FORMAT_UNKNOWN ) ? m_eSceneFormat : oDesc.Format;
+	oDesc.SampleDesc.Count   = m_uiSceneSampleCount;
+	oDesc.SampleDesc.Quality = 0;
+	oDesc.Usage              = D3D11_USAGE_DEFAULT;
+	oDesc.BindFlags          = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	oDesc.CPUAccessFlags     = 0;
+	oDesc.MiscFlags          = 0;
 
 	if ( FAILED( m_pDevice11->CreateTexture2D( &oDesc, TNULL, &m_pSceneTexture ) ) ||
 	     FAILED( m_pDevice11->CreateRenderTargetView( m_pSceneTexture, TNULL, &m_pSceneRTView ) ) ||
-	     FAILED( m_pDevice11->CreateShaderResourceView( m_pSceneTexture, TNULL, &m_pSceneSRV ) ) )
+	     FAILED( m_pDevice11->CreateShaderResourceView( m_pSceneTexture, TNULL, &m_pSceneSRV ) ) ||
+	     !CreateDepthTarget( m_uiSceneSampleCount, m_oSceneDepth ) )
 	{
 		TERROR( "Couldn't create the scene target\n" );
 		DestroySceneTarget();
@@ -1543,6 +1603,7 @@ void TRenderD3DInterface::DestroySceneTarget()
 		m_pSceneTexture = TNULL;
 	}
 
+	DestroyDepthTarget( m_oSceneDepth );
 	m_bSceneTargetActive = TFALSE;
 }
 
@@ -1550,34 +1611,18 @@ void TRenderD3DInterface::DestroyBackBufferViews()
 {
 	// The views are released right away, so they can't wait for the next draw to be unbound
 	SetRenderTargets( TNULL, TNULL );
+	SetSecondaryRenderTarget( TNULL, TNULL );
 
 	if ( m_pDeviceContext )
 	{
 		m_pDeviceContext->OMSetRenderTargets( 0, TNULL, TNULL );
-		m_oApplied.pRenderTargetView = TNULL;
-		m_oApplied.pDepthStencilView = TNULL;
+		m_oApplied.pRenderTargetView          = TNULL;
+		m_oApplied.pSecondaryRenderTargetView = TNULL;
+		m_oApplied.pDepthStencilView          = TNULL;
 	}
 
 	DestroySceneTarget();
-
-	if ( m_pDepthStencilSRV )
-	{
-		InvalidateShaderResource( m_pDepthStencilSRV );
-		m_pDepthStencilSRV->Release();
-		m_pDepthStencilSRV = TNULL;
-	}
-
-	if ( m_pReadOnlyDepthStencilView )
-	{
-		m_pReadOnlyDepthStencilView->Release();
-		m_pReadOnlyDepthStencilView = TNULL;
-	}
-
-	if ( m_pDepthStencilView )
-	{
-		m_pDepthStencilView->Release();
-		m_pDepthStencilView = TNULL;
-	}
+	DestroyDepthTarget( m_oDepth );
 
 	if ( m_pBackBufferRTView )
 	{
@@ -2303,6 +2348,10 @@ void TRenderD3DInterface::PSSetSampler( UINT a_uiSlot, ID3D11SamplerState* a_pSa
 {
 	TASSERT( a_uiSlot < MAX_SAMPLER_SLOTS );
 	m_oCurrent.apPSSamplers[ a_uiSlot ] = a_pSampler;
+
+	// It stays until the texture stage changes again
+	if ( a_uiSlot < NUM_TEXTURE_STAGES )
+		m_uiDirtySamplers &= ~( 1u << a_uiSlot );
 }
 
 void TRenderD3DInterface::CSSetShaderResource( UINT a_uiSlot, ID3D11ShaderResourceView* a_pView )
@@ -2424,11 +2473,16 @@ void TRenderD3DInterface::ApplyDesiredState()
 		}
 	}
 
-	if ( bForce || m_oApplied.pRenderTargetView != m_oCurrent.pRenderTargetView || m_oApplied.pDepthStencilView != m_oCurrent.pDepthStencilView )
+	ID3D11RenderTargetView* pSecondary = ( m_oCurrent.pRenderTargetView && m_oCurrent.pRenderTargetView == m_pSecondaryRenderTargetOwner ) ? m_oCurrent.pSecondaryRenderTargetView : TNULL;
+
+	if ( bForce || m_oApplied.pRenderTargetView != m_oCurrent.pRenderTargetView || m_oApplied.pSecondaryRenderTargetView != pSecondary || m_oApplied.pDepthStencilView != m_oCurrent.pDepthStencilView )
 	{
-		m_oApplied.pRenderTargetView = m_oCurrent.pRenderTargetView;
-		m_oApplied.pDepthStencilView = m_oCurrent.pDepthStencilView;
-		pContext->OMSetRenderTargets( 1, &m_oCurrent.pRenderTargetView, m_oCurrent.pDepthStencilView );
+		m_oApplied.pRenderTargetView          = m_oCurrent.pRenderTargetView;
+		m_oApplied.pSecondaryRenderTargetView = pSecondary;
+		m_oApplied.pDepthStencilView          = m_oCurrent.pDepthStencilView;
+
+		ID3D11RenderTargetView* apViews[ 2 ] = { m_oCurrent.pRenderTargetView, pSecondary };
+		pContext->OMSetRenderTargets( pSecondary ? 2 : 1, apViews, m_oCurrent.pDepthStencilView );
 	}
 
 	if ( bForce || m_oApplied.pVertexShader != m_oCurrent.pVertexShader )

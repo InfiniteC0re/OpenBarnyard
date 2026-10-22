@@ -181,7 +181,8 @@ public:
 
 	TINT GetSectionID() const { return m_iCurrentSection; }
 
-	void SetLightMag( TINT a_iIndex, TFLOAT a_fMagnitude ) { m_afLightMags[ a_iIndex ] = a_fMagnitude; }
+	void   SetLightMag( TINT a_iIndex, TFLOAT a_fMagnitude ) { m_afLightMags[ a_iIndex ] = a_fMagnitude; }
+	TFLOAT GetLightMag( TINT a_iIndex ) const { return m_afLightMags[ a_iIndex ]; }
 	void SetLightOverride( TBOOL a_bOverride ) { m_bLightOverride = a_bOverride; }
 
 	Toshi::TCollisionCommon::TOSHICGROUPFLAG GetSectionRayIgnoreGroups() const { return m_eSectionRayIgnoreGroups; }

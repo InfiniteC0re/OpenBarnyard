@@ -28,7 +28,7 @@ enum BASISVECTOR_ : BASISVECTOR
 	BASISVECTOR_TRANSLATION
 };
 
-class TMatrix44
+class MODAPI TMatrix44
 {
 public:
 	constexpr TMatrix44() = default;

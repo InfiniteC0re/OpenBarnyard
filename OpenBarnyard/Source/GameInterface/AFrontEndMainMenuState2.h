@@ -5,7 +5,7 @@
 #include "GUI/AFade.h"
 #include "AMessagePopupState.h"
 
-class AFrontEndMainMenuState2 : public ABYardMenuState
+class MODAPI AFrontEndMainMenuState2 : public ABYardMenuState
 {
 public:
 	TDECLARE_CLASS( AFrontEndMainMenuState2, ABYardMenuState );
@@ -34,6 +34,18 @@ public:
 
 	// Sets camera to it's position it should have in front end
 	static void SetupCamera();
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// For a mod replacing the state before it's inserted: the windmill it was given and the flag
+	AWindmillHelper* GetWindmillHelper() const { return m_pWindmillHelper; }
+	TBOOL            GetFlag() const { return m_bFlag; }
+
+	// The class of a mod's state that replaces the main menu
+	inline static Toshi::TClass* ms_pReplacementClass = TNULL;
+
+	// Whether the main menu (or its replacement) is the current state, for the development switches
+	static TBOOL IsCurrent();
+#endif
 
 	//-----------------------------------------------------------------------------
 	// AGameState

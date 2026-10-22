@@ -3,6 +3,9 @@
 
 TOSHI_NAMESPACE_START
 
+class TShaderSourceCache;
+struct TShaderSourceFile;
+
 //-----------------------------------------------------------------------------
 // Purpose: Every permutation of one entry point of a .hlsl file.
 // The combos are declared at the top of the file, before any code:
@@ -13,6 +16,8 @@ TOSHI_NAMESPACE_START
 // definition table and a helper per combo, the index of a permutation is the sum of them:
 //   oPixelShaders.GetPixelShader( GrassShaderCombos::FOG( bFog ) + GrassShaderCombos::TEXTURED( 1 ) )
 // "TShaderCommon.hlsli" can be included for the shared helpers (AlphaTest).
+// The permutations compile on all the cores. Create doesn't touch the render state, so it can
+// run on a worker thread while the game renders.
 //-----------------------------------------------------------------------------
 class MODAPI TShaderCombo
 {
@@ -44,14 +49,16 @@ public:
 	TShaderCombo( const TShaderCombo& )            = delete;
 	TShaderCombo& operator=( const TShaderCombo& ) = delete;
 
-	// Compiles and creates the shaders of every permutation, a_szTarget picks the stage (vs_*, ps_* or cs_*)
-	TBOOL Create( const TCHAR* a_szFileName, LPCSTR a_szEntryPoint, LPCSTR a_szTarget, const Definition* a_pCombos, TUINT a_uiNumCombos );
+	// Compiles and creates the shaders of every permutation, a_szTarget picks the stage (vs_*, ps_* or cs_*).
+	// With a_szCacheFileName the bytecode is kept in that file and reused while the source files
+	// (includes too), the combos and the entry point stay the same
+	TBOOL Create( const TCHAR* a_szFileName, LPCSTR a_szEntryPoint, LPCSTR a_szTarget, const Definition* a_pCombos, TUINT a_uiNumCombos, const TCHAR* a_szCacheFileName = TNULL );
 
 	// Same, with the definitions of a generated header
 	template <class Combos>
-	TBOOL Create( const TCHAR* a_szFileName, LPCSTR a_szEntryPoint, LPCSTR a_szTarget )
+	TBOOL Create( const TCHAR* a_szFileName, LPCSTR a_szEntryPoint, LPCSTR a_szTarget, const TCHAR* a_szCacheFileName = TNULL )
 	{
-		return Create( a_szFileName, a_szEntryPoint, a_szTarget, Combos::s_aCombos, Combos::NUM_COMBOS );
+		return Create( a_szFileName, a_szEntryPoint, a_szTarget, Combos::s_aCombos, Combos::NUM_COMBOS, a_szCacheFileName );
 	}
 
 	void Destroy();
@@ -60,7 +67,7 @@ public:
 	TUINT GetNumPermutations() const { return m_uiNumPermutations; }
 	TUINT GetNumUniqueShaders() const { return m_uiNumUniqueShaders; }
 
-	// The bytecode, for creating input layouts
+	// The bytecode of a vertex shader, for creating input layouts
 	ID3DBlob* GetBlob( TUINT a_uiPermutation ) const;
 
 	ID3D11VertexShader*  GetVertexShader( TUINT a_uiPermutation ) const;
@@ -69,6 +76,12 @@ public:
 
 	// Number of permutations of a definition table
 	static TUINT GetNumPermutations( const Definition* a_pCombos, TUINT a_uiNumCombos );
+
+private:
+	TBOOL Compile( TShaderSourceCache& a_rCache, const TCHAR* a_szFileName, const TShaderSourceFile& a_rcSource, LPCSTR a_szEntryPoint, LPCSTR a_szTarget, const Definition* a_pCombos, TUINT a_uiNumCombos, TUINT a_uiNumPermutations );
+	TBOOL LoadCache( const TCHAR* a_szCacheFileName, TUINT64 a_uiKey, TUINT a_uiNumPermutations, TShaderSourceCache* a_pSourceCache );
+	void  SaveCache( const TCHAR* a_szCacheFileName, TUINT64 a_uiKey, const TShaderSourceCache& a_rcSourceCache ) const;
+	void  ReleaseBlobs();
 
 private:
 	STAGE                m_eStage;

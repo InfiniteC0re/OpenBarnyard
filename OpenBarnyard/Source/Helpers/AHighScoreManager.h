@@ -16,7 +16,7 @@
 // NOTE: the record functions don't use 'this' in the original (they're
 // __stdcall functions of the singleton), they're static here.
 //-----------------------------------------------------------------------------
-class AHighScoreManager
+class MODAPI AHighScoreManager
     : public Toshi::TTask
     , public Toshi::TSingleton<AHighScoreManager>
 {

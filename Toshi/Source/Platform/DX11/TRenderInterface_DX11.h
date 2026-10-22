@@ -240,24 +240,45 @@ public:
 	TFORCEINLINE IDXGISwapChain1*        GetSwapChain() const { return m_pSwapChain; }
 	TFORCEINLINE ID3D11Texture2D*        GetBackBuffer() const { return m_pBackBuffer; }
 	TFORCEINLINE ID3D11RenderTargetView* GetBackBufferRTView() const { return m_pBackBufferRTView; }
-	TFORCEINLINE ID3D11DepthStencilView* GetDepthStencilView() const { return m_pDepthStencilView; }
 
-	// The depth buffer can be read by shaders. The read-only view keeps the depth test on while
-	// it's read, it's TNULL below feature level 11_0
-	TFORCEINLINE ID3D11ShaderResourceView* GetDepthStencilSRV() const { return m_pDepthStencilSRV; }
-	TFORCEINLINE ID3D11DepthStencilView*   GetReadOnlyDepthStencilView() const { return m_pReadOnlyDepthStencilView; }
+	// A depth buffer shaders can read. The read-only view keeps the depth test on while it's read,
+	// it's TNULL below feature level 11_0
+	struct DEPTHTARGET
+	{
+		ID3D11DepthStencilView*   pView;
+		ID3D11DepthStencilView*   pReadOnlyView;
+		ID3D11ShaderResourceView* pSRV; // a Texture2DMS view with MSAA
+	};
 
-	// Off-screen scene target: when enabled (from the next BeginScene on) the frame is rendered into a
-	// texture shaders can read, and EndScene copies it to the back buffer unless SkipSceneCopy was called
-	void  SetSceneTargetEnabled( TBOOL a_bEnabled ) { m_bSceneTargetEnabled = a_bEnabled; }
-	TBOOL IsSceneTargetEnabled() const { return m_bSceneTargetEnabled; }
-	void  SkipSceneCopy() { m_bSkipSceneCopy = TTRUE; }
+	// The depth buffer that is rendered with, the one of the scene target while it's active
+	TFORCEINLINE const DEPTHTARGET&        GetDepthTarget() const { return m_bSceneTargetActive ? m_oSceneDepth : m_oDepth; }
+	TFORCEINLINE ID3D11DepthStencilView*   GetDepthStencilView() const { return GetDepthTarget().pView; }
+	TFORCEINLINE ID3D11ShaderResourceView* GetDepthStencilSRV() const { return GetDepthTarget().pSRV; }
+	TFORCEINLINE ID3D11DepthStencilView*   GetReadOnlyDepthStencilView() const { return GetDepthTarget().pReadOnlyView; }
 
+	//-----------------------------------------------------------------------------
+	// Scene target: an off-screen colour target with its own depth buffer, in any format and with
+	// MSAA. Between BeginSceneTarget and EndSceneTarget everything renders into it (the viewport
+	// clears too), then into the back buffer again. Mods use it for HDR and post processing: the
+	// scene goes into it and is resolved to the back buffer before the GUI is drawn.
+	//-----------------------------------------------------------------------------
+
+	// DXGI_FORMAT_UNKNOWN is the format of the back buffer, takes effect at the next BeginSceneTarget
+	void        SetSceneTargetFormat( DXGI_FORMAT a_eFormat, UINT a_uiSampleCount );
+	DXGI_FORMAT GetSceneTargetFormat() const { return m_eSceneFormat; }
+	UINT        GetSceneTargetSampleCount() const { return m_uiSceneSampleCount; }
+
+	TBOOL BeginSceneTarget();
+	void  EndSceneTarget();
+	TBOOL IsSceneTargetActive() const { return m_bSceneTargetActive; }
+
+	// Valid once BeginSceneTarget has been called, the shader views are Texture2DMS ones with MSAA
 	TFORCEINLINE ID3D11Texture2D*          GetSceneTexture() const { return m_pSceneTexture; }
 	TFORCEINLINE ID3D11RenderTargetView*   GetSceneRTView() const { return m_pSceneRTView; }
 	TFORCEINLINE ID3D11ShaderResourceView* GetSceneSRV() const { return m_pSceneSRV; }
+	TFORCEINLINE const DEPTHTARGET&        GetSceneDepthTarget() const { return m_oSceneDepth; }
 
-	// What the frame is rendered into: the scene target, or the back buffer
+	// What is rendered into: the scene target while it's active, or the back buffer
 	TFORCEINLINE ID3D11Texture2D*        GetRenderTargetTexture() const { return m_bSceneTargetActive ? m_pSceneTexture : m_pBackBuffer; }
 	TFORCEINLINE ID3D11RenderTargetView* GetRenderTargetView() const { return m_bSceneTargetActive ? m_pSceneRTView : m_pBackBufferRTView; }
 	TFORCEINLINE TUINT32                 GetBackBufferWidth() const { return m_uiBackBufferWidth; }
@@ -323,7 +344,7 @@ public:
 	// Unbinds a_pBuffer from every slot, TConstantBufferGeneric::Destroy calls it
 	void UnbindConstantBuffer( TConstantBufferGeneric* a_pBuffer );
 
-	static constexpr TUINT MAX_VERTEX_STREAMS = 2;
+	static constexpr TUINT MAX_VERTEX_STREAMS = 3; // the vertices, the tangents of the remaster, the instances
 	static constexpr TUINT MAX_SRV_SLOTS      = 16;
 	static constexpr TUINT MAX_SAMPLER_SLOTS  = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
 	static constexpr TUINT MAX_UAV_SLOTS      = D3D11_PS_CS_UAV_REGISTER_COUNT;
@@ -335,6 +356,7 @@ public:
 		ID3D11PixelShader*        pPixelShader;
 		ID3D11InputLayout*        pInputLayout;
 		ID3D11RenderTargetView*   pRenderTargetView;
+		ID3D11RenderTargetView*   pSecondaryRenderTargetView; // SV_Target1
 		ID3D11DepthStencilView*   pDepthStencilView;
 		D3D11_PRIMITIVE_TOPOLOGY  eTopology;
 		ID3D11Buffer*             apVertexBuffers[ MAX_VERTEX_STREAMS ];
@@ -363,6 +385,14 @@ public:
 	void SetPixelShader( ID3D11PixelShader* a_pPixelShader ) { m_oCurrent.pPixelShader = a_pPixelShader; }
 	void SetInputLayout( ID3D11InputLayout* a_pInputLayout ) { m_oCurrent.pInputLayout = a_pInputLayout; }
 	void SetRenderTargets( ID3D11RenderTargetView* a_pRenderTargetView, ID3D11DepthStencilView* a_pDepthStencilView );
+
+	// A second colour target (SV_Target1), bound only while a_pPrimary is the first one, so the passes
+	// that switch to other targets don't need to know about it. Same size and sample count as a_pPrimary
+	void SetSecondaryRenderTarget( ID3D11RenderTargetView* a_pPrimary, ID3D11RenderTargetView* a_pSecondary )
+	{
+		m_pSecondaryRenderTargetOwner          = a_pPrimary;
+		m_oCurrent.pSecondaryRenderTargetView = a_pSecondary;
+	}
 	void SetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY a_eTopology ) { m_oCurrent.eTopology = a_eTopology; }
 	void SetVertexBuffer( UINT a_uiSlot, ID3D11Buffer* a_pVertexBuffer, UINT a_uiStride, UINT a_uiOffset );
 	void SetIndexBuffer( ID3D11Buffer* a_pIndexBuffer, DXGI_FORMAT a_eFormat, UINT a_uiOffset );
@@ -391,6 +421,9 @@ public:
 	void InvalidateUnorderedAccessView( ID3D11UnorderedAccessView* a_pView );
 
 	void ApplyDesiredState();
+
+	// The samplers of the texture stages are set again at the next draw, after code that set its own with PSSetSampler
+	void InvalidateSamplerStates() { m_uiDirtySamplers = ( 1u << NUM_TEXTURE_STAGES ) - 1; }
 
 	// The next ApplyDesiredState sends everything, for code that changed the device state behind the renderer
 	void InvalidateStateCache() { m_bStateCacheValid = TFALSE; }
@@ -426,6 +459,7 @@ public:
 	void SetFixedFunctionShader();
 	void SetShaders( ID3D11VertexShader* a_pVertexShader, ID3D11PixelShader* a_pPixelShader, ID3D11InputLayout* a_pInputLayout );
 	void SetTransform( TRANSFORM a_eTransform, const TMatrix44& a_rMatrix );
+	const TMatrix44& GetTransform( TRANSFORM a_eTransform ) const { return m_aTransforms[ a_eTransform ]; }
 	void                      SetTexture( UINT a_uiStage, ID3D11ShaderResourceView* a_pTexture );
 	ID3D11ShaderResourceView* GetTexture( UINT a_uiStage ) const { return m_oCurrent.apPSShaderResources[ a_uiStage ]; }
 	void SetTextureOp( TEXTUREOP a_eTextureOp ) { m_eTextureOp = a_eTextureOp; }
@@ -458,6 +492,7 @@ public:
 	void SetStencil( TBOOL a_bEnable, D3D11_COMPARISON_FUNC a_eFunc, UINT a_uiStencilRef, TUINT8 a_uiMask, D3D11_STENCIL_OP a_eFailOp, D3D11_STENCIL_OP a_eDepthFailOp, D3D11_STENCIL_OP a_ePassOp );
 	void            SetCullMode( D3D11_CULL_MODE a_eCullMode ) { m_CurrentRasterizer.Flags.Parts.CullMode = a_eCullMode; }
 	D3D11_CULL_MODE GetCullMode() const { return D3D11_CULL_MODE( m_CurrentRasterizer.Flags.Parts.CullMode ); }
+	void            SetScissorEnable( TBOOL a_bEnable ) { m_CurrentRasterizer.Flags.Parts.bScissorEnable = a_bEnable; }
 	void SetDepthBias( INT a_iDepthBias, FLOAT a_fSlopeScaledDepthBias );
 	void SetColorUpdate( TBOOL a_bUpdate );
 	void SetAlphaUpdate( TBOOL a_bUpdate );
@@ -485,6 +520,9 @@ private:
 
 	TBOOL CreateBackBufferViews();
 	void  DestroyBackBufferViews();
+
+	TBOOL CreateDepthTarget( UINT a_uiSampleCount, DEPTHTARGET& a_rTarget );
+	void  DestroyDepthTarget( DEPTHTARGET& a_rTarget );
 
 	TBOOL CreateSceneTarget();
 	void  DestroySceneTarget();
@@ -535,15 +573,15 @@ private:
 	PIPELINESTATE m_oApplied; // held by the device
 	TBOOL         m_bStateCacheValid;
 	ID3D11RenderTargetView* m_pBackBufferRTView;
-	ID3D11DepthStencilView* m_pDepthStencilView;
-	ID3D11DepthStencilView* m_pReadOnlyDepthStencilView;
-	ID3D11ShaderResourceView* m_pDepthStencilSRV;
+	DEPTHTARGET               m_oDepth;
+	ID3D11RenderTargetView*   m_pSecondaryRenderTargetOwner;
 	ID3D11Texture2D*          m_pSceneTexture;
 	ID3D11RenderTargetView*   m_pSceneRTView;
 	ID3D11ShaderResourceView* m_pSceneSRV;
-	TBOOL                     m_bSceneTargetEnabled;
-	TBOOL                     m_bSceneTargetActive; // the current frame renders into the scene target
-	TBOOL                     m_bSkipSceneCopy;
+	DEPTHTARGET               m_oSceneDepth;
+	DXGI_FORMAT               m_eSceneFormat;
+	UINT                      m_uiSceneSampleCount;
+	TBOOL                     m_bSceneTargetActive;
 	TUINT32                 m_uiBackBufferWidth;
 	TUINT32                 m_uiBackBufferHeight;
 	TBOOL                   m_bOccluded;

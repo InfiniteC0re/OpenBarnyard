@@ -5,7 +5,7 @@
 
 // Story progress and the save data: a header and NUM_SAVE_SLOTS save slots, kept in one block of memory
 // that SaveLoadSKU writes to / reads from the save file.
-class APlayerProgress
+class MODAPI APlayerProgress
     : public Toshi::TSingleton<APlayerProgress>
 {
 public:

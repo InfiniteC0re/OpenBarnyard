@@ -13,6 +13,7 @@
 #include "Helpers/AGameTimeManager.h"
 #include "HUD/AHudManager.h"
 #include "HUD/ATerrainSectionHudElement.h"
+#include "Render/AGlowViewport.h"
 
 #include <Toshi/T2String.h>
 
@@ -1284,11 +1285,47 @@ static void RenderNothing( TModelInstance* a_pModelInstance )
 {
 }
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+// Not in the original: the lights that reach a cell, for the shaders of mods (the game's ignore them)
+static void BeginCellLighting( CellMeshSphere* a_pMeshSphere )
+{
+	// The cells are exported rotated
+	const TVector4& rcSphere = a_pMeshSphere->m_BoundingSphere.AsVector4();
+	const TSphere   oBounds( rcSphere.x, -rcSphere.z, rcSphere.y, a_pMeshSphere->m_BoundingSphere.GetRadius() );
+
+	TLightIDList oLightIDs;
+	AGlowViewport::GetSingleton()->GetInfluencingLightIDs( oBounds, oLightIDs );
+
+	TRenderContext* pRenderContext = TRenderInterface::GetSingleton()->GetCurrentContext();
+	pRenderContext->ClearLightIDs();
+
+	for ( TINT i = 0; i < TLightIDList::MAX_NUM_LIGHTS; i++ )
+	{
+		if ( oLightIDs[ i ] >= 0 )
+			pRenderContext->AddLight( oLightIDs[ i ] );
+	}
+
+	pRenderContext->SetLightingBounds( oBounds );
+}
+
+static void EndCellLighting()
+{
+	TRenderInterface::GetSingleton()->GetCurrentContext()->ClearLightIDs();
+}
+#endif // BARNYARD_COMMUNITY_PATCH
+
 // $Barnyard: FUNCTION 005e7d10
 static void RenderCellMeshDefault( CellMeshSphere* a_pMeshSphere, RenderData* a_pRenderData )
 {
 	TVALIDPTR( a_pMeshSphere );
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	BeginCellLighting( a_pMeshSphere );
 	a_pMeshSphere->m_pCellMesh->pMesh->Render();
+	EndCellLighting();
+#else
+	a_pMeshSphere->m_pCellMesh->pMesh->Render();
+#endif // BARNYARD_COMMUNITY_PATCH
 }
 
 // $Barnyard: FUNCTION 005e83e0
@@ -1318,7 +1355,14 @@ static void RenderCellMeshWin( CellMeshSphere* a_pMeshSphere, RenderData* a_pRen
 	vecColour *= fLightMag;
 
 	TDYNAMICCAST( AWorldShaderHAL, AWorldShader::GetSingleton() )->SetColours( vecColour, vecColour );
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	BeginCellLighting( a_pMeshSphere );
 	pMesh->Render();
+	EndCellLighting();
+#else
+	pMesh->Render();
+#endif // BARNYARD_COMMUNITY_PATCH
 }
 
 // $Barnyard: FUNCTION 005e8490

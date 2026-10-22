@@ -9,7 +9,7 @@ class APlayerProgress;
 
 // Game state that saves or loads the save data of APlayerProgress, showing a message while it works.
 // The platform specific part (where the data goes) is in SaveLoadSKU.
-class SaveLoad
+class MODAPI SaveLoad
     : public AGameState
 {
 public:

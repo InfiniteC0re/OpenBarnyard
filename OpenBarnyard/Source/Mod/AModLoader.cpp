@@ -15,9 +15,20 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AModLoader );
 
+static TString8 s_strModsBinariesDirectory = "Mods\\Native\\";
+
 AModLoader::AModLoader()
 {
 	m_oCommandLine.Create( GetCommandLineA() );
+
+	// Development: "-modsdir <dir>" loads the native mods from another folder (e.g. a build output)
+	if ( m_oCommandLine.HasParameter( "-modsdir" ) )
+	{
+		s_strModsBinariesDirectory = m_oCommandLine.GetParameterValue( "-modsdir" );
+
+		if ( s_strModsBinariesDirectory.Length() > 0 && s_strModsBinariesDirectory[ s_strModsBinariesDirectory.Length() - 1 ] != '\\' )
+			s_strModsBinariesDirectory += "\\";
+	}
 }
 
 AModLoader::~AModLoader()
@@ -75,7 +86,7 @@ const TCHAR* AModLoader::GetModsDirectory()
 
 const TCHAR* AModLoader::GetModsBinariesDirectory()
 {
-	return "Mods\\Native\\";
+	return s_strModsBinariesDirectory;
 }
 
 void AModLoader::LoadMods()

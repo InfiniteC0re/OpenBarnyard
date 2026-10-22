@@ -3,10 +3,10 @@
 
 TOSHI_NAMESPACE_START
 
-class TGenericDList
+class MODAPI TGenericDList
 {
 public:
-	class TNode
+	class MODAPI TNode
 	{
 	public:
 		friend TGenericDList;
@@ -82,10 +82,10 @@ protected:
 	TNode m_oRoot;
 };
 
-class TGenericPriList
+class MODAPI TGenericPriList
 {
 public:
-	class TNode
+	class MODAPI TNode
 	{
 	public:
 		friend TGenericPriList;

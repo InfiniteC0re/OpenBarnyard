@@ -103,8 +103,8 @@ project "OpenBarnyard"
 	includedirs
 	{
 		"Source",
-		"%{wks.location}/Toshi/Resources",
-		"%{wks.location}/Shared/Source",
+		OpenBarnyardDir .. "/Toshi/Resources",
+		OpenBarnyardDir .. "/Shared/Source",
 		"%{IncludeDir.fmod}",
 		"%{IncludeDir.bink}",
 		"%{IncludeDir.opcode}",
@@ -115,7 +115,7 @@ project "OpenBarnyard"
 	
 	prebuildcommands
 	{
-		"\"%{wks.location}/DevTools/PooledStrings/PooledStrings.exe\" \"%{prj.location}Source\\APooledStrings.txt\" \"%{prj.location}Source\\APooledStrings.cpp\""
+		"\"" .. OpenBarnyardDir .. "/DevTools/PooledStrings/PooledStrings.exe\" \"%{prj.location}Source\\APooledStrings.txt\" \"%{prj.location}Source\\APooledStrings.cpp\""
 	}
 	
 	postbuildcommands

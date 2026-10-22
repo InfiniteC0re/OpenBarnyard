@@ -3227,7 +3227,7 @@ void AGameLoader::Dev_UpdateMiniGameRequest()
 	}
 
 	// Wait until the frontend's main menu is up
-	if ( !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( AFrontEndMainMenuState2 ) ) )
+	if ( !AFrontEndMainMenuState2::IsCurrent() )
 		return;
 
 	s_bStarted = TTRUE;
@@ -4143,7 +4143,7 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 		// first up (New Game / Load Game go through the real menus). The save file is the dev one ("-devsavefile").
 		static TBOOL s_bFrontEndUp = TFALSE;
 
-		if ( !s_bFrontEndUp && AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( AFrontEndMainMenuState2 ) ) )
+		if ( !s_bFrontEndUp && AFrontEndMainMenuState2::IsCurrent() )
 		{
 			s_bFrontEndUp = TTRUE;
 			Dev_SetupSavePath();
@@ -4919,7 +4919,7 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 
 		if ( s_iLoadPhase == 0 )
 		{
-			if ( !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( AFrontEndMainMenuState2 ) ) )
+			if ( !AFrontEndMainMenuState2::IsCurrent() )
 				return;
 
 			s_iLoadPhase = 1;
@@ -4956,7 +4956,7 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 		return;
 
 	// Wait until the frontend's main menu is up
-	if ( !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( AFrontEndMainMenuState2 ) ) )
+	if ( !AFrontEndMainMenuState2::IsCurrent() )
 		return;
 
 	s_bStarted = TTRUE;

@@ -21,7 +21,7 @@ class AModelInstance;
 // TClass 0x0078de7c (version 1.0, size 0x310), singleton at 0x0078de44,
 // vtable 0x007324d0.
 //-----------------------------------------------------------------------------
-class AGateManager
+class MODAPI AGateManager
     : public Toshi::TObject
     , public Toshi::TSingleton<AGateManager>
 {

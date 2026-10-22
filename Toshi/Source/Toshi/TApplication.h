@@ -18,7 +18,7 @@ struct TApplicationExitEvent
 	TBOOL m_bLockedCursor;
 };
 
-class TApplication
+class MODAPI TApplication
 {
 public:
 	TApplication();

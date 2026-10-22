@@ -6,10 +6,10 @@
 #include <Render/TRenderContext.h>
 #include <Toshi/TSceneObject.h>
 
-class AGlowViewport : public Toshi::TSingleton<AGlowViewport>
+class MODAPI AGlowViewport : public Toshi::TSingleton<AGlowViewport>
 {
 public:
-	class GlowObject
+	class MODAPI GlowObject
 	{
 	public:
 		GlowObject();
@@ -58,6 +58,9 @@ public:
 
 	// Prepares created glow objects for rendering
 	void Update();
+
+	// The glow objects that are used, linked by m_pNextObject
+	GlowObject* GetFirstUsedObject() const { return m_pHeadUsedObject; }
 
 private:
 	TINT        m_iMaxNumObjects;

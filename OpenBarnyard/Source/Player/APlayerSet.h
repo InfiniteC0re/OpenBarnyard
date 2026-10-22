@@ -45,7 +45,7 @@ public:
 	TUINT8                         m_uiFlags;
 };
 
-class APlayerSet
+class MODAPI APlayerSet
 {
 public:
 	APlayerSet();

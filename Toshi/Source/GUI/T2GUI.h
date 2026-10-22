@@ -8,7 +8,7 @@
 
 TOSHI_NAMESPACE_START
 
-class T2GUI
+class MODAPI T2GUI
 {
 public:
 	static T2GUIContext*  GetContext() { return ms_pCurrentContext; }

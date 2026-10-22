@@ -6,7 +6,7 @@
 #include <Toshi/TPString8.h>
 #include <Toshi/T2Map.h>
 
-class AKeyFrameLibraryManager : public Toshi::TObject
+class MODAPI AKeyFrameLibraryManager : public Toshi::TObject
     , public Toshi::TSingleton<AKeyFrameLibraryManager>
 {
 public:

@@ -20,7 +20,7 @@
 
 class PBPropertyValue;
 
-class ASoundManager
+class MODAPI ASoundManager
     : public Toshi::TTask
     , public Toshi::TSingleton<ASoundManager>
 {

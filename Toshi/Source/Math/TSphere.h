@@ -4,7 +4,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TSphere
+class MODAPI TSphere
 {
 public:
 	constexpr TSphere() = default;

@@ -4,7 +4,7 @@
 #include <Toshi/TPString8.h>
 #include <Toshi/T2Map.h>
 
-class AModelRepos : public Toshi::TObject
+class MODAPI AModelRepos : public Toshi::TObject
     , public Toshi::TSingleton<AModelRepos>
 {
 public:

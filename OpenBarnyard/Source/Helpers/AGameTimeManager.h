@@ -9,7 +9,7 @@
 
 class AGameTimeFXManager;
 
-class AGameTimeManager
+class MODAPI AGameTimeManager
     : public Toshi::TTask
     , public Toshi::TSingleton<AGameTimeManager>
 {

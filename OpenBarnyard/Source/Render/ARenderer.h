@@ -127,10 +127,12 @@ public:
 	static void CreateDefaultShaders( SHADERS a_eShaders = SHADERS_ALL );
 #endif // BARNYARD_COMMUNITY_PATCH
 
-private:
-	void CreateMainViewport();
+	// Public for mods, which hook them
 	void RenderGUI();
 	void RenderMainScene( TFLOAT a_fDeltaTime );
+
+private:
+	void CreateMainViewport();
 
 	// Takes the screen capture over two frames once m_eScreenCaptureStatus is SCREENCAPTURE_REQUESTED
 	void UpdateScreenCapture( Toshi::TRenderInterface* a_pRender );

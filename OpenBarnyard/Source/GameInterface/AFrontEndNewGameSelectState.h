@@ -11,7 +11,7 @@
 // overwritten first. Once a slot is chosen, the SS01 intro sequence is started (AGameLoader::StartNewGame).
 //
 // TClass 0x0076ee10 (size 0x15c4), vtable 0x00716e58.
-class AFrontEndNewGameSelectState
+class MODAPI AFrontEndNewGameSelectState
     : public ABYardMenuState
 {
 public:
@@ -40,6 +40,10 @@ public:
 #ifdef BARNYARD_COMMUNITY_PATCH
 	// Development: the save slot buttons
 	AGUI2Button& Dev_GetSlotButton( TINT a_iSlot ) { return m_aSlotButtons[ a_iSlot ]; }
+
+	// What choosing a slot does, for a mod replacing the screen: a_bOverwrite once the player agreed
+	// to overwrite the slot in use. Returns TFALSE when the slot is in use and a_bOverwrite isn't set
+	static TBOOL StartNewGameInSlot( TINT a_iSlot, TBOOL a_bOverwrite );
 #endif
 
 private:
@@ -62,4 +66,4 @@ private:
 // Reads the name, the gender and the costume of the player out of a used save slot and formats its
 // save date (" (day/month/year hour:minute)" in the order of the language).
 // NOTE: inlined in AFrontEndNewGameSelectState::OnInsertion and AFrontEndLoadState::OnInsertion
-void AFrontEnd_ReadSaveSlot( const APlayerProgress::SaveSlot* a_pSlot, TWCHAR* a_wszOutName, TWCHAR* a_wszOutDate, TINT& a_rOutGender, TINT& a_rOutCostume );
+MODAPI void AFrontEnd_ReadSaveSlot( const APlayerProgress::SaveSlot* a_pSlot, TWCHAR* a_wszOutName, TWCHAR* a_wszOutDate, TINT& a_rOutGender, TINT& a_rOutCostume );

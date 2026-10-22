@@ -85,6 +85,12 @@ public:
 
 	static constexpr TUINT MAX_NUM_TEXTURES = 600;
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// More slots are added in blocks when the 600 run out
+	static constexpr TINT NUM_EXTRA_SLOTS_PER_BLOCK = 256;
+	static constexpr TINT MAX_EXTRA_SLOT_BLOCKS     = 64;
+#endif
+
 public:
 	AMaterialLibraryManager();
 	~AMaterialLibraryManager();
@@ -109,6 +115,10 @@ public:
 private:
 	void DestroyLibrary( LibrariesMap::Iterator& a_rcMaterialLibraryNode, TBOOL a_bUpdateGUIMaterials );
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	TBOOL AddTextureSlots();
+#endif
+
 private:
 	Toshi::T2Map<Toshi::TPString8, int, Toshi::TPString8::Comparator> m_NumRefLibraries;
 	LibrariesMap                                                      m_LoadedLibraries;
@@ -117,4 +127,9 @@ private:
 	Toshi::T2SList<TextureSlot>                                       m_FreeTextures;
 	TINT                                                              m_iNumUsedTextures;
 	TINT                                                              m_iNumFreeTextures;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	TextureSlot* m_apExtraSlotBlocks[ MAX_EXTRA_SLOT_BLOCKS ];
+	TINT         m_iNumExtraSlotBlocks;
+#endif
 };

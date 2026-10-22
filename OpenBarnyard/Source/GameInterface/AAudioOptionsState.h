@@ -60,7 +60,7 @@ private:
 	TINT                  m_iLastPressedArrowIndex;
 };
 
-class AAudioOptionsState : public ABYardMenuState
+class MODAPI AAudioOptionsState : public ABYardMenuState
 {
 public:
 	TDECLARE_CLASS( AAudioOptionsState, ABYardMenuState );

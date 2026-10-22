@@ -247,6 +247,12 @@ void AFrontEndMainMenuState2::OnInsertion()
 
 #ifdef BARNYARD_COMMUNITY_PATCH
 
+TBOOL AFrontEndMainMenuState2::IsCurrent()
+{
+	AGameStateController* pController = AGameStateController::GetSingleton();
+	return pController->IsCurrentState( &TGetClass( AFrontEndMainMenuState2 ) ) || ( ms_pReplacementClass && pController->IsCurrentState( ms_pReplacementClass ) );
+}
+
 // $BarnyardPS2EU: FUNCTION 00110c18
 void AFrontEndMainMenuState2::UpdateTexts()
 {

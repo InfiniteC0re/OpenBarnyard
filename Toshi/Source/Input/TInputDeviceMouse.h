@@ -14,7 +14,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TInputDeviceMouse : public TInputDevice
+class MODAPI TInputDeviceMouse : public TInputDevice
 {
 public:
 	TDECLARE_CLASS( TInputDeviceMouse, TInputDevice );

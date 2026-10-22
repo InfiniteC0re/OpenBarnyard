@@ -2,7 +2,7 @@
 #include "ABYardMenuState.h"
 #include "GUI/AGUI2Button.h"
 
-class AOptionsState : public ABYardMenuState
+class MODAPI AOptionsState : public ABYardMenuState
 {
 public:
 	TDECLARE_CLASS( AOptionsState, ABYardMenuState );

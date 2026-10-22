@@ -51,6 +51,10 @@ ATreeManager::~ATreeManager()
 // $Barnyard: FUNCTION 005ee7f0
 void ATreeManager::Destroy()
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	ms_uiVersion++;
+#endif
+
 	for ( TINT i = 0; i < TARRAYSIZE( m_apUnk6670 ); i++ )
 	{
 		if ( m_apUnk6670[ i ] )
@@ -144,6 +148,10 @@ void ATreeManager::SetCollisionEnabled( TBOOL a_bEnable )
 // $Barnyard: FUNCTION 005ee170
 TBOOL ATreeManager::Initialise()
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	ms_uiVersion++;
+#endif
+
 	TASSERT( m_pTrunks == TNULL && m_pFOBs == TNULL );
 
 	m_iNumKeyLibs = 0;
@@ -279,6 +287,10 @@ TBOOL ATreeManager::Initialise()
 // $Barnyard: FUNCTION 005ee8e0
 void ATreeManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	ms_uiVersion++;
+#endif
+
 	TVALIDPTR( a_pLocatorList );
 
 	TASSERT( m_pFOBs != TNULL && m_pTrunks != TNULL );
@@ -532,6 +544,10 @@ static ATreeManager::TreeInstanceRenderData s_aInstanceMatrices[ MAX_RENDERED_IN
 // $Barnyard: FUNCTION 005ef2b0
 void ATreeManager::DestroyInstances( ATerrainLocatorList* a_pLocatorList )
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	ms_uiVersion++;
+#endif
+
 	// NOTE: the collisions of the trunks of all the locator lists are destroyed
 	delete[] m_pTrunkCollisionObjects;
 	m_pTrunkCollisionObjects = TNULL;
@@ -645,6 +661,9 @@ void ATreeManager::Render()
 
 	TMatrix44 matModelView = pRenderContext->GetModelViewMatrix();
 	TMatrix44 matLightDir  = pRenderInterface->GetLightDirection();
+#ifdef BARNYARD_COMMUNITY_PATCH
+	const TMatrix44 matLightColour = pRenderInterface->GetLightColour();
+#endif
 
 	TINT iNumLocatorsToRender = 0;
 
@@ -837,6 +856,16 @@ void ATreeManager::Render()
 	}
 
 START_RENDERING:
+#ifdef BARNYARD_COMMUNITY_PATCH
+	if ( ms_bDrawingHidden )
+	{
+		pRenderInterface->SetLightDirectionMatrix( matLightDir );
+		pRenderContext->SetAlphaBlend( 1.0f );
+		pRenderContext->SetModelViewMatrix( matModelView );
+		return;
+	}
+#endif
+
 	static TVector4 s_vecUnused1 = TVector4( 0.7372549f, 0.8156863f, 0.5254902f );
 	static TVector4 s_vecUnused2 = TVector4( 0.54509807f, 0.60784316f, 0.47058824f );
 	static TVector4 s_vecUnused3 = TVector4( 0.9529412f, 0.75686276f, 0.54509807f );
@@ -914,6 +943,19 @@ START_RENDERING:
 			Model* pFOBModel = &m_pFOBs[ pTrunkModel->m_uiID * 2 ];
 			pRenderContext->SetSkeletonInstance( pFOBModel->m_pSceneObject->GetInstance()->GetSkeletonInstance() );
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+			if ( ms_bFOBSelector )
+			{
+				const TUINT8 uiInstanceFlags = aLocatorRenderData[ iInstanceIndex ].uiFlags;
+
+				TMatrix44 matFOBSelector = matLightColour;
+				matFOBSelector.m_f11     = ( uiInstanceFlags & 0xF ) * ( 1.0f / 15.0f );
+				matFOBSelector.m_f12     = TFLOAT( ( uiInstanceFlags >> 4 ) & 3 );
+				matFOBSelector.m_f13     = -1.0f;
+				pRenderInterface->SetLightColourMatrix( matFOBSelector );
+			}
+#endif
+
 			for ( TINT k = 0; k < pTrunkModel->m_iNumFOBs; k++ )
 			{
 				TMatrix44 matFOBTransform;
@@ -928,6 +970,11 @@ START_RENDERING:
 					rLOD.ppMeshes[ k ]->Render();
 			}
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+			if ( ms_bFOBSelector )
+				pRenderInterface->SetLightColourMatrix( matLightColour );
+#endif
+
 			pInstanceRenderData = pInstanceRenderData->pPrev;
 		}
 	}
@@ -936,6 +983,47 @@ START_RENDERING:
 	pRenderContext->SetAlphaBlend( 1.0f );
 	pRenderContext->SetModelViewMatrix( matModelView );
 }
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+// NOTE: the instance matrix and the bounds of Render
+TINT ATreeManager::GetCullTrees( CullTree* a_pOutTrees, TINT a_iMaxTrees ) const
+{
+	TMatrix44 matGlobalTransform = {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+
+	TINT iNumTrees = 0;
+
+	T2_FOREACH( m_llUsedTreeInstances, pTreeInstance )
+	{
+		if ( iNumTrees >= a_iMaxTrees )
+			break;
+
+		const Model*     pTrunk   = &m_pTrunks[ pTreeInstance->iTrunkIndex ];
+		ATerrainLocator* pLocator = &pTreeInstance->pLocatorList->GetHeader()->pLocators[ pTreeInstance->uiLocatorId ];
+		const TFLOAT     fScale   = pLocator->GetScale();
+		CullTree&        rOut     = a_pOutTrees[ iNumTrees++ ];
+
+		TMatrix44 matLocator;
+		pLocator->GetMatrix( matLocator );
+
+		rOut.matWorld.Multiply( matGlobalTransform, matLocator );
+		rOut.matWorld.Scale( fScale );
+
+		rOut.oBounds   = TSphere( pLocator->vecPosition.x, -pLocator->vecPosition.z + pTrunk->m_fGroundOffset, pLocator->vecPosition.y, fScale * pTrunk->m_fRadius );
+		rOut.iTrunk    = pTreeInstance->iTrunkIndex;
+		rOut.uiLocator = pTreeInstance->uiLocatorId;
+		rOut.uiFlags   = TUINT8( pLocator->GetFlags1() | ( pTreeInstance->iColor << 4 ) );
+	}
+
+	return iNumTrees;
+}
+
+#endif // BARNYARD_COMMUNITY_PATCH
 
 // $Barnyard: FUNCTION 005edd80
 ATreeManager::Model::Model()

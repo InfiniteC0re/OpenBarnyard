@@ -330,8 +330,6 @@ void AGrassShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 
 			for ( TINT i = 1; i <= iNumLayers; i++ )
 			{
-				extern T2Texture* g_aGrassLayers[ 7 ]; // AModelLoader_World.cpp
-
 				pRender->SetTexture( 0, g_aGrassLayers[ i ]->GetD3DTexture() );
 				pRender->SetVec4InVSBuffer( CONSTANT_ANIMATION, &g_vecAnimOffset );
 

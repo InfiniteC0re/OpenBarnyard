@@ -2,7 +2,7 @@
 #include <Toshi/T2Allocator.h>
 #include <T2Locale/T2Locale.h>
 
-class ALocaleManager : public Toshi::T2Locale
+class MODAPI ALocaleManager : public Toshi::T2Locale
 {
 public:
 	constexpr static const TCHAR* s_pLangDataFileNames[] = {

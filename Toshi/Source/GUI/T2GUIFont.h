@@ -35,7 +35,7 @@ struct T2GUIFontDef
 	T2GUIFontDefCharacterData* pCharactersData;
 };
 
-class T2GUIFont
+class MODAPI T2GUIFont
 {
 public:
 	enum TextAlign : TUINT32

@@ -7,7 +7,7 @@
 // opened by the Antics button of the main menu. Uses the UI of the SS01 intro
 // sequence (ASSeqUI) and opens the minigame selection once it's done.
 //-----------------------------------------------------------------------------
-class AFrontEndCharacterSelectState : public AGameState
+class MODAPI AFrontEndCharacterSelectState : public AGameState
 {
 public:
 	TDECLARE_CLASS( AFrontEndCharacterSelectState, AGameState );

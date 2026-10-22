@@ -4,6 +4,9 @@
 --       files { "Source/**.h", "Source/**.cpp" }
 --
 -- The DLL is copied to Game/Mods/Native, where the game loads mods from.
+-- The OpenBarnyard folder, this file is in OpenBarnyard/Mods
+local ModProjectRoot = path.getabsolute( path.join( _SCRIPT_DIR, ".." ) )
+
 function ModProject( name )
 	project( name )
 	kind "SharedLib"
@@ -20,13 +23,13 @@ function ModProject( name )
 	files
 	{
 		-- Routes the mod's new/delete to the game's allocator
-		path.join( _MAIN_SCRIPT_DIR, "Toshi/Source/Mod/ModMemory.cpp" )
+		path.join( ModProjectRoot, "Toshi/Source/Mod/ModMemory.cpp" )
 	}
 
 	includedirs
 	{
-		"%{wks.location}/OpenBarnyard/Source",
-		"%{wks.location}/Toshi/Resources",
+		path.join( ModProjectRoot, "OpenBarnyard/Source" ),
+		path.join( ModProjectRoot, "Toshi/Resources" ),
 		"%{IncludeDir.fmod}",
 		"%{IncludeDir.bink}",
 		"%{IncludeDir.opcode}",

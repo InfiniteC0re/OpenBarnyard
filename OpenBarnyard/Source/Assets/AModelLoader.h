@@ -17,7 +17,7 @@
 #  include <Render/TTMDWin.h>
 #endif
 
-class AModelLoader
+class MODAPI AModelLoader
     : public Toshi::TObject
     , public Toshi::TSingleton<AModelLoader>
 {
@@ -85,10 +85,13 @@ private:
 	static void  WorldMaterialApplyProperties( AWorldMaterial* a_pMaterial, const TCHAR* a_szMaterialName );
 
 	static void LoadGrassMeshTRB( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader );
-	static void LoadWorldMeshTRB( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader );
-	static void LoadSkinLOD( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader );
 
 	static void InitialiseGrassLayersTextures();
+
+public:
+	// Public for mods, which hook them
+	static void LoadWorldMeshTRB( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader );
+	static void LoadSkinLOD( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader );
 
 private:
 	static TBOOL __stdcall AModelLoaderLoadTMDCallback( Toshi::TModel* a_pModel );
@@ -121,3 +124,6 @@ private:
 private:
 	Toshi::TTRB m_oTRB;
 };
+
+// The textures of the grass shell layers, 1 to 6 (AModelLoader::InitialiseGrassLayersTextures)
+extern MODAPI Toshi::T2Texture* g_aGrassLayers[ 7 ];

@@ -83,7 +83,7 @@ private:
 	AGUI2Slider m_oSlider; // 0x74
 };
 
-class AControlOptionsState : public ABYardMenuState
+class MODAPI AControlOptionsState : public ABYardMenuState
 {
 public:
 	TDECLARE_CLASS( AControlOptionsState, ABYardMenuState );

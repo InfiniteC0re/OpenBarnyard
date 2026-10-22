@@ -5,7 +5,7 @@ TOSHI_NAMESPACE_START
 
 class TGenericEmitter;
 
-class TGenericListener : public TPriList<TGenericListener>::TNode
+class MODAPI TGenericListener : public TPriList<TGenericListener>::TNode
 {
 public:
 	using t_Callback = TBOOL( __stdcall* )( void* a_pCaller, void* a_pOwner, void* a_pData );
@@ -26,7 +26,7 @@ private:
 	t_Callback m_pCallback = TNULL;
 };
 
-class TGenericEmitter
+class MODAPI TGenericEmitter
 {
 public:
 	TGenericEmitter();

@@ -36,6 +36,10 @@ AMaterialLibraryManager::AMaterialLibraryManager()
 		m_FreeTextures.PushFront( &m_aSlots[ i ] );
 		m_iNumFreeTextures++;
 	}
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	m_iNumExtraSlotBlocks = 0;
+#endif
 }
 
 // $Barnyard: FUNCTION 006146f0
@@ -51,7 +55,34 @@ AMaterialLibraryManager::~AMaterialLibraryManager()
 	m_iNumFreeTextures = 0;
 	m_FreeTextures.Clear();
 	m_UsedTextures.Clear();
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	for ( TINT i = 0; i < m_iNumExtraSlotBlocks; i++ )
+		delete[] m_apExtraSlotBlocks[ i ];
+
+	m_iNumExtraSlotBlocks = 0;
+#endif
 }
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+TBOOL AMaterialLibraryManager::AddTextureSlots()
+{
+	if ( m_iNumExtraSlotBlocks >= MAX_EXTRA_SLOT_BLOCKS )
+		return TFALSE;
+
+	TextureSlot* pBlock                             = new TextureSlot[ NUM_EXTRA_SLOTS_PER_BLOCK ];
+	m_apExtraSlotBlocks[ m_iNumExtraSlotBlocks++ ] = pBlock;
+
+	for ( TINT i = 0; i < NUM_EXTRA_SLOTS_PER_BLOCK; i++ )
+	{
+		m_FreeTextures.PushFront( &pBlock[ i ] );
+		m_iNumFreeTextures++;
+	}
+
+	TINFO( "AMaterialLibraryManager: %d texture slots added past the 600 of the game\n", m_iNumExtraSlotBlocks * NUM_EXTRA_SLOTS_PER_BLOCK );
+	return TTRUE;
+}
+#endif
 
 // $Barnyard: FUNCTION 00613ee0
 void AMaterialLibraryManager::LoadLibrariesFromProperties( const PBPropertyValue* a_pProperty, TTRB* a_pTRB, TBOOL a_bUpdateGUIMaterials )
@@ -301,6 +332,14 @@ void AMaterialLibraryManager::UnloadTexturesOfLibrary( AMaterialLibrary* a_pMate
 void AMaterialLibraryManager::CreateTextures( AMaterialLibrary* a_pMatLibrary )
 {
 	auto pTextureFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>( SYSRESOURCE_TEXTUREFACTORY );
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// NOTE: retail has 600 slots and runs out of them in big levels (the merged world of the remaster)
+	while ( m_iNumFreeTextures < a_pMatLibrary->GetNumTextures() && AddTextureSlots() )
+		;
+
+	TASSERT( m_iNumFreeTextures >= a_pMatLibrary->GetNumTextures() && "AMaterialLibraryManager: out of texture slots" );
+#endif
 
 	for ( TINT i = 0; i < a_pMatLibrary->GetNumTextures(); i++ )
 	{

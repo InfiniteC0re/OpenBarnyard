@@ -669,6 +669,11 @@ void AModelInstance::RenderInstanceCallback( TModelInstance* a_pInstance, void* 
 		TLightIDList lightIds;
 		AGlowViewport::GetSingleton()->GetInfluencingLightIDs( boundingSphere, lightIds );
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+		// The lights of mods are found with the same sphere
+		pRenderContext->SetLightingBounds( boundingSphere );
+#endif // BARNYARD_COMMUNITY_PATCH
+
 		if ( lightIds[ 0 ] != -1 )
 		{
 			// Add light to the render context

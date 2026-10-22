@@ -8,7 +8,7 @@
 // Formatting of the localised strings.
 // Names come from JPOG (ALocale::FormatTags, ALocale::FormatValue, ALocale::FormatMoney).
 //-----------------------------------------------------------------------------
-class ALocale
+class MODAPI ALocale
 {
 public:
 	// Maximum number of ':' separated tokens in a %{...} tag

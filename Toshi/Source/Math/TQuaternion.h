@@ -15,7 +15,7 @@
 
 TOSHI_NAMESPACE_START
 
-class TQuaternion
+class MODAPI TQuaternion
 {
 public:
 	TQuaternion()

@@ -43,6 +43,10 @@ public:
 	TFLOAT GetAlpha() const { return m_fAlpha; }
 	void   SetAlpha( TFLOAT val ) { m_fAlpha = val; }
 
+	// Unused by the game, the shaders of mods attach their own data to their packets
+	void* GetUserData() const { return m_pUnk; }
+	void  SetUserData( void* a_pData ) { m_pUnk = a_pData; }
+
 #ifndef TOSHI_SDK
 private:
 #endif

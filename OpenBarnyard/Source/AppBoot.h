@@ -28,4 +28,4 @@ public:
 	ADummyTask* m_pRenderTask;
 };
 
-extern AApplication g_oTheApp;
+extern MODAPI AApplication g_oTheApp;

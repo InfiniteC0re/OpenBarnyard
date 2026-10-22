@@ -20,7 +20,7 @@ TOSHI_NAMESPACE_START
 
 class TPString8Pool;
 
-class TPooledString8 : public TRefCounted
+class MODAPI TPooledString8 : public TRefCounted
 {
 public:
 	TDECLARE_FREELIST_ALLOCATOR( TPooledString8 );
@@ -46,7 +46,7 @@ private:
 	TPString8Pool* m_pPool;
 };
 
-class TPString8Pool
+class MODAPI TPString8Pool
 {
 public:
 	// Doesn't initialise strings from TPString8Initialiser

@@ -4,7 +4,7 @@
 #include <Toshi/TClass.h>
 #include <Toshi/TTask.h>
 
-class ASimAnimModelHelperManager
+class MODAPI ASimAnimModelHelperManager
     : public Toshi::TTask
     , public Toshi::TSingleton<ASimAnimModelHelperManager>
 {

@@ -23,7 +23,7 @@ public:
 	}
 
 public:
-	struct HALBuffer
+	struct MODAPI HALBuffer
 	{
 		HALBuffer();
 

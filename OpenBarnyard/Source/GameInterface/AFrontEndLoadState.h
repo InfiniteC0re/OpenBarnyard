@@ -10,7 +10,7 @@
 // The chosen slot is loaded by AGameLoader::LoadSavedGame.
 //
 // TClass 0x0076ed80 (size 0x19b4), vtable 0x00716bc8.
-class AFrontEndLoadState
+class MODAPI AFrontEndLoadState
     : public ABYardMenuState
 {
 public:

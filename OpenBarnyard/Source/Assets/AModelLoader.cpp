@@ -358,7 +358,6 @@ TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMa
 	    eTextureFormat == DXGI_FORMAT_B4G4R4A4_UNORM ||
 	    eTextureFormat == DXGI_FORMAT_BC3_UNORM;
 #endif
-
 	if ( a_pShader->IsA( &TGetClass( ASkinShader ) ) )
 	{
 		ASkinShaderHAL* pShader   = TDYNAMICCAST( ASkinShaderHAL, a_pShader );

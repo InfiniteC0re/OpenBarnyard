@@ -12,7 +12,7 @@ class ATerrainLocatorList;
 // coefficient of the render context while the instance is rendered.
 // m_fShadeCoeff is the time of day (0 is day, 1 is night), set by AGameTimeFX.
 //-----------------------------------------------------------------------------
-class AInstanceLightingHelper
+class MODAPI AInstanceLightingHelper
     : public Toshi::TSingleton<AInstanceLightingHelper>
 {
 public:

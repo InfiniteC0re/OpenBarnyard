@@ -90,6 +90,10 @@ AInstanceManager::~AInstanceManager()
 // $Barnyard: FUNCTION 005e1e80
 TBOOL AInstanceManager::LoadModels( TINT a_iInstanceLibIndex, TINT a_iNumModels, TUINT* a_pModelIndices, TBOOL a_bCreateCollisionModelNodes, TBOOL a_bCreateCollisionModelInstances, TINT a_iNumCollisionModelNodes )
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	ms_uiVersion++;
+#endif
+
 	TASSERT( a_iInstanceLibIndex > -1 );
 
 	// Update flags
@@ -239,6 +243,10 @@ void AInstanceManager::DestroyDynamicInstances()
 // $Barnyard: FUNCTION 005e1ae0
 void AInstanceManager::Reset()
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	ms_uiVersion++;
+#endif
+
 	for ( TSIZE i = 0; i < TARRAYSIZE( m_aLists ); i++ )
 		ClearList( m_aLists[ i ] );
 
@@ -309,6 +317,9 @@ TBOOL AInstanceManager::Render()
 		// Don't check terrain section visibility
 
 		// Static instances
+#ifdef BARNYARD_COMMUNITY_PATCH
+		if ( !ms_bStaticInstancesHidden )
+#endif
 		FillRenderList_All( m_llUsedInstances, matModelView, s_aRenderList, iRenderListSize, TFALSE );
 
 		// Dynamic instances
@@ -319,6 +330,9 @@ TBOOL AInstanceManager::Render()
 		// Check terrain section visibility
 
 		// Static instances
+#ifdef BARNYARD_COMMUNITY_PATCH
+		if ( !ms_bStaticInstancesHidden )
+#endif
 		FillRenderList_Visible( m_llUsedInstances, matModelView, s_aRenderList, iRenderListSize, TFALSE );
 
 		// Dynamic instances
@@ -401,6 +415,10 @@ TBOOL AInstanceManager::Render()
 // $BarnyardWiiJP: FUNCTION 8037463c
 void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	ms_uiVersion++;
+#endif
+
 	TSTATICASSERT( 255 > NUM_MODELS );
 
 	// Per-locator spawn flags (parallel array to the locator list)
@@ -1062,6 +1080,88 @@ void AInstanceManager::FillRenderList_Visible( const Toshi::T2SList<StaticInstan
 	}
 }
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+TINT AInstanceManager::GetCullInstances( CullInstance* a_pOutInstances, TINT a_iMaxInstances ) const
+{
+	TINT iNumInstances = 0;
+
+	T2_FOREACH( m_llUsedInstances, it )
+	{
+		if ( iNumInstances >= a_iMaxInstances )
+			break;
+
+		const ATerrainLocator* pLocator = it->pLocatorList->GetLocator( it->uiLocatorIndex );
+		CullInstance&          rOut     = a_pOutInstances[ iNumInstances++ ];
+
+		TMatrix44 matLocatorLocalTransform;
+		pLocator->GetMatrix( matLocatorLocalTransform );
+
+		const TFLOAT flLocatorScale = ( it->uiPackedScaleYaw & 0b1111 ) * 0.2f;
+		rOut.matWorld.Multiply( s_mInstanceTransform, matLocatorLocalTransform );
+		rOut.matWorld.Scale( flLocatorScale, flLocatorScale, flLocatorScale );
+
+		rOut.oBounds = TSphere(
+		    pLocator->vecPosition.x,
+		    -pLocator->vecPosition.z,
+		    pLocator->vecPosition.y,
+		    INSTANCE_RENDER_DISTANCE_MULTIPLIER * m_pModels[ it->uiModelIndex ].pManagedModel->GetModel()->GetRenderDistance()
+		);
+
+		if ( it->uiModelIndex == 44 || it->uiModelIndex == 45 )
+			rOut.oBounds.GetRadius() *= 1.75f;
+
+		rOut.iModel     = it->uiModelIndex;
+		rOut.uiLocator  = it->uiLocatorIndex;
+		rOut.uiExposure = it->uiPackedScaleYaw >> 4;
+	}
+
+	return iNumInstances;
+}
+
+// NOTE: the first step of FillRenderList_Visible
+TINT AInstanceManager::GetCullVISRanges( TUINT* a_pOutRanges, TINT a_iMaxRanges ) const
+{
+	if ( m_uiFlags & FLAGS_INTERIOR )
+		return -1;
+
+	return GetTerrainVISRanges( a_pOutRanges, a_iMaxRanges );
+}
+
+TINT AInstanceManager::GetTerrainVISRanges( TUINT* a_pOutRanges, TINT a_iMaxRanges )
+{
+	ATerrainInterface*   pTerrainInterface = ATerrainInterface::GetSingleton();
+	ATerrainVIS*         pTerrainVIS       = pTerrainInterface->GetVIS();
+	ATerrainLocatorList* pLocatorList      = pTerrainInterface->GetLocatorList();
+
+	if ( !pTerrainVIS || !pLocatorList || pLocatorList->GetNumVISSections() == 0 )
+		return -1;
+
+	TINT             iNumSections    = pTerrainVIS->GetNumSections();
+	ATerrainSection* pCurrentSection = &pTerrainVIS->GetSections()[ pTerrainInterface->GetSectionID() ];
+	TINT             iNumRanges      = 0;
+
+	for ( TINT i = 0; i < pLocatorList->GetNumVISSections() && iNumRanges < a_iMaxRanges; i++ )
+	{
+		ATerrainLocatorVISSection* pLocatorVISSection = &pLocatorList->GetVISHeader()->pSections[ i ];
+		TBOOL                      bVisible           = !TStringManager::String8CompareNoCase( "undefined", pLocatorVISSection->pName );
+
+		for ( TINT k = 0; k < iNumSections && !bVisible; k++ )
+			bVisible = pCurrentSection->IsOtherSectionVisible( k ) && !TStringManager::String8CompareNoCase( pTerrainVIS->GetSections()[ k ].GetName(), pLocatorVISSection->pName );
+
+		if ( bVisible )
+		{
+			a_pOutRanges[ iNumRanges * 2 ]     = pLocatorVISSection->uiFirstLocator;
+			a_pOutRanges[ iNumRanges * 2 + 1 ] = pLocatorVISSection->uiFirstLocator + pLocatorVISSection->uiNumLocators;
+			iNumRanges++;
+		}
+	}
+
+	return iNumRanges;
+}
+
+#endif // BARNYARD_COMMUNITY_PATCH
+
 // $Barnyard: FUNCTION 005e00f0
 void AInstanceManager::DestroyCollisionSets()
 {
@@ -1079,6 +1179,10 @@ void AInstanceManager::DestroyCollisionSets()
 // $Barnyard: FUNCTION 005e0f80
 void AInstanceManager::DestroyInstances( ATerrainLocatorList* a_pLocatorList )
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	ms_uiVersion++;
+#endif
+
 	// Collisions
 	for ( TSIZE i = 0; i < TARRAYSIZE( m_aLists ); i++ )
 	{
