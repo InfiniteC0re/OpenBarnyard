@@ -66,7 +66,12 @@ TBOOL TRenderCaptureD3D::Request()
 	}
 
 	RECT oRect;
+#ifdef BARNYARD_COMMUNITY_PATCH
+	GetClientRect( pRender->GetMSWindow()->GetHWND(), &oRect );
+	MapWindowPoints( pRender->GetMSWindow()->GetHWND(), HWND_DESKTOP, (LPPOINT)&oRect, 2 );
+#else
 	GetWindowRect( pRender->GetMSWindow()->GetHWND(), &oRect );
+#endif // BARNYARD_COMMUNITY_PATCH
 
 	if ( pRender->GetCurrentDisplayParams()->bWindowed != TTRUE )
 	{

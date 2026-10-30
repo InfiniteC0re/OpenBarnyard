@@ -153,7 +153,7 @@ void T2GUIFont::DrawTextWrapped( const TWCHAR* a_wszText, TFLOAT a_fX, TFLOAT a_
 				DrawTextSingleLine( pTextBuffer2, pTextBuffer - pTextBuffer2, fPosX, a_fY, a_uiColour, a_fScale, a_fnCallback );
 			}
 
-			a_fY += ( pFontDef->uiLineHeight + pFontDef->uiLinesMargin ) * a_fScale;
+			a_fY += ( pFontDef->uiLineHeight + pFontDef->iLinesMargin ) * a_fScale;
 
 		} while ( *pTextBuffer != L'\0' );
 	}
@@ -282,7 +282,7 @@ TFLOAT T2GUIFont::GetTextHeightWrapped( const TWCHAR* a_wszText, TFLOAT a_fMaxWi
 				}
 			}
 
-			fHeight += ( pFontDef->uiLineHeight + pFontDef->uiLinesMargin ) * a_fScale;
+			fHeight += ( pFontDef->uiLineHeight + pFontDef->iLinesMargin ) * a_fScale;
 
 		} while ( *pTextBuffer != L'\0' );
 
@@ -355,7 +355,7 @@ TFLOAT T2GUIFont::GetLineHeight()
 TFLOAT T2GUIFont::GetLinesMargin()
 {
 	if ( m_pFontDef )
-		return TFLOAT( m_pFontDef->uiLinesMargin );
+		return TFLOAT( m_pFontDef->iLinesMargin );
 
 	return 0.0f;
 }
@@ -552,7 +552,7 @@ void T2GUIFont::DrawTextWrapped( const TWCHAR* a_wszText, TUINT32 a_uiColour, Te
 	if ( !a_wszText || *a_wszText == L'\0' || !m_pFontDef )
 		return;
 
-	TFLOAT fLineAdvance = a_fScale * ( m_pFontDef->uiLineHeight + TINT8( m_pFontDef->uiLinesMargin ) );
+	TFLOAT fLineAdvance = a_fScale * ( m_pFontDef->uiLineHeight + m_pFontDef->iLinesMargin );
 	TINT   iCharsLeft   = 0;
 
 	if ( a_iMaxChars >= 0 )
@@ -713,7 +713,7 @@ TFLOAT T2GUIFont::GetTextHeightWrapped( const TWCHAR* a_wszText, IconWidthCallba
 
 	if ( a_wszText && *a_wszText != L'\0' && m_pFontDef )
 	{
-		TFLOAT        fLineAdvance = a_fScale * ( m_pFontDef->uiLineHeight + TINT8( m_pFontDef->uiLinesMargin ) );
+		TFLOAT        fLineAdvance = a_fScale * ( m_pFontDef->uiLineHeight + m_pFontDef->iLinesMargin );
 		TINT          iCharsLeft   = ( a_iMaxChars >= 0 ) ? a_iMaxChars : 0;
 		const TWCHAR* pLine        = a_wszText;
 

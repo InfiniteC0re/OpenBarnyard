@@ -329,14 +329,15 @@ void PGUITRDisplayContext::DrawLabel( const TGUIRectangle* a_pRect, const TGUIFo
 		TINT   iWidth     = pGlyph->GetWidth();
 		TINT   iHeight    = pGlyph->GetHeight();
 		TFLOAT fY1        = TFLOAT( iY ) + TFLOAT( a_pFont->GetFontHeight() ) - TFLOAT( iHeight ) + TFLOAT( pGlyph->GetBaseline() );
+		TFLOAT fX1 = TFLOAT( iX + pGlyph->GetKerningLeft() );
 
 		InsertRectIntoMesh(
 		    pTexture,
 		    a_rcColour,
-		    TFLOAT( iX ),
+		    fX1,
 		    fY1,
-		    TFLOAT( iWidth ) + TFLOAT( iX ),
-		    TFLOAT( iHeight ) + fY1,
+		    TFLOAT( iWidth + 1 ) + fX1,
+		    TFLOAT( iHeight + 1 ) + fY1,
 		    TFLOAT( iDepth ),
 		    TFLOAT( iGlyphX ) * fInvWidth,
 		    TFLOAT( iGlyphY ) * fInvHeight,
@@ -393,7 +394,7 @@ void PGUITRDisplayContext::DrawLabel( const TGUIRectangle* a_pRect, const TGUIFo
 		TINT   iGlyphY    = pGlyph->GetY();
 		TINT   iWidth     = pGlyph->GetWidth();
 		TINT   iHeight    = pGlyph->GetHeight();
-		TFLOAT fX1        = TFLOAT( iOffsetX ) + TFLOAT( iX );
+		TFLOAT fX1        = TFLOAT( iOffsetX ) + TFLOAT( iX ) + TFLOAT( pGlyph->GetKerningLeft() ); // NOTE: see the other DrawLabel
 		TFLOAT fY1        = TFLOAT( iY ) + TFLOAT( iOffsetY ) - TFLOAT( iHeight ) + TFLOAT( pGlyph->GetBaseline() );
 
 		InsertRectIntoMesh(
@@ -401,8 +402,8 @@ void PGUITRDisplayContext::DrawLabel( const TGUIRectangle* a_pRect, const TGUIFo
 		    a_rcColour,
 		    fX1,
 		    fY1,
-		    TFLOAT( a_pOffset->m_iWidth ) + TFLOAT( iWidth ) + fX1,
-		    TFLOAT( iHeight ) + TFLOAT( a_pOffset->m_iHeight ) + fY1,
+		    TFLOAT( a_pOffset->m_iWidth ) + TFLOAT( iWidth + 1 ) + fX1,
+		    TFLOAT( iHeight + 1 ) + TFLOAT( a_pOffset->m_iHeight ) + fY1,
 		    TFLOAT( iDepth ),
 		    TFLOAT( iGlyphX ) * fInvWidth,
 		    TFLOAT( iGlyphY ) * fInvHeight,

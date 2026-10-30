@@ -390,7 +390,7 @@ void AMobilePhoneUIState2::OnInsertion()
 
 	// The message, with more space between the lines
 	m_pMessageFont = T2GUIFontManager::FindFont( "Rekord18" )->Clone();
-	m_pMessageFont->GetFontDef()->uiLinesMargin += 8;
+	m_pMessageFont->GetFontDef()->iLinesMargin += 8;
 
 	m_oMessage.Create( m_pMessageFont, fPhoneWidth * 0.685f );
 	m_oMessage.SetScale( 1.0f );

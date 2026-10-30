@@ -272,7 +272,7 @@ ASpeechDialogManager::ASpeechDialogManager()
 {
 	// The text uses Rekord18 with more space between the lines
 	m_pFont = T2GUIFontManager::FindFont( "Rekord18" )->Clone();
-	m_pFont->GetFontDef()->uiLinesMargin += 8;
+	m_pFont->GetFontDef()->iLinesMargin += 8;
 
 	m_pChoice = new Choice();
 }

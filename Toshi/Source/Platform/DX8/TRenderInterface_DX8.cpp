@@ -275,6 +275,13 @@ TBOOL TRenderD3DInterface::BeginScene()
 			RECT windowRect;
 			GetWindowRect( m_Window.GetHWND(), &windowRect );
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+			windowRect.left   = 0;
+			windowRect.top    = 0;
+			windowRect.right  = LONG( m_SurfaceDesk.Width );
+			windowRect.bottom = LONG( m_SurfaceDesk.Height );
+#endif // BARNYARD_COMMUNITY_PATCH
+
 			D3DVIEWPORT8 viewport = {
 				.X      = 0,
 				.Y      = 0,

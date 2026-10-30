@@ -25,7 +25,7 @@ struct T2GUIFontDef
 	void*                      Unk1;
 	const TCHAR*               szTextureNames;
 	TINT8                      iLetterSpacing;
-	TUINT8                     uiLinesMargin;
+	TINT8                      iLinesMargin;
 	TUINT8                     uiLineHeight;
 	TUINT8                     uiNumMaterials;
 	TUINT16                    ui16MaxCharacter;

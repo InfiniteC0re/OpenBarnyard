@@ -160,6 +160,17 @@ void TMSWindow::SetFocused( TBOOL a_bFocused )
 void TMSWindow::SetPosition( UINT x, UINT y, UINT width, UINT height )
 {
 #ifdef BARNYARD_COMMUNITY_PATCH
+	if ( m_bWindowed )
+	{
+		RECT oRect = { 0, 0, LONG( width ), LONG( height ) };
+
+		if ( AdjustWindowRectEx( &oRect, GetWindowLongA( m_HWND, GWL_STYLE ), FALSE, GetWindowLongA( m_HWND, GWL_EXSTYLE ) ) )
+		{
+			width  = UINT( oRect.right - oRect.left );
+			height = UINT( oRect.bottom - oRect.top );
+		}
+	}
+
 	if ( IsBackgroundMode() )
 	{
 		// Above and to the left of the whole virtual desktop (all monitors), so it never covers anything
