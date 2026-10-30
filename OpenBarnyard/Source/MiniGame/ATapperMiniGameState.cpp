@@ -4892,46 +4892,6 @@ void ATapperMiniGameState::UpdateGame( TFLOAT a_fDeltaTime )
 	if ( !m_oStartHudElement.IsForceHidden() )
 		return;
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// Development: "-devautoplay" runs fill and throw glasses and switch the bars
-	if ( T2String8::FindString( GetCommandLineA(), "-devautoplay" ) && m_eEndState == ENDSTATE_NONE )
-	{
-		static TFLOAT s_fTime  = 0.0f;
-		static TINT   s_iCycle = 0;
-		static TINT   s_iStep  = 0;
-		TBOOL         bHandled = TFALSE;
-
-		s_fTime += a_fDeltaTime;
-
-		if ( s_iStep == 0 && s_fTime > 0.5f )
-		{
-			// Hold Shoot to fill a glass
-			HandleCommand( AInputCommand_Shoot, TInputInterface::EVENT_TYPE_GONE_DOWN, bHandled );
-			s_iStep = 1;
-		}
-		else if ( s_iStep == 1 && s_fTime > 1.0f )
-		{
-			// Release it to throw the glass
-			HandleCommand( AInputCommand_Shoot, TInputInterface::EVENT_TYPE_GONE_UP, bHandled );
-			TINFO( "[devautoplay] threw a glass at bar %d, score %d, lives %d\n", m_iBar, GetCurrentPlayer().iScore, GetCurrentPlayer().iLives );
-			s_iStep = 2;
-		}
-		else if ( s_iStep == 2 && s_fTime > 1.6f )
-		{
-			// Every 8th glass goes to the other bar
-			if ( ( ++s_iCycle & 7 ) == 0 )
-			{
-				AInputCommand eCommand = ( ( s_iCycle / 8 ) & 1 ) ? AInputCommand_ForwardWithUp : AInputCommand_BackwardWithUp;
-				HandleCommand( eCommand, TInputInterface::EVENT_TYPE_GONE_DOWN, bHandled );
-				HandleCommand( eCommand, TInputInterface::EVENT_TYPE_GONE_UP, bHandled );
-			}
-
-			s_fTime = 0.0f;
-			s_iStep = 0;
-		}
-	}
-#endif
-
 	if ( m_eEndState != ENDSTATE_NONE )
 	{
 		m_fEndTimer -= a_fDeltaTime;

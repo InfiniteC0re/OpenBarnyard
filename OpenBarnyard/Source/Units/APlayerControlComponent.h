@@ -90,23 +90,7 @@ public:
 	void SetUseItemCooldown( TFLOAT a_fValue ) { m_fUseItemCooldown = a_fValue; }
 
 #ifdef BARNYARD_COMMUNITY_PATCH
-	// Dev: -devwalk feeds this fake left stick to the movement every update
-	static void SetDevStick( TFLOAT a_fX, TFLOAT a_fY )
-	{
-		ms_bDevStick   = TTRUE;
-		ms_vDevStick.x = a_fX;
-		ms_vDevStick.y = a_fY;
-	}
-
-	// Dev: -devtalk presses the action button once on the next update
-	static void DevInteract() { ms_bDevInteract = TTRUE; }
-
 	AUnit* GetTargetUnit() const { return m_pTargetUnit; }
-
-	// NOTE: not in retail
-	inline static TBOOL           ms_bDevStick = TFALSE;
-	inline static Toshi::TVector2 ms_vDevStick;
-	inline static TBOOL           ms_bDevInteract = TFALSE;
 #endif
 
 #ifdef BARNYARD_LATEST

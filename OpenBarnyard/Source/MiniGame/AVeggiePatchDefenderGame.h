@@ -354,11 +354,6 @@ private:
 	Fence*             FindNearestOpenGate( const Toshi::TVector4& a_rcPosition, Toshi::TVector4& a_rOutPosition, TFLOAT& a_rDistance );
 	AVeggiePatchThief* FindNearestMilkedThief( const Toshi::TVector4& a_rcPosition, Toshi::TVector4& a_rOutPosition, TFLOAT& a_rDistance );
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// -devautoplay: the player squirts the raccoons, throws them out and closes the gates
-	void DevAutoPlay( TFLOAT a_fDeltaTime );
-#endif
-
 private:
 	TBOOL                          m_bUnkbc0;                            // 0x0bc0
 	TINT                           m_iUnkbc4;                            // 0x0bc4

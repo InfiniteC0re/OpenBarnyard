@@ -30,7 +30,7 @@
 #include "Animation/AAnimatableObject.h"
 #include "Physics/ACollisionObjectSimple.h"
 #include "Locale/ALocaleManager.h"
-#include "Render/ADebugOverlay.h"
+#include "Debug/ADebugOverlay.h"
 
 #include <Toshi/TStringManager.h>
 
@@ -50,11 +50,11 @@ TPSTRING8_DECLARE( idle );
 
 #ifdef BARNYARD_COMMUNITY_PATCH
 // NOTE: retail never sets m_bShowPlayerFloats to TRUE (every write stores FALSE), so the
-// "P1".."P4"/"Com" markers above the players are dead code on PC. "-playerfloats" turns
+// "P1".."P4"/"Com" markers above the players are dead code on PC. minigame.player_floats turns
 // them back on for the minigames that don't explicitly disable them (Statues does).
 static TBOOL ShouldShowPlayerFloats()
 {
-	return TStringManager::String8FindString( GetCommandLineA(), "-playerfloats" ) != TNULL;
+	return AMiniGameState::ms_iShowPlayerFloats != 0;
 }
 #endif
 

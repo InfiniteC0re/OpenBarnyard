@@ -84,13 +84,6 @@ TBOOL TRenderInterface::Destroy()
 {
 	TASSERT( TTRUE == IsCreated(), "TRender is not created" );
 
-#if defined( BARNYARD_COMMUNITY_PATCH ) && defined( TOSHI_SKU_WINDOWS )
-
-	g_pMemory->DestroyMemBlock( m_pMemBlock );
-	HeapFree( GetProcessHeap(), 0, m_pMemBlockRaw );
-
-#endif // BARNYARD_COMMUNITY_PATCH && TOSHI_SKU_WINDOWS
-
 	if ( m_Unk2 )
 	{
 		delete m_Unk2;
@@ -105,6 +98,26 @@ TBOOL TRenderInterface::Destroy()
 
 	m_pCurrentContext = TNULL;
 	m_bCreated        = TFALSE;
+
+#if defined( BARNYARD_COMMUNITY_PATCH ) && defined( TOSHI_SKU_WINDOWS )
+
+	if ( m_pMemBlock )
+	{
+#  ifndef TMEMORY_USE_DLMALLOC
+		g_pMemory->FreeMemBlock( m_pMemBlock );
+#  else
+		g_pMemory->DestroyMemBlock( m_pMemBlock );
+#  endif
+		m_pMemBlock = TNULL;
+	}
+
+	if ( m_pMemBlockRaw )
+	{
+		HeapFree( GetProcessHeap(), 0, m_pMemBlockRaw );
+		m_pMemBlockRaw = TNULL;
+	}
+
+#endif // BARNYARD_COMMUNITY_PATCH && TOSHI_SKU_WINDOWS
 
 	return TTRUE;
 }

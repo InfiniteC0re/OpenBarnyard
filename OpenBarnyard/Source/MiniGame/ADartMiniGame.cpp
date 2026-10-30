@@ -541,21 +541,6 @@ void ADartMiniGame::UpdateGame( TFLOAT a_fDeltaTime )
 
 	ADart& rDart = GetCurrentDart();
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// Development: "-devautoplay" runs stop the aim bars of the first player
-	if ( !rPlayer.bComputer && T2String8::FindString( GetCommandLineA(), "-devautoplay" ) )
-	{
-		// Different timings for each dart so that the aim varies
-		TFLOAT fFireTimeX = 0.3f + 0.37f * TFLOAT( rPlayer.iCurrentDart % 4 );
-		TFLOAT fFireTimeY = 0.2f + 0.29f * TFLOAT( ( rPlayer.iCurrentDart + 1 ) % 3 );
-
-		if ( rDart.m_eState == ADart::STATE_AIM_X && m_fAimTimerX > fFireTimeX )
-			m_bFireX = TTRUE;
-		else if ( rDart.m_eState == ADart::STATE_AIM_Y && m_fAimTimerY > fFireTimeY )
-			m_bFireY = TTRUE;
-	}
-#endif
-
 	switch ( rDart.m_eState )
 	{
 		case ADart::STATE_IDLE:

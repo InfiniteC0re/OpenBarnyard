@@ -122,11 +122,6 @@ private:
 	static TBOOL __stdcall OnQuitCallback( AStartMenuState* a_pStartMenu, void* a_pUserData, AMessagePopupState* a_pPopup, AMessagePopupState::ResponseEvent* a_pEvent );
 	static TBOOL __stdcall OnLeavePopupResponse( ACookingMiniGame* a_pGame, AMessagePopupState* a_pPopup, AMessagePopupState::ResponseEvent* a_pEvent );
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// Development: "-devautoplay" cooks the first recipe the player has the ingredients of, then leaves
-	void Dev_Update( TFLOAT a_fDeltaTime );
-#endif
-
 private:
 	inline static TBOOL ms_bCocktails   = TFALSE; // DAT_007833b0
 	inline static TBOOL ms_bIgnoreShoot = TFALSE; // DAT_007833b4, the next Shoot closed the recipe book or the popup

@@ -252,9 +252,14 @@ public:
 
 	void DumpMemInfo();
 
-private:
+	/**
+	 * Releases the slot of a memory block without freeing its memory (for blocks made with CreateMemBlockInPlace)
+	 * @param a_pMemBlock Memory block to release
+	 */
 	TBOOL FreeMemBlock( MemBlock* a_pMemBlock );
-	void  SetMemBlockUnused( MemBlock* a_pMemBlock );
+
+private:
+	void SetMemBlockUnused( MemBlock* a_pMemBlock );
 
 	static MemNode* GetMemNodeFromAddress( void* a_pMem );
 	static void     ExtendNodeSize( MemNode* a_pNode, TSIZE a_uiExtendSize ) { a_pNode->uiSize = a_uiExtendSize | ( a_pNode->uiSize & TMEMORY_FLAGS_MASK ); }

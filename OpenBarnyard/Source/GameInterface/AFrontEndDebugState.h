@@ -11,7 +11,7 @@
 // labels (unreferenced at 0x0077263c). Recovered from the PS2 build (SLUS_212.77,
 // vtable 0x505878, size 0xbfc), which keeps every virtual but not the
 // constructor (see Docs/PS2DeadCode.md).
-// Reachable in community builds with "-devsseq" (main menu, Antics button).
+// Reachable in community builds with "frontend.antics 1" (main menu, Antics button).
 //-----------------------------------------------------------------------------
 class AFrontEndDebugState
     : public ABYardMenuState

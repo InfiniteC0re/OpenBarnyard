@@ -10,10 +10,6 @@
 #include "TTextureFactoryHAL_DX8.h"
 #include "TTextureResourceHAL_DX8.h"
 
-#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
-#  include "TDevScreenshot_DX8.h"
-#endif
-
 #include "Render/TShader.h"
 #include "Input/TInputInterface.h"
 
@@ -318,9 +314,8 @@ TBOOL TRenderD3DInterface::EndScene()
 
 		if ( SUCCEEDED( hRes ) )
 		{
-#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
-			// Development: "-devshot" saves the finished frame (GUI included) before it's presented
-			TDevScreenshot::Update( m_pDirectDevice );
+#ifdef BARNYARD_COMMUNITY_PATCH
+			TRenderCaptureD3D::CapturePending( m_pDirectDevice );
 #endif
 
 			HRESULT hPresentRes = m_pDirectDevice->Present( NULL, NULL, NULL, NULL );

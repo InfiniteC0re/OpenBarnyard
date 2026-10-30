@@ -31,23 +31,7 @@ public:
 	virtual TBOOL ProcessCommand( AInputCommand a_eCommand, const Toshi::TInputInterface::InputEvent* a_pEvent ) OVERRIDE; // +0x3c
 	virtual void  OnDisable() OVERRIDE;                                                                                    // +0x40
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// Dev: -devbike rides the bike without input (steering, throttle)
-	static void SetDevInput( TFLOAT a_fSteering, TFLOAT a_fThrottle )
-	{
-		ms_bDevInput    = TTRUE;
-		ms_fDevSteer    = a_fSteering;
-		ms_fDevThrottle = a_fThrottle;
-	}
-#endif
-
 private:
-#ifdef BARNYARD_COMMUNITY_PATCH
-	inline static TBOOL  ms_bDevInput    = TFALSE;
-	inline static TFLOAT ms_fDevSteer    = 0.0f;
-	inline static TFLOAT ms_fDevThrottle = 0.0f;
-#endif
-
 	// Picks up the items around the bike
 	void UpdatePickUps( TFLOAT a_fDeltaTime );
 

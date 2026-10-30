@@ -39,7 +39,7 @@
 #include "MiniGame/ATreasueHuntMicroGame.h"
 #include "Helpers/AGameLoader.h"
 #include "Player/APlayerManager.h"
-#include "Render/ADebugOverlay.h"
+#include "Debug/ADebugOverlay.h"
 #include "Cameras/AGTAStyleCameraHelper.h"
 #include "Input/AInputHandler.h"
 #include "Player/APlayerProfileManager.h"

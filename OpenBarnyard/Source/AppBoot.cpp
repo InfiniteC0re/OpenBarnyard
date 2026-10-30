@@ -25,6 +25,7 @@
 #include "Tasks/ARootTask.h"
 #include "Mod/AModLoader.h"
 #include "Assets/AAssetLoader.h"
+#include "Debug/APrimeDebug.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -435,6 +436,11 @@ TBOOL AApplication::OnCreate( int argc, TCHAR** argv )
 {
 	TINFO( "Starting Barnyard...\n" );
 
+#ifdef PRIMEDEBUG
+	// The settings read while the systems are created take the dev config and the command line first
+	APrimeDebug::CreateConsole();
+#endif
+
 	// Initialise important systems
 	if ( !CreateOptionalSystems() )
 		return TFALSE;
@@ -521,33 +527,36 @@ TBOOL AApplication::OnCreate( int argc, TCHAR** argv )
 //-----------------------------------------------------------------------------
 // The original has no frame limiter: fullscreen Present waits for the vertical blank, but windowed mode runs
 // uncapped, which changes everything that is tuned per frame.
-// "-fpslimit <N>" caps the frame rate to N FPS (off by default, like retail).
+// game.fps_limit (console, AApplication::ms_fFPSLimit) caps the frame rate (0, the default: none, like retail).
 //-----------------------------------------------------------------------------
-
-static constexpr TFLOAT DEFAULT_FPS_LIMIT = 0.0f; // no limit
 
 static TBOOL         s_bFrameLimiterInitialised = TFALSE;
 static LARGE_INTEGER s_iPerfFrequency;
+static TFLOAT        s_fAppliedLimit  = 0.0f;
 static LONGLONG      s_iFrameTicks    = 0; // 0 = no limit
 static LONGLONG      s_iNextFrameTime = 0;
 static HANDLE        s_hWaitTimer     = NULL;
 
-static void FrameLimiter_Initialise()
+// Takes a new game.fps_limit
+static void FrameLimiter_Update()
 {
-	s_bFrameLimiterInitialised = TTRUE;
-
-	QueryPerformanceFrequency( &s_iPerfFrequency );
-
-	const TCHAR* pchCommandLine = GetCommandLineA();
-	TFLOAT       fLimit         = DEFAULT_FPS_LIMIT;
-
-	if ( const TCHAR* pchArg = TStringManager::String8FindString( pchCommandLine, "-fpslimit " ) )
-		fLimit = TFLOAT( atof( pchArg + TStringManager::String8Length( "-fpslimit " ) ) );
-
-	if ( fLimit > 0.0f )
+	if ( !s_bFrameLimiterInitialised )
 	{
-		s_iFrameTicks = LONGLONG( TFLOAT( s_iPerfFrequency.QuadPart ) / fLimit );
+		s_bFrameLimiterInitialised = TTRUE;
+		QueryPerformanceFrequency( &s_iPerfFrequency );
+	}
+	else if ( AApplication::ms_fFPSLimit == s_fAppliedLimit )
+	{
+		return;
+	}
 
+	const TFLOAT fLimit = TMath::Max( AApplication::ms_fFPSLimit, 0.0f );
+	s_fAppliedLimit     = AApplication::ms_fFPSLimit;
+	s_iFrameTicks       = fLimit > 0.0f ? LONGLONG( TFLOAT( s_iPerfFrequency.QuadPart ) / fLimit ) : 0;
+	s_iNextFrameTime    = 0;
+
+	if ( fLimit > 0.0f && !s_hWaitTimer )
+	{
 		// High resolution waitable timer (Windows 10 1803+); a normal one otherwise (~1 ms with timeBeginPeriod)
 		s_hWaitTimer = CreateWaitableTimerExW( NULL, NULL, 0x00000002 /* CREATE_WAITABLE_TIMER_HIGH_RESOLUTION */, TIMER_ALL_ACCESS );
 		if ( !s_hWaitTimer )
@@ -557,7 +566,7 @@ static void FrameLimiter_Initialise()
 		}
 	}
 
-	TINFO( "Frame rate limit: %.1f FPS%s\n", fLimit > 0.0f ? fLimit : 0.0f, fLimit > 0.0f ? "" : " (uncapped)" );
+	TINFO( "Frame rate limit: %.1f FPS%s\n", fLimit, fLimit > 0.0f ? "" : " (uncapped)" );
 }
 
 static void FrameLimiter_Wait()
@@ -599,9 +608,7 @@ static void FrameLimiter_Wait()
 
 TBOOL AApplication::OnUpdate( TFLOAT a_fDeltaTime )
 {
-	if ( !s_bFrameLimiterInitialised )
-		FrameLimiter_Initialise();
-
+	FrameLimiter_Update();
 	FrameLimiter_Wait();
 
 	return TApplication::OnUpdate( a_fDeltaTime );

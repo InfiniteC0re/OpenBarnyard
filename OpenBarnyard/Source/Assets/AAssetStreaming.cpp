@@ -28,6 +28,10 @@ AAssetStreaming::AAssetStreaming()
 // $Barnyard: FUNCTION 00606760
 AAssetStreaming::~AAssetStreaming()
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	m_FileStream.Stop();
+#endif
+
 	m_FileStream.Destroy();
 	TFree( m_Unk );
 }

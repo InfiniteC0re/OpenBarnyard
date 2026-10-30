@@ -5,6 +5,7 @@
 #include "Units/AControlComponentManager.h"
 #include "GUI/AGUI2.h"
 #include "AOptions.h"
+#include "Debug/APrimeDebug.h"
 
 #include <Input/TInputInterface.h>
 
@@ -136,6 +137,10 @@ TBOOL AInputHandler::OnUpdate( TFLOAT a_fDeltaTime )
 
 	TInputInterface::GetSingleton()->AcquireAll();
 	TInputInterface::GetSingleton()->ProcessEvents( a_fDeltaTime );
+
+#ifdef PRIMEDEBUG_DEV
+	APrimeDebug::Update( a_fDeltaTime );
+#endif
 
 	if ( !m_bRumblePaused )
 		UpdateRumbles( a_fDeltaTime );

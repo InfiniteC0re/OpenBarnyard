@@ -82,11 +82,6 @@ public:
 	TBOOL            IsExiting() const { return m_bExiting; }
 	AGopherShopMenu* GetShopMenu() const { return m_pMenu; }
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// Development: the item "-devgophershop" bought, -1 if none
-	inline static TINT ms_iDevBoughtId = -1;
-#endif
-
 private:
 	// The locale id of the name of category a_iCategory
 	static TINT GetCategoryTextId( TINT a_iCategory );
@@ -149,10 +144,6 @@ private:
 
 	static void OnMenuItemActivatedCallback( void* a_pUserData, AGUI2MenuItem* a_pItem );
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// Development: "-devgophershop" buys an item and leaves
-	void Dev_Update( TFLOAT a_fDeltaTime );
-#endif
 	static TBOOL __stdcall OnQuitCallback( AStartMenuState* a_pStartMenu, void* a_pUserData, AMessagePopupState* a_pPopup, AMessagePopupState::ResponseEvent* a_pEvent );
 
 private:

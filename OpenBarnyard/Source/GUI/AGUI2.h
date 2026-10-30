@@ -66,6 +66,9 @@ public:
 
 #  ifdef BARNYARD_COMMUNITY_PATCH
 	void DevLoadXUIScene( const TCHAR* a_szArgs );
+
+	// Console xui.load: the scene loaded once AGUI2 has run 5 seconds
+	inline static TCHAR ms_szDevXUIScene[ 128 ];
 #  endif
 #endif // BARNYARD_LATEST
 

@@ -165,11 +165,6 @@ static const TVector4 s_avHiveCameraPositions[ AHoneyCollectingGame::MAX_HIVES ]
 	TVector4( 2.37f, -3.34f, -9.05f, 1.0f ),
 };
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-// Development: "-devautoplay" leaves the woods (see OnUpdate)
-static TBOOL s_bDevLeave = TFALSE;
-#endif
-
 // Sets the text and the hint
 static void ShowHint( AGUI2TextBox& a_rHint, AHoneyCollectingGame::HINT& a_reHint, TINT a_iLocale, AHoneyCollectingGame::HINT a_eHint )
 {
@@ -750,24 +745,7 @@ TBOOL AHoneyCollectingGame::OnUpdate( TFLOAT a_fDeltaTime )
 
 	m_pInteractionArea = pArea;
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	TBOOL bResult = AMiniGameState::OnUpdate( a_fDeltaTime );
-
-	if ( s_bDevLeave )
-	{
-		// Development: "-devautoplay" leaves the woods here, the state is destroyed right away
-		s_bDevLeave = TFALSE;
-		TINFO( "[honeyauto] leave the woods (combs %d, royal jelly %d)\n", m_iNumCombs, m_bRoyalJelly );
-
-		TInputInterface::InputEvent oEvent( TNULL, 0, TInputInterface::EVENT_TYPE_GONE_DOWN );
-		TBOOL                       bStopEvents = TFALSE;
-		ProcessCommand( AInputCommand_Interact, &oEvent, bStopEvents );
-	}
-
-	return bResult;
-#else
 	return AMiniGameState::OnUpdate( a_fDeltaTime );
-#endif
 }
 
 // $Barnyard: FUNCTION 0048eda0
@@ -2314,10 +2292,6 @@ LABEL_UPDATE_ACTIONS:
 		pHelper->SetCameraPosition( vCamera );
 		pHelper->SetForceUpdate( TFALSE );
 	}
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-	DevAutoPlay( a_fDeltaTime );
-#endif
 }
 
 // $Barnyard: FUNCTION 0048cde0
@@ -2618,160 +2592,3 @@ TBOOL __stdcall AHoneyCollectingGame::OnMilkHit( AHoneyCollectingGame* a_pCaller
 
 	return TTRUE;
 }
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-
-// Development: "-devautoplay" runs. The player gets out of the stump, is moved in front
-// of the first hive with honey and turns the stick around the comb until the jar is full, squirting
-// milk at the attacking swarms and swatting the bees away when they sting. Then he is moved to the entrance of the woods and leaves (see OnUpdate).
-void AHoneyCollectingGame::DevAutoPlay( TFLOAT a_fDeltaTime )
-{
-	if ( !T2String8::FindString( GetCommandLineA(), "-devautoplay" ) )
-		return;
-
-	static TFLOAT s_fTimer = 0.0f;
-	static TFLOAT s_fAngle = 0.0f;
-	s_fTimer += a_fDeltaTime;
-
-	TBOOL bStopEvents = TFALSE;
-
-	// Swat the bees
-	if ( m_iNumStinging > 0 && !m_bHiding )
-	{
-		if ( s_fTimer >= 0.15f )
-		{
-			s_fTimer = 0.0f;
-			TINFO( "[honeyauto] swat (power %.2f, lives %d)\n", m_oSwatBar.m_fTargetValue, m_iLives );
-			TInputInterface::InputEvent oEvent( TNULL, 0, TInputInterface::EVENT_TYPE_GONE_DOWN );
-			ProcessCommand( AInputCommand_Jump, &oEvent, bStopEvents );
-		}
-
-		return;
-	}
-
-	// Squirt milk at an attacking swarm (it disperses): face it every frame, squirt once facing it
-	static TFLOAT s_fSquirtTimer = 0.0f;
-	static TBOOL  s_abMilked[ NUM_SWARMS ];
-	s_fSquirtTimer += a_fDeltaTime;
-
-	for ( TINT i = 0; i < NUM_SWARMS; i++ )
-	{
-		TBOOL bMilked = m_apSwarms[ i ] && m_apSwarms[ i ]->GetState() == ABeeSwarm::STATE_DISPERSE_MILKED;
-
-		if ( bMilked && !s_abMilked[ i ] )
-			TINFO( "[honeyauto] swarm %d dispersed by the milk\n", i );
-
-		s_abMilked[ i ] = bMilked;
-	}
-
-	if ( !m_bCollecting && !m_bHiding )
-	{
-		for ( TINT i = 0; i < NUM_SWARMS; i++ )
-		{
-			ABeeSwarm* pSwarm = m_apSwarms[ i ];
-
-			if ( !pSwarm || ( pSwarm->GetState() != ABeeSwarm::STATE_ATTACK && pSwarm->GetState() != ABeeSwarm::STATE_ALERT ) )
-				continue;
-
-			TVector4 vDirection;
-			vDirection.Substract( *pSwarm->GetSteer()->GetPosition(), *m_pPlayer->GetSteer()->GetPosition() );
-			vDirection.y     = 0.0f;
-			TFLOAT fDistance = vDirection.Magnitude();
-			vDirection.Normalise();
-
-			TFLOAT fFacing = TVector4::DotProduct3( vDirection, *m_pPlayer->GetSteer()->GetDirection() );
-			m_pPlayer->GetSteer()->SetDirection( vDirection );
-
-			AProjectileLauncher* pLauncher = m_pPlayer->GetActiveLauncher();
-
-			if ( pLauncher && fFacing > 0.95f && fDistance < 8.0f && s_fSquirtTimer >= 0.3f )
-			{
-				s_fSquirtTimer = 0.0f;
-				pLauncher->Fire();
-				TINFO( "[honeyauto] squirt at swarm %d (state %d, distance %.1f)\n", i, pSwarm->GetState(), fDistance );
-			}
-
-			break;
-		}
-	}
-
-	if ( m_bCollecting )
-	{
-		// Turn the stick around the comb
-		s_fAngle += a_fDeltaTime * TMath::TWO_PI;
-
-		TInputInterface::InputEvent oEvent( TNULL, 0, TInputInterface::EVENT_TYPE_MOVED, TFLOAT( sin( s_fAngle ) ), TFLOAT( -cos( s_fAngle ) ) );
-		ProcessCommand( AInputCommand_Move, &oEvent, bStopEvents );
-		return;
-	}
-
-	if ( s_fTimer < 1.0f || m_bWalkingToHive || m_bLeavingHive || m_bLeavingHide )
-		return;
-
-	s_fTimer = 0.0f;
-
-	if ( m_bHiding )
-	{
-		TINFO( "[honeyauto] leave the stump\n" );
-		TInputInterface::InputEvent oEvent( TNULL, 0, TInputInterface::EVENT_TYPE_GONE_DOWN );
-		ProcessCommand( AInputCommand_Interact, &oEvent, bStopEvents );
-		return;
-	}
-
-	APlayerSteer* pSteer = TSTATICCAST( APlayerSteer, m_pPlayer->GetSteer() );
-
-	if ( m_bWon )
-	{
-		if ( m_bAtExit )
-		{
-			s_bDevLeave = TTRUE;
-			return;
-		}
-
-		TINT iArea = m_pNetwork->FindAreaIndex( TPS8( entrance ) );
-
-		if ( iArea != -1 )
-		{
-			TVector4 vPosition;
-			m_pNetwork->GetArea( iArea )->GetPosition( vPosition );
-			pSteer->SetPosition( vPosition );
-			TINFO( "[honeyauto] go to the entrance (combs %d, royal jelly %d)\n", m_iNumCombs, m_bRoyalJelly );
-		}
-
-		return;
-	}
-
-	if ( m_eAction == ACTION_COLLECT )
-	{
-		TINFO( "[honeyauto] collect hive %d (honey %d)\n", m_iHive, m_aHives[ m_iHive ].iHoney );
-		TInputInterface::InputEvent oEvent( TNULL, 0, TInputInterface::EVENT_TYPE_GONE_DOWN );
-		ProcessCommand( AInputCommand_Interact, &oEvent, bStopEvents );
-		return;
-	}
-
-	if ( !m_oCollectHud.IsFull() )
-		return;
-
-	// Go in front of the first hive with honey
-	for ( TINT i = 0; i < m_iNumHives; i++ )
-	{
-		if ( m_aHives[ i ].iHoney <= 0 )
-			continue;
-
-		TVector4 vSide = m_avHiveDirections[ i ];
-		vSide.AsVector3().RotateY( TMath::HALF_PI );
-
-		TVector4 vPosition( m_avHivePositions[ i ].x + vSide.x, m_avHivePositions[ i ].y, m_avHivePositions[ i ].z + vSide.z, 1.0f );
-		vPosition.y = ATerrainInterface::GetSingleton()->GetGroundHeight( vPosition, TCollisionCommon::TOSHICGROUPFLAG_NONE );
-
-		TVector4 vDirection( -vSide.x, 0.0f, -vSide.z, 1.0f );
-		vDirection.Normalise();
-
-		pSteer->SetPosition( vPosition );
-		pSteer->SetDirection( vDirection );
-		TINFO( "[honeyauto] go to hive %d\n", i );
-		return;
-	}
-}
-
-#endif

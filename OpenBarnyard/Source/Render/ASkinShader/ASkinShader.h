@@ -37,6 +37,11 @@ public:
 	virtual void           SetPointLights( TBOOL a_bEnabled );
 	virtual TBOOL          IsPointLightsEnabled();
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Console render.low_end_skin: the DX8 shader uses the low end (CPU skinning) path
+	inline static TINT ms_iForceLowEndSkinning = 0;
+#endif
+
 protected:
 	union
 	{

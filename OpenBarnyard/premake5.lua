@@ -11,6 +11,7 @@ project "OpenBarnyard"
 	links
 	{
 		"Toshi",
+		"PrimeDebug",
 		"OPCODE",
 		"MinHook",
 		"binkw32.lib"
@@ -37,6 +38,8 @@ project "OpenBarnyard"
 		"Source/Assets/**.cpp",
 		"Source/Cameras/**.h",
 		"Source/Cameras/**.cpp",
+		"Source/Debug/**.h",
+		"Source/Debug/**.cpp",
 		"Source/Helpers/**.h",
 		"Source/Helpers/**.cpp",
 		"Source/GameInterface/**.h",
@@ -103,6 +106,7 @@ project "OpenBarnyard"
 	includedirs
 	{
 		"Source",
+		OpenBarnyardDir .. "/PrimeDebug/Source",
 		OpenBarnyardDir .. "/Toshi/Resources",
 		OpenBarnyardDir .. "/Shared/Source",
 		"%{IncludeDir.fmod}",

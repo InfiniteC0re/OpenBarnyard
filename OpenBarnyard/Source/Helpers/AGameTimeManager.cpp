@@ -2,7 +2,7 @@
 #include "AGameTimeManager.h"
 #include "FX/AGameTimeFXManager.h"
 #include "FSM/AMethodPointer.h"
-#include "Render/ADebugOverlay.h"
+#include "Debug/ADebugOverlay.h"
 
 #include <Toshi/TSystem.h>
 
@@ -114,7 +114,7 @@ TBOOL AGameTimeManager::Reset()
 TBOOL AGameTimeManager::OnUpdate( TFLOAT a_fDeltaTime )
 {
 #ifdef ADEBUGOVERLAY
-	// Development: the time on the debug overlay (once a frame, "-devtimescale" updates the time again)
+	// Development: the time on the debug overlay (once a frame, game.time_scale updates the time again)
 	static TUINT s_uiPrintFrame = 0;
 
 	if ( ADebugOverlay::IsPrinting() && s_uiPrintFrame != g_oSystemManager.GetFrameCount() )

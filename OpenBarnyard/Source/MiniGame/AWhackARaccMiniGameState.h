@@ -309,12 +309,6 @@ private:
 	static void OnIntroCueReset( TINT a_iType, TINT a_iCueIndex, void* a_pUserData );                          // 004d98c0
 	static TBOOL __stdcall OnMalletImpact( AWhackARaccMiniGameState* a_pThis, void* a_pOwner, void* a_pData ); // 004dc1b0
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-public:
-	// -devautoplay: moves the ring to the best target and swings the mallet
-	void DevAutoPlay( TFLOAT a_fDeltaTime );
-#endif
-
 private:
 	AAnimatableObject*      m_pMallet;                         // 0x0bac, "wacmallet"
 	AAnimatableObject*      m_pRing;                           // 0x0bb0, "wackring"

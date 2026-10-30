@@ -121,6 +121,10 @@ ASoundManager::~ASoundManager()
 
 	FSOUND_Close();
 	m_PauseListener.Disconnect();
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	m_SoundBanks.Clear();
+#endif // BARNYARD_COMMUNITY_PATCH
 }
 
 // $Barnyard: FUNCTION 005dab50
@@ -1723,8 +1727,7 @@ TBOOL ASoundManager::Initialise()
 {
 #ifdef BARNYARD_COMMUNITY_PATCH
 	// Dev switches: "-background" (and "-mute") runs make no sound. Everything else keeps working, FMOD just has no output device.
-	// "-devaudio" keeps the real output
-	const TBOOL bMuted = ( T2String8::FindString( GetCommandLineA(), "-background" ) || T2String8::FindString( GetCommandLineA(), "-mute" ) ) && !T2String8::FindString( GetCommandLineA(), "-devaudio" );
+	const TBOOL bMuted = T2String8::FindString( GetCommandLineA(), "-background" ) || T2String8::FindString( GetCommandLineA(), "-mute" );
 	if ( bMuted ) FSOUND_SetOutput( FSOUND_OUTPUT_NOSOUND );
 #endif
 

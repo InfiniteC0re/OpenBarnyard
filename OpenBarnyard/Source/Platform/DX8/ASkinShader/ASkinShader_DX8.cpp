@@ -560,9 +560,11 @@ void ASkinShaderHAL::EnableHighEndSkinning( TBOOL a_bEnable )
 	m_bHighEndSkinning = a_bEnable && IsCapableHighEndSkinning();
 
 #ifdef BARNYARD_COMMUNITY_PATCH
-	// Development: "-devlowendskin" forces the low end (CPU skinning, fixed function) path
-	if ( TStringManager::String8FindString( GetCommandLineA(), "-devlowendskin" ) )
+	// render.low_end_skin forces the low end (CPU skinning, fixed function) path
+	if ( ms_iForceLowEndSkinning )
 		m_bHighEndSkinning = TFALSE;
+
+	TINFO( "ASkinShaderHAL: %s skinning\n", m_bHighEndSkinning ? "high end" : "low end" );
 #endif
 }
 

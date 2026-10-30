@@ -5,7 +5,7 @@
 #include "Player/APlayerManager.h"
 #include "Units/AUnit.h"
 #include "UnitMovement/Steering/ASteer.h"
-#include "Render/ADebugOverlay.h"
+#include "Debug/ADebugOverlay.h"
 
 #include <Math/TQuaternion.h>
 

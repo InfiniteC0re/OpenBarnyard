@@ -2,10 +2,12 @@
 #include "ADebugOverlay.h"
 
 #if !defined( TOSHI_FINAL ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) )
-#  include "ARenderer.h"
+#  include "Render/ARenderer.h"
+#  include "Debug/APrimeDebug.h"
 #  include "Cameras/ACameraManager.h"
 #  include "Tasks/ARootTask.h"
 #  include "Units/AUnit.h"
+#  include "Units/AVisibleUnit.h"
 #  include "Units/AUnitManager.h"
 #  include "Units/AUnitNameManager.h"
 #  include "Units/AUnitBehaviour.h"
@@ -31,9 +33,6 @@ ADebugOverlay::ADebugOverlay()
     , m_iNumLines( 0 )
     , m_iNumShownLines( 0 )
 {
-	// "-debugoverlay" starts with the overlay on
-	if ( TStringManager::String8FindString( GetCommandLineA(), "-debugoverlay" ) )
-		m_bEnabled = TTRUE;
 }
 
 ADebugOverlay::~ADebugOverlay()
@@ -151,8 +150,16 @@ void ADebugOverlay::Render( TFLOAT a_fDeltaTime )
 	{
 		TRenderInterface::DISPLAYPARAMS* pDisplayParams = TRenderD3DInterface::Interface()->GetCurrentDisplayParams();
 
+		TFLOAT fMilliseconds = a_fDeltaTime * 1000.0f;
+		TFLOAT fFPS          = 1.0f / a_fDeltaTime;
+
+#  ifdef PRIMEDEBUG_DEV
+		// The frame time of the Prime debug tools' frame stats, averaged over two seconds (debug.stats)
+		APrimeDebug::GetFrameStats( fMilliseconds, fFPS );
+#  endif
+
 		TCHAR szLine[ 64 ];
-		TStringManager::String8Format( szLine, TARRAYSIZE( szLine ), "Total = %.3f (%.1f FPS)", a_fDeltaTime * 1000.0f, 1.0f / a_fDeltaTime );
+		TStringManager::String8Format( szLine, TARRAYSIZE( szLine ), "Total = %.3f (%.1f FPS)", fMilliseconds, fFPS );
 		pDebugText->PrintString( pDisplayParams->uiWidth / 2, pDisplayParams->uiHeight - LINE_HEIGHT * 2, szLine, INFO_COLOUR, TDebugText::ENTRYFLAGS_CENTERED );
 	}
 
@@ -178,6 +185,9 @@ void ADebugOverlay::RenderUnitLabels( ACamera* a_pCamera )
 		AUnit* pUnit = it;
 
 		if ( pUnit->IsDying() || !pUnit->GetSteer() )
+			continue;
+
+		if ( pUnit->IsA( &TGetClass( AVisibleUnit ) ) && !TSTATICCAST( AVisibleUnit, pUnit )->IsVisible() )
 			continue;
 
 		const TVector4* pPosition = pUnit->GetSteer()->GetPosition();

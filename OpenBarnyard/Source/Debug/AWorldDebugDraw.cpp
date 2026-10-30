@@ -1,15 +1,16 @@
 #include "pch.h"
 #include "AWorldDebugDraw.h"
 
-#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+#ifdef AWORLDDEBUGDRAW
 #  include <Render/TCameraObject.h>
-#  include "ADebugOverlay.h"
-#  include "ALineShader/ALineShader.h"
+#  include "Debug/ADebugOverlay.h"
+#  include <Draw/PDebugPrimitives.h>
 #  include "Cameras/ACamera.h"
 #  include "Cameras/ACameraManager.h"
 #  include "Terrain/ATerrainInterface.h"
 #  include "Terrain/ATerrainLocator.h"
 #  include "Units/AUnit.h"
+#  include "Units/AVisibleUnit.h"
 #  include "Units/AUnitManager.h"
 #  include "UnitMovement/Steering/ASteer.h"
 #  include "UnitMovement/Steering/AInteriorSteer.h"
@@ -18,7 +19,7 @@
 #  include "UnitMovement/PathfindingNetworks/AInteriorArea.h"
 #  include "UnitMovement/PathfindingNetworks/AInteriorGoal.h"
 #  ifdef BARNYARD_COMMUNITY_PATCH
-#    include "GameInterface/AInteriorNetworkPlacementState.h"
+#	include "GameInterface/AInteriorNetworkPlacementState.h"
 #  endif
 
 #  include <Render/TBackend.h>
@@ -92,10 +93,10 @@ void AWorldDebugDraw::Render()
 	if ( !IsAnyLayerEnabled() && !bEditor )
 		return;
 
-	ACamera*     pCamera     = ACameraManager::IsSingletonCreated() ? ACameraManager::GetSingleton()->GetCurrentCamera() : TNULL;
-	ALineShader* pLineShader = ALineShader::IsSingletonCreated() ? ALineShader::GetSingleton() : TNULL;
+	ACamera* pCamera = ACameraManager::IsSingletonCreated() ? ACameraManager::GetSingleton()->GetCurrentCamera() : TNULL;
 
-	if ( !pCamera || !pLineShader )
+	// The primitives are drawn right after this, in APrimeDebug::Render3D
+	if ( !pCamera || !PDebugPrimitives::IsStarted() )
 		return;
 
 	m_iHeightBudget = HEIGHTS_PER_FRAME;
@@ -107,42 +108,15 @@ void AWorldDebugDraw::Render()
 	if ( m_abLayers[ LAYER_STEERING ] )
 		RenderSteering( pCamera );
 
-	if ( m_abLayers[ LAYER_LOCATORS ] )
+	TBOOL bEditorLocators = TFALSE;
+
+#  ifdef BARNYARD_COMMUNITY_PATCH
+	// The Locators toggle of the network editor
+	bEditorLocators = m_pEditor && m_pEditor->IsLocatorSnap();
+#  endif
+
+	if ( m_abLayers[ LAYER_LOCATORS ] || bEditorLocators )
 		RenderLocators( pCamera );
-
-	// The line shader draws in the space of the model view matrix of the context (of the main viewport): the world
-	TRenderD3DInterface* pRender    = TRenderD3DInterface::Interface();
-	IDirect3DDevice8*    pDevice    = pRender->GetDirect3DDevice();
-	TRenderContext*      pContext   = pRender->GetCurrentContext();
-	TMatrix44            oOldMatrix = pContext->GetModelViewMatrix();
-
-	pContext->SetModelViewMatrix( pContext->GetWorldViewMatrix() );
-
-	DWORD uiLighting, uiFog, uiZEnable, uiZWrite, uiAlphaBlend, uiAlphaTest;
-	pDevice->GetRenderState( D3DRS_LIGHTING, &uiLighting );
-	pDevice->GetRenderState( D3DRS_FOGENABLE, &uiFog );
-	pDevice->GetRenderState( D3DRS_ZENABLE, &uiZEnable );
-	pDevice->GetRenderState( D3DRS_ZWRITEENABLE, &uiZWrite );
-	pDevice->GetRenderState( D3DRS_ALPHABLENDENABLE, &uiAlphaBlend );
-	pDevice->GetRenderState( D3DRS_ALPHATESTENABLE, &uiAlphaTest );
-
-	pDevice->SetRenderState( D3DRS_LIGHTING, FALSE );
-	pDevice->SetRenderState( D3DRS_FOGENABLE, FALSE );
-	pDevice->SetRenderState( D3DRS_ZENABLE, D3DZB_TRUE );
-	pDevice->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
-	pDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, FALSE );
-	pDevice->SetRenderState( D3DRS_ALPHATESTENABLE, FALSE );
-
-	pLineShader->FlushLines();
-
-	pDevice->SetRenderState( D3DRS_LIGHTING, uiLighting );
-	pDevice->SetRenderState( D3DRS_FOGENABLE, uiFog );
-	pDevice->SetRenderState( D3DRS_ZENABLE, uiZEnable );
-	pDevice->SetRenderState( D3DRS_ZWRITEENABLE, uiZWrite );
-	pDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, uiAlphaBlend );
-	pDevice->SetRenderState( D3DRS_ALPHATESTENABLE, uiAlphaTest );
-
-	pContext->SetModelViewMatrix( oOldMatrix );
 }
 
 void AWorldDebugDraw::RenderNetworks( ACamera* a_pCamera )
@@ -174,10 +148,10 @@ void AWorldDebugDraw::RenderNetwork( AInteriorNetwork* a_pNetwork, const TVector
 	if ( !pINetwork )
 		return;
 
-	NetworkHeights* pHeights        = GetNetworkHeights( a_pNetwork );
-	TINT            iSelectedArea   = -1;
-	TINT            iHoverArea      = -1;
-	TBOOL           bCostHighlight  = TFALSE;
+	NetworkHeights* pHeights       = GetNetworkHeights( a_pNetwork );
+	TINT            iSelectedArea  = -1;
+	TINT            iHoverArea     = -1;
+	TBOOL           bCostHighlight = TFALSE;
 
 #  ifdef BARNYARD_COMMUNITY_PATCH
 	if ( m_pEditor && m_pEditor->GetNetwork() == a_pNetwork )
@@ -210,6 +184,36 @@ void AWorldDebugDraw::RenderNetwork( AInteriorNetwork* a_pNetwork, const TVector
 		{
 			TFLOAT fCost = TMath::Min( TMath::Max( ( rcArea.m_fPathHeuristicScale - 1.0f ) / 3.0f, 0.0f ), 1.0f );
 			uiCostColour = 0xff000000 | ( TUINT32( fCost * 255.0f ) << 16 ) | ( TUINT32( ( 1.0f - fCost ) * 255.0f ) << 8 );
+		}
+
+		TUINT32 uiAreaColour = OUTER_EDGE_COLOUR;
+
+		if ( iArea == iSelectedArea )
+			uiAreaColour = SELECTED_COLOUR;
+		else if ( iArea == iHoverArea )
+			uiAreaColour = HOVER_COLOUR;
+		else if ( bCostHighlight )
+			uiAreaColour = uiCostColour;
+
+		// The area, see-through (a fan from its first corner, the areas are convex)
+		TFLOAT fHeight0, fHeight1, fHeight2;
+
+		if ( rcArea.m_iNumArcBounds >= 3 && GetCornerHeight( a_pNetwork, pHeights, iArea, 0, fHeight0 ) )
+		{
+			const AInteriorArcBounds& rc0 = rcArea.m_pArcBounds[ 0 ];
+			TVector4                  v0( rc0.m_fX, fHeight0 - LINE_LIFT, rc0.m_fZ, 1.0f );
+
+			for ( TINT i = 1; i + 1 < rcArea.m_iNumArcBounds; i++ )
+			{
+				if ( !GetCornerHeight( a_pNetwork, pHeights, iArea, i, fHeight1 ) || !GetCornerHeight( a_pNetwork, pHeights, iArea, i + 1, fHeight2 ) )
+					continue;
+
+				const AInteriorArcBounds& rc1 = rcArea.m_pArcBounds[ i ];
+				const AInteriorArcBounds& rc2 = rcArea.m_pArcBounds[ i + 1 ];
+				TVector4                  v1( rc1.m_fX, fHeight1 - LINE_LIFT, rc1.m_fZ, 1.0f );
+				TVector4                  v2( rc2.m_fX, fHeight2 - LINE_LIFT, rc2.m_fZ, 1.0f );
+				PDebugPrimitives::AddTriangle( &v0, &v1, &v2, AREA_FILL_ALPHA | ( uiAreaColour & 0xffffff ), 0 );
+			}
 		}
 
 		for ( TINT i = 0; i < rcArea.m_iNumArcBounds; i++ )
@@ -278,7 +282,15 @@ void AWorldDebugDraw::RenderNetwork( AInteriorNetwork* a_pNetwork, const TVector
 #  endif
 
 		AddLine( vPosition, TVector4( vPosition.x, vPosition.y - 1.5f, vPosition.z, 1.0f ), uiColour );
-		AddArrow( vPosition, TVector4( vPosition.x + rGoal.m_vForward.x, vPosition.y, vPosition.z + rGoal.m_vForward.z, 1.0f ), uiColour );
+
+		// The facing, an arrow at the foot of the post
+		TVector4 vFacing( rGoal.m_vForward.x, 0.0f, rGoal.m_vForward.z, 0.0f );
+
+		if ( vFacing.x != 0.0f || vFacing.z != 0.0f )
+		{
+			vFacing.Normalise();
+			PDebugPrimitives::AddArrow( &vPosition, &vFacing, 1.0f, uiColour, 1 );
+		}
 	}
 
 #  ifdef BARNYARD_COMMUNITY_PATCH
@@ -308,6 +320,10 @@ void AWorldDebugDraw::RenderSteering( ACamera* a_pCamera )
 		if ( pUnit->IsDying() || !pSteer )
 			continue;
 
+		// Hidden units (pooled or switched off, often parked at the origin) aren't in the world
+		if ( pUnit->IsA( &TGetClass( AVisibleUnit ) ) && !TSTATICCAST( AVisibleUnit, pUnit )->IsVisible() )
+			continue;
+
 		TVector4 vPosition = *pSteer->GetPosition();
 
 		if ( TVector4::DistanceSq( vPosition, rcCamera ) > STEERING_DISTANCE * STEERING_DISTANCE )
@@ -318,18 +334,35 @@ void AWorldDebugDraw::RenderSteering( ACamera* a_pCamera )
 
 		// The radius and the heading
 		TFLOAT fRadius = pSteer->GetRadius();
-		AddCircle( vPosition, fRadius, UNIT_COLOUR );
+
+		if ( fRadius > 0.0f )
+		{
+			TMatrix44 oDisc = TMatrix44::IDENTITY;
+			oDisc.SetTranslation( vPosition );
+			PDebugPrimitives::AddCylinder( &oDisc, fRadius, 0.05f, UNIT_FILL_COLOUR, UNIT_COLOUR, TTRUE );
+		}
 
 		const TVector4* pDirection = pSteer->GetDirection();
 		TFLOAT          fLength    = TMath::Max( fRadius * 2.0f, 1.0f );
 		TVector4        vHeading( vPosition.x, vPosition.y - 0.5f, vPosition.z, 1.0f );
-		AddArrow( vHeading, TVector4( vHeading.x + pDirection->x * fLength, vHeading.y, vHeading.z + pDirection->z * fLength, 1.0f ), UNIT_COLOUR );
+		TVector4        vDirection( pDirection->x, 0.0f, pDirection->z, 0.0f );
+
+		if ( vDirection.x != 0.0f || vDirection.z != 0.0f )
+		{
+			vDirection.Normalise();
+			PDebugPrimitives::AddArrow( &vHeading, &vDirection, fLength, UNIT_COLOUR, 1 );
+		}
 
 		// The path: the next point and the destination
 		if ( !pSteer->IsA( &TGetClass( AInteriorSteer ) ) )
 			continue;
 
-		const AInteriorNetworkPath::BuildPathState& rcPath = TSTATICCAST( AInteriorSteer, pSteer )->GetPath().m_oPath;
+		AInteriorSteer*                             pInteriorSteer = TSTATICCAST( AInteriorSteer, pSteer );
+		const AInteriorNetworkPath::BuildPathState& rcPath         = pInteriorSteer->GetPath().m_oPath;
+
+		// Only while a path is followed: the path state keeps the old points (or zero) otherwise
+		if ( pInteriorSteer->GetMode() == AInteriorSteer::MODE_STILL || rcPath.m_iNumPathAreas == 0 || ( rcPath.m_uiFlags & AInteriorNetworkPath::BuildPathState::FLAGS_NOT_FOUND ) )
+			continue;
 
 		if ( TVector4::DistanceSq( rcPath.m_vDestination, *pSteer->GetPosition() ) < 0.04f )
 			continue;
@@ -364,6 +397,14 @@ void AWorldDebugDraw::RenderLocators( ACamera* a_pCamera )
 	TMatrix44 oWorld;
 	pLocatorList->GetWorldTransform().GetLocalMatrixImp( oWorld );
 
+	TVector4 vForward = a_pCamera->GetMatrix().AsBasisVector4( BASISVECTOR_FORWARD );
+	vForward.Normalise();
+
+	// The names of the closest locators in front of the camera, close to the middle of the view
+	TINT   aiNames[ MAX_LOCATOR_NAMES ];
+	TFLOAT afNameDistances[ MAX_LOCATOR_NAMES ];
+	TINT   iNumNames = 0;
+
 	for ( TINT i = 0; i < pLocatorList->GetNumLocators(); i++ )
 	{
 		TVector3 vLocal = pLocatorList->GetLocator( i )->vecPosition;
@@ -376,11 +417,49 @@ void AWorldDebugDraw::RenderLocators( ACamera* a_pCamera )
 		if ( fDistanceSq > LOCATOR_DISTANCE * LOCATOR_DISTANCE )
 			continue;
 
-		AddCross( vPosition, 0.2f, LOCATOR_COLOUR );
+		TMatrix44 oBox = TMatrix44::IDENTITY;
+		oBox.SetTranslation( vPosition );
+		TVector4 vSize( 0.25f, 0.25f, 0.25f, 1.0f );
+		PDebugPrimitives::AddBox( &oBox, &vSize, 0, LOCATOR_COLOUR, TTRUE );
 		AddLine( vPosition, TVector4( vPosition.x, vPosition.y - 0.5f, vPosition.z, 1.0f ), LOCATOR_COLOUR );
 
-		if ( fDistanceSq < LOCATOR_NAME_DISTANCE * LOCATOR_NAME_DISTANCE && ADebugOverlay::IsSingletonCreated() )
-			ADebugOverlay::GetSingleton()->PrintWorldText( a_pCamera, TVector4( vPosition.x, vPosition.y - 0.6f, vPosition.z, 1.0f ), pLocatorList->GetLocatorName( i ), LOCATOR_COLOUR );
+		if ( fDistanceSq > LOCATOR_NAME_DISTANCE * LOCATOR_NAME_DISTANCE || fDistanceSq < 0.0001f )
+			continue;
+
+		TFLOAT fDistance = TMath::Sqrt( fDistanceSq );
+		TFLOAT fDot      = ( ( vPosition.x - rcCamera.x ) * vForward.x + ( vPosition.y - rcCamera.y ) * vForward.y + ( vPosition.z - rcCamera.z ) * vForward.z ) / fDistance;
+
+		if ( fDot < LOCATOR_NAME_CONE )
+			continue;
+
+		// Sorted by distance
+		TINT iSlot = iNumNames;
+
+		while ( iSlot > 0 && afNameDistances[ iSlot - 1 ] > fDistance )
+			iSlot--;
+
+		if ( iSlot >= MAX_LOCATOR_NAMES )
+			continue;
+
+		for ( TINT j = TMath::Min( iNumNames, MAX_LOCATOR_NAMES - 1 ); j > iSlot; j-- )
+		{
+			aiNames[ j ]         = aiNames[ j - 1 ];
+			afNameDistances[ j ] = afNameDistances[ j - 1 ];
+		}
+
+		aiNames[ iSlot ]         = i;
+		afNameDistances[ iSlot ] = fDistance;
+		iNumNames                = TMath::Min( iNumNames + 1, MAX_LOCATOR_NAMES );
+	}
+
+	if ( !ADebugOverlay::IsSingletonCreated() )
+		return;
+
+	for ( TINT i = 0; i < iNumNames; i++ )
+	{
+		TVector3 vWorld;
+		TMatrix44::TransformVector( vWorld, oWorld, pLocatorList->GetLocator( aiNames[ i ] )->vecPosition );
+		ADebugOverlay::GetSingleton()->PrintWorldText( a_pCamera, TVector4( vWorld.x, vWorld.y - 0.6f, vWorld.z, 1.0f ), pLocatorList->GetLocatorName( aiNames[ i ] ), LOCATOR_NAME_COLOUR );
 	}
 }
 
@@ -459,7 +538,7 @@ TBOOL AWorldDebugDraw::GetCornerHeight( AInteriorNetwork* a_pNetwork, NetworkHei
 
 void AWorldDebugDraw::AddLine( const TVector4& a_rcStart, const TVector4& a_rcEnd, TUINT32 a_uiColour )
 {
-	ALineShader::GetSingleton()->AddLineDirect( a_rcStart.AsVector3(), a_rcEnd.AsVector3(), a_uiColour, a_uiColour );
+	PDebugPrimitives::AddLine( &a_rcStart, &a_rcEnd, a_uiColour );
 	m_iNumLines++;
 }
 
@@ -509,4 +588,4 @@ void AWorldDebugDraw::AddCross( const TVector4& a_rcCentre, TFLOAT a_fSize, TUIN
 	AddLine( TVector4( a_rcCentre.x, a_rcCentre.y, a_rcCentre.z - a_fSize, 1.0f ), TVector4( a_rcCentre.x, a_rcCentre.y, a_rcCentre.z + a_fSize, 1.0f ), a_uiColour );
 }
 
-#endif // !TOSHI_FINAL && TRENDERINTERFACE_DX8
+#endif // AWORLDDEBUGDRAW

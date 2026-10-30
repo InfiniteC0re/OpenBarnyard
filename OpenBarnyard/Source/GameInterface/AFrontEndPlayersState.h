@@ -12,7 +12,7 @@
 // (SLUS_212.77 vtable 0x505eb8, size 0xe84, `$BarnyardPS2` markers) but not the
 // constructor, and they match this code (Docs/PS2DeadCode.md). Both TClasses
 // name AGameState as the parent although the class derives from ABYardMenuState.
-// Only reachable with the BARNYARD_COMMUNITY_PATCH "-multiplayerantics" switch.
+// Only reachable in BARNYARD_COMMUNITY_PATCH builds with "frontend.antics 2".
 //-----------------------------------------------------------------------------
 class AFrontEndPlayersState
     : public ABYardMenuState

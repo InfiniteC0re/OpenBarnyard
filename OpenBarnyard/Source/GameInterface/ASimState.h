@@ -91,8 +91,7 @@ public:
 #endif
 
 #if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
-	// Development: the game time runs a_fScale times faster while the sim is the current state ("-devtimescale <N>",
-	// the debug menu)
+	// Development: the game time runs a_fScale times faster while the sim is the current state (game.time_scale)
 	static void   Dev_SetTimeScale( TFLOAT a_fScale );
 	static TFLOAT Dev_GetTimeScale();
 #endif

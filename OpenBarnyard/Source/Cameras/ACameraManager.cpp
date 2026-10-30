@@ -16,7 +16,7 @@
 #include "AMultiCameraHelper.h"
 #include "AProjectileFireCameraHelper.h"
 #include "ACarChaseCamera.h"
-#include "Render/ADebugOverlay.h"
+#include "Debug/ADebugOverlay.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

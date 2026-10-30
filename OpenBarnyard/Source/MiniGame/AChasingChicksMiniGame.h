@@ -110,11 +110,6 @@ private:
 	// Plays an animation of a player and updates his state ("pickup", "throw", "throw2", "yuk")
 	static TBOOL PlayPlayerAnim( AChasingChicksPlayer* a_pPlayer, const Toshi::TPString8& a_rcAnim );
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// -devautoplay: the player catches the nearest chick and throws it into the nearest pen
-	void DevAutoPlay( TFLOAT a_fDeltaTime );
-#endif
-
 private:
 	AChasingChicksGame     m_oGame;                     // 0x0bc0
 	AUnitPlayer*           m_pPlayer;                   // 0x0ec8, "player_chicks"

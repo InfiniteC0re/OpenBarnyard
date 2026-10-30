@@ -848,10 +848,6 @@ void AChasingChicksMiniGame::UpdateGame( TFLOAT a_fDeltaTime )
 
 	ASteer* pSteer = m_pPlayer->GetSteer();
 	m_oMap.SetCentre( *pSteer->GetPosition(), *pSteer->GetDirection() );
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-	DevAutoPlay( a_fDeltaTime );
-#endif
 }
 
 // $Barnyard: FUNCTION 0050f3a0
@@ -1745,78 +1741,3 @@ void AChasingChicksMiniGame::ResetCamera()
 	pHelper->SetSmallCollisionRadius( 0.2f );
 	pHelper->SetHeightOffset( 1.7f );
 }
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-
-//-----------------------------------------------------------------------------
-// -devautoplay: the player walks to the nearest free chick, picks it up, walks
-// into the nearest open pen and throws it in.
-//-----------------------------------------------------------------------------
-void AChasingChicksMiniGame::DevAutoPlay( TFLOAT a_fDeltaTime )
-{
-	if ( !T2String8::FindString( GetCommandLineA(), "-devautoplay" ) )
-		return;
-
-	static TFLOAT s_fTimer = 0.0f;
-	s_fTimer += a_fDeltaTime;
-
-	if ( s_fTimer < 0.75f )
-		return;
-
-	s_fTimer = 0.0f;
-
-	AChasingChicksPlayer& rPlayer = m_oGame.aPlayers[ 0 ];
-	APlayerSteer*         pSteer  = TSTATICCAST( APlayerSteer, m_pPlayer->GetSteer() );
-
-	if ( rPlayer.eState == AChasingChicksPlayer::STATE_FREE )
-	{
-		// Next to the nearest free chick (UpdateGame picks it up)
-		AChasingChicksChick* pTarget   = TNULL;
-		TFLOAT               fDistance = 0.0f;
-
-		for ( TINT i = 0; i < m_oGame.iNumChicks; i++ )
-		{
-			AChasingChicksChick* pChick = TSTATICCAST( AChasingChicksChick, m_oGame.aFreeChicks[ i ]->GetUnit() );
-
-			if ( pChick->GetState() != AChasingChicksChick::STATE_FREE && pChick->GetState() != AChasingChicksChick::STATE_FLEEING )
-				continue;
-
-			TFLOAT fChickDistance = TVector4::DistanceSq( *pChick->GetSteer()->GetPosition(), *pSteer->GetPosition() );
-
-			if ( !pTarget || fChickDistance < fDistance )
-			{
-				pTarget   = pChick;
-				fDistance = fChickDistance;
-			}
-		}
-
-		if ( pTarget )
-		{
-			TVector4 vPosition = *pTarget->GetSteer()->GetPosition();
-			vPosition.x += 0.5f;
-			pSteer->SetPosition( vPosition );
-			TINFO( "[ccauto] go to a chick (%d)\n", pTarget->GetState() );
-		}
-	}
-	else if ( rPlayer.eState == AChasingChicksPlayer::STATE_CARRY )
-	{
-		if ( rPlayer.pHotSpot && rPlayer.pHotSpot->eState == AChasingChicksHotSpot::STATE_INSIDE )
-		{
-			// In an open pen: throw
-			TINFO( "[ccauto] throw (kind %d, score %d)\n", rPlayer.pHotSpot->iKind, rPlayer.iScore );
-			rPlayer.uiFlags |= AChasingChicksPlayer::FLAGS_INTERACT;
-			return;
-		}
-
-		// Into the nearest open pen
-		AChasingChicksHotSpot* pPen = m_oGame.FindClosestPen( *pSteer->GetPosition(), 1000.0f );
-
-		if ( pPen )
-		{
-			pSteer->SetPosition( pPen->vPosition );
-			TINFO( "[ccauto] go to a pen (kind %d)\n", pPen->iKind );
-		}
-	}
-}
-
-#endif

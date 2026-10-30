@@ -1,6 +1,10 @@
 #pragma once
 #include "Render/TRenderCapture.h"
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+#  include <d3d8.h>
+#endif
+
 TOSHI_NAMESPACE_START
 
 class TRenderCaptureD3D : public TRenderCapture
@@ -23,6 +27,16 @@ public:
 	virtual void* ObtainBuffer() override { return m_pBuffer; }
 
 	virtual void ReleaseBuffer() override;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	static void CapturePending( IDirect3DDevice8* a_pDevice );
+
+private:
+	TBOOL CaptureBackBuffer( IDirect3DDevice8* a_pDevice );
+
+private:
+	inline static TRenderCaptureD3D* ms_pPendingCapture = TNULL;
+#endif
 
 private:
 	TUINT8* m_pBuffer; // 0x04

@@ -168,62 +168,9 @@ static TINT GetCowTypeInt( ACowTippingMiniGameState::Enemy* a_pCow )
 	return ACowTippingMiniGameState::GetSingleton()->m_aiUnitMaxHits[ a_pCow->eType ];
 }
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-
-// Development: "-devautoplay" runs aim at the first unit that tips a cow and throw tomatoes at it
-static void Dev_AutoPlay( ACowTippingMiniGameState* a_pState, TFLOAT a_fDeltaTime )
-{
-	static TBOOL  s_bChecked  = TFALSE;
-	static TBOOL  s_bEnabled  = TFALSE;
-	static TFLOAT s_fCooldown = 0.0f;
-
-	if ( !s_bChecked )
-	{
-		s_bChecked = TTRUE;
-		s_bEnabled = T2String8::FindString( GetCommandLineA(), "-devautoplay" ) != TNULL;
-	}
-
-	if ( !s_bEnabled || a_pState->GetElapsedTime() < 1.0f )
-		return;
-
-	s_fCooldown -= a_fDeltaTime;
-
-	T2GenericSList& rEnemies = *TREINTERPRETCAST( T2GenericSList*, &a_pState->m_llActiveEnemies );
-
-	for ( T2GenericSList::Node* pNode = rEnemies.Begin(); pNode != rEnemies.End(); pNode = pNode->Next() )
-	{
-		ACowTippingMiniGameState::Enemy* pEnemy = TREINTERPRETCAST( ACowTippingMiniGameState::Enemy*, pNode );
-		AAnimatedUnit*                   pUnit  = pEnemy->pUnit;
-
-		if ( !pUnit || !pUnit->IsVisible() )
-			continue;
-
-		// Aim at the enemy (and lock on to it) every frame, throw when the cooldown is over
-		const TVector4* pPosition = pUnit->GetSteer()->GetPosition();
-		TVector4&       rTarget   = a_pState->m_vAimTarget;
-		rTarget.x                 = pPosition->x;
-		rTarget.y                 = pPosition->y - 0.5f;
-		rTarget.z                 = pPosition->z;
-		a_pState->m_pLockEnemy    = pEnemy;
-
-		if ( s_fCooldown <= 0.0f && a_pState->StartThrow() )
-		{
-			TINFO( "[devautoplay] threw a tomato at (%.2f, %.2f, %.2f), score %d\n", pPosition->x, pPosition->y, pPosition->z, a_pState->m_aPlayers[ a_pState->m_iCurrentPlayer ].iScore );
-			s_fCooldown = 0.8f;
-		}
-
-		break;
-	}
-}
-
-#endif // BARNYARD_COMMUNITY_PATCH
-
 // $Barnyard: FUNCTION 004c4380
 void ACowTippingMiniGameState::UpdateGame( TFLOAT a_fDeltaTime )
 {
-#ifdef BARNYARD_COMMUNITY_PATCH
-	Dev_AutoPlay( this, a_fDeltaTime );
-#endif
 
 	if ( m_eEndState != ENDSTATE_NONE )
 	{

@@ -74,9 +74,7 @@ TBOOL AMaterialLibrary::LoadTTLData( void* a_pTTLData )
 #ifdef BARNYARD_COMMUNITY_PATCH
 					TFile* pTextureOverrideFile = TNULL;
 
-					static TBOOL s_bOverrideTextures = !TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-notexoverrides" );
-
-					if ( s_bOverrideTextures )
+					if ( ms_iTextureOverrides )
 					{
 						TString8 strOverridePath = "Data\\Textures\\";
 						strOverridePath += pTexInfo->szFileName;

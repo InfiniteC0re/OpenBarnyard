@@ -45,6 +45,8 @@ public:
 	// Adds job to the FIFO
 	void AddStream( TFileStreamJob* job );
 
+	void Stop();
+
 private:
 	TFifo<TFileStreamJob*, 32> m_Jobs;
 };

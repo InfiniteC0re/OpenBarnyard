@@ -281,10 +281,8 @@ void ASimState::OnCollisionModelLoaded( void* a_pCollisionModel, void* a_pGroupI
 
 #ifdef BARNYARD_COMMUNITY_PATCH
 
-// Development, tests the day/night cycle of the sim:
-//  "-devdayphase <N>":  changes the phase of the day to N (0 dawn, 1 morning, 2 afternoon, 3 dusk, 4 night) once the sim runs
-//  "-devtimescale <N>": the game time runs N times faster while the sim is the current state
-static TFLOAT s_fTimeScale = -1.0f;
+// Development (game.time_scale): the game time runs that many times faster while the sim is the current state
+static TFLOAT s_fTimeScale = 1.0f;
 
 #  ifndef TOSHI_FINAL
 
@@ -296,52 +294,14 @@ void ASimState::Dev_SetTimeScale( TFLOAT a_fScale )
 
 TFLOAT ASimState::Dev_GetTimeScale()
 {
-	return s_fTimeScale < 0.0f ? 1.0f : s_fTimeScale;
+	return s_fTimeScale;
 }
 
 #  endif
 
 static void Dev_UpdateGameTime( TFLOAT a_fDeltaTime )
 {
-	static TBOOL s_bDayPhaseSet = TFALSE;
-
 	AGameTimeManager* pGameTimeManager = AGameTimeManager::GetSingleton();
-
-	// Wait until the player's animation controller has started its idle animation: changing the phase on the first
-	// sim frame fires the farmer sequence before any movement animation played, which leaves the player in the bind pose.
-	AUnit* pPlayer         = APlayerManager::GetSingleton()->GetPlayerUnit( 0 );
-	TBOOL  bPlayerAnimates = pPlayer && pPlayer->IsA( &TGetClass( AAnimatedUnit ) ) &&
-	    !TSTATICCAST( AAnimatedUnit, pPlayer )->GetAnimatableObject()->GetToshiAnimInterface().GetAnimRefs().IsEmpty();
-
-	static TFLOAT s_fDayPhaseWait = 0.0f;
-	s_fDayPhaseWait += a_fDeltaTime;
-
-	if ( !s_bDayPhaseSet && ( bPlayerAnimates || s_fDayPhaseWait > 5.0f ) )
-	{
-		s_bDayPhaseSet = TTRUE;
-
-		if ( const TCHAR* szArg = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devdayphase " ) )
-		{
-			TINT iDayPhase = atoi( szArg + TStringManager::String8Length( "-devdayphase " ) );
-
-			if ( iDayPhase >= 0 && iDayPhase < AGameTimeManager::DAYPHASE_NUMOF )
-			{
-				TINFO( "[devtime] changing the phase of the day to %d\n", iDayPhase );
-				pGameTimeManager->ChangePhaseOfDay( iDayPhase, TTRUE, TTRUE );
-			}
-		}
-	}
-
-	if ( s_fTimeScale < 0.0f )
-	{
-		s_fTimeScale = 1.0f;
-
-		if ( const TCHAR* szArg = TStringManager::String8FindString( GetCommandLineA(), "-devtimescale " ) )
-		{
-			s_fTimeScale = TFLOAT( atof( szArg + TStringManager::String8Length( "-devtimescale " ) ) );
-			TINFO( "[devtime] game time scale %.2f\n", s_fTimeScale );
-		}
-	}
 
 	static TBOOL s_bWasStopped = TFALSE;
 

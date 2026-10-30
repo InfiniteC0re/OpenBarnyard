@@ -13,7 +13,7 @@
 // windmill helper). After ms_fAttractIdleTime seconds without input the
 // "Attract" movie plays and a new AFrontEndAttractState follows it.
 // NOTE: nothing in the retail game creates it, it can only be created by name
-// (the TClass has a create function), e.g. with -devattract.
+// (the TClass has a create function).
 // TClass 0077df4c, vtable 007164a0, size 0x2a4.
 //-----------------------------------------------------------------------------
 class AFrontEndAttractState

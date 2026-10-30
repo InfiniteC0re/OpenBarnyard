@@ -164,10 +164,6 @@ TBOOL AGolfMinigameState::OnUpdate( TFLOAT a_fDeltaTime )
 		}
 	}
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	DevAutoPlay( a_fDeltaTime );
-#endif
-
 	AAnimatableObject* pPlayerObject = GetAnimatedUnit( m_pPlayerUnit )->GetAnimatableObject();
 
 	switch ( m_eGameState )
@@ -984,54 +980,3 @@ TBOOL AGolfMinigameState::OnGopherAnimEventCallback( AGolfMinigameState* a_pThis
 {
 	return a_pThis->OnGopherAnimEvent( a_pOwner, a_pData );
 }
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-
-// Development: "-devautoplay" runs
-void AGolfMinigameState::DevAutoPlay( TFLOAT a_fDeltaTime )
-{
-	if ( !T2String8::FindString( GetCommandLineA(), "-devautoplay" ) )
-		return;
-
-	static TFLOAT s_fWaitTimer  = 0.0f;
-	static TINT   s_iLastState  = -1;
-	static TINT   s_iLastPlayer = -2;
-
-	s_fWaitTimer += a_fDeltaTime;
-
-	if ( m_eGameState != s_iLastState || m_iCurrentPlayer != s_iLastPlayer )
-	{
-		TINFO( "[devautoplay] state %d -> %d (player %d, hole %d, power error %.3f)\n", s_iLastState, m_eGameState, m_iCurrentPlayer, m_iCurrentHole, m_fPowerError );
-		s_iLastState  = m_eGameState;
-		s_iLastPlayer = m_iCurrentPlayer;
-		s_fWaitTimer  = 0.0f;
-	}
-
-	if ( m_iCurrentPlayer < 0 || m_iCurrentPlayer >= m_iNumPlayers )
-		return;
-
-	Player& rPlayer = GetCurrentPlayer();
-
-	switch ( m_eGameState )
-	{
-		case GAMESTATE_TEE:
-			// Swing a second after the tee is ready
-			if ( s_fWaitTimer > 1.0f )
-				rPlayer.bSwingPressed = TTRUE;
-			break;
-		case GAMESTATE_POWER_UP:
-			// Stop just below the upper bracket
-			if ( rPlayer.fPower + a_fDeltaTime >= m_oPowerBar.m_fBracket2Pos )
-				rPlayer.bSwingPressed = TTRUE;
-			break;
-		case GAMESTATE_POWER_DOWN:
-			// Stop just above the lower bracket
-			if ( rPlayer.fPower - a_fDeltaTime <= m_oPowerBar.m_fBracketPos )
-				rPlayer.bSwingPressed = TTRUE;
-			break;
-		default:
-			break;
-	}
-}
-
-#endif // BARNYARD_COMMUNITY_PATCH

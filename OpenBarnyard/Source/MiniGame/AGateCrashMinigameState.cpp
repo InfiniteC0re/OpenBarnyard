@@ -83,11 +83,6 @@ TPSTRING8_DECLARE( victory );
 // NOTE: GetClass 0046cd10, CreateObject 00470670, CreateObjectInPlace 004706d0
 TDEFINE_CLASS( AGateCrashMinigameState );
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-static TINT  s_iDevNumHumans = 0;
-static TBOOL s_bDevAiReady   = TFALSE;
-#endif
-
 // $Barnyard: FUNCTION 00470510
 AGateCrashMinigameState::AGateCrashMinigameState()
     : AMiniGameState( new AGateCrashPlayerAi() )
@@ -217,11 +212,6 @@ void AGateCrashMinigameState::OnInsertion()
 
 	// Fill up the empty slots with computer players
 	m_iNumPlayers = APlayerManager::GetSingleton()->GetCurrentPlayerSet()->GetHumanPlayerCount();
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// The human players, the slots the dev AI plays (UpdateGame)
-	s_iDevNumHumans = m_iNumPlayers;
-	s_bDevAiReady   = TFALSE;
-#endif
 
 	for ( TINT i = MAX_PLAYERS - APlayerManager::GetSingleton()->GetCurrentPlayerSet()->GetNumAIPlayers() - m_iNumPlayers; i > 0; i-- )
 		APlayerManager::GetSingleton()->GetCurrentPlayerSet()->AddAIPlayer();
@@ -575,31 +565,6 @@ void AGateCrashMinigameState::UpdateAlways( TFLOAT a_fDeltaTime )
 // $Barnyard: FUNCTION 0046f4c0
 void AGateCrashMinigameState::UpdateGame( TFLOAT a_fDeltaTime )
 {
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// Development: "-devautoplay" runs let a computer player of its own jump and kick
-	// for the human players (the same AI the other slots use, with steady reactions)
-	if ( T2String8::FindString( GetCommandLineA(), "-devautoplay" ) && s_iDevNumHumans > 0 )
-	{
-		static AGateCrashPlayerAi* s_pDevAi = TNULL;
-
-		if ( !s_pDevAi )
-			s_pDevAi = new AGateCrashPlayerAi();
-
-		if ( !s_bDevAiReady )
-		{
-			s_bDevAiReady = TTRUE;
-			s_pDevAi->SetGameData( &m_oGame );
-			s_pDevAi->Init( 0, s_iDevNumHumans );
-
-			for ( TINT i = 0; i < s_iDevNumHumans; i++ )
-				s_pDevAi->SetParams( i, 0.35f, 0.05f, 0.05f, 0.0f );
-
-			TINFO( "[devautoplay] mudjumpers: AI for %d human player(s)\n", s_iDevNumHumans );
-		}
-
-		s_pDevAi->Update( a_fDeltaTime );
-	}
-#endif
 
 	if ( m_oGame.iServingPlayer >= 0 )
 	{
@@ -625,12 +590,6 @@ void AGateCrashMinigameState::UpdateGame( TFLOAT a_fDeltaTime )
 			m_oGame.fGateAngle = fAngle;
 			m_fPrevGateAngle   = fAngle;
 		}
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-		// Development: "-devautoplay" runs press kick for the serving player
-		if ( T2String8::FindString( GetCommandLineA(), "-devautoplay" ) )
-			rServingSlot.bKickPressed = TTRUE;
-#endif
 
 		if ( !m_oServeListener.IsLinked() && rServingSlot.bKickPressed )
 		{

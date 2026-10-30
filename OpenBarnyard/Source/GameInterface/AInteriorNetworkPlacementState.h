@@ -99,6 +99,8 @@ public:
 	static constexpr TFLOAT PICK_DISTANCE       = 100.0f; // length of the pointer ray
 	static constexpr TFLOAT DRAW_DISTANCE       = 40.0f;  // NOTE: ours, times the DrawDist text box
 	static constexpr TFLOAT POINT_SNAP_DISTANCE = 0.5f;   // NOTE: ours, the Points snap toggle
+	static constexpr TFLOAT LOCATOR_SNAP_DISTANCE = 1.0f; // NOTE: ours, the Locators snap toggle
+	static constexpr TFLOAT MOUSE_LOOK_SPEED    = 1.0f / 256.0f;
 
 	using ButtonListener = Toshi::TListener<PGUIButton, Toshi::TGUIActionEvent, AInteriorNetworkPlacementState>;
 	using PaintListener  = Toshi::TListener<Toshi::TGUIScreen, Toshi::TGUIScreenPaintEvent, AInteriorNetworkPlacementState>;
@@ -128,6 +130,7 @@ public:
 	TINT           GetHoverArea() const { return m_iHoverArea; }
 	TFLOAT         GetDrawDistance() const { return DRAW_DISTANCE * m_fDrawDistance; }
 	TBOOL          IsCostHighlighted() const { return m_bCostHighlight; }
+	TBOOL          IsLocatorSnap() const { return m_bLocatorSnap; }
 
 	// World position of a corner (at the height of its area) or a goal
 	Toshi::TVector4 GetElementPosition( const Element& a_rcElement );
@@ -232,6 +235,10 @@ private:
 	TFLOAT            m_fDrawDistance;
 	TFLOAT            m_fCostStep;
 	TBOOL             m_bCostHighlight; // the CostHighlight toggle
+	TBOOL             m_bLocatorSnap;   // the Locators toggle (BoneSnap): snap to the terrain locators, they're drawn
+	TBOOL             m_bMouseLook;     // the right (not dragging) or the middle button is held: the mouse turns the camera
+	TINT              m_iMouseLookX;    // where the pointer stays while the mouse turns the camera
+	TINT              m_iMouseLookY;
 
 	Toshi::TGUIWidget* m_pDialog;  // AInteriorNetworkPlacementDialog
 	Toshi::TGUIWidget* m_pDialog2; // AInteriorNetworkPlacementDialog2 (Show UI)

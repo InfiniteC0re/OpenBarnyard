@@ -6,7 +6,7 @@
 #include "UnitMovement/Steering/AInteriorSteer.h"
 #include "Units/AAnimatedUnit.h"
 #include "FSM/AMethodPointer.h"
-#include "Render/ADebugOverlay.h"
+#include "Debug/ADebugOverlay.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

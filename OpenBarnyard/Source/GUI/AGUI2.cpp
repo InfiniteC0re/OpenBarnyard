@@ -161,19 +161,19 @@ TBOOL AGUI2::OnCreate()
 TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 {
 #if defined( BARNYARD_LATEST ) && defined( BARNYARD_COMMUNITY_PATCH )
-	// Development: "-devxui <scene>" loads Data/XUI/<language>/<scene>.trb 5 seconds after the start,
-	// creates its first scene on the XUI canvas and logs the element tree (lines tagged [devxui])
+	// Development: "xui.load <scene>" loads Data/XUI/<language>/<scene>.trb (5 seconds after the start at the earliest),
+	// creates its first scene on the XUI canvas and logs the element tree (lines tagged [xui])
 	static TFLOAT s_fDevXUITimer = 0.0f;
 
-	if ( s_fDevXUITimer >= 0.0f && TStringManager::String8FindString( GetCommandLineA(), "-devxui " ) )
-	{
+	if ( s_fDevXUITimer < 5.0f )
 		s_fDevXUITimer += a_fDeltaTime;
 
-		if ( s_fDevXUITimer >= 5.0f )
-		{
-			s_fDevXUITimer = -1.0f;
-			DevLoadXUIScene( TStringManager::String8FindString( GetCommandLineA(), "-devxui " ) + 8 );
-		}
+	if ( s_fDevXUITimer >= 5.0f && ms_szDevXUIScene[ 0 ] != '\0' )
+	{
+		TCHAR szScene[ TARRAYSIZE( ms_szDevXUIScene ) ];
+		TStringManager::String8Copy( szScene, ms_szDevXUIScene );
+		ms_szDevXUIScene[ 0 ] = '\0';
+		DevLoadXUIScene( szScene );
 	}
 #endif
 
@@ -542,7 +542,7 @@ static void DevLogXUIElement( AGUI2XUIElement* a_pElement, TINT a_iDepth )
 		TStringManager::StringUnicodeToChar( szId, a_pElement->GetId(), 127 );
 
 	TVector2 vecPos = a_pElement->GetTransform().GetTranslation();
-	TINFO( "[devxui] %*s%s '%s' pos=(%.1f, %.1f) size=(%.1f, %.1f) scale=(%.2f, %.2f) pivot=(%.1f, %.1f) visible=%d\n", a_iDepth * 2, "", a_pElement->GetClass()->GetName(), szId, vecPos.x, vecPos.y, a_pElement->GetWidth(), a_pElement->GetHeight(), a_pElement->GetTransform().GetScaleX(), a_pElement->GetTransform().GetScaleY(), a_pElement->GetPivot().x, a_pElement->GetPivot().y, a_pElement->IsVisible() );
+	TINFO( "[xui] %*s%s '%s' pos=(%.1f, %.1f) size=(%.1f, %.1f) scale=(%.2f, %.2f) pivot=(%.1f, %.1f) visible=%d\n", a_iDepth * 2, "", a_pElement->GetClass()->GetName(), szId, vecPos.x, vecPos.y, a_pElement->GetWidth(), a_pElement->GetHeight(), a_pElement->GetTransform().GetScaleX(), a_pElement->GetTransform().GetScaleY(), a_pElement->GetPivot().x, a_pElement->GetPivot().y, a_pElement->IsVisible() );
 
 	for ( T2GUIElement* it = a_pElement->ChildRBegin(); it != TNULL; it = a_pElement->GetPrevChild( it ) )
 	{
@@ -564,7 +564,7 @@ void AGUI2::DevLoadXUIScene( const TCHAR* a_szArgs )
 	}
 
 	szName[ iLength ] = '\0';
-	TINFO( "[devxui] loading '%s'\n", szName );
+	TINFO( "[xui] loading '%s'\n", szName );
 
 	// What the Wii loading screens load before their scene
 	LoadXUIMaterialLibrary( "wii_icons128" );
@@ -577,14 +577,14 @@ void AGUI2::DevLoadXUIScene( const TCHAR* a_szArgs )
 
 	if ( !pResource )
 	{
-		TINFO( "[devxui] failed to load the resource\n" );
+		TINFO( "[xui] failed to load the resource\n" );
 		return;
 	}
 
 	LoadXUIMaterialLibrary( szName );
 
 	AGUI2XUIScene* pScene = CreateXUIScene( pResource, 0 );
-	TINFO( "[devxui] scene 0: %p\n", pScene );
+	TINFO( "[xui] scene 0: %p\n", pScene );
 
 	if ( pScene )
 	{

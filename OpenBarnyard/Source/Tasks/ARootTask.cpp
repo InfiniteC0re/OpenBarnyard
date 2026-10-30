@@ -268,7 +268,6 @@ TBOOL ARootTask::OnUpdate( TFLOAT a_fDeltaTime )
 		AGameLoader::Dev_UpdateMiniGameRequest();
 		AGameLoader::Dev_UpdateSimStateRequest();
 		AGameLoader::Dev_UpdateDevTierSequence();
-		ACheatActivator::Dev_Update();
 	}
 
 #  if defined( TOSHI_SKU_WINDOWS )

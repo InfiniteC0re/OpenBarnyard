@@ -9,6 +9,7 @@ workspace "OpenBarnyard"
 -- Include the projects
 group "Engine"
 	include "Toshi"
+	include "PrimeDebug"
 	include "OpenBarnyard"
 
 group "Tools"

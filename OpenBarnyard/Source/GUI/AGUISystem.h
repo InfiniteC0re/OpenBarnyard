@@ -14,7 +14,6 @@ class PGUIOwnerDraw;
 class AGUISoundFactory;
 class AGUIAudioContext;
 class AGUIInputContext;
-class AGUITGUIDemo;
 
 namespace Toshi
 {
@@ -22,6 +21,7 @@ class TGUIScreen;
 class TGUIWidget;
 class TGUIWindow;
 struct TGUIWidgetPaintEvent;
+struct TGUIScreenPaintEvent;
 } // namespace Toshi
 #endif
 
@@ -92,6 +92,7 @@ public:
 	};
 
 	using OwnerDrawListener = Toshi::TListener<Toshi::TGUIWidget, Toshi::TGUIWidgetPaintEvent, PGUIOwnerDraw>;
+	using ScreenPaintListener = Toshi::TListener<Toshi::TGUIScreen, Toshi::TGUIScreenPaintEvent, AGUISystem>;
 
 	// Creates the GUI manager, the display context, the factories and the screen
 	TBOOL CreateTGUI();
@@ -126,12 +127,6 @@ public:
 	// textures of the GUI are found again before the screen is painted
 	void OnTGUIMaterialLibrariesChanged( TBOOL a_bUnloading );
 
-#  ifndef TOSHI_FINAL
-	// Development: shows or hides the dialogs of Data/GUI/main.gui ("-tguidemo", the debug menu)
-	void  Dev_ShowTGUIDemo( TBOOL a_bShow );
-	TBOOL Dev_IsTGUIDemoShown() const { return m_pTGUIDemo != TNULL; }
-#  endif
-
 	TBOOL                 IsTGUICreated() const { return m_pTGUIScreen != TNULL; }
 	Toshi::TGUIScreen*    GetTGUIScreen() const { return m_pTGUIScreen; }
 	PGUITRDisplayContext* GetTGUIDisplayContext() const { return m_pTGUIDisplayContext; }
@@ -144,6 +139,7 @@ private:
 	void UpdateTGUIScreenTransform();
 
 	static TBOOL __stdcall OnOwnerDrawPaint( PGUIOwnerDraw* a_pOwnerDraw, Toshi::TGUIWidget* a_pWidget, Toshi::TGUIWidgetPaintEvent* a_pEvent );
+	static TBOOL __stdcall OnScreenPaint( AGUISystem* a_pGUISystem, Toshi::TGUIScreen* a_pScreen, Toshi::TGUIScreenPaintEvent* a_pEvent );
 	static TBOOL __stdcall FindOwnerDrawCallback( Toshi::TGUIWidget* a_pWidget, void* a_pUserData );
 	static TBOOL __stdcall FindFocusableCallback( Toshi::TGUIWidget* a_pWidget, void* a_pUserData );
 #endif
@@ -180,9 +176,7 @@ private:
 	TINT                   m_iNumOwnerDraws;
 	PGUIOwnerDraw*         m_apOwnerDraws[ MAX_OWNER_DRAWS ];
 	OwnerDrawListener*     m_apOwnerDrawListeners[ MAX_OWNER_DRAWS ];
-#  ifndef TOSHI_FINAL
-	AGUITGUIDemo* m_pTGUIDemo; // "-tguidemo"
-#  endif
+	ScreenPaintListener*   m_pTGUIPaintListener;
 #endif
 };
 

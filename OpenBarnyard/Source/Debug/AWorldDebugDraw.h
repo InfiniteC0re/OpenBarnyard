@@ -1,6 +1,8 @@
 #pragma once
 
-#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+#include <PrimeDebug.h>
+
+#ifdef PRIMEDEBUG_DEV
 #  define AWORLDDEBUGDRAW // the world debug drawing is compiled (development builds)
 #  include <Toshi/TSingleton.h>
 #  include <Math/TVector4.h>
@@ -9,18 +11,6 @@ class ACamera;
 class AInteriorNetwork;
 class AInteriorNetworkPlacementState;
 
-//-----------------------------------------------------------------------------
-// Purpose: development drawing in the world (not in Final builds) with the
-// line shader (ALineShader, created by retail but never used). Each layer is
-// a toggle of the debug menu (ADebugMenuState):
-//  - the interior networks: the edges of the areas (outer cyan, shared blue),
-//    the edge and corner normals (green), the goals (green posts with their
-//    facing)
-//  - the steering of the units: the radius and the heading (red), the next
-//    point (magenta) and the destination (blue) of their path
-//  - the terrain locators (yellow crosses with their names)
-// Drawn with depth at the end of the main pass of ARenderer::RenderMainScene.
-//-----------------------------------------------------------------------------
 class AWorldDebugDraw
     : public Toshi::TSingleton<AWorldDebugDraw>
 {
@@ -33,23 +23,28 @@ public:
 		LAYER_NUMOF
 	};
 
-	static constexpr TUINT32 OUTER_EDGE_COLOUR    = 0xff00ffff;
-	static constexpr TUINT32 SHARED_EDGE_COLOUR   = 0xff2850ff;
-	static constexpr TUINT32 NORMAL_COLOUR        = 0xff00ff40;
-	static constexpr TUINT32 GOAL_COLOUR          = 0xff00ff40;
-	static constexpr TUINT32 SELECTED_COLOUR      = 0xffffffff;
-	static constexpr TUINT32 HOVER_COLOUR         = 0xffffe600;
-	static constexpr TUINT32 UNIT_COLOUR          = 0xffff0000;
-	static constexpr TUINT32 PATH_COLOUR          = 0xffff00ff;
-	static constexpr TUINT32 DESTINATION_COLOUR   = 0xff2850ff;
-	static constexpr TUINT32 LOCATOR_COLOUR       = 0xffffff00;
-	static constexpr TFLOAT  NETWORK_DISTANCE     = 40.0f; // around the camera
-	static constexpr TFLOAT  STEERING_DISTANCE    = 40.0f;
-	static constexpr TFLOAT  LOCATOR_DISTANCE     = 30.0f;
-	static constexpr TFLOAT  LOCATOR_NAME_DISTANCE = 12.0f;
-	static constexpr TFLOAT  LINE_LIFT            = 0.05f; // above the ground (-Y is up)
-	static constexpr TINT    MAX_NETWORKS         = 16;
-	static constexpr TINT    HEIGHTS_PER_FRAME    = 256; // corner heights resolved per frame (rays)
+	static constexpr TUINT32 OUTER_EDGE_COLOUR     = 0xff00ffff;
+	static constexpr TUINT32 SHARED_EDGE_COLOUR    = 0xff2850ff;
+	static constexpr TUINT32 NORMAL_COLOUR         = 0xff00ff40;
+	static constexpr TUINT32 GOAL_COLOUR           = 0xff00ff40;
+	static constexpr TUINT32 SELECTED_COLOUR       = 0xffffffff;
+	static constexpr TUINT32 HOVER_COLOUR          = 0xffffe600;
+	static constexpr TUINT32 UNIT_COLOUR           = 0xffff0000;
+	static constexpr TUINT32 PATH_COLOUR           = 0xffff00ff;
+	static constexpr TUINT32 DESTINATION_COLOUR    = 0xff2850ff;
+	static constexpr TUINT32 LOCATOR_COLOUR        = 0xffffff00;
+	static constexpr TFLOAT  NETWORK_DISTANCE      = 40.0f; // around the camera
+	static constexpr TFLOAT  STEERING_DISTANCE     = 40.0f;
+	static constexpr TFLOAT  LOCATOR_DISTANCE      = 30.0f;
+	static constexpr TFLOAT  LOCATOR_NAME_DISTANCE = 10.0f;
+	static constexpr TFLOAT  LOCATOR_NAME_CONE     = 0.9f; // cosine of the angle from the middle of the view
+	static constexpr TINT    MAX_LOCATOR_NAMES     = 6;
+	static constexpr TUINT32 LOCATOR_NAME_COLOUR   = 0xffc8c864;
+	static constexpr TFLOAT  LINE_LIFT             = 0.05f; // above the ground (-Y is up)
+	static constexpr TINT    MAX_NETWORKS          = 16;
+	static constexpr TINT    HEIGHTS_PER_FRAME     = 256; // corner heights resolved per frame (rays)
+	static constexpr TUINT32 AREA_FILL_ALPHA       = 0x30000000;
+	static constexpr TUINT32 UNIT_FILL_COLOUR      = 0x40ff0000;
 
 public:
 	AWorldDebugDraw();
@@ -102,4 +97,4 @@ private:
 	TINT                            m_iNumLines;
 };
 
-#endif // !TOSHI_FINAL && TRENDERINTERFACE_DX8
+#endif // PRIMEDEBUG_DEV

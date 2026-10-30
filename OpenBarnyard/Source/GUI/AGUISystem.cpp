@@ -11,7 +11,6 @@
 #  include "AGUISoundFactory.h"
 #  include "AGUIAudioContext.h"
 #  include "AGUIInputContext.h"
-#  include "AGUITGUIDemo.h"
 #  include "Assets/AAssetLoader.h"
 #  include "Assets/AMaterialLibraryManager.h"
 
@@ -23,6 +22,8 @@
 #  include <Plugins/PGUI/PGUIOwnerDraw.h>
 #  include <Plugins/PGUI/PGUIMenuDialog.h>
 #  include <TGUI/TGUIWindow.h>
+#  include <TGUI/TGUIDisplayContext.h>
+#  include <TGUI/TGUIColour.h>
 #  include <Plugins/PGUIRenderer/PGUITRDisplayContext.h>
 #  include <Plugins/PGUIRenderer/PGUITRViewportHandler.h>
 #  include <File/TFile.h>
@@ -73,14 +74,11 @@ AGUISystem::AGUISystem()
 	m_bTGUIMaterialsDirty = TFALSE;
 	m_bTGUIMatLibLoaded   = TFALSE;
 	m_bTGUIPointerMode    = TFALSE;
+	m_pTGUIPaintListener  = TNULL;
 	m_iNumOwnerDraws      = 0;
 
 	for ( TUINT i = 0; i < NUM_RENDER_OBJECTS; i++ )
 		m_apTGUIViewportHandlers[ i ] = TNULL;
-
-#  ifndef TOSHI_FINAL
-	m_pTGUIDemo = TNULL;
-#  endif
 #endif
 }
 
@@ -155,17 +153,6 @@ TBOOL __stdcall AGUISystem::OnGUIRender( AGUISystem* a_pGUISystem, ARenderer* a_
 			a_pGUISystem->m_MatLibPicture.Render();
 
 #ifdef BARNYARD_COMMUNITY_PATCH
-#  ifndef TOSHI_FINAL
-		// NOTE: "-tguidemo" (development): shows the dialogs of Data/GUI/main.gui
-		static TBOOL s_bTGUIDemoStarted = TFALSE;
-
-		if ( !s_bTGUIDemoStarted && AGUITGUIDemo::IsRequested() && AAssetLoader::GetAssetTRB( AAssetType_Startup ) )
-		{
-			s_bTGUIDemoStarted = TTRUE;
-			a_pGUISystem->Dev_ShowTGUIDemo( TTRUE );
-		}
-#  endif
-
 		// NOTE: Barnyard route added on top: the TGUI screen, above the picture
 		if ( a_pGUISystem->m_pTGUIScreen )
 			a_pGUISystem->RenderTGUI();
@@ -342,6 +329,9 @@ TBOOL AGUISystem::CreateTGUI()
 
 	UpdateTGUIScreenTransform();
 
+	m_pTGUIPaintListener = new ScreenPaintListener();
+	m_pTGUIPaintListener->Connect( m_pTGUIScreen->GetScreenPaintEmitter(), this, OnScreenPaint, 0 );
+
 	TINFO( "[TGUI] created the screen (%dx%d)\n", TGUI_SCREEN_WIDTH, TGUI_SCREEN_HEIGHT );
 	return TTRUE;
 }
@@ -350,16 +340,15 @@ void AGUISystem::DestroyTGUI()
 {
 	TGUIMemoryScope oMemoryScope;
 
-#  ifndef TOSHI_FINAL
-	if ( m_pTGUIDemo )
-	{
-		delete m_pTGUIDemo;
-		m_pTGUIDemo = TNULL;
-	}
-#  endif
-
 	if ( !m_pTGUIScreen )
 		return;
+
+	if ( m_pTGUIPaintListener )
+	{
+		m_pTGUIPaintListener->Disconnect();
+		delete m_pTGUIPaintListener;
+		m_pTGUIPaintListener = TNULL;
+	}
 
 	// The screen doesn't delete its children
 	while ( !m_pTGUIScreen->GetChildren().IsEmpty() )
@@ -510,33 +499,11 @@ void AGUISystem::HideTGUIDialog( TGUIWidget* a_pDialog )
 	delete a_pDialog;
 }
 
-#  ifndef TOSHI_FINAL
-
-void AGUISystem::Dev_ShowTGUIDemo( TBOOL a_bShow )
-{
-	if ( a_bShow && !m_pTGUIDemo )
-	{
-		m_pTGUIDemo = new AGUITGUIDemo( this );
-	}
-	else if ( !a_bShow && m_pTGUIDemo )
-	{
-		delete m_pTGUIDemo;
-		m_pTGUIDemo = TNULL;
-	}
-}
-
-#  endif
-
 // NOTE: Barnyard route added on top (called by AGameStateController::ProcessInput): the events of the doodads the action
 // map knows are kept from the game state while the screen shows a widget
 TBOOL AGUISystem::NotifyTGUIInputEvent( const TInputInterface::InputEvent* a_pEvent )
 {
 	TGUIMemoryScope oMemoryScope;
-
-#  ifndef TOSHI_FINAL
-	if ( m_pTGUIDemo && m_pTGUIDemo->ProcessInput( a_pEvent ) )
-		return TTRUE;
-#  endif
 
 	if ( !m_pTGUIScreen || m_pTGUIScreen->GetChildren().IsEmpty() )
 		return TFALSE;
@@ -567,6 +534,28 @@ TBOOL AGUISystem::NotifyTGUIInputEvent( const TInputInterface::InputEvent* a_pEv
 
 	TBOOL bUsed = m_pTGUIScreen->NotifyInputEvent( const_cast<TInputInterface::InputEvent*>( a_pEvent ) );
 	return bUsed || TGUIManager::GetSingleton()->GetActionMap().TranslateDoodadToAction( a_pEvent->GetDoodad() ) != 0;
+}
+
+TBOOL __stdcall AGUISystem::OnScreenPaint( AGUISystem* a_pGUISystem, TGUIScreen* a_pScreen, TGUIScreenPaintEvent* a_pEvent )
+{
+	if ( a_pEvent->ePhase != TGUIScreenPaintEvent::Phase_End || !a_pScreen->IsPointerVisible() )
+		return TTRUE;
+
+	// An arrow, white with a black outline
+	TGUIDisplayContext* pContext = a_pScreen->GetDisplayContext();
+	const TGUIColour    oWhite( TUINT8( 255 ), TUINT8( 255 ), TUINT8( 255 ), TUINT8( 255 ) );
+	const TGUIColour    oBlack( TUINT8( 0 ), TUINT8( 0 ), TUINT8( 0 ), TUINT8( 255 ) );
+
+	TINT iX, iY;
+	a_pScreen->GetPointerPosition( iX, iY );
+
+
+	for ( TINT i = 0; i < 16; i++ )
+		pContext->DrawLine( iX, iY + i, iX + i * 2 / 3, iY + i, ( i == 15 ) ? oBlack : oWhite );
+
+	pContext->DrawLine( iX - 1, iY, iX - 1, iY + 16, oBlack );
+	pContext->DrawLine( iX, iY - 1, iX + 12, iY + 13, oBlack );
+	return TTRUE;
 }
 
 TBOOL __stdcall AGUISystem::OnOwnerDrawPaint( PGUIOwnerDraw* a_pOwnerDraw, TGUIWidget* a_pWidget, TGUIWidgetPaintEvent* a_pEvent )
@@ -771,11 +760,6 @@ void AGUISystem::UpdateTGUIScreenTransform()
 void AGUISystem::RenderTGUI()
 {
 	TGUIMemoryScope oMemoryScope;
-
-#  ifndef TOSHI_FINAL
-	if ( m_pTGUIDemo )
-		m_pTGUIDemo->Update();
-#  endif
 
 	if ( m_pTGUIScreen->GetChildren().IsEmpty() )
 		return;

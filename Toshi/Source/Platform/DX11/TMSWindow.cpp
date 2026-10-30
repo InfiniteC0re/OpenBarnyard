@@ -338,6 +338,17 @@ LRESULT CALLBACK TMSWindow::WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 			return DefWindowProcA( hWnd, uMsg, wParam, lParam );
 		}
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+		case WM_CLOSE:
+			{
+				TRenderD3DInterface* pRenderer = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
+				pRenderer->Exit();
+
+				g_oSystemManager.Destroy();
+				return 0;
+			}
+#endif // BARNYARD_COMMUNITY_PATCH
+
 		case WM_SYSCOMMAND:
 			if ( wParam == SC_CLOSE )
 			{

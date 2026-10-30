@@ -30,6 +30,13 @@ void TFileStream::Main()
 		do
 		{
 			m_Jobs.Pop( pJob );
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+			// A null job is pushed by Stop()
+			if ( pJob == TNULL )
+				return;
+#endif
+
 			pJob->Process();
 			pJob->m_bIsProcessed = TTRUE;
 		} while ( pJob->m_pSemaphore == TNULL );
@@ -44,6 +51,24 @@ void TFileStream::AddStream( TFileStreamJob* job )
 	TPROFILER_SCOPE();
 	job->m_bIsProcessed = TFALSE;
 	m_Jobs.Push( &job );
+}
+
+void TFileStream::Stop()
+{
+	if ( m_hThreadHnd == TNULL )
+		return;
+
+	// TThread::Exit closes m_hThreadHnd on the thread itself, so wait on a copy of it
+	HANDLE hThread = NULL;
+	if ( !DuplicateHandle( GetCurrentProcess(), m_hThreadHnd, GetCurrentProcess(), &hThread, SYNCHRONIZE, FALSE, 0 ) )
+		return;
+
+	TFileStreamJob* pStopJob = TNULL;
+	m_Jobs.Push( &pStopJob );
+
+	DWORD uiResult = WaitForSingleObject( hThread, 10000 );
+	TASSERT( uiResult == WAIT_OBJECT_0, "TFileStream::Stop: the thread didn't finish its jobs" );
+	CloseHandle( hThread );
 }
 
 //-----------------------------------------------------------------------------

@@ -8,7 +8,7 @@
 #include "UnitMovement/Steering/ASteerTraits.h"
 #include "Player/APlayerProfileManager.h"
 #include "Terrain/ATerrainInterface.h"
-#include "Render/ADebugOverlay.h"
+#include "Debug/ADebugOverlay.h"
 #include "Physics/ACollisionManager.h"
 #include "Physics/APhysics.h"
 

@@ -1,13 +1,11 @@
 #include "pch.h"
 #include "AGameLoader.h"
-#include "AOptions.h"
 #include "FSM/AFunctionTable.h"
 #include "ALoadScreen.h"
 #include "Tasks/ARootTask.h"
 #include "Tasks/AGameSystemManager.h"
 #include "Helpers/AHighScoreManager.h"
 #include "MiniGame/AGopherShopInterface.h"
-#include "MiniGame/AGopherShopGame.h"
 #include "Helpers/ABikeManager.h"
 #include "Helpers/ABikeHelpers.h"
 #include "UnitMovement/Steering/ABikeSteer.h"
@@ -29,14 +27,13 @@
 #include "Assets/AKeyFrameLibraryManager.h"
 #include "Assets/AMaterialLibraryManager.h"
 #include "MiniGame/AMiniGameManager.h"
-#include "MiniGame/AShakeTreeMicroGame.h"
 #include "MiniGame/ABikeRaceMicroGame.h"
 #include "Render/AShadowManager.h"
 #include "UnitMovement/PathfindingNetworks/AInteriorNetworkManager.h"
 #include "GameInterface/AFrontEndMainMenuState2.h"
-#include "GameInterface/AFrontEndAttractState.h"
+#include "Debug/ADebugMenuState.h"
+#include "Debug/APrimeDebugFSM.h"
 #include "GameInterface/AMiniGameInstructionState.h"
-#include "GameInterface/AMessagePopupState.h"
 #include "Player/APlayerProfileManager.h"
 #include "Input/AInputHandler.h"
 #include "Input/AInputMapManager.h"
@@ -54,14 +51,9 @@
 #include "FX/AGameTimeFXManager.h"
 #include "Helpers/AWeatherManager.h"
 #include "GameInterface/ASimState.h"
-#include "Helpers/ALadderBeansGame.h"
-#include "Units/AUnitPlayer.h"
-#include "Units/Projectiles/AProjectileLauncher.h"
 #include "Units/Projectiles/ALaunchAmmo.h"
 #include "Helpers/APlayerProgress.h"
 #include "UnitMovement/PathfindingNetworks/AInteriorNetwork.h"
-#include "UnitMovement/PathfindingNetworks/AInteriorArea.h"
-#include "GameInterface/AInventoryState2.h"
 #include "GameInterface/AInteriorNetworkPlacementState.h"
 #include "Cameras/ACamera.h"
 #include "Units/AUnitManager.h"
@@ -71,9 +63,6 @@
 #include "Units/Projectiles/ASimpleProjectileManager.h"
 #include "UnitMovement/Steering/APlayerSteer.h"
 #include "Terrain/ATerrainInterface.h"
-#include "Units/APlayerControlComponent.h"
-#include "Units/ACharacterUnit.h"
-#include "GameInterface/AAnimalConversationState.h"
 #include <Toshi/TScheduler.h>
 #include "Assets/AModelLoader.h"
 #include "Animation/AAnimatableObject.h"
@@ -91,20 +80,12 @@
 #include "GameInterface/SaveLoadSKU.h"
 #include "GameInterface/AHackedQuickSave.h"
 #include "GameInterface/AGameStateController.h"
-#include "Units/ABikeControlComponent.h"
-#include "Helpers/ACoinSpawner.h"
-#include "MiniGame/ACoinPickupMicroGame.h"
-#include "Units/ACoinPickupCoinItem.h"
 #include "Units/AInventoryComponentInterface.h"
-#include "MiniGame/ACookingRecipe.h"
 #include "Assets/AAssetLoader.h"
 #include "Helpers/AReplayManager.h"
-#include "GameInterface/AReplayVariantSelectState.h"
-#include "MiniGame/ATreasueHuntMicroGame.h"
 #include "GameInterface/ASSeqState.h"
 #include "Render/ARenderer.h"
 #include "MiniGame/ABarnExploreMinigameState.h"
-#include "Sound/AMultiplexStream.h"
 #include "Quests/AQuest.h"
 #include "Units/AInteractionEventManager.h"
 #include "Units/AInteractionQuestEvent.h"
@@ -296,8 +277,8 @@ static TINT s_iLastScriptedSequence = -1; // 0x00772814
 static TBOOL LoadScriptedSequenceImpl();
 
 #ifdef BARNYARD_COMMUNITY_PATCH
-// Development: the scripted sequence "-devtier" asked for while the main game was loading (see LoadMainGameImpl),
-// played by Dev_UpdateDevTierSequence once the sim is up
+// Development: the scripted sequence of the tier "story.goto" asked for while the main game was loading (see
+// LoadMainGameImpl), played by Dev_UpdateDevTierSequence once the sim is up
 static TINT          s_iDevTierSequence          = -1;
 static const TClass* s_pDevTierSequencePrevState = TNULL;
 static TPString8     s_strDevTierSequenceGoal;
@@ -305,6 +286,7 @@ static TPString8     s_strDevTierSequenceGoal;
 static void  Dev_StartDevTierGame();
 static TBOOL Dev_ApplyDevTier();
 static void  Dev_PopulateDevTier();
+static void  Dev_FinishStoryRequest();
 #endif
 
 // $Barnyard: FUNCTION 004232c0
@@ -1499,7 +1481,7 @@ static TBOOL LoadMainGameImpl()
 		s_bPlacePlayerAtStartGoal = TTRUE;
 
 #ifdef BARNYARD_COMMUNITY_PATCH
-		// Development: "-devtier <act> <tier>" starts the story at that tier. Before the animals are spawned, the
+		// Development: "story.goto <act> <tier>" starts the story at that tier. Before the animals are spawned, the
 		// same as a loaded save (the population depends on the tier, the act's assets only have the act's units)
 		const TBOOL bDevTier = Dev_ApplyDevTier();
 
@@ -1526,6 +1508,8 @@ static TBOOL LoadMainGameImpl()
 #ifdef BARNYARD_COMMUNITY_PATCH
 		else
 			Dev_PopulateDevTier();
+
+		Dev_FinishStoryRequest();
 #endif
 
 		AGameTimeManager::GetSingleton()->SetTime( 10, 0, 0, TFALSE, TTRUE );
@@ -2829,18 +2813,8 @@ void AGameLoader::LoadFrontEnd()
 
 	ARootTask::GetSingleton()->SetRenderWorld( TTRUE );
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// Development: "-devattract" starts at the title screen that retail never creates
-	if ( TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devattract" ) )
-	{
-		delete pFrontEndState;
-		pFrontEndState = TNULL;
-		AGameStateController::GetSingleton()->PushState( new AFrontEndAttractState() );
-	}
-	else
-#endif
-		// Push the state
-		AGameStateController::GetSingleton()->PushState( pFrontEndState );
+	// Push the state
+	AGameStateController::GetSingleton()->PushState( pFrontEndState );
 	AGameLoader::Debug_VerifyModelsInAssetPack( AAssetLoader::GetAssetTRB( AAssetType_AssetPack ) );
 
 	// The barn doors of the frontend are open
@@ -2887,22 +2861,18 @@ static const TCHAR* Dev_GetMiniGameArg( TCHAR* a_szOutName, TINT a_iSize )
 }
 
 // The micro games of the sim aren't minigames of AMiniGameManager: the sim starts them (a lever, a kick, an item...).
-// "-minigame <micro game>" plays them in a new game of the sim, through the dev switches that start each of them
+// "-minigame <micro game>" plays them in a new game of the sim, 8 seconds after it has started
 struct DevMicroGame
 {
 	const TCHAR* szName;
-	const TCHAR* szSwitches; // TNULL: added by name to the sim 8 seconds after it has started (CreateAndAddChildState)
+	const TCHAR* szStartGoal; // TNULL: added by name to the sim (CreateAndAddChildState); else the game state started at that goal (a door)
+	TINT         iDayPhase;   // -1: unchanged
 };
 
 static const DevMicroGame s_aDevMicroGames[] = {
-	{ "ACoinPickupMicroGame", "-devgoldrush" },
-	{ "AShakeTreeMicroGame", "-devshake tree" },
-	{ "AMilkCanMicroGame", "-devnightbarn -devshake milkcan" },
-	{ "ATreasueHuntMicroGame", "-devtreasure" },
-	{ "ABarnExploreMinigameState", "-devnightbarn -devdayphase 4" },
-	{ "ACookingMiniGame", "-devnightbarn -devdayphase 4 -devcocktails 4" },
-	{ "ASuperSquirtMicroGame", TNULL },
-	{ "AFarmerTrainMicroGame", TNULL },
+	{ "ABarnExploreMinigameState", "barn_entrance", AGameTimeManager::DAYPHASE_NIGHT },
+	{ "ASuperSquirtMicroGame", TNULL, -1 },
+	{ "AFarmerTrainMicroGame", TNULL, -1 },
 };
 
 // The micro game of "-minigame", TNULL if there's none
@@ -2922,27 +2892,21 @@ static const DevMicroGame* Dev_GetMicroGame()
 
 const TCHAR* AGameLoader::Dev_GetCommandLine()
 {
-	static TString8 s_strCommandLine;
-	static TBOOL    s_bCreated = TFALSE;
+	static TCHAR* s_szCommandLine = TNULL;
 
-	if ( !s_bCreated )
+	if ( !s_szCommandLine )
 	{
-		s_bCreated       = TTRUE;
-		s_strCommandLine = GetCommandLineA();
+		TString8 strCommandLine = GetCommandLineA();
 
-		if ( const DevMicroGame* pMicroGame = Dev_GetMicroGame() )
-		{
-			s_strCommandLine += " -simstate";
+		if ( Dev_GetMicroGame() )
+			strCommandLine += " -simstate";
 
-			if ( pMicroGame->szSwitches )
-			{
-				s_strCommandLine += " ";
-				s_strCommandLine += pMicroGame->szSwitches;
-			}
-		}
+		const TINT iLength = strCommandLine.Length();
+		s_szCommandLine    = TSTATICCAST( TCHAR, HeapAlloc( GetProcessHeap(), 0, iLength + 1 ) );
+		TStringManager::String8Copy( s_szCommandLine, strCommandLine, iLength + 1 );
 	}
 
-	return s_strCommandLine;
+	return s_szCommandLine;
 }
 
 // Returns TTRUE if a_szSwitch is on the command line
@@ -2969,13 +2933,25 @@ static TBOOL Dev_HasSwitch( const TCHAR* a_szSwitch, const TCHAR** a_ppOutArgs =
 }
 
 //-----------------------------------------------------------------------------
-// Development: "-devtier <act> <tier>" starts a new game (like "-simstate") at that act and tier, in the state
-// the story leaves it when the tier is reached by playing: the quests of the earlier tiers are completed and
-// their lasting rewards given. "-devadvancetier <n>" is the same, at the tier n tiers after the first one.
+// Development: "story.goto <act> <tier>" starts a new game at that act and tier, the quests of the earlier tiers
+// completed with their lasting rewards. While a game is going on, it returns to the frontend first.
 //-----------------------------------------------------------------------------
 
+enum DEVSTORY
+{
+	DEVSTORY_NONE,
+	DEVSTORY_LEAVE,
+	DEVSTORY_WAIT_MENU,
+	DEVSTORY_APPLY,
+};
+
+static DEVSTORY s_eDevStory     = DEVSTORY_NONE;
+static TINT     s_iDevStoryAct  = 0; // 0: story.reset
+static TINT     s_iDevStoryTier = 0;
+static TBOOL    s_bDevStoryBoot = TFALSE;
+
 // What the quests of the story give for good (items, unlocks), applied for the quests of the tiers before the one
-// "-devtier" starts at. From the activities of Data/Interactions. Only the gifts that stay with the player are
+// "story.goto" starts at. From the activities of Data/Interactions. Only the gifts that stay with the player are
 // listed, not the items a quest takes back.
 struct DevTierQuestReward
 {
@@ -3006,41 +2982,74 @@ static const DevTierQuestReward s_aDevTierQuestRewards[] = {
 	{ "Barnyard Hero", "junkyard_gate_key", TFALSE, TNULL, TNULL, TFALSE },
 };
 
-// The act and tier of "-devtier" / "-devadvancetier", TFALSE if there's neither
 static TBOOL Dev_GetDevTier( TINT& a_rAct, TINT& a_rTier )
 {
-	const TCHAR* szArgs;
+	if ( s_eDevStory != DEVSTORY_APPLY || s_iDevStoryAct <= 0 )
+		return TFALSE;
 
-	if ( Dev_HasSwitch( "-devtier", &szArgs ) )
+	a_rAct  = TMath::Min( TMath::Max( s_iDevStoryAct, 1 ), 3 );
+	a_rTier = TMath::Max( s_iDevStoryTier, 1 );
+	return TTRUE;
+}
+
+static void Dev_FinishStoryRequest()
+{
+	if ( s_eDevStory == DEVSTORY_APPLY )
+		s_eDevStory = DEVSTORY_NONE;
+}
+
+TINT AGameLoader::Dev_GetNumTiersInAct( TINT a_iAct )
+{
+	static const TINT s_aiNumTiers[] = { 16, 20, 18 };
+	a_iAct                           = TMath::Min( TMath::Max( a_iAct, 1 ), 3 );
+
+	if ( AQuestManager::IsSingletonCreated() && AQuestManager::GetSingleton()->GetNumTiersInAct( a_iAct - 1 ) > 0 )
+		return AQuestManager::GetSingleton()->GetNumTiersInAct( a_iAct - 1 );
+
+	return s_aiNumTiers[ a_iAct - 1 ];
+}
+
+void AGameLoader::Dev_GetAdvancedTier( TINT a_iNumTiers, TINT& a_rAct, TINT& a_rTier )
+{
+	TINT iAbsTier = TMath::Max( a_iNumTiers, 0 ) + 1;
+	a_rAct        = 1;
+
+	while ( a_rAct < 3 && iAbsTier > Dev_GetNumTiersInAct( a_rAct ) )
+		iAbsTier -= Dev_GetNumTiersInAct( a_rAct++ );
+
+	a_rTier = iAbsTier;
+}
+
+void AGameLoader::Dev_RequestStory( TINT a_iAct, TINT a_iTier )
+{
+	if ( a_iAct > 0 )
 	{
-		a_rAct  = 1;
-		a_rTier = 1;
-		sscanf( szArgs, " %d %d", &a_rAct, &a_rTier );
-	}
-	else if ( Dev_HasSwitch( "-devadvancetier", &szArgs ) )
-	{
-		// The tier n tiers after the first one (the numbers of tiers of the acts are those of tier_data)
-		TINT iNumTiers = 0;
-		sscanf( szArgs, " %d", &iNumTiers );
-
-		static const TINT s_aiNumTiers[] = { 16, 20, 18 };
-		TINT              iAbsTier       = TMath::Max( iNumTiers, 0 ) + 1;
-
-		a_rAct = 1;
-
-		while ( a_rAct < 3 && iAbsTier > s_aiNumTiers[ a_rAct - 1 ] )
-			iAbsTier -= s_aiNumTiers[ a_rAct++ - 1 ];
-
-		a_rTier = iAbsTier;
+		s_iDevStoryAct  = TMath::Min( TMath::Max( a_iAct, 1 ), 3 );
+		s_iDevStoryTier = TMath::Min( TMath::Max( a_iTier, 1 ), Dev_GetNumTiersInAct( s_iDevStoryAct ) );
+		TINFO( "[story] going to act %d tier %d\n", s_iDevStoryAct, s_iDevStoryTier );
 	}
 	else
 	{
-		return TFALSE;
+		s_iDevStoryAct  = 0;
+		s_iDevStoryTier = 0;
+		TINFO( "[story] reset: a new game at act 1 tier 1\n" );
 	}
 
-	a_rAct  = TMath::Min( TMath::Max( a_rAct, 1 ), 3 );
-	a_rTier = TMath::Max( a_rTier, 1 );
-	return TTRUE;
+	if ( !ARootTask::IsSingletonCreated() || !ARootTask::GetSingleton()->IsGameSystemCreated() )
+	{
+		// Before the frontend: started like "-simstate"
+		s_bDevStoryBoot = TTRUE;
+		s_eDevStory     = DEVSTORY_APPLY;
+	}
+	else
+	{
+		s_eDevStory = DEVSTORY_LEAVE;
+	}
+}
+
+TBOOL AGameLoader::Dev_IsStoryRequestPending()
+{
+	return s_eDevStory != DEVSTORY_NONE;
 }
 
 // Called before a new main game is loaded: the act decides which assets the main game loads
@@ -3054,7 +3063,7 @@ static void Dev_StartDevTierGame()
 	// The assets of the main game depend on the act (AAssetLoader::GetLibraryFileName), the same way loading a save
 	// sets the act of its slot first (AGameLoader::LoadSavedGame)
 	ASimPersistData::GetSingleton()->SetAct( iAct );
-	TINFO( "[devtier] new game at act %d tier %d\n", iAct, iTier );
+	TINFO( "[story] new game at act %d tier %d\n", iAct, iTier );
 }
 
 // Completes the quests of the tier a_iAbsTier the way the story leaves them once they're done: the completed
@@ -3079,7 +3088,7 @@ static TINT Dev_CompleteQuestTier( TINT a_iAbsTier )
 
 		if ( !pEvent )
 		{
-			TWARN( "[devtier] no free quest event for '%s'\n", pQuest->GetName().GetString() );
+			TWARN( "[story] no free quest event for '%s'\n", pQuest->GetName().GetString() );
 			continue;
 		}
 
@@ -3097,7 +3106,7 @@ static TINT Dev_CompleteQuestTier( TINT a_iAbsTier )
 	return iNumEvents;
 }
 
-// Called instead of AQuestManager::SetQuestTier( 1, 1 ) of a new game. Returns TFALSE if there's no "-devtier"
+// Called instead of AQuestManager::SetQuestTier( 1, 1 ) of a new game. Returns TFALSE if there's no "story.goto"
 static TBOOL Dev_ApplyDevTier()
 {
 	TINT iAct, iTier;
@@ -3119,7 +3128,7 @@ static TBOOL Dev_ApplyDevTier()
 	for ( TINT i = 1; i < iAbsTier; i++ )
 		iNumEvents += Dev_CompleteQuestTier( i );
 
-	TINFO( "[devtier] %d quests of the earlier tiers completed\n", iNumEvents );
+	TINFO( "[story] %d quests of the earlier tiers completed\n", iNumEvents );
 
 	// Same as the start of a new game, at the given tier
 	pQuestManager->SetQuestTier( iAct, iTier, TFALSE );
@@ -3154,7 +3163,7 @@ static TBOOL Dev_ApplyDevTier()
 		if ( rcReward.bSuperSquirt )
 			AMiscFunctions::GetSingleton()->EnableSuperSquirtParticles( TTRUE );
 
-		TINFO( "[devtier] reward of '%s': %s\n", rcReward.szQuest, rcReward.szItem ? rcReward.szItem : "(unlock)" );
+		TINFO( "[story] reward of '%s': %s\n", rcReward.szQuest, rcReward.szItem ? rcReward.szItem : "(unlock)" );
 	}
 
 	// The quests of the tier
@@ -3163,15 +3172,15 @@ static TBOOL Dev_ApplyDevTier()
 	for ( TINT k = 0; k < pTier->uiNumQuests; k++ )
 	{
 		AQuest* pQuest = pQuestManager->GetQuest( pTier->auiQuests[ k ] );
-		TINFO( "[devtier] quest of the tier: '%s' (giver %s)\n", pQuest->GetName().GetString(), pQuest->GetQuestGiver().GetString() );
+		TINFO( "[story] quest of the tier: '%s' (giver %s)\n", pQuest->GetName().GetString(), pQuest->GetQuestGiver().GetString() );
 	}
 
-	TINFO( "[devtier] act %d tier %d (abs %d of %d), persist act %d, %d quests assigned\n", pQuestManager->GetAct(), pQuestManager->GetTier(), pQuestManager->GetCurAbsQuestTier(), pQuestManager->GetNumTiers(), ASimPersistData::GetSingleton()->GetAct(), pQuestManager->GetNumAssignedQuests() );
+	TINFO( "[story] act %d tier %d (abs %d of %d), persist act %d, %d quests assigned\n", pQuestManager->GetAct(), pQuestManager->GetTier(), pQuestManager->GetCurAbsQuestTier(), pQuestManager->GetNumTiers(), ASimPersistData::GetSingleton()->GetAct(), pQuestManager->GetNumAssignedQuests() );
 	fflush( stdout );
 	return TTRUE;
 }
 
-// Called after the animals of a "-devtier" game are spawned. AQuestManager::SetQuestTier (Dev_ApplyDevTier) ran before
+// Called after the animals of a "story.goto" game are spawned. AQuestManager::SetQuestTier (Dev_ApplyDevTier) ran before
 // AAnimalPopulationManager::Populate, when the population manager ignores it (no spawn flags yet), so the story changes
 // of the population were missing until the next change of the phase of the day: Ben stayed alive after his death (act
 // 2 tier 19), Igg, Bud and Eddie weren't spawned, etc. Destroying Ben then, in the frame the night came, left a dying
@@ -3261,11 +3270,11 @@ void AGameLoader::Dev_UpdateMiniGameRequest()
 
 	APlayerSet* pPlayerSet = APlayerManager::GetSingleton()->GetPlayerSet( 1 );
 
-	// "-devplayers <n>": n human players sharing the main controller (multiplayer turn tests)
-	if ( const TCHAR* szPlayers = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devplayers " ) )
+	// minigame.players: that many human players sharing the main controller (multiplayer turn tests)
+	if ( ms_iDevMiniGamePlayers > 1 )
 	{
-		TINT iNumPlayers = TMath::Min( atoi( szPlayers + TStringManager::String8Length( "-devplayers " ) ), pMiniGameManager->GetMiniGame( iMiniGame )->GetMaxNumPlayers() );
-		TINFO( "-devplayers: %d human players\n", iNumPlayers );
+		TINT iNumPlayers = TMath::Min( ms_iDevMiniGamePlayers, pMiniGameManager->GetMiniGame( iMiniGame )->GetMaxNumPlayers() );
+		TINFO( "-minigame: %d human players\n", iNumPlayers );
 
 		for ( TINT i = iNumPlayers - 1; i >= 0; i-- )
 		{
@@ -3294,46 +3303,16 @@ void AGameLoader::Dev_UpdateMiniGameRequest()
 	if ( pMiniGameManager->GetMiniGameVariant() < 0 )
 		pMiniGameManager->SetMiniGameVariant( 0 );
 
-	// "-devvariant <n>": play variant n instead of the default one (as AFrontEndVariantSelectState does)
-	if ( const TCHAR* szVariant = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devvariant " ) )
+	// minigame.variant: that variant instead of the default one (as AFrontEndVariantSelectState does)
+	if ( ms_iDevMiniGameVariant >= 0 )
 	{
-		TINT iVariant = atoi( szVariant + TStringManager::String8Length( "-devvariant " ) );
-		TINFO( "-devvariant: variant %d\n", iVariant );
-		pMiniGameManager->SetMiniGameVariant( iVariant );
+		TINFO( "-minigame: variant %d\n", ms_iDevMiniGameVariant );
+		pMiniGameManager->SetMiniGameVariant( ms_iDevMiniGameVariant );
 	}
 
 	SetTransitionToMiniGame( iMiniGame, TFALSE );
 }
 
-// Development: gives the player the ingredients of the first recipe (and a few more) and starts ACookingMiniGame
-// the way the kitchen (or, in the barn, the bar: the cocktails) does
-static void Dev_StartCooking()
-{
-	AUnit*                    pPlayer       = APlayerManager::GetSingleton()->GetPlayerSet( 0 )->GetHumanPlayerUnit( 0 );
-	AInventoryGroupComponent* pInventory    = TSTATICCAST( AInventoryGroupComponent, pPlayer->FindComponent( &TGetClass( AInventoryGroupComponent ) ) );
-	const TCHAR**             ppIngredients = TSTATICCAST( const TCHAR*, AAssetLoader::GetSymbolAddress( "cooking", "AllIngredients", AAssetType_AssetPack ) );
-	RecipeEntryData*          pRecipes      = TSTATICCAST( RecipeEntryData, AAssetLoader::GetSymbolAddress( "cooking", "AllRecipes", AAssetType_AssetPack ) );
-
-	if ( pRecipes && ppIngredients )
-	{
-		for ( TINT i = 0; i < ACookingRecipe::MAX_INGREDIENTS && pRecipes[ 0 ].aszIngredients[ i ]; i++ )
-			pInventory->AddItems( TPString8( pRecipes[ 0 ].aszIngredients[ i ] ), 3, AInventoryComponentInterface::ms_strDefaultInventory );
-
-		// cooking.AllIngredients has 7 words per ingredient, the first one is the unit type
-		for ( TINT i = 0; i < 4; i++ )
-			pInventory->AddItems( TPString8( ppIngredients[ i * 7 ] ), 2, AInventoryComponentInterface::ms_strDefaultInventory );
-	}
-	else
-	{
-		TWARN( "[devcooking] the cooking asset pack isn't loaded, no ingredients given\n" );
-	}
-
-	AGameStateController::GetSingleton()->StartGameState( TPS8( ACookingMiniGame ) );
-}
-
-// Development: "-devinventory" opens the inventory screen of the sim 6 seconds after the sim has
-// started (like the inventory button does) and scrolls its items (right twice, left twice...) every 3 seconds. With
-// "-devinventoryuse" the selected item is used 10 seconds later (which opens the screen of the item)
 // Development, save system test (unattended runs of "-simstate"):
 //  "-devsave":  15 seconds after the sim has started, changes the time, the pick ups and the player's
 //               position and saves the game into slot 0 of the dev save file.
@@ -3424,10 +3403,55 @@ static void Dev_StartNewMainGame()
 	if ( APlayerProfileManager::GetSingleton()->GetMainProfile()->GetName().Length() == 0 )
 		APlayerProfileManager::GetSingleton()->GetMainProfile()->SetName( L"Archie" );
 
-	// "-devtier": the act decides the assets of the main game
+	// "story.goto": the act decides the assets of the main game
 	Dev_StartDevTierGame();
 
 	AGameLoader::SetTransitionToMainGame( TFALSE );
+}
+
+// TTRUE once the new game has started
+static TBOOL Dev_UpdateStoryRequest()
+{
+	if ( s_eDevStory != DEVSTORY_LEAVE && s_eDevStory != DEVSTORY_WAIT_MENU )
+		return TFALSE;
+
+#  ifndef TOSHI_FINAL
+	if ( ADebugMenuState::GetOpenMenu() )
+	{
+		ADebugMenuState::RequestAction( ADebugMenuState::ACTION_CLOSE, 0 );
+		return TFALSE;
+	}
+#  endif
+
+	if ( ARootTask::GetSingleton()->IsTransitioning() || AGameLoader::IsReturningToFrontEnd() )
+		return TFALSE;
+
+	if ( s_eDevStory == DEVSTORY_LEAVE && !AFrontEndMainMenuState2::IsCurrent() )
+	{
+		if ( !s_bMainGameLoaded && !s_bInMiniGame && !s_bGameStateLibraryLoaded && s_iScriptedSequence == -1 )
+		{
+			s_eDevStory = DEVSTORY_WAIT_MENU;
+			TINFO( "[story] waiting for the main menu of the frontend\n" );
+			return TFALSE;
+		}
+
+		TINFO( "[story] returning to the frontend\n" );
+		s_iDevTierSequence          = -1;
+		s_pDevTierSequencePrevState = TNULL;
+		s_strDevTierSequenceGoal    = TPString8();
+		s_eDevStory                 = DEVSTORY_WAIT_MENU;
+		AGameLoader::ReturnToFrontEnd( TNULL, TTRUE, TTRUE );
+		return TFALSE;
+	}
+
+	if ( !AFrontEndMainMenuState2::IsCurrent() )
+		return TFALSE;
+
+	s_eDevStory = DEVSTORY_APPLY;
+	TINFO( "[story] starting the new game\n" );
+	Dev_SetupSavePath();
+	Dev_StartNewMainGame();
+	return TTRUE;
 }
 
 static void Dev_UpdateSaveTest()
@@ -3486,467 +3510,10 @@ static void Dev_UpdateSaveTest()
 	}
 }
 
-static void Dev_UpdateInventoryTest()
-{
-	static TFLOAT s_fTime       = 0.0f;
-	static TFLOAT s_fNextScroll = 9.0f;
-	static TINT   s_iNumScrolls = 0;
-	static TBOOL  s_bOpened     = TFALSE;
-	static TBOOL  s_bUsed       = TFALSE;
-
-	s_fTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
-	AUnit* pPlayer = APlayerManager::GetSingleton()->GetPlayerUnit( 0 );
-
-	if ( !pPlayer || !AGameStateController::GetSingleton()->GetCurrentState()->IsA( &TGetClass( ASimState ) ) )
-		return;
-
-	if ( !s_bOpened && s_fTime >= 6.0f )
-	{
-		s_bOpened = TTRUE;
-
-		// Press the inventory button
-		APlayerControlComponent*    pControlComponent = TSTATICCAST( APlayerControlComponent, pPlayer->FindComponent( &TGetClass( APlayerControlComponent ) ) );
-		TInputInterface::InputEvent oEvent( AInputHandler::GetSingleton()->GetKeyboardDevice(), 0, TInputInterface::EVENT_TYPE_GONE_DOWN );
-		pControlComponent->ProcessCommand( AInputCommand_Inventory, &oEvent );
-
-		TINFO( "[devinventory] opened the inventory\n" );
-		fflush( stdout );
-	}
-
-	AInventoryState2* pInventoryState = TSTATICCAST( AInventoryState2, AGameStateController::GetSingleton()->GetCurrentState()->FindChildState( &TGetClass( AInventoryState2 ) ) );
-
-	if ( !pInventoryState || !pInventoryState->IsOpen() )
-	{
-		static TBOOL s_bReportedClosed = TFALSE;
-
-		if ( s_bOpened && !s_bReportedClosed )
-		{
-			s_bReportedClosed = TTRUE;
-			TINFO( "[devinventory] the inventory is closed (state %s)\n", pInventoryState ? "exists" : "removed" );
-			fflush( stdout );
-		}
-
-		return;
-	}
-
-	TInputInterface::InputEvent oEvent( AInputHandler::GetSingleton()->GetKeyboardDevice(), 0, TInputInterface::EVENT_TYPE_GONE_DOWN );
-	TBOOL                       bStopEvents = TFALSE;
-
-	if ( Dev_HasSwitch( "-devinventoryuse" ) && !s_bUsed && s_iNumScrolls >= 3 )
-	{
-		s_bUsed = TTRUE;
-		TINFO( "[devinventory] using the selected item\n" );
-		pInventoryState->ProcessCommand( AInputCommand_Interact, &oEvent, bStopEvents );
-		fflush( stdout );
-		return;
-	}
-
-	if ( s_fTime >= s_fNextScroll )
-	{
-		s_fNextScroll = s_fTime + 3.0f;
-		s_iNumScrolls++;
-
-		TINFO( "[devinventory] scrolling (%d)\n", s_iNumScrolls );
-		pInventoryState->ProcessCommand( ( s_iNumScrolls & 2 ) ? AInputCommand_Left : AInputCommand_Right, &oEvent, bStopEvents );
-		fflush( stdout );
-	}
-}
-
 // Development: "-devkeys W:2-6,Up:8-10,I:12" presses keyboard keys (names of the input map
 // manager's keyboard doodads, or the mouse buttons Button1-Button8) at the given seconds after the sim has started, holding them until the
 // end time or for a short tap. The key changes are injected into the keyboard device itself, so the
 // whole input path (input map, commands, game states and control components) gets exercised
-// Development: "-devsunglasses" gives the sim player the sunglasses and puts them on 5 seconds after
-// the sim has started. The player can only use the milk squirt while wearing them
-static void Dev_UpdateSunglasses()
-{
-	static TFLOAT s_fTime = 0.0f;
-	static TBOOL  s_bDone = TFALSE;
-
-	if ( s_bDone )
-		return;
-
-	s_fTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
-	if ( s_fTime < 5.0f )
-		return;
-
-	s_bDone = TTRUE;
-
-	AUnit* pPlayer = APlayerManager::GetSingleton()->GetPlayerUnit( 0 );
-
-	if ( !pPlayer )
-		return;
-
-	AInventoryGroupComponent* pInventory = TSTATICCAST( AInventoryGroupComponent, AInventoryComponentInterface::GetInventory( pPlayer ) );
-
-	if ( !pInventory )
-		return;
-
-	if ( !pInventory->FindItemByType( TPS8( sunglasses ) ) )
-		pInventory->AddItems( TPS8( sunglasses ), 1, AInventoryComponentInterface::ms_strDefaultInventory );
-
-#  ifdef BARNYARD_LATEST
-	// "-devwiicamoff" turns the Wii Style camera option off (the PC retail aim camera)
-	if ( Dev_HasSwitch( "-devwiicamoff" ) )
-		AOptions::GetSingleton()->SetWiiStyleCamera( TFALSE );
-#  endif
-
-	AInventoryItem* pItem   = pInventory->FindItemByType( TPS8( sunglasses ) );
-	TBOOL           bResult = AInventoryGroupComponent::TakeOutItem( pItem, AGameStateController::GetSingleton()->GetCurrentState() );
-
-	TINFO( "[devsunglasses] item %p, put on: %d\n", pItem, bResult );
-	fflush( stdout );
-}
-
-// Development: "-devshake tree|crate|milkcan" puts the player 6 seconds after the sim has started in front of the
-// closest tree with fruits, crate or milk can (of the loaded terrain), and 3 seconds later kicks it the way the kick
-// of the player does (AShakeTreeMicroGame::PushState( -1 )) or adds AMilkCanMicroGame by name. With "-devnightbarn"
-// it's done 6 seconds after entering the barn
-static void Dev_UpdateShake()
-{
-	static TFLOAT s_fTime  = 0.0f;
-	static TINT   s_iPhase = 0;
-
-	s_fTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
-	AUnit* pPlayer = APlayerManager::GetSingleton()->GetPlayerUnit( 0 );
-
-	// With "-devnightbarn" it's done in the barn (the milk cans are there)
-	if ( !pPlayer || ( Dev_HasSwitch( "-devnightbarn" ) && !AGameStateController::GetSingleton()->FindGameStateOnStack( TPS8D( "ABarnExploreMinigameState" ) ) ) )
-	{
-		s_fTime = 0.0f;
-		return;
-	}
-
-	const TCHAR* szArg    = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devshake " ) + TStringManager::String8Length( "-devshake " );
-	TBOOL        bTree    = TStringManager::String8Compare( szArg, "tree", 4 ) == 0;
-	TBOOL        bMilkCan = TStringManager::String8Compare( szArg, "milkcan", 7 ) == 0;
-
-	if ( s_iPhase == 0 && s_fTime >= 6.0f )
-	{
-		s_iPhase = 1;
-
-		ARegrowthManager* pRegrowth = ARegrowthManager::GetSingleton();
-		TVector4          vecPlayer = *pPlayer->GetSteer()->GetPosition();
-		TVector4          vecTarget;
-		TFLOAT            fBestDistance = TMath::MAXFLOAT;
-
-		for ( TINT i = 0; i < 32; i++ )
-		{
-			TFLOAT   fAngle = TFLOAT( i ) * ( TMath::TWO_PI / 32.0f );
-			TVector2 vecDirection( TMath::Cos( fAngle ), TMath::Sin( fAngle ) );
-			TVector4 vecPosition;
-			TBOOL    bFound = TFALSE;
-
-			if ( bTree )
-			{
-				ATreeManager::TreeInstance* pTree = ATreeManager::GetSingleton()->FindTreeInFront( vecPlayer, vecDirection, 300.0f );
-
-				if ( pTree && pTree->uiRegrowthGroup != 0xff )
-				{
-					TINT iType = pRegrowth->FindTypeOfGroup( pTree->uiRegrowthGroup );
-
-					if ( ARegrowthManager::HasTypeFlag( iType, ARegrowthManager::TYPEFLAG_FRUIT ) && pRegrowth->FindRandomObjectAtStage( pTree->uiRegrowthGroup, 10000, iType ) )
-					{
-						vecPosition = pTree->GetPosition();
-						bFound      = TTRUE;
-					}
-				}
-			}
-			else if ( i == 0 )
-			{
-				// The grown objects of the types
-				ARegrowthManager::TypeMask oMask = bMilkCan ? ARegrowthManager::TypeMask::FromName( TPS8D( "milkcan" ) ) : ARegrowthManager::TypeMask::Crates();
-				TFLOAT                     fTime = AGameTimeManager::GetSingleton()->GetTotalTime();
-
-				for ( TINT iType = ARegrowthManager::GetTypes()->GetNumEnums() - 1; iType >= 0; iType-- )
-				{
-					if ( !ARegrowthManager::TypeMatches( iType, oMask ) )
-						continue;
-
-					const ARegrowthManager::GrowthMapping& rcMapping = pRegrowth->GetGrowthMapping( iType );
-
-					T2_FOREACH( pRegrowth->GetTypeLists( iType ).llGrowing, it )
-					{
-						if ( rcMapping.uiFirstModel == 0xff || TINT( TINT64( ( fTime - it->fGrowTime ) * rcMapping.fStagesPerSecond ) ) < rcMapping.iNumStages - 1 )
-							continue;
-
-						TFLOAT fDistance = TVector4::DistanceXZ( vecPlayer, it->vecPosition );
-
-						if ( fDistance < fBestDistance )
-						{
-							fBestDistance = fDistance;
-							vecTarget     = it->vecPosition;
-						}
-					}
-				}
-			}
-
-			if ( bFound )
-			{
-				TFLOAT fDistance = TVector4::DistanceXZ( vecPlayer, vecPosition );
-
-				if ( fDistance < fBestDistance )
-				{
-					fBestDistance = fDistance;
-					vecTarget     = vecPosition;
-				}
-			}
-		}
-
-		if ( fBestDistance < TMath::MAXFLOAT )
-		{
-			TVector4 vecFacing( vecTarget.x - vecPlayer.x, 0.0f, vecTarget.z - vecPlayer.z, 1.0f );
-			vecFacing.Normalise();
-
-			TFLOAT   fStandDistance = bTree ? 1.8f : 1.0f;
-			TVector4 vecStand( vecTarget.x - vecFacing.x * fStandDistance, vecTarget.y, vecTarget.z - vecFacing.z * fStandDistance, 1.0f );
-
-			pPlayer->SetSteerPosition( vecStand );
-			pPlayer->SetSteerDirection( vecFacing );
-
-			TINFO( "[devshake] the player is in front of the %s at %.2f %.2f %.2f (%.1f away)\n", bTree ? "tree" : ( bMilkCan ? "milk can" : "crate" ), vecTarget.x, vecTarget.y, vecTarget.z, fBestDistance );
-		}
-		else
-		{
-			TWARN( "[devshake] nothing found\n" );
-		}
-
-		fflush( stdout );
-	}
-	else if ( s_iPhase == 1 && s_fTime >= 9.0f )
-	{
-		s_iPhase = 2;
-
-		if ( bMilkCan )
-		{
-			AGameStateController::GetSingleton()->AddChildStateByName( TPS8D( "AMilkCanMicroGame" ) );
-			TINFO( "[devshake] added AMilkCanMicroGame\n" );
-		}
-		else
-		{
-			AShakeTreeMicroGame::PushState( -1 );
-			TINFO( "[devshake] kicking\n" );
-		}
-
-		fflush( stdout );
-	}
-}
-
-// Development: "-devmilkweed" plants a milkweed (ALadderBeansGame) 4 seconds after the sim has started: it gives
-// the player a milkweed_seed, takes them to the closest empty patch (in 15 unit hops, the terrain streams in around
-// the camera) and presses the action button (the area
-// interaction "milkweed"). Then it puts the player 4 units in front of the milkweed, facing it, so that
-// "-devsunglasses -devkeys Button2:14-60,Button1:16-16.2,..." squirts it. Every change of the ladders is logged
-static void Dev_UpdateMilkweed()
-{
-	static TFLOAT   s_fTime       = 0.0f;
-	static TFLOAT   s_fNextAction = 4.0f;
-	static TINT     s_iPhase      = 0;
-	static TINT     s_iLadder     = -1;
-	static TINT     s_iNumTries   = 0;
-	static TINT8    s_aiStages[ ASimPersistData::NUM_LADDER_BEANS ];
-	static TBOOL    s_bPopupLogged = TFALSE;
-	static TVector4 s_vecHold;
-	static TVector4 s_vecTarget;
-	static TVector4 s_vecFace;
-	static TBOOL    s_bHoldYSet = TFALSE;
-
-	s_fTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
-	ASimState* pSimState = TSTATICCAST( ASimState, AGameStateController::GetSingleton()->FindGameStateOnStack( TPS8D( "ASimState" ) ) );
-	AUnit*     pPlayer   = APlayerManager::GetSingleton()->GetPlayerUnit( 0 );
-
-	if ( !pSimState || !pSimState->GetLadderBeansGame() || !pPlayer )
-		return;
-
-	ALadderBeansGame*                pGame    = pSimState->GetLadderBeansGame();
-	ASimPersistData::LadderBeansSet* pLadders = ASimPersistData::GetSingleton()->GetLadderBeans();
-	AInteriorNetwork*                pNetwork = AInteriorNetworkManager::GetSingleton()->GetDefaultNetwork();
-
-	if ( s_iPhase == 0 && s_fTime >= s_fNextAction )
-	{
-		// The closest empty patch
-		const TVector4 vecPlayerPos = *pPlayer->GetSteer()->GetPosition();
-		TFLOAT         fBestDistSq  = TMath::MAXFLOAT;
-
-		for ( TINT i = 0; i < ASimPersistData::NUM_LADDER_BEANS; i++ )
-		{
-			s_aiStages[ i ] = pLadders->aLadders[ i ].iStage;
-
-			if ( pGame->IsPlanted( i ) )
-				continue;
-
-			TCHAR szArea[ 16 ];
-			T2String8::Format( szArea, "mweed%02d", ALadderBeansGame::GetLadderId( i ) );
-
-			TVector4 vecArea;
-			pNetwork->GetArea( pNetwork->FindAreaIndex( TPString8( szArea ) ) )->GetPosition( vecArea );
-
-			const TFLOAT fDistSq = TVector4::DistanceSq( vecArea, vecPlayerPos );
-
-			if ( fDistSq < fBestDistSq )
-			{
-				fBestDistSq = fDistSq;
-				s_iLadder   = i;
-			}
-		}
-
-		s_iPhase = 3;
-
-		if ( s_iLadder < 0 )
-		{
-			TWARN( "[devmilkweed] every patch is planted already\n" );
-			fflush( stdout );
-			return;
-		}
-
-		AInventoryGroupComponent* pInventory = TSTATICCAST( AInventoryGroupComponent, AInventoryComponentInterface::GetInventory( pPlayer ) );
-
-		if ( pInventory && !pInventory->FindItemByType( TPS8D( "milkweed_seed" ) ) )
-			pInventory->AddItems( TPS8D( "milkweed_seed" ), 1, AInventoryComponentInterface::ms_strDefaultInventory );
-
-		TCHAR szArea[ 16 ];
-		T2String8::Format( szArea, "mweed%02d", ALadderBeansGame::GetLadderId( s_iLadder ) );
-		AInteriorArea* pArea = pNetwork->GetArea( pNetwork->FindAreaIndex( TPString8( szArea ) ) );
-
-		pArea->GetPosition( s_vecTarget );
-		s_vecTarget.y = pArea->GetSpecialHeight() - 0.5f; // -Y is up
-
-		TVector4 vecMilkweed;
-		ALadderBeansGame::GetMilkweedPosition( pArea, vecMilkweed );
-		s_vecFace = TVector4( vecMilkweed.x - s_vecTarget.x, 0.0f, vecMilkweed.z - s_vecTarget.z, 0.0f );
-		s_vecFace.Normalise();
-		s_fNextAction = s_fTime;
-
-		TINFO( "[devmilkweed] patch %s (ladder %d, stage %d) at (%.2f %.2f %.2f), seed given\n", szArea, s_iLadder, pLadders->aLadders[ s_iLadder ].iStage, s_vecTarget.x, s_vecTarget.y, s_vecTarget.z );
-		fflush( stdout );
-	}
-	else if ( s_iPhase == 3 && s_fTime >= s_fNextAction )
-	{
-		// Hop towards the patch, the terrain only streams in around the camera
-		const TVector4 vecPlayerPos = *pPlayer->GetSteer()->GetPosition();
-		TVector4       vecToTarget( s_vecTarget.x - vecPlayerPos.x, 0.0f, s_vecTarget.z - vecPlayerPos.z, 0.0f );
-		const TFLOAT   fDistance = vecToTarget.Magnitude();
-
-		if ( fDistance < 15.0f )
-		{
-			pPlayer->GetSteer()->SetPosition( s_vecTarget );
-			pPlayer->GetSteer()->SetDirection( s_vecFace );
-			s_vecHold     = s_vecTarget;
-			s_bHoldYSet   = TFALSE;
-			s_iPhase      = 1;
-			s_fNextAction = s_fTime + 1.0f;
-
-			TINFO( "[devmilkweed] the player is in the patch\n" );
-		}
-		else
-		{
-			vecToTarget.Divide( fDistance );
-
-			TVector4 vecPos( vecPlayerPos.x + vecToTarget.x * 15.0f, 0.0f, vecPlayerPos.z + vecToTarget.z * 15.0f, 1.0f );
-			vecPos.y = ATerrainInterface::GetSingleton()->GetGroundHeightTop( vecPos.x, vecPos.z, TCollisionCommon::TOSHICGROUPFLAG( 0 ) );
-
-			// Keep the height where the ground isn't loaded yet
-			vecPos.y = ( vecPos.y != 0.0f ) ? vecPos.y - 0.3f : vecPlayerPos.y;
-
-			{
-				pPlayer->GetSteer()->SetPosition( vecPos );
-				pPlayer->GetSteer()->SetDirection( vecToTarget );
-				s_vecHold   = vecPos;
-				s_bHoldYSet = TTRUE;
-				TINFO( "[devmilkweed] hop to (%.2f %.2f %.2f)\n", vecPos.x, vecPos.y, vecPos.z );
-			}
-
-			s_fNextAction = s_fTime + 0.75f;
-		}
-
-		fflush( stdout );
-	}
-	else if ( s_iPhase == 1 && s_iLadder >= 0 && s_fTime >= s_fNextAction )
-	{
-		if ( !pGame->IsPlanted( s_iLadder ) )
-		{
-			if ( s_iNumTries++ < 5 )
-			{
-				TINFO( "[devmilkweed] pressing the action button (try %d), player at (%.2f %.2f %.2f)\n", s_iNumTries, pPlayer->GetSteer()->GetPosition()->x, pPlayer->GetSteer()->GetPosition()->y, pPlayer->GetSteer()->GetPosition()->z );
-				APlayerControlComponent::DevInteract();
-				s_fNextAction = s_fTime + 2.5f;
-			}
-		}
-		else if ( !( pLadders->aLadders[ s_iLadder ].uiFlags & ASimPersistData::LadderBeans::LADDERFLAGS_GROWING ) && !pPlayer->HasInteraction() )
-		{
-			// Stand in front of the planted milkweed, facing it
-			TVector4        vecMilkweed = *pGame->GetMilkweed( s_iLadder )->GetSteer()->GetPosition();
-			const TVector4* pPlayerPos  = pPlayer->GetSteer()->GetPosition();
-			TVector4        vecFace( vecMilkweed.x - pPlayerPos->x, 0.0f, vecMilkweed.z - pPlayerPos->z, 0.0f );
-			vecFace.Normalise();
-
-			TVector4 vecPos( vecMilkweed.x - vecFace.x * 4.0f, s_vecHold.y, vecMilkweed.z - vecFace.z * 4.0f, 1.0f );
-
-			pPlayer->GetSteer()->SetPosition( vecPos );
-			s_vecHold = vecPos;
-			pPlayer->GetSteer()->SetDirection( vecFace );
-			s_iPhase = 2;
-
-			TINFO( "[devmilkweed] planted, the player is in front of the milkweed at (%.2f %.2f %.2f)\n", vecPos.x, vecPos.y, vecPos.z );
-		}
-
-		fflush( stdout );
-	}
-
-	if ( s_iPhase == 2 && s_fTime >= s_fNextAction )
-	{
-		// Keep the milk full
-		s_fNextAction = s_fTime + 2.0f;
-
-		for ( TINT i = 0; i < AUnitPlayer::NUM_LAUNCHERS; i++ )
-		{
-			AProjectileLauncher* pLauncher = TSTATICCAST( AUnitPlayer, pPlayer )->GetLauncher( i );
-
-			if ( pLauncher && pLauncher->GetAmmo() )
-				pLauncher->GetAmmo()->SetAmmo( pLauncher->GetAmmo()->GetMaxAmmo() );
-		}
-	}
-
-	// The terrain collision may not be there: put the player back when they fall through
-	if ( s_iPhase > 0 && s_iLadder >= 0 )
-	{
-		const TVector4* pPlayerPos = pPlayer->GetSteer()->GetPosition();
-
-		if ( !s_bHoldYSet )
-		{
-			s_vecHold.y = pPlayerPos->y;
-			s_bHoldYSet = TTRUE;
-		}
-		else if ( pPlayerPos->y > s_vecHold.y + 1.0f )
-		{
-			pPlayer->GetSteer()->SetPosition( s_vecHold );
-		}
-	}
-
-	for ( TINT i = 0; i < ASimPersistData::NUM_LADDER_BEANS; i++ )
-	{
-		const ASimPersistData::LadderBeans& rcLadder = pLadders->aLadders[ i ];
-
-		if ( s_iPhase > 0 && rcLadder.iStage != s_aiStages[ i ] )
-		{
-			s_aiStages[ i ] = rcLadder.iStage;
-			TINFO( "[devmilkweed] ladder %d: stage %d, height %.3f -> %.3f (max %.3f)\n", i, rcLadder.iStage, rcLadder.fHeight, rcLadder.fTargetHeight, rcLadder.fMaxHeight );
-			fflush( stdout );
-		}
-	}
-
-	if ( !s_bPopupLogged && AGameStateController::GetSingleton()->GetCurrentState()->IsA( &TGetClass( AMessagePopupState ) ) )
-	{
-		s_bPopupLogged = TTRUE;
-		TINFO( "[devmilkweed] reward popup shown, unlocked flags 0x%x\n", APlayerProgress::GetSingleton()->GetUnlockedFlags() );
-		fflush( stdout );
-	}
-}
-
 #  ifndef TOSHI_FINAL
 
 // Development (not in Final builds): "-devkeys" and "-devmouse"
@@ -4084,11 +3651,11 @@ static void Dev_UpdateKeys()
 
 TBOOL AGameLoader::Dev_IsSimStateRequested()
 {
-	// "-devtier" and "-devadvancetier" start the sim the same way
-	return Dev_HasSwitch( "-simstate" ) || Dev_HasSwitch( "-devtier" ) || Dev_HasSwitch( "-devadvancetier" );
+	// "story.goto" before the frontend starts the sim the same way
+	return Dev_HasSwitch( "-simstate" ) || s_bDevStoryBoot;
 }
 
-// Development: plays the scripted sequence of the "-devtier" tier once the sim is up (see LoadMainGameImpl)
+// Development: plays the scripted sequence of the "story.goto" tier once the sim is up (see LoadMainGameImpl)
 void AGameLoader::Dev_UpdateDevTierSequence()
 {
 	if ( s_iDevTierSequence == -1 || !s_bMainGameLoaded || ARootTask::GetSingleton()->IsTransitioning() )
@@ -4099,7 +3666,7 @@ void AGameLoader::Dev_UpdateDevTierSequence()
 	if ( !pCurrentState || pCurrentState->GetClass() != &TGetClass( ASimState ) )
 		return;
 
-	TINFO( "[devtier] playing the scripted sequence %d of the tier\n", s_iDevTierSequence );
+	TINFO( "[story] playing the scripted sequence %d of the tier\n", s_iDevTierSequence );
 
 	SetTransitionToScriptedSequence( s_iDevTierSequence );
 	SetPrevGameStateClass( s_pDevTierSequencePrevState );
@@ -4112,21 +3679,14 @@ void AGameLoader::Dev_UpdateDevTierSequence()
 	s_strDevTierSequenceGoal    = TPString8();
 }
 
-// Development: "-simstate" starts a new game of the sim like the New Game menu does, but without
-// the save slot selection and the SS01 intro sequence
-// One-shot dev switches done (see Dev_IsRequestPending)
-static TBOOL s_bDevShopOpened   = TFALSE;
-static TBOOL s_bDevCoinsSpilled = TFALSE;
-
 TBOOL AGameLoader::Dev_IsRequestPending()
 {
-	if ( ACheatActivator::Dev_IsPending() )
+#  ifdef PRIMEDEBUG_DEV
+	if ( APrimeDebugFSM::HasPendingWorldCalls() )
 		return TTRUE;
+#  endif
 
-	if ( Dev_HasSwitch( "-devgophershop" ) && !s_bDevShopOpened )
-		return TTRUE;
-
-	if ( Dev_HasSwitch( "-devcoins" ) && !s_bDevCoinsSpilled )
+	if ( s_eDevStory != DEVSTORY_NONE )
 		return TTRUE;
 
 	return TFALSE;
@@ -4135,6 +3695,10 @@ TBOOL AGameLoader::Dev_IsRequestPending()
 void AGameLoader::Dev_UpdateSimStateRequest()
 {
 	static TBOOL s_bStarted = TFALSE;
+
+	// "story.goto" / "story.reset" while the game runs
+	if ( Dev_UpdateStoryRequest() )
+		s_bStarted = TTRUE;
 
 #  ifndef TOSHI_FINAL
 	if ( !Dev_IsSimStateRequested() && Dev_HasSwitch( "-devkeys" ) )
@@ -4159,755 +3723,46 @@ void AGameLoader::Dev_UpdateSimStateRequest()
 	}
 #  endif
 
-	if ( s_bStarted && s_bMainGameLoaded && Dev_HasSwitch( "-devwalk" ) )
+	if ( s_bStarted && s_bMainGameLoaded && Dev_GetMicroGame() )
 	{
-		// Development: "-devwalk" makes the sim player walk forward while slowly changing direction
-		static TFLOAT s_fWalkTime = 0.0f;
-
-		s_fWalkTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
-		APlayerControlComponent::SetDevStick( TMath::Sin( s_fWalkTime * 0.5f ) * 0.6f, -1.0f );
-	}
-
-	if ( s_bStarted && s_bMainGameLoaded && Dev_HasSwitch( "-devtalk" ) )
-	{
-		// Development: "-devtalk" puts the sim player in front of the closest unit that can talk and
-		// presses the action button every few seconds to start a conversation
-		static TFLOAT s_fTalkTime   = 0.0f;
-		static TFLOAT s_fNextAction = 4.0f;
-		static TBOOL  s_bPlaced     = TFALSE;
-
-		s_fTalkTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
-		AUnit* pPlayer = APlayerManager::GetSingleton()->GetPlayerUnit( 0 );
-
-		if ( pPlayer && !s_bPlaced && s_fTalkTime >= 3.0f )
-		{
-			s_bPlaced = TTRUE;
-
-			TINT                    iNumUnits;
-			const TVector4          vecPlayerPos = *pPlayer->GetSteer()->GetPosition();
-			AUnitHash::QueryResult* pResults     = AUnitManager::GetSingleton()->FindUnits( vecPlayerPos, 60.0f, &iNumUnits, TFALSE, 420, TFALSE, TNULL );
-			AUnit*                  pBest        = TNULL;
-			TFLOAT                  fBestDistSq  = TMath::MAXFLOAT;
-
-			for ( TINT i = 0; i < iNumUnits; i++ )
-			{
-				AUnit* pUnit = pResults[ i ].pUnit;
-
-				if ( pUnit == pPlayer || !pUnit->IsA( &TGetClass( ACharacterUnit ) ) || !AAnimalConversationState::CanConverse( pUnit ) )
-					continue;
-
-				TFLOAT fDistSq = TVector4::DistanceSq( vecPlayerPos, *pUnit->GetSteer()->GetPosition() );
-
-				if ( fDistSq < fBestDistSq )
-				{
-					fBestDistSq = fDistSq;
-					pBest       = pUnit;
-				}
-			}
-
-			if ( pBest )
-			{
-				// Stand 1.5 in front of the unit, facing it
-				TVector4 vecDir = *pBest->GetSteer()->GetDirection();
-				TVector4 vecPos = *pBest->GetSteer()->GetPosition();
-				vecPos.x += vecDir.x * 1.5f;
-				vecPos.z += vecDir.z * 1.5f;
-
-				TVector4 vecFace( -vecDir.x, 0.0f, -vecDir.z, 0.0f );
-				pPlayer->GetSteer()->SetPosition( vecPos );
-				pPlayer->GetSteer()->SetDirection( vecFace );
-
-				TINFO( "[devtalk] placed the player in front of %s (id %d) at (%.2f %.2f %.2f)\n", pBest->GetType()->GetName().GetString(), pBest->GetId(), vecPos.x, vecPos.y, vecPos.z );
-			}
-			else
-			{
-				TWARN( "[devtalk] no unit to talk to\n" );
-			}
-		}
-
-		if ( s_fTalkTime >= s_fNextAction )
-		{
-			s_fNextAction = s_fTalkTime + 12.0f;
-
-			AGameState* pCurrentState = AGameStateController::GetSingleton()->GetCurrentState();
-
-			if ( pCurrentState->IsA( &TGetClass( AAnimalConversationState ) ) )
-			{
-				// Press OK to go to the next line of the conversation
-				TINFO( "[devtalk] next line\n" );
-
-				TInputInterface::InputEvent oEvent( TNULL, 0, TInputInterface::EVENT_TYPE_GONE_DOWN );
-				TBOOL                       bStopEvents = TFALSE;
-				pCurrentState->ProcessCommand( AInputCommand_OK, &oEvent, bStopEvents );
-			}
-			else
-			{
-				APlayerControlComponent::DevInteract();
-			}
-		}
-
-		// The log may be read after the process is killed
-		fflush( stdout );
-	}
-
-	if ( s_bStarted && s_bMainGameLoaded && Dev_HasSwitch( "-devrock" ) )
-	{
-		// Development: "-devrock" puts the sim player next to the closest recipe rock (ARegrowthManager type "rock"),
-		// facing it, 3 seconds after the sim has started. Use with "-devkeys" (Jump = Space, Interact = F)
-		static TFLOAT s_fRockTime = 0.0f;
-		static TBOOL  s_bPlaced   = TFALSE;
-
-		s_fRockTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
-		AUnit* pPlayer = APlayerManager::GetSingleton()->GetPlayerUnit( 0 );
-
-		if ( pPlayer && !s_bPlaced && s_fRockTime >= 3.0f )
-		{
-			s_bPlaced = TTRUE;
-
-			const TVector4                  vecPlayerPos = *pPlayer->GetSteer()->GetPosition();
-			ARegrowthManager::GrowthObject* pRock        = ARegrowthManager::GetSingleton()->FindClosestVisible( vecPlayerPos, ARegrowthManager::TypeMask::FromName( TPS8D( "rock" ) ), 100000.0f );
-
-			if ( pRock )
-			{
-				// Stand 0.6 away from the rock on the side of the player, facing it
-				TVector4 vecDir( pRock->vecPosition.x - vecPlayerPos.x, 0.0f, pRock->vecPosition.z - vecPlayerPos.z, 0.0f );
-				vecDir.Normalise();
-
-				TVector4 vecPos = pRock->vecPosition;
-				vecPos.x -= vecDir.x * 0.6f;
-				vecPos.z -= vecDir.z * 0.6f;
-
-				pPlayer->GetSteer()->SetPosition( vecPos );
-				pPlayer->GetSteer()->SetDirection( vecDir );
-
-				TINFO( "[devrock] placed the player at (%.2f %.2f %.2f), rock at (%.2f %.2f %.2f), recipes %d\n", vecPos.x, vecPos.y, vecPos.z, pRock->vecPosition.x, pRock->vecPosition.y, pRock->vecPosition.z, AHintManager::GetNumRecipes() );
-			}
-			else
-			{
-				TWARN( "[devrock] no rock\n" );
-			}
-
-			fflush( stdout );
-		}
-	}
-
-	const TCHAR* szDevPosArgs;
-	if ( s_bStarted && s_bMainGameLoaded && Dev_HasSwitch( "-devpos", &szDevPosArgs ) )
-	{
-		// Development: "-devpos <x> <y> <z> [<dirx> <dirz> [<section>]]" puts the sim player at that position (facing that direction,
-		// loading that terrain section, e.g. 32 for the Junkyard of EnvMain) 3 seconds after the sim has started and logs the position every second
-		static TFLOAT s_fPosTime   = 0.0f;
-		static TFLOAT s_fPosLogged = 0.0f;
-		static TBOOL  s_bPosPlaced = TFALSE;
-
-		s_fPosTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-		AUnit* pPlayer = APlayerManager::GetSingleton()->GetPlayerUnit( 0 );
-
-		// Held there for 7 seconds, so the terrain section there gets streamed in
-		if ( pPlayer && s_fPosTime >= 3.0f && s_fPosTime < 10.0f )
-		{
-			TVector4 vecPos( 0.0f, 0.0f, 0.0f, 1.0f );
-			TVector4 vecDir( 0.0f, 0.0f, 1.0f, 0.0f );
-			sscanf( szDevPosArgs, " %f %f %f %f %f", &vecPos.x, &vecPos.y, &vecPos.z, &vecDir.x, &vecDir.z );
-			vecDir.Normalise();
-
-			pPlayer->GetSteer()->SetPosition( vecPos );
-			pPlayer->GetSteer()->SetDirection( vecDir );
-
-			if ( !s_bPosPlaced )
-			{
-				TINFO( "[devpos] placed the player at (%.2f %.2f %.2f)\n", vecPos.x, vecPos.y, vecPos.z );
-
-				// The terrain section there is loaded only when the camera is above a loaded neighbour, so it's forced
-				TINT iSection = -1;
-				sscanf( szDevPosArgs, " %*f %*f %*f %*f %*f %d", &iSection );
-				if ( iSection >= 0 ) ATerrainInterface::GetSingleton()->ForceSection( iSection, TFALSE );
-			}
-
-			s_bPosPlaced = TTRUE;
-		}
-
-		if ( pPlayer && s_bPosPlaced && s_fPosTime - s_fPosLogged >= 1.0f )
-		{
-			s_fPosLogged          = s_fPosTime;
-			const TVector4 vecPos = *pPlayer->GetSteer()->GetPosition();
-			TINFO( "[devpos] t=%.0f player at (%.2f %.2f %.2f)\n", s_fPosTime, vecPos.x, vecPos.y, vecPos.z );
-			fflush( stdout );
-		}
-	}
-
-	if ( s_bStarted && s_bMainGameLoaded && Dev_HasSwitch( "-devwindmill" ) )
-	{
-		// Development: "-devwindmill" holds the sim player in the air 25 units from the windmill wmill_01 (AWindmillHelper),
-		// facing it (the ground collision there isn't loaded, so the position is set again every frame)
-		static TFLOAT   s_fWindmillTime   = 0.0f;
-		static TBOOL    s_bWindmillPlaced = TFALSE;
-		static TVector4 s_vecWindmillPos;
-		static TVector4 s_vecWindmillDir;
-
-		s_fWindmillTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-		AUnit* pPlayer = APlayerManager::GetSingleton()->GetPlayerUnit( 0 );
-
-		if ( pPlayer && !s_bWindmillPlaced && s_fWindmillTime >= 15.0f && AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( ASimState ) ) )
-		{
-			s_bWindmillPlaced = TTRUE;
-
-			TMatrix44 matLocator;
-			ATerrainInterface::GetSingleton()->GetLocatorTransform( "wmill_01", matLocator );
-
-			TVector4 vecTarget = matLocator.GetTranslation();
-			TVector4 vecPos    = *pPlayer->GetSteer()->GetPosition();
-			s_vecWindmillDir   = TVector4( vecTarget.x - vecPos.x, 0.0f, vecTarget.z - vecPos.z, 0.0f );
-			s_vecWindmillDir.Normalise();
-
-			s_vecWindmillPos   = vecTarget;
-			s_vecWindmillPos.x = vecTarget.x - s_vecWindmillDir.x * 25.0f;
-			s_vecWindmillPos.z = vecTarget.z - s_vecWindmillDir.z * 25.0f;
-			s_vecWindmillPos.y = vecTarget.y - 3.0f; // -Y is up
-
-			TINFO( "[devwindmill] holding the player at (%.2f %.2f %.2f) facing the windmill at (%.2f %.2f %.2f)\n", s_vecWindmillPos.x, s_vecWindmillPos.y, s_vecWindmillPos.z, vecTarget.x, vecTarget.y, vecTarget.z );
-			fflush( stdout );
-		}
-
-		if ( pPlayer && s_bWindmillPlaced )
-		{
-			pPlayer->GetSteer()->SetPosition( s_vecWindmillPos );
-			pPlayer->GetSteer()->SetDirection( s_vecWindmillDir );
-		}
-	}
-
-	if ( s_bStarted && s_bMainGameLoaded && Dev_HasSwitch( "-devbike" ) )
-	{
-		// Development: "-devbike" puts the sim player next to the closest bike, gives the bike key, gets on it with the action button (the normal interaction
-		// that runs the FSM native StartupPlayerBike) and rides it in circles in the open ground in front of the bike
-		static TFLOAT s_fBikeTime = 0.0f;
-		static TBOOL  s_bPlaced   = TFALSE;
-		static TBOOL  s_bStarted  = TFALSE;
-
-		s_fBikeTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
-		AUnit*        pPlayer      = APlayerManager::GetSingleton()->GetPlayerUnit( 0 );
-		ABikeManager* pBikeManager = ABikeManager::GetSingleton();
-
-		if ( pPlayer && pBikeManager->GetNumBikes() > 0 && !s_bPlaced && s_fBikeTime >= 8.0f )
-		{
-			s_bPlaced = TTRUE;
-
-			AUnit* pBike     = TNULL;
-			TINT   iBikeType = 0;
-			pBikeManager->FindClosestBike( *pPlayer->GetSteer()->GetPosition(), pBike, iBikeType );
-
-			if ( pBike )
-			{
-				// Stand 1.5 to the side of the bike
-				TVector4 vecDir = *pBike->GetSteer()->GetDirection();
-				TVector4 vecPos = *pBike->GetSteer()->GetPosition();
-				vecPos.x += vecDir.z * 1.5f;
-				vecPos.z -= vecDir.x * 1.5f;
-
-				pPlayer->GetSteer()->SetPosition( vecPos );
-				pPlayer->GetSteer()->SetDirection( vecDir );
-
-				TINFO( "[devbike] placed the player next to the bike at (%.2f %.2f %.2f)\n", vecPos.x, vecPos.y, vecPos.z );
-
-				// The bike's interaction needs the bike key
-				AInventoryGroupComponent* pInventory = TSTATICCAST( AInventoryGroupComponent, AInventoryComponentInterface::GetInventory( pPlayer ) );
-
-				if ( pInventory && !pInventory->FindItemByType( TPS8( bikekey ) ) )
-					pInventory->AddItems( TPS8( bikekey ), 1, AInventoryComponentInterface::ms_strDefaultInventory );
-			}
-			else
-			{
-				TWARN( "[devbike] no bike\n" );
-			}
-		}
-
-		if ( s_bPlaced && !s_bStarted && s_fBikeTime >= 9.0f )
-		{
-			s_bStarted = TTRUE;
-			TINFO( "[devbike] interact with the bike\n" );
-			APlayerControlComponent::DevInteract();
-		}
-
-		static TBOOL    s_bHomeSet = TFALSE;
-		static TVector4 s_vecHome;
-
-		if ( s_bStarted )
-		{
-			// Keep the ride in the open ground: ride straight away from the barn wall, then circle there
-			// and turn back if the bike drifts too far away
-			TFLOAT fSteer = 0.0f;
-			AUnit* pBike  = pBikeManager->IsPlayerOnBike() ? pBikeManager->GetPlayerBike() : TNULL;
-
-			if ( pBike )
-			{
-				const TVector4& vecPos = *pBike->GetSteer()->GetPosition();
-				const TVector4& vecDir = *pBike->GetSteer()->GetDirection();
-
-				static TBOOL    s_bStartSet = TFALSE;
-				static TVector4 s_vecStart;
-
-				if ( !s_bStartSet )
-				{
-					s_bStartSet = TTRUE;
-					s_vecStart  = vecPos;
-				}
-
-				// The bike is parked next to the barn wall, facing away from it: the centre of the ride
-				// is the point 10 units into the open ground the bike first drives through
-				if ( !s_bHomeSet && TVector4::DistanceXZ( s_vecStart, vecPos ) >= 10.0f )
-				{
-					s_bHomeSet = TTRUE;
-					s_vecHome  = vecPos;
-					TINFO( "[devbike] centre of the ride (%.2f %.2f %.2f)\n", vecPos.x, vecPos.y, vecPos.z );
-				}
-
-				TFLOAT fToX  = s_vecHome.x - vecPos.x;
-				TFLOAT fToZ  = s_vecHome.z - vecPos.z;
-				TFLOAT fDist = s_bHomeSet ? TMath::Sqrt( fToX * fToX + fToZ * fToZ ) : 0.0f;
-
-				if ( s_bHomeSet && fDist > 14.0f )
-				{
-					// Too far away: head back (positive cross = home is to the right of the facing)
-					TFLOAT fCross = ( vecDir.z * fToX - vecDir.x * fToZ ) / fDist;
-					TFLOAT fDot   = ( vecDir.x * fToX + vecDir.z * fToZ ) / fDist;
-					fSteer        = ( fDot < 0.0f ) ? ( fCross < 0.0f ? -1.0f : 1.0f ) : TMath::Max( -1.0f, TMath::Min( fCross * 4.0f, 1.0f ) );
-				}
-				else if ( s_bHomeSet )
-				{
-					// Circle at full lock to the right, away from the sheds left of the starting line
-					fSteer = 1.0f;
-				}
-			}
-
-			ABikeControlComponent::SetDevInput( fSteer, s_bHomeSet ? 0.3f : 0.6f );
-		}
-
-		static TINT s_iLastState = -1;
-
-		if ( pBikeManager->GetState() != s_iLastState )
-		{
-			s_iLastState = pBikeManager->GetState();
-			TINFO( "[devbike] state %d, on bike %d\n", s_iLastState, pBikeManager->IsPlayerOnBike() );
-		}
-
-		fflush( stdout );
-	}
-
-	if ( s_bStarted && Dev_HasSwitch( "-devnightbarn" ) )
-	{
-		// Development: "-devnightbarn" goes into the barn (ABarnExploreMinigameState) 8 seconds after the sim has started,
-		// the way the barn door does: the spawn activity sets the start goal, then AGameStateController::StartGameState.
-		// With "-devdayphase 4" it's the night barn (the party). "-devbarnleave <N>" leaves the barn N seconds later the
-		// way its exit does (FinishGameState, back to the sim). "-devbarnloft <N>" puts the player in the loft N seconds
-		// after entering the barn.
-		static TFLOAT s_fBarnTime = 0.0f;
-		static TINT   s_iStage    = 0; // 0: in the sim, 1: entering, 2: in the barn, 3: leaving, 4: back in the sim
-
-		AGameState* pCurrentState = AGameStateController::GetSingleton()->GetCurrentState();
-		TBOOL       bInBarn       = pCurrentState && pCurrentState->GetClass() == &TGetClass( ABarnExploreMinigameState );
-
-		// The 8 seconds only count while the sim is the current state: "-devtier" plays the scripted sequence of the tier
-		// first, and "-devdayphase" is only applied by the sim's update
-		if ( s_iStage != 0 || ( pCurrentState && pCurrentState->GetClass() == &TGetClass( ASimState ) ) )
-			s_fBarnTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
-		if ( s_iStage == 0 && s_bMainGameLoaded && s_fBarnTime >= 8.0f && APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) )
-		{
-			s_iStage = 1;
-			TINFO( "[devnightbarn] entering the barn (night %d)\n", AGameTimeManager::GetSingleton()->IsItNight() );
-			AGameLoader::SetPlayerStartGoal( TPS8D( "barn_entrance" ) );
-			AGameStateController::GetSingleton()->StartGameState( TPS8D( "ABarnExploreMinigameState" ) );
-		}
-		else if ( s_iStage == 1 && bInBarn )
-		{
-			s_iStage    = 2;
-			s_fBarnTime = 0.0f;
-			TINFO( "[devnightbarn] in the barn, floor %d\n", ABarnExploreMinigameState::ms_iFloor );
-		}
-		else if ( s_iStage == 2 && bInBarn )
-		{
-			static TBOOL s_bLoft = TFALSE;
-
-			if ( const TCHAR* szArg = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devbarnloft " ) )
-			{
-				if ( !s_bLoft && s_fBarnTime >= TFLOAT( atof( szArg + TStringManager::String8Length( "-devbarnloft " ) ) ) )
-				{
-					s_bLoft = TTRUE;
-
-					AUnit* pPlayer = APlayerManager::GetSingleton()->GetPlayerUnit( 0 );
-					TSTATICCAST( APlayerSteer, pPlayer->GetSteer() )->PlaceAtNamedGoal( TPS8D( "root_nightbarn_pos" ), TTRUE, TTRUE );
-					TINFO( "[devnightbarn] the player is in the loft (y %.2f)\n", pPlayer->GetSteer()->GetPosition()->y );
-				}
-			}
-
-			// "-devcocktails <N>": N seconds after entering the barn, the cocktails (ACookingMiniGame from the barn)
-			static TBOOL s_bCocktails = TFALSE;
-
-			if ( const TCHAR* szArg = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devcocktails " ) )
-			{
-				if ( !s_bCocktails && s_fBarnTime >= TFLOAT( atof( szArg + TStringManager::String8Length( "-devcocktails " ) ) ) )
-				{
-					s_bCocktails = TTRUE;
-					TINFO( "[devnightbarn] starting the cocktails\n" );
-					Dev_StartCooking();
-				}
-			}
-
-			if ( const TCHAR* szArg = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devbarnleave " ) )
-			{
-				if ( s_fBarnTime >= TFLOAT( atof( szArg + TStringManager::String8Length( "-devbarnleave " ) ) ) )
-				{
-					s_iStage = 3;
-					TINFO( "[devnightbarn] leaving the barn (floor %d, music stream state %d, radio %d, wurlitzer %d)\n", ABarnExploreMinigameState::ms_iFloor, AMultiplexStream::GetSingleton()->GetState(), ABarnExploreMinigameState::ms_bRadioOn, ABarnExploreMinigameState::ms_bWurlitzerOn );
-					AGameLoader::SetPlayerStartGoal( TPS8D( "park2_goals_barnspawn" ) );
-					AGameStateController::GetSingleton()->FinishGameState();
-				}
-			}
-		}
-		else if ( s_iStage == 3 && s_bMainGameLoaded && pCurrentState && pCurrentState->GetClass() == &TGetClass( ASimState ) )
-		{
-			s_iStage = 4;
-			TINFO( "[devnightbarn] back in the sim\n" );
-		}
-
-		fflush( stdout );
-	}
-
-	if ( s_bStarted && s_bMainGameLoaded && Dev_HasSwitch( "-devhighscore" ) )
-	{
-		// Development: "-devhighscore" gives the player the best score of the first charts (shown by the scorebook)
-		// 6 seconds after the sim has started
-		static TFLOAT s_fHighScoreTime = 0.0f;
-		static TBOOL  s_bAdded         = TFALSE;
-
-		s_fHighScoreTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
-		if ( !s_bAdded && s_fHighScoreTime >= 6.0f && APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) )
-		{
-			s_bAdded = TTRUE;
-
-			for ( TINT i = 0, iNumAdded = 0; i < AHighScoreManager::RECORD_STARS && iNumAdded < 8; i++ )
-			{
-				AHighScoreManager::Record* pRecord = AHighScoreManager::GetRecord( i );
-
-				if ( pRecord->iHidden != 0 )
-					continue;
-
-				iNumAdded++;
-				TFLOAT fScore = pRecord->aScores[ 0 ];
-
-				if ( fScore != 0.0f )
-					fScore += ( pRecord->eType == AHighScoreRecord::TYPE_INTEGER_LOW || pRecord->eType == AHighScoreRecord::TYPE_DECIMAL_LOW || pRecord->eType == AHighScoreRecord::TYPE_TIME_LOW ) ? -1.0f : 1.0f;
-
-				AHighScoreManager::AddScore( i, fScore, TTRUE, AHighScoreManager::PLAYER_1, TTRUE );
-			}
-
-			TINFO( "[devhighscore] added the scores of the player\n" );
-			fflush( stdout );
-		}
-	}
-
-	if ( s_bStarted && s_bMainGameLoaded && TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devreplay " ) )
-	{
-		// Development: "-devreplay <replay>" unlocks the first two variants of the replay and replays it 6 seconds after
-		// the sim has started (like its star does), then picks the second variant in AReplayVariantSelectState
-		static TFLOAT s_fReplayTime = 0.0f;
-		static TINT   s_iStage      = 0;
-
-		s_fReplayTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
-		if ( s_iStage == 0 && s_fReplayTime >= 6.0f && APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) )
-		{
-			s_iStage = 1;
-
-			TCHAR        szName[ 64 ];
-			const TCHAR* szArg   = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devreplay " ) + TStringManager::String8Length( "-devreplay " );
-			TINT         iLength = 0;
-
-			while ( szArg[ iLength ] != '\0' && szArg[ iLength ] != ' ' && iLength < TARRAYSIZE( szName ) - 1 )
-			{
-				szName[ iLength ] = szArg[ iLength ];
-				iLength++;
-			}
-
-			szName[ iLength ] = '\0';
-
-			TPString8        strName( szName );
-			AReplayableGame* pReplay = AReplayManager::GetSingleton()->FindReplay( strName );
-
-			if ( pReplay )
-			{
-				pReplay->m_abVariants[ 0 ] = TTRUE;
-				pReplay->m_abVariants[ 1 ] = TTRUE;
-
-				TINFO( "[devreplay] replaying %s (%d variants)\n", szName, pReplay->GetNumVariants() );
-				AReplayManager::GetSingleton()->ReplayMiniGame( strName );
-			}
-			else
-			{
-				TWARN( "[devreplay] no replay called %s\n", szName );
-			}
-
-			fflush( stdout );
-		}
-		else if ( s_iStage == 1 && s_fReplayTime >= 9.0f )
-		{
-			AGameState* pCurrentState = AGameStateController::GetSingleton()->GetCurrentState();
-
-			if ( pCurrentState && pCurrentState->IsA( &TGetClass( AReplayVariantSelectState ) ) )
-			{
-				// Down, then OK
-				TInputInterface::InputEvent oEvent( AInputHandler::GetSingleton()->GetKeyboardDevice(), 0, TInputInterface::EVENT_TYPE_GONE_DOWN );
-				TBOOL                       bStopEvents = TFALSE;
-
-				TINFO( "[devreplay] choosing the second variant\n" );
-				pCurrentState->ProcessCommand( AInputCommand_Down, &oEvent, bStopEvents );
-				s_iStage = 2;
-			}
-			else
-			{
-				TWARN( "[devreplay] the variant select state isn't shown\n" );
-				s_iStage = 3;
-			}
-
-			fflush( stdout );
-		}
-		else if ( s_iStage == 2 && s_fReplayTime >= 10.0f )
-		{
-			AGameState* pCurrentState = AGameStateController::GetSingleton()->GetCurrentState();
-
-			if ( pCurrentState && pCurrentState->IsA( &TGetClass( AReplayVariantSelectState ) ) )
-			{
-				TInputInterface::InputEvent oEvent( AInputHandler::GetSingleton()->GetKeyboardDevice(), 0, TInputInterface::EVENT_TYPE_GONE_DOWN );
-				TBOOL                       bStopEvents = TFALSE;
-				pCurrentState->ProcessCommand( AInputCommand_OK, &oEvent, bStopEvents );
-			}
-
-			s_iStage = 3;
-		}
-	}
-
-	if ( s_bStarted && s_bMainGameLoaded && Dev_GetMicroGame() && !Dev_GetMicroGame()->szSwitches )
-	{
-		// "-minigame <micro game>" of a micro game the sim adds by name (the "highsquirt" spots...): it's added
-		// 8 seconds after the sim has started, the way the script function CreateAndAddChildState does
-		static TFLOAT s_fMicroGameTime = 0.0f;
-		static TBOOL  s_bAdded         = TFALSE;
+		// "-minigame <micro game>": the micro game starts 8 seconds after the sim, the way the sim starts it (the script
+		// function CreateAndAddChildState, or the spawn activity of a door setting the start goal before
+		// AGameStateController::StartGameState); the day phase is set 4 seconds after the sim
+		const DevMicroGame* pMicroGame       = Dev_GetMicroGame();
+		static TFLOAT       s_fMicroGameTime = 0.0f;
+		static TBOOL        s_bDayPhaseSet   = TFALSE;
+		static TBOOL        s_bAdded         = TFALSE;
 
 		s_fMicroGameTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
+
+		if ( !s_bDayPhaseSet && pMicroGame->iDayPhase >= 0 && s_fMicroGameTime >= 4.0f )
+		{
+			s_bDayPhaseSet = TTRUE;
+			AGameTimeManager::GetSingleton()->ChangePhaseOfDay( AGameTimeManager::DAYPHASE( pMicroGame->iDayPhase ), TTRUE, TTRUE );
+		}
 
 		if ( !s_bAdded && s_fMicroGameTime >= 8.0f && APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) )
 		{
 			s_bAdded = TTRUE;
-			TINFO( "-minigame: adding the micro game '%s' to the sim\n", Dev_GetMicroGame()->szName );
-			AGameStateController::GetSingleton()->AddChildStateByName( TPString8( Dev_GetMicroGame()->szName ) );
-		}
-	}
+			TINFO( "-minigame: starting the micro game '%s'\n", pMicroGame->szName );
 
-	if ( s_bStarted && s_bMainGameLoaded && Dev_HasSwitch( "-devtreasure" ) )
-	{
-		// Development: "-devtreasure" gives the player a metal detector and starts the treasure hunt 6 seconds after
-		// the sim has started (like the detector does), then digs every 4 seconds and ends it with the inventory button 30 seconds later
-		static TFLOAT s_fTreasureTime = 0.0f;
-		static TFLOAT s_fNextDig      = 0.0f;
-		static TBOOL  s_bPushed       = TFALSE;
-
-		s_fTreasureTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
-		AUnit* pPlayer = APlayerManager::GetSingleton()->GetPlayerUnit( 0 );
-
-		if ( !s_bPushed && s_fTreasureTime >= 6.0f && pPlayer )
-		{
-			s_bPushed  = TTRUE;
-			s_fNextDig = s_fTreasureTime + 4.0f;
-
-			AUnitTransform oTransform( *pPlayer->GetSteer()->GetPosition(), TVector4::VEC_POSZ, 0, -1, -1, TTRUE );
-			AUnit*         pDetector = AUnitManager::GetSingleton()->SpawnUnit( TPS8D( "metaldetector" ), &oTransform );
-
-			if ( pDetector )
+			if ( pMicroGame->szStartGoal )
 			{
-				TSTATICCAST( AAnimatedUnit, pPlayer )->AttachUnit( pDetector, TPS8D( "cb_rlocator" ) );
-				TINFO( "[devtreasure] starting the treasure hunt\n" );
-				ATreasueHuntMicroGame::PushState( TFALSE );
+				AGameLoader::SetPlayerStartGoal( TPString8( pMicroGame->szStartGoal ) );
+				AGameStateController::GetSingleton()->StartGameState( TPString8( pMicroGame->szName ) );
 			}
 			else
 			{
-				TWARN( "[devtreasure] couldn't spawn the metal detector\n" );
-			}
-
-			fflush( stdout );
-		}
-		else if ( s_bPushed && s_fTreasureTime >= s_fNextDig )
-		{
-			s_fNextDig = s_fTreasureTime + 4.0f;
-
-			AGameState* pCurrentState = AGameStateController::GetSingleton()->GetCurrentState();
-
-			if ( pCurrentState && pCurrentState->IsA( &TGetClass( ATreasueHuntMicroGame ) ) )
-			{
-				TInputInterface::InputEvent oEvent( AInputHandler::GetSingleton()->GetKeyboardDevice(), 0, TInputInterface::EVENT_TYPE_GONE_DOWN );
-				TBOOL                       bStopEvents = TFALSE;
-
-				TBOOL bEnd = s_fTreasureTime >= 36.0f;
-				TINFO( bEnd ? "[devtreasure] ending the treasure hunt\n" : "[devtreasure] digging\n" );
-				pCurrentState->ProcessCommand( bEnd ? AInputCommand_Inventory : AInputCommand_Use, &oEvent, bStopEvents );
-				fflush( stdout );
+				AGameStateController::GetSingleton()->AddChildStateByName( TPString8( pMicroGame->szName ) );
 			}
 		}
 	}
 
-	if ( s_bStarted && s_bMainGameLoaded && TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devgoldrush" ) )
-	{
-		// Development: "-devgoldrush [N]" plays the gold rush at the coin spawner N (1 by default) 6 seconds after
-		// the sim has started: gives the player a token, puts them at the spawner and pushes the micro game the
-		// way the interaction of its lever does. With "-devautoplay" the player then runs along the coins.
-		static TFLOAT s_fCoinsTime    = 0.0f;
-		static TBOOL  s_bPushed       = TFALSE;
-		static TFLOAT s_fNextCoinTime = 0.0f;
-		static TINT   s_iLastState    = -1;
-
-		s_fCoinsTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
-		AUnit* pPlayer = APlayerManager::GetSingleton()->GetPlayerUnit( 0 );
-
-		if ( !s_bPushed && s_fCoinsTime >= 6.0f && pPlayer )
-		{
-			s_bPushed = TTRUE;
-
-			const TCHAR* szArg    = TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devgoldrush" ) + TStringManager::String8Length( "-devgoldrush" );
-			TINT         iSpawner = ( szArg[ 0 ] == ' ' && szArg[ 1 ] >= '1' && szArg[ 1 ] <= '8' ) ? szArg[ 1 ] - '1' : 0;
-			AUnit*       pStump   = ACoinPickupMicroGame::GetStump( iSpawner );
-
-			if ( pStump )
-			{
-				TVector4 vecPosition = *pStump->GetSteer()->GetPosition();
-				vecPosition.x += 2.0f;
-				pPlayer->SetSteerPosition( vecPosition );
-
-				// "-devnotoken": the player has to be told that a token is needed
-				if ( !Dev_HasSwitch( "-devnotoken" ) )
-					AInventoryComponentInterface::GetInventory( pPlayer )->AddItems( TPS8D( "goldrush_token" ), 1, AInventoryComponentInterface::ms_strDefaultInventory );
-
-				ACoinPickupMicroGame::SetSplineID( iSpawner );
-				ACoinPickupMicroGame::SetNumberOfCoins( 40 );
-				ACoinPickupMicroGame::SetTimeLimit( 45.0f );
-				AGameStateController::GetSingleton()->PushState( new ACoinPickupMicroGame() );
-
-				TINFO( "[devgoldrush] pushed ACoinPickupMicroGame at the spawner %d\n", iSpawner + 1 );
-			}
-			else
-			{
-				TWARN( "[devgoldrush] no coin spawner %d\n", iSpawner + 1 );
-			}
-
-			fflush( stdout );
-		}
-
-		ACoinPickupMicroGame* pGame = TSTATICCAST( ACoinPickupMicroGame, AGameStateController::GetSingleton()->FindGameStateOnStack( TPS8D( "ACoinPickupMicroGame" ) ) );
-
-		if ( pGame )
-		{
-			if ( pGame->GetState() != s_iLastState )
-			{
-				s_iLastState = pGame->GetState();
-				TINFO( "[devgoldrush] state %d, %d coins, %d left, score %d\n", s_iLastState, pGame->GetNumCoins(), pGame->GetNumCoinsLeft(), pGame->GetScore() );
-				fflush( stdout );
-
-				if ( s_iLastState == ACoinPickupMicroGame::STATE_COLLECTING )
-					s_fNextCoinTime = s_fCoinsTime + 8.0f;
-			}
-
-			// Run to the next coin every 0.3 seconds, starting 8 seconds after the coins came out
-			if ( Dev_HasSwitch( "-devautoplay" ) && pGame->GetState() == ACoinPickupMicroGame::STATE_COLLECTING && s_fCoinsTime >= s_fNextCoinTime )
-			{
-				s_fNextCoinTime = s_fCoinsTime + 0.3f;
-
-				for ( TINT i = 0; i < pGame->GetNumCoins(); i++ )
-				{
-					ACoinPickupCoinItem* pCoin = TSTATICCAST( ACoinPickupCoinItem, pGame->GetCoin( i ) );
-
-					if ( !pCoin->IsCollected() )
-					{
-						pPlayer->SetSteerPosition( *pCoin->GetSteer()->GetPosition() );
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	if ( s_bStarted && s_bMainGameLoaded && Dev_HasSwitch( "-devgophershop" ) )
-	{
-		// Development: "-devgophershop" opens the gopher shop 26 seconds (after "-devcheat") after the sim has started, the way
-		// the activity of the gopher does (agamestatecontroller::startgamestate), see AGopherShopGame for the rest
-		static TFLOAT s_fShopTime = 0.0f;
-
-		s_fShopTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
-		if ( !s_bDevShopOpened && s_fShopTime >= 26.0f && APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) )
-		{
-			s_bDevShopOpened = TTRUE;
-			TINFO( "[devgophershop] opening the shop\n" );
-			// Close the screens on top of the sim (the message of -devcheat), the shop returns to the state it was started from
-			AGameStateController::GetSingleton()->ReturnToNamedState( TPS8D( "ASimState" ) );
-			AGameStateController::GetSingleton()->StartGameState( TPS8( AGopherShopGame ) );
-			fflush( stdout );
-		}
-
-		static TBOOL s_bLogged = TFALSE;
-
-		if ( s_bDevShopOpened && !s_bLogged && AGopherShopGame::ms_iDevBoughtId != -1 && APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) &&
-		     !AGameStateController::GetSingleton()->FindGameStateOnStack( TPS8( AGopherShopGame ) ) )
-		{
-			s_bLogged = TTRUE;
-			TINFO( "[devgophershop] back in the sim: GetNumBought( %d ) = %d, GetPercentBought = %d, money %d\n", AGopherShopGame::ms_iDevBoughtId, AGopherShopInterface::GetNumBought( AGopherShopGame::ms_iDevBoughtId ), AGopherShopInterface::GetPercentBought(), APlayerProfileManager::GetSingleton()->GetMainProfile()->GetDisplayedPickups() );
-			fflush( stdout );
-		}
-	}
-
-	if ( s_bStarted && s_bMainGameLoaded && Dev_HasSwitch( "-devinventory" ) )
-		Dev_UpdateInventoryTest();
-
-	if ( s_bStarted && s_bMainGameLoaded && Dev_HasSwitch( "-devsunglasses" ) )
-		Dev_UpdateSunglasses();
-
-	if ( s_bStarted && s_bMainGameLoaded && Dev_HasSwitch( "-devmilkweed" ) )
-		Dev_UpdateMilkweed();
-
-	if ( s_bStarted && TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devshake " ) )
-		Dev_UpdateShake();
-
-		// (also in minigames started with -minigame, the times are then counted from the minigame start, and in the barn of "-devnightbarn")
+	// "-devkeys" (also in minigames started with -minigame, the times are then counted from the minigame start, and in the micro games)
 #  ifndef TOSHI_FINAL
-	if ( ( ( s_bStarted && ( s_bMainGameLoaded || Dev_HasSwitch( "-devnightbarn" ) ) && Dev_IsSimStateRequested() ) || s_bInMiniGame ) && TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devkeys " ) )
+	if ( ( ( s_bStarted && ( s_bMainGameLoaded || Dev_GetMicroGame() ) && Dev_IsSimStateRequested() ) || s_bInMiniGame ) && TStringManager::String8FindString( AGameLoader::Dev_GetCommandLine(), "-devkeys " ) )
 		Dev_UpdateKeys();
 #  endif
-
-	if ( s_bStarted && s_bMainGameLoaded && Dev_HasSwitch( "-devcoins" ) )
-	{
-		// Development: "-devcoins" spills 10 coins in front of the player 8 seconds after the sim has started
-		static TFLOAT s_fCoinTime = 0.0f;
-
-		s_fCoinTime += g_oSystemManager.GetScheduler()->GetCurrentDeltaTime();
-
-		if ( !s_bDevCoinsSpilled && s_fCoinTime >= 8.0f && APlayerManager::GetSingleton()->GetPlayerUnit( 0 ) )
-		{
-			s_bDevCoinsSpilled = TTRUE;
-
-			ASteer*  pSteer      = APlayerManager::GetSingleton()->GetPlayerUnit( 0 )->GetSteer();
-			TVector4 vecPosition = *pSteer->GetPosition();
-			vecPosition.x += pSteer->GetDirection()->x * 1.5f;
-			vecPosition.z += pSteer->GetDirection()->z * 1.5f;
-			vecPosition.y -= 1.0f;
-
-			ACoinSpawner::SpawnMoney( 10, vecPosition );
-			TINFO( "[devcoins] spilled 10 coins\n" );
-		}
-	}
 
 	if ( s_bStarted && s_bMainGameLoaded && !s_bChangingTerrain && ( Dev_HasSwitch( "-devsave" ) || Dev_HasSwitch( "-devload" ) ) )
 		Dev_UpdateSaveTest();

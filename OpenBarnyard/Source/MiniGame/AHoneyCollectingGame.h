@@ -222,11 +222,6 @@ private:
 	// Milk hit a swarm
 	static TBOOL __stdcall OnMilkHit( AHoneyCollectingGame* a_pCaller, void* a_pOwner, Toshi::TRef<class AUnitProxy>* a_pUnit );
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// Development: "-devautoplay"
-	void DevAutoPlay( TFLOAT a_fDeltaTime );
-#endif
-
 private:
 	TFLOAT                          m_fTime;                            // 0x0bac
 	TBOOL                           m_bUnkbb0;                          // 0x0bb0

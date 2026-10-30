@@ -51,6 +51,8 @@ public:
 
 	TINT GetNumVISSections() const;
 
+	TBOOL FindClosestLocatorXZ( TFLOAT a_fX, TFLOAT a_fZ, TFLOAT a_fMaxDistance, Toshi::TVector4& a_rOutPosition );
+
 	Toshi::TTRB*             GetTRB() { return m_pTRB; }
 	Toshi::TTransformObject& GetWorldTransform() { return m_oWorldTransform; }
 

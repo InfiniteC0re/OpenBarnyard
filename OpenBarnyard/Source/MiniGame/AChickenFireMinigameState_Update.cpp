@@ -67,9 +67,6 @@ static constexpr TFLOAT MAX_FLIGHT_SPEED = 60.0f;
 // $Barnyard: FUNCTION 00480360
 TBOOL AChickenFireMinigameState::OnUpdate( TFLOAT a_fDeltaTime )
 {
-#ifdef BARNYARD_COMMUNITY_PATCH
-	DevAutoPlay( a_fDeltaTime );
-#endif
 
 	m_oTextBox.Hide();
 	m_fStateTime += a_fDeltaTime;

@@ -19,7 +19,7 @@
 #include "SaveLoadSKU.h"
 #include "Helpers/APlayerProgress.h"
 #include "Quests/AQuestManager.h"
-#include "ADebugMenuState.h"
+#include "Debug/ADebugMenuState.h"
 #include "GUI/AGUISystem.h"
 #include "Mod/ImGui/AImGui.h"
 

@@ -9,8 +9,9 @@
 class ACamera;
 
 //-----------------------------------------------------------------------------
-// Purpose: development text overlay (not in Final builds), toggled from the
-// debug menu (ADebugMenuState) or started on with "-debugoverlay".
+// Purpose: development text overlay (not in Final builds), toggled by the
+// debug.overlay variable (the Prime debug menu, APrimeDebug; "+set debug.overlay 1"
+// on the command line).
 // The systems print their own lines every frame with ADEBUGLINE (the player's
 // steer, the game time, the cameras, the current state...), the overlay sorts
 // them by group, draws them at the top left with the frame time at the bottom

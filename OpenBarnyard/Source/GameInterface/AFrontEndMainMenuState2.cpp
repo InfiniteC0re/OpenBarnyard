@@ -421,19 +421,17 @@ void AFrontEndMainMenuState2::OnMenuClose()
 			break;
 		case FRONTENDBUTTON_ANTICS:
 #ifdef BARNYARD_COMMUNITY_PATCH
-			// Development: "-multiplayerantics" opens the abandoned player count selection test
-			// (AFrontEndPlayersState, recovered from the original source) before the minigames
-			if ( TStringManager::String8FindString( GetCommandLineA(), "-multiplayerantics" ) )
+			// Development (frontend.antics): the developer menu (AFrontEndDebugState, from the PS2 build) or the
+			// abandoned player count selection test (AFrontEndPlayersState, from the original source)
+			if ( AGameLoader::ms_iDevFrontEndAntics == AGameLoader::DEVANTICS_DEBUGMENU )
 			{
-				pPushGameState = new AFrontEndPlayersState();
+				pPushGameState = new AFrontEndDebugState();
 				break;
 			}
 
-			// Development: "-devsseq" opens the developer menu (AFrontEndDebugState, recovered from the PS2 build):
-			// "Debug MiniGames", "Preview Scripted Sequences" (AFrontEndDebugSSeqState) and "Preview Terrains"
-			if ( TStringManager::String8FindString( GetCommandLineA(), "-devsseq" ) )
+			if ( AGameLoader::ms_iDevFrontEndAntics == AGameLoader::DEVANTICS_PLAYERS )
 			{
-				pPushGameState = new AFrontEndDebugState();
+				pPushGameState = new AFrontEndPlayersState();
 				break;
 			}
 #endif // BARNYARD_COMMUNITY_PATCH

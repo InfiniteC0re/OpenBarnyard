@@ -237,12 +237,31 @@ public:
 	static TBOOL Dev_IsSimStateRequested();
 	static void  Dev_UpdateSimStateRequest();
 
-	// Development: a one-shot dev switch ("-devcheat", "-devgophershop", "-devcoins") hasn't done its
-	// job yet. The game then keeps running while its window isn't active, so they don't wait for it to be reactivated
+	// Development: a story request or a console line waiting for the world (the command line) hasn't run yet.
+	// The game then keeps running while its window isn't active, so they don't wait for it to be reactivated
 	static TBOOL Dev_IsRequestPending();
 
-	// Development: plays the scripted sequence "-devtier" asked for while the main game was loading
+	// Development (console frontend.antics): what the Antics button of the main menu opens
+	enum DEVANTICS_
+	{
+		DEVANTICS_NORMAL,
+		DEVANTICS_DEBUGMENU, // AFrontEndDebugState
+		DEVANTICS_PLAYERS,   // AFrontEndPlayersState
+		DEVANTICS_NUMOF,
+	};
+
+	inline static TINT ms_iDevFrontEndAntics = DEVANTICS_NORMAL;
+
+	inline static TINT ms_iDevMiniGameVariant = -1;
+	inline static TINT ms_iDevMiniGamePlayers = 0;
+
 	static void Dev_UpdateDevTierSequence();
+
+	static void  Dev_RequestStory( TINT a_iAct, TINT a_iTier );
+	static TBOOL Dev_IsStoryRequestPending();
+
+	static TINT Dev_GetNumTiersInAct( TINT a_iAct );
+	static void Dev_GetAdvancedTier( TINT a_iNumTiers, TINT& a_rAct, TINT& a_rTier );
 
 	// Development: with "-devsavefile <path>" every save / load uses that file from the start (the save loaded at
 	// boot and OpenBarnyard.cfg included), so a test run never reads or writes Save\savedata.by. TTRUE if it's given

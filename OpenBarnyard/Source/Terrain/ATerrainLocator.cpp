@@ -142,3 +142,33 @@ void ATerrainLocator::GetMatrix( Toshi::TMatrix44& a_rOutMatrix ) const
 	a_rOutMatrix.SetFromQuaternion( quatRotation );
 	a_rOutMatrix.AsBasisVector3( BASISVECTOR_TRANSLATION ) = vecPosition;
 }
+
+TBOOL ATerrainLocatorList::FindClosestLocatorXZ( TFLOAT a_fX, TFLOAT a_fZ, TFLOAT a_fMaxDistance, TVector4& a_rOutPosition )
+{
+	if ( !m_pLocatorsHeader )
+		return TFALSE;
+
+	TMatrix44 oWorld;
+	m_oWorldTransform.GetLocalMatrixImp( oWorld );
+
+	TFLOAT fClosestSq = a_fMaxDistance * a_fMaxDistance;
+	TBOOL  bFound     = TFALSE;
+
+	for ( TINT i = 0; i < m_pLocatorsHeader->iNumLocators; i++ )
+	{
+		TVector3 vWorld;
+		TMatrix44::TransformVector( vWorld, oWorld, m_pLocatorsHeader->pLocators[ i ].vecPosition );
+
+		TFLOAT fDX = vWorld.x - a_fX;
+		TFLOAT fDZ = vWorld.z - a_fZ;
+
+		if ( fDX * fDX + fDZ * fDZ < fClosestSq )
+		{
+			fClosestSq     = fDX * fDX + fDZ * fDZ;
+			a_rOutPosition = TVector4( vWorld.x, vWorld.y, vWorld.z, 1.0f );
+			bFound         = TTRUE;
+		}
+	}
+
+	return bFound;
+}

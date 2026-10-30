@@ -163,11 +163,6 @@ private:
 	void DisablePlayerControl();
 	void EnablePlayerControl();
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// -devautoplay: the player squirts the thieves and throws the hens/eggs back into the coop
-	void DevAutoPlay( TFLOAT a_fDeltaTime );
-#endif
-
 private:
 	AChickenCoopDefenderGame       m_oGame;                // 0x0bc0
 	AUnitPlayer*                   m_pPlayer;              // 0x1104, "player_chickencoop"

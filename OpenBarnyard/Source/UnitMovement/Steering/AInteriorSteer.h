@@ -156,11 +156,6 @@ public:
 	// is already following a path, or no path is found (unlike SeekPoint, the point isn't moved).
 	TBOOL SeekPosition( const Toshi::TVector4& a_rcTarget );
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// Development: "-devnpcwalk", see AInteriorSteer.cpp
-	void Dev_UpdateNPCWalk();
-#endif
-
 	TBOOL ConnectToNetwork( AInteriorNetwork* a_pNetwork );
 
 private:

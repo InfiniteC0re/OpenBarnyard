@@ -299,11 +299,6 @@ public:
 	// Returns TFALSE when there's none.
 	TBOOL GetTrackSpeedLimit( TFLOAT a_fProgress, TFLOAT& a_rfOutSpeed ) const;
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// -devautoplay: drives the player car along the track
-	void DevAutoPlay( TFLOAT a_fDeltaTime );
-#endif
-
 protected:
 	TFLOAT                  m_afData[ 8 ];                              // 0xbac, carchase.trb "Floats"
 	TINT                    m_iData;                                    // 0xbcc, carchase.trb "Ints"

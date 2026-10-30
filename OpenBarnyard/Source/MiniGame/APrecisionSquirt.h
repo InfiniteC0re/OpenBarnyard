@@ -213,11 +213,6 @@ public:
 	// Creates the coins of the charity variant along the spline
 	void CreateCoins();
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// Development: "-devautoplay" squirts at the targets
-	void DevAutoPlay( TFLOAT a_fDeltaTime );
-#endif
-
 private:
 	TINT                                m_iNumSpawnPoints;                        // 0x0bc0
 	ASpawnPoint                         m_aSpawnPoints[ MAX_SPAWN_POINTS ];       // 0x0bc4

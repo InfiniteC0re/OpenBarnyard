@@ -172,11 +172,6 @@ ABarnYardPoolMiniGameState::ABarnYardPoolMiniGameState()
 	m_fInputDelay      = 0.0f;
 	m_fMessageTimer    = 0.0f;
 	m_bGroupsAnnounced = TFALSE;
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-	m_fDevAutoPlayTimer = 0.0f;
-	m_iDevAutoPlayShots = 0;
-#endif
 }
 
 // $Barnyard: FUNCTION 004d3680

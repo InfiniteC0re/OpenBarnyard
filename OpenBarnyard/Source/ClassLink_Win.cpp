@@ -240,7 +240,7 @@ void ClassLink_Win::ReferenceClasses()
 	REFERENCE_CLASS( AContextButtonHudElement ); // never created in retail, only by name
 	REFERENCE_CLASS( ASuperSquirtMicroGame );    // pushed by name at the "highsquirt_NN" spots
 	REFERENCE_CLASS( AEndGameState );            // AGameLoader::SetTransitionToGameState( "AEndGameState" )
-	REFERENCE_CLASS( AFrontEndAttractState );    // never created in retail, only by name (-devattract)
+	REFERENCE_CLASS( AFrontEndAttractState );    // never created in retail, only by name
 	REFERENCE_CLASS( AGateCrashMinigameState );
 	REFERENCE_CLASS( ACarChaseMiniGameState );
 	REFERENCE_CLASS( AGateCrashPlayerAi );

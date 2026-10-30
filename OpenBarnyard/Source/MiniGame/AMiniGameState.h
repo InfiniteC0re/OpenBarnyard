@@ -94,6 +94,11 @@ public:
 	};
 
 public:
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Console minigame.player_floats: the minigames created next show the player floats (dead code in retail)
+	inline static TINT ms_iShowPlayerFloats = 0;
+#endif
+
 	AMiniGameState();
 	AMiniGameState( AMinigamePlayerAi* a_pPlayerAi );
 	virtual ~AMiniGameState();

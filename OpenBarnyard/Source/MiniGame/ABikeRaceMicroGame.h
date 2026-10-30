@@ -216,11 +216,6 @@ private:
 	void UpdatePickups( TFLOAT a_fDeltaTime );
 	void UpdateSpectators();
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// Development: "-devautoplay" rides the bike of the player along the waypoints
-	void Dev_UpdateAutoPlay();
-#endif
-
 public:
 	static const TrackInfo ms_aTracks[ NUM_TRACKS ];
 

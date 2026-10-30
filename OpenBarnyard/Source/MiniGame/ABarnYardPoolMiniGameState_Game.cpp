@@ -560,59 +560,6 @@ end:
 	m_pCue->SetVisible( TFALSE );
 }
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-
-// Development: "-devautoplay" runs place the cue ball and let the planner of the computer aim and shoot for the player
-void ABarnYardPoolMiniGameState::UpdateDevAutoPlay( TFLOAT a_fDeltaTime )
-{
-	static TBOOL s_bChecked = TFALSE;
-	static TBOOL s_bEnabled = TFALSE;
-
-	if ( !s_bChecked )
-	{
-		s_bChecked = TTRUE;
-		s_bEnabled = T2String8::FindString( GetCommandLineA(), "-devautoplay" ) != TNULL;
-	}
-
-	if ( !s_bEnabled )
-		return;
-
-	if ( m_eState != STATE_HUMAN_AIM && m_eState != STATE_HUMAN_PLACE_BALL )
-	{
-		m_fDevAutoPlayTimer = 0.0f;
-		return;
-	}
-
-	m_fDevAutoPlayTimer += a_fDeltaTime;
-
-	if ( m_fDevAutoPlayTimer < 1.0f )
-		return;
-
-	m_fDevAutoPlayTimer = 0.0f;
-
-	if ( m_eState == STATE_HUMAN_PLACE_BALL )
-	{
-		if ( m_pCueBall->IsPlacementValid() )
-		{
-			TINFO( "[devautoplay] placed the cue ball\n" );
-			m_eState      = STATE_START_TURN;
-			m_fInputDelay = 0.1f;
-		}
-
-		return;
-	}
-
-	m_oAI.SetTargetBallType( GetCurrentTeam().GetTargetBallType() );
-	m_vShotVelocity = m_oAI.GetShot( TTRUE );
-	m_vAimTarget    = m_oAI.GetAimPoint();
-	m_eState        = STATE_HUMAN_SHOT;
-	m_iDevAutoPlayShots++;
-
-	TINFO( "[devautoplay] shot %d by team %d (target %d), velocity (%.2f, %.2f), potted %d - %d\n", m_iDevAutoPlayShots, m_iCurrentTeam, GetCurrentTeam().GetTargetBallType(), m_vShotVelocity.x, m_vShotVelocity.z, m_aTeams[ 0 ].GetNumPotted(), m_aTeams[ 1 ].GetNumPotted() );
-}
-
-#endif // BARNYARD_COMMUNITY_PATCH
-
 // $Barnyard: FUNCTION 004d6a60
 void ABarnYardPoolMiniGameState::UpdateGame( TFLOAT a_fDeltaTime )
 {
@@ -725,10 +672,6 @@ void ABarnYardPoolMiniGameState::UpdateGame( TFLOAT a_fDeltaTime )
 
 	if ( m_eState == STATE_BALLS_ROLLING && m_eBallsState != BALLSSTATE_MOVING )
 		EndShot();
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-	UpdateDevAutoPlay( a_fDeltaTime );
-#endif
 
 	switch ( m_eState )
 	{

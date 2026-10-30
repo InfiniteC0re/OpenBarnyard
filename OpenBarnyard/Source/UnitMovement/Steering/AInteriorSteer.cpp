@@ -90,142 +90,6 @@ void AInteriorSteer::DeinitialiseClass()
 	ms_oFunctionTable.Unregister();
 }
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-
-//-----------------------------------------------------------------------------
-// Development: "-devnpcwalk" makes the first NPCs that stand on a network walk
-// to an area 10-40 units away from them (a few seconds after the main game is
-// loaded) and logs their positions every two seconds.
-//-----------------------------------------------------------------------------
-
-static constexpr TINT DEV_NUM_NPC_WALKERS = 2;
-
-static AInteriorSteer* s_apDevNPCWalkers[ DEV_NUM_NPC_WALKERS ];
-static TFLOAT          s_afDevNPCWalkerLogTime[ DEV_NUM_NPC_WALKERS ];
-static TFLOAT          s_fDevNPCWalkStartTime = -1.0f;
-
-static TBOOL Dev_IsNPCWalkEnabled()
-{
-	static TINT s_iEnabled = -1;
-
-	if ( s_iEnabled == -1 )
-		s_iEnabled = T2String8::FindString( GetCommandLineA(), "-devnpcwalk" ) ? 1 : 0;
-
-	return s_iEnabled == 1;
-}
-
-static void Dev_ForgetNPCWalker( AInteriorSteer* a_pSteer )
-{
-	for ( TINT i = 0; i < DEV_NUM_NPC_WALKERS; i++ )
-	{
-		if ( s_apDevNPCWalkers[ i ] == a_pSteer )
-			s_apDevNPCWalkers[ i ] = TNULL;
-	}
-}
-
-void AInteriorSteer::Dev_UpdateNPCWalk()
-{
-	if ( !Dev_IsNPCWalkEnabled() || !AGameLoader::IsMainGameLoaded() )
-		return;
-
-	AInteriorNetwork* pNetwork = GetNetwork();
-
-	if ( !pNetwork )
-		return;
-
-	TFLOAT fTime = g_oSystemManager.GetScheduler()->GetTotalTime();
-
-	if ( s_fDevNPCWalkStartTime < 0.0f )
-		s_fDevNPCWalkStartTime = fTime;
-
-	// Give the world a few seconds to settle
-	if ( fTime - s_fDevNPCWalkStartTime < 5.0f )
-		return;
-
-	const TCHAR*    szUnitName = GetParentUnit().GetType() ? GetParentUnit().GetType()->GetName().GetString() : "?";
-	const TVector4* pPosition  = m_pKinematics->GetPosition();
-	TINT            iSlot      = -1;
-
-	for ( TINT i = 0; i < DEV_NUM_NPC_WALKERS; i++ )
-	{
-		if ( s_apDevNPCWalkers[ i ] == this )
-			iSlot = i;
-	}
-
-	if ( iSlot == -1 )
-	{
-		for ( TINT i = 0; i < DEV_NUM_NPC_WALKERS; i++ )
-		{
-			if ( !s_apDevNPCWalkers[ i ] )
-			{
-				iSlot = i;
-				break;
-			}
-		}
-
-		// Already got enough walkers
-		if ( iSlot == -1 || IsFollowingPath() )
-			return;
-
-		// Pick the farthest routable normal area 10-40 units away (or the farthest one)
-		TINT   iBestArea         = -1;
-		TFLOAT fBestDistance     = -1.0f;
-		TINT   iFarthestArea     = -1;
-		TFLOAT fFarthestDistance = -1.0f;
-
-		for ( TINT i = 0; i < pNetwork->m_pINetwork->m_iNumAreas; i++ )
-		{
-			const AInteriorArea& rcArea = pNetwork->m_pINetwork->m_pAreas[ i ];
-
-			if ( rcArea.IsSpecialArea( 0 ) || HASANYFLAG( rcArea.m_eFlags, AInteriorArea::FLAGS_NON_ROUTABLE ) )
-				continue;
-
-			TFLOAT fDistance = sqrtf( TVector2::DistanceSq( TVector2( pPosition->x, pPosition->z ), TVector2( rcArea.m_fOriginX, rcArea.m_fOriginZ ) ) );
-
-			if ( fDistance >= 10.0f && fDistance <= 40.0f && fDistance > fBestDistance )
-			{
-				iBestArea     = i;
-				fBestDistance = fDistance;
-			}
-
-			if ( fDistance > fFarthestDistance )
-			{
-				iFarthestArea     = i;
-				fFarthestDistance = fDistance;
-			}
-		}
-
-		if ( iBestArea == -1 )
-			iBestArea = iFarthestArea;
-
-		if ( iBestArea == -1 )
-			return;
-
-		TVector4 vecTarget;
-		pNetwork->m_pINetwork->m_pAreas[ iBestArea ].GetPosition( vecTarget );
-
-		if ( !Command_SeekPointXYZ( vecTarget.x, vecTarget.y, vecTarget.z ) )
-		{
-			TWARN( "[devnpcwalk] %s: no path from (%.2f %.2f %.2f) area %d to area %d (%.2f %.2f %.2f)\n", szUnitName, pPosition->x, pPosition->y, pPosition->z, m_oPath.m_iStartArea, iBestArea, vecTarget.x, vecTarget.y, vecTarget.z );
-			return;
-		}
-
-		s_apDevNPCWalkers[ iSlot ]       = this;
-		s_afDevNPCWalkerLogTime[ iSlot ] = fTime;
-
-		TINFO( "[devnpcwalk] %s: walking from (%.2f %.2f %.2f) area %d to area %d '%s' (%.2f %.2f %.2f), %d path areas, next point (%.2f %.2f)\n", szUnitName, pPosition->x, pPosition->y, pPosition->z, m_oPath.m_iStartArea, iBestArea, pNetwork->m_pINetwork->m_pAreas[ iBestArea ].m_strName->GetString(), vecTarget.x, vecTarget.y, vecTarget.z, m_oPath.m_oPath.m_iNumPathAreas, m_oPath.m_oPath.m_vPosition.x, m_oPath.m_oPath.m_vPosition.z );
-	}
-
-	if ( fTime >= s_afDevNPCWalkerLogTime[ iSlot ] )
-	{
-		s_afDevNPCWalkerLogTime[ iSlot ] = fTime + 2.0f;
-
-		TINFO( "[devnpcwalk] %s: t=%.1f pos (%.2f %.2f %.2f) area %d speed %.2f following %d areas left %d next (%.2f %.2f) dest (%.2f %.2f)\n", szUnitName, fTime - s_fDevNPCWalkStartTime, pPosition->x, pPosition->y, pPosition->z, m_oPath.m_iStartArea, m_pKinematics->GetSpeed(), IsFollowingPath(), m_oPath.m_oPath.m_iNumPathAreas, m_oPath.m_oPath.m_vPosition.x, m_oPath.m_oPath.m_vPosition.z, m_oPath.m_oPath.m_vDestination.x, m_oPath.m_oPath.m_vDestination.z );
-	}
-}
-
-#endif // BARNYARD_COMMUNITY_PATCH
-
 // $Barnyard: FUNCTION 00562f70
 AInteriorSteer::AInteriorSteer()
     : m_pKinematics( TNULL )
@@ -252,10 +116,6 @@ AInteriorSteer::AInteriorSteer()
 // $Barnyard: FUNCTION 00563070
 AInteriorSteer::~AInteriorSteer()
 {
-#ifdef BARNYARD_COMMUNITY_PATCH
-	Dev_ForgetNPCWalker( this );
-#endif
-
 	// NOTE: reads m_pNetwork directly, not through GetCurrentNetwork
 	if ( m_pNetwork )
 		TSTATICCAST( AInteriorNetwork, m_pNetwork )->DisconnectUnit( &m_oPath, &GetParentUnit() );
@@ -382,10 +242,6 @@ TBOOL AInteriorSteer::IsOnGround()
 // $Barnyard: FUNCTION 005660b0
 TBOOL AInteriorSteer::Update( TFLOAT a_fDeltaTime )
 {
-#ifdef BARNYARD_COMMUNITY_PATCH
-	Dev_UpdateNPCWalk();
-#endif
-
 	TFLOAT fDeltaTime = a_fDeltaTime + m_fUpdateTime;
 	m_fUpdateTime     = fDeltaTime;
 

@@ -9,10 +9,6 @@
 #include "TTextureFactoryHAL_DX11.h"
 #include "TTextureResourceHAL_DX11.h"
 
-#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
-#  include "TDevScreenshot_DX11.h"
-#endif
-
 #include "Render/TShader.h"
 #include "Input/TInputInterface.h"
 
@@ -453,11 +449,6 @@ TBOOL TRenderD3DInterface::EndScene()
 	{
 		m_EndSceneEmitter.Throw( TNULL );
 		TASSERT( !m_bSceneTargetActive && "EndSceneTarget wasn't called" );
-
-#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
-		// Development: "-devshot" saves the finished frame (GUI included) before it's presented
-		TDevScreenshot::Update( m_pDevice11, m_pDeviceContext, m_pBackBuffer );
-#endif
 
 		if ( m_pPendingCapture )
 		{

@@ -51,7 +51,8 @@ AGameState::~AGameState()
 	// running (the caller of AGameLoader::LeaveMiniGame/RestartMiniGame), so it can't be deleted.
 	while ( !m_ChildStates.IsEmpty() )
 	{
-		AGameState* pChild    = m_ChildStates.PopFront();
+		AGameState* pChild = m_ChildStates.Front();
+		pChild->Node::Remove();
 		pChild->m_pOwnerState = TNULL;
 	}
 #endif

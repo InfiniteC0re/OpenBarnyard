@@ -1891,10 +1891,6 @@ void AWhackARaccMiniGameState::UpdateGame( TFLOAT a_fDeltaTime )
 		}
 	}
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	DevAutoPlay( a_fDeltaTime );
-#endif
-
 	UpdateSpecials( a_fDeltaTime );
 	UpdateRaccoons( a_fDeltaTime );
 	UpdateDials( a_fDeltaTime );
@@ -2147,53 +2143,3 @@ void AWhackARaccMiniGameState::UpdateGameOver( TFLOAT a_fDeltaTime )
 	for ( TINT i = 0; i < NUM_DIALS; i++ )
 		m_aDials[ i ].fAngle = 0.0f;
 }
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-
-// Development: "-devautoplay" runs move the ring to whatever is up
-// and swing the mallet (not at Freddy).
-void AWhackARaccMiniGameState::DevAutoPlay( TFLOAT a_fDeltaTime )
-{
-	if ( !T2String8::FindString( GetCommandLineA(), "-devautoplay" ) )
-		return;
-
-	static TFLOAT s_fTimer = 0.0f;
-	s_fTimer += a_fDeltaTime;
-
-	if ( s_fTimer < 0.3f )
-		return;
-
-	for ( TINT i = 0; i < NUM_HOLES; i++ )
-	{
-		const Hole& rHole = m_aHoles[ i ];
-
-		if ( !rHole.bOccupied || rHole.iObject < 0 )
-			continue;
-
-		const Mole* pMole = TNULL;
-
-		if ( rHole.eKind == KIND_RACCOON )
-			pMole = &m_aRaccoons[ rHole.iObject ];
-		else if ( rHole.eKind == KIND_BUCK )
-			pMole = &m_aBucks[ rHole.iObject ];
-		else if ( rHole.iObject != SPECIAL_FREDDY )
-			pMole = &m_aSpecials[ rHole.iObject ];
-
-		if ( !pMole || ( pMole->eState != MOLESTATE_RISING && pMole->eState != MOLESTATE_UP ) )
-			continue;
-
-		Player& rPlayer = GetCurrentPlayer();
-		rPlayer.iRow    = i / NUM_ROWS;
-		rPlayer.iCol    = i % NUM_ROWS;
-
-		TInputInterface::InputEvent oEvent( TNULL, 0, TInputInterface::EVENT_TYPE_GONE_DOWN );
-		TBOOL                       bStopEvents = TFALSE;
-		ProcessCommand( AInputCommand_Shoot, &oEvent, bStopEvents );
-
-		TINFO( "[whackauto] whack hole %d (kind %d) score %d level %d lives %d\n", i, rHole.eKind, rPlayer.iScore, rPlayer.iLevel, rPlayer.iLives );
-		s_fTimer = 0.0f;
-		break;
-	}
-}
-
-#endif

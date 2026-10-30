@@ -17,7 +17,7 @@
 #include "Animation/AAnimatableObject.h"
 #include "Animation/ANamedAnimationSet.h"
 #include "Player/APlayerManager.h"
-#include "Render/ADebugOverlay.h"
+#include "Debug/ADebugOverlay.h"
 
 #include <Math/TMatrix44.h>
 

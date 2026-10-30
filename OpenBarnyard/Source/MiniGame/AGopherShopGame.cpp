@@ -411,10 +411,6 @@ TBOOL AGopherShopGame::OnUpdate( TFLOAT a_fDeltaTime )
 	if ( m_pMenu->IsTransitioning() )
 		return TTRUE;
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	Dev_Update( a_fDeltaTime );
-#endif
-
 	if ( m_eMenu == MENU_ITEM )
 	{
 		AGopherShopCategory* pCategory = &m_aCategories[ m_iCategory ];
@@ -1487,88 +1483,3 @@ void AGopherShopGame::Exit()
 	AHackedQuickSave::GetSingleton()->SaveProfile();
 	AGameLoader::LeaveMiniGame( TFALSE );
 }
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-
-void AGopherShopGame::Dev_Update( TFLOAT a_fDeltaTime )
-{
-	if ( !TStringManager::String8FindString( GetCommandLineA(), "-devgophershop" ) )
-		return;
-
-	static TFLOAT s_fTime  = 0.0f;
-	static TINT   s_iPhase = 0;
-
-	s_fTime += a_fDeltaTime;
-	APlayerSimProfile* pProfile = APlayerProfileManager::GetSingleton()->GetMainProfile();
-
-	if ( s_iPhase == 0 && s_fTime > 6.0f )
-	{
-		s_iPhase = 1;
-		TINFO( "[devgophershop] in the shop, money %d, %d items available\n", pProfile->GetDisplayedPickups(), m_iNumAvailable );
-		OnMainMenuItem( m_pMenu->GetButton( AGopherShopMenu::BUTTON_BUY ) );
-	}
-	else if ( s_iPhase == 1 && s_fTime > 9.0f )
-	{
-		s_iPhase = 2;
-
-		// The first category with an item that can be bought
-		for ( TINT i = 0; i < CATEGORY_SELL; i++ )
-		{
-			for ( TINT k = 0; k < m_aCategories[ i ].GetNumItems(); k++ )
-			{
-				AGopherShopItem* pItem = m_aCategories[ i ].GetItem( k );
-
-				if ( pItem->GetNumRemaining() != 0 && pItem->IsUnlocked() && HasRequiredItems( pItem ) && pItem->GetPrice() <= pProfile->GetDisplayedPickups() )
-				{
-					TINT iButton = ( i == 0 ) ? AGopherShopMenu::BUTTON_CATEGORY_0 : AGopherShopMenu::BUTTON_CATEGORY_1 + i - 1;
-					TINFO( "[devgophershop] category %d, item %d (id %d, price %d)\n", i, k, pItem->GetId(), pItem->GetPrice() );
-					OnCategoryMenuItem( m_pMenu->GetButton( iButton ) );
-					ms_iDevBoughtId = pItem->GetId();
-					i               = CATEGORY_SELL;
-					break;
-				}
-			}
-		}
-	}
-	else if ( s_iPhase == 2 && s_fTime > 12.0f && m_eMenu == MENU_ITEM && m_pCurrentItem )
-	{
-		// Scroll to the item
-		if ( m_pCurrentItem->GetId() != ms_iDevBoughtId )
-		{
-			// Scroll the shorter way
-			AGopherShopCategory& rCategory = m_aCategories[ m_iCategory ];
-			TINT                 iTarget   = 0;
-
-			for ( TINT i = 0; i < rCategory.GetNumItems(); i++ )
-			{
-				if ( rCategory.GetItem( i )->GetId() == ms_iDevBoughtId )
-					iTarget = i;
-			}
-
-			TINT iDistance = ( iTarget - rCategory.GetCurrentIndex() + rCategory.GetNumItems() ) % rCategory.GetNumItems();
-
-			if ( iDistance <= rCategory.GetNumItems() / 2 )
-				m_bRight = TTRUE;
-			else
-				m_bLeft = TTRUE;
-
-			s_fTime = 11.6f;
-			return;
-		}
-
-		s_iPhase = 3;
-		TINFO( "[devgophershop] buying %d, money %d\n", m_pCurrentItem->GetId(), pProfile->GetDisplayedPickups() );
-		Buy( m_pCurrentItem );
-		TINFO( "[devgophershop] bought: count %d, purchases %d\n", m_pCurrentItem->GetCount(), m_iNumPurchases );
-	}
-	else if ( s_iPhase == 3 && s_fTime > 18.0f )
-	{
-		s_iPhase = 4;
-		TINFO( "[devgophershop] leaving, money %d\n", pProfile->GetDisplayedPickups() );
-		OnMainMenuItem( m_pMenu->GetButton( AGopherShopMenu::BUTTON_LEAVE ) );
-	}
-
-	fflush( stdout );
-}
-
-#endif

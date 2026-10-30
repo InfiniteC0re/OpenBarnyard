@@ -204,13 +204,6 @@ private:
 	// Resets everything for the next turn; a_bNextPlayer adds the score of the turn and moves to the next player
 	void ResetTurn( TBOOL a_bNextPlayer );
 
-
-	//-----------------------------------------------------------------------------
-	// Development (AChickenFireMinigameState.cpp)
-	//-----------------------------------------------------------------------------
-	// -devautoplay: bashes and launches for the current player
-	void DevAutoPlay( TFLOAT a_fDeltaTime );
-
 	PlayerInput& GetCurrentInput();
 
 

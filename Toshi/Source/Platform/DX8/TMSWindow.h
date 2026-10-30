@@ -64,7 +64,7 @@ public:
 	static TBOOL IsNoPauseMode();
 
 	// Development: while set, a windowed game keeps running when it isn't the active application (the game sets it
-	// while one-shot dev switches such as "-devcheat" wait for the sim). Clearing it while the game is inactive
+	// while dev requests such as console lines of the command line wait for the world). Clearing it while the game is inactive
 	// pauses the game as the deactivation would have done.
 	static void Dev_SetKeepRunning( TBOOL a_bKeepRunning );
 

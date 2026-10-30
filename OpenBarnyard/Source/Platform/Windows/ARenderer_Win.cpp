@@ -22,8 +22,9 @@
 #include "Units/AUnitManager.h"
 #include "Units/AAnimalPopulationManager.h"
 #include "Render/ASunFlareEffect.h"
-#include "Render/ADebugOverlay.h"
-#include "Render/AWorldDebugDraw.h"
+#include "Debug/ADebugOverlay.h"
+#include "Debug/AWorldDebugDraw.h"
+#include "Debug/APrimeDebug.h"
 #include "Mod/AModEvents.h"
 #include "FX/AParticleEffectManager.h"
 
@@ -465,8 +466,12 @@ TBOOL ARenderer::OnCreate()
 		ADebugOverlay::CreateSingleton();
 #endif
 
-#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+#ifdef AWORLDDEBUGDRAW
 		AWorldDebugDraw::CreateSingleton();
+#endif
+
+#ifdef PRIMEDEBUG
+		APrimeDebug::Create();
 #endif
 
 		FIRE_EVENT( ARenderer::Created, this );
@@ -491,12 +496,16 @@ static void DestroyShader()
 // $Barnyard: FUNCTION 0060b1d0
 void ARenderer::OnDestroy()
 {
+#ifdef PRIMEDEBUG
+	APrimeDebug::Destroy();
+#endif
+
 #if !defined( TOSHI_FINAL ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) )
 	if ( ADebugOverlay::IsSingletonCreated() )
 		ADebugOverlay::DestroySingleton();
 #endif
 
-#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+#ifdef AWORLDDEBUGDRAW
 	if ( AWorldDebugDraw::IsSingletonCreated() )
 		AWorldDebugDraw::DestroySingleton();
 #endif
@@ -651,13 +660,18 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 		if ( ATerrainInterface::GetSingleton() )
 			ATerrainInterface::GetSingleton()->RenderGlowModels();
 
-#if !defined( TOSHI_FINAL ) && defined( TRENDERINTERFACE_DX8 )
+#ifdef AWORLDDEBUGDRAW
 		// Development: the world debug drawing, with the depth of the scene
 		if ( AWorldDebugDraw::IsSingletonCreated() )
 		{
 			pRender->FlushShaders();
 			AWorldDebugDraw::GetSingleton()->Render();
 		}
+#endif
+
+#ifdef PRIMEDEBUG_DEV
+		pRender->FlushShaders();
+		APrimeDebug::Render3D();
 #endif
 
 		pViewport->GetRenderContext()->SetCameraObject( pOldCameraObject );
@@ -770,6 +784,10 @@ TBOOL ARenderer::OnUpdate( TFLOAT a_fDeltaTime )
 			ADebugOverlay::GetSingleton()->Render( a_fDeltaTime );
 #endif
 
+#ifdef PRIMEDEBUG_DEV
+		APrimeDebug::Render2D();
+#endif
+
 		pRender->EndScene();
 
 		UpdateScreenCapture( pRender );
@@ -784,6 +802,10 @@ TBOOL ARenderer::OnUpdate( TFLOAT a_fDeltaTime )
 
 		if ( m_bRenderGUI )
 			RenderGUI();
+
+#ifdef PRIMEDEBUG_DEV
+		APrimeDebug::Render2D();
+#endif
 
 		pRender->EndScene();
 		return TTRUE;

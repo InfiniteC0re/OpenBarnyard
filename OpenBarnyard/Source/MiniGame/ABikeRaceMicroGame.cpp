@@ -597,10 +597,6 @@ void ABikeRaceMicroGame::UpdateGame( TFLOAT a_fDeltaTime )
 	UpdateProgress();
 	UpdateSunkBikes();
 	UpdatePlayerFall( a_fDeltaTime );
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-	Dev_UpdateAutoPlay();
-#endif
 }
 
 // $Barnyard: FUNCTION 0052baf0

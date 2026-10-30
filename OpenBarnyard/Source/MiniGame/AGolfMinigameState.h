@@ -239,11 +239,6 @@ public:
 	static TBOOL __stdcall OnPlayFinishedCallback( AGolfMinigameState* a_pThis, void* a_pOwner, void* a_pData );                                                           // 00474350
 	static TBOOL __stdcall OnGopherAnimEventCallback( AGolfMinigameState* a_pThis, AAnimationBreakpointCallback* a_pOwner, AAnimationBreakpointCallback::Event* a_pData ); // 00474530
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// Development: "-devautoplay" runs
-	void DevAutoPlay( TFLOAT a_fDeltaTime );
-#endif
-
 	//-----------------------------------------------------------------------------
 	// AGolfMinigameState_Play.cpp
 	//-----------------------------------------------------------------------------
@@ -266,11 +261,6 @@ private:
 	void CollectBucks();
 	void UpdateBalls();
 	void UpdateBallSaves();
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// -devautoplay: the gopher of a_iPlayer fetches its ball, aims at the hole and strikes
-	void DevAutoPlayGopher( TINT a_iPlayer );
-#endif
 
 public:
 protected:

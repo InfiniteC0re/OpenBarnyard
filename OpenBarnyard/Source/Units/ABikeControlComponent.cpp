@@ -54,14 +54,6 @@ void ABikeControlComponent::UpdateAI( TFLOAT a_fDeltaTime )
 {
 	ABikeSteer* pSteer = TSTATICCAST( ABikeSteer, GetOwner()->GetSteer() );
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	if ( ms_bDevInput )
-	{
-		m_vecInput.x += ms_fDevSteer;
-		m_vecInput.z = ms_fDevThrottle;
-	}
-#endif
-
 	if ( m_bBoost == TTRUE && m_vecInput.z > 0.0f )
 		m_vecInput.z = 2.0f;
 

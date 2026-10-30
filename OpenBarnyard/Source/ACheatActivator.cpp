@@ -619,11 +619,7 @@ void ACheatActivator::OnInteractionManagerEventCallback( void* a_pReceiver, cons
 	TSTATICCAST( ACheatActivator, a_pReceiver )->OnInteractionManagerEvent( a_rcEvent );
 }
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-
-static TBOOL s_bDevCheatEntered = TFALSE;
-
-#  ifndef TOSHI_FINAL
+#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_FINAL )
 
 void ACheatActivator::Dev_TriggerCheat( CHEAT a_eCheat )
 {
@@ -647,45 +643,14 @@ void ACheatActivator::Dev_TriggerCheat( CHEAT a_eCheat )
 	}
 }
 
-#  endif
-
-TBOOL ACheatActivator::Dev_IsPending()
+void ACheatActivator::Dev_EnterCheatCode( const TCHAR* a_szWord )
 {
-	return !s_bDevCheatEntered && TStringManager::String8FindString( GetCommandLineA(), "-devcheat " ) != TNULL;
-}
-
-void ACheatActivator::Dev_Update()
-{
-	static DWORD s_uiSimStart = 0;
-
-	if ( s_bDevCheatEntered || !IsSingletonCreated() )
+	if ( !IsSingletonCreated() )
 		return;
 
-	const TCHAR* szArg = TStringManager::String8FindString( GetCommandLineA(), "-devcheat " );
-	if ( !szArg )
-		return;
+	TINFO( "[debugmenu] typing the cheat code %s\n", a_szWord );
 
-	AGameState* pState = AGameStateController::GetSingleton()->GetCurrentState();
-
-	if ( !pState || !pState->IsA( &TGetClass( ASimState ) ) )
-	{
-		s_uiSimStart = 0;
-		return;
-	}
-
-	if ( s_uiSimStart == 0 )
-		s_uiSimStart = GetTickCount();
-
-	// Give the sim a few seconds to settle
-	if ( GetTickCount() - s_uiSimStart < 20000 )
-		return;
-
-	s_bDevCheatEntered = TTRUE;
-	szArg += TStringManager::String8Length( "-devcheat " );
-
-	TINFO( "-devcheat: entering the cheat\n" );
-
-	for ( ; *szArg != '\0' && *szArg != ' '; szArg++ )
+	for ( const TCHAR* szArg = a_szWord; *szArg != '\0'; szArg++ )
 	{
 		TCHAR chLetter = *szArg;
 

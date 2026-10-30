@@ -1489,11 +1489,6 @@ void ABarnExploreMinigameState::UpdateItemCounts()
 
 		rItem.iNumBought = AGopherShopInterface::GetNumBought( rItem.iItemId ) + rItem.iNumBought;
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-		// Development: "-devbarnall" places every item of the barn as if it had been bought once (the ceiling fans, the games...)
-		if ( rItem.iNumBought == 0 && TStringManager::String8FindString( GetCommandLineA(), "-devbarnall" ) )
-			rItem.iNumBought = 1;
-#endif
 		rItem.bEnabled = rItem.iNumBought > 0 || ( rItem.iNumBought == 0 && rItem.HasSubModel() );
 
 		// The vases are placed at the "vase_loc" bones instead (SpawnAtBones)

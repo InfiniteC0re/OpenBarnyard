@@ -12,7 +12,8 @@
 #  include "ASSeqState.h"
 #  include "AMiniGameInstructionState.h"
 #  include "AHintDisplayState.h"
-#  include "ADebugMenuState.h"
+#  include "Debug/ADebugMenuState.h"
+#  include "Debug/APrimeDebug.h"
 #  include "Units/ASSeqController.h"
 #  include "Helpers/AGameLoader.h"
 #  include "Tasks/ARootTask.h"
@@ -22,7 +23,10 @@
 #  include "Cameras/ACameraManager.h"
 #  include "GUI/AGUISystem.h"
 #  include "Render/ARenderer.h"
-#  include "Render/AWorldDebugDraw.h"
+#  include "Debug/AWorldDebugDraw.h"
+#  include "Terrain/ATerrainInterface.h"
+#  include "Terrain/ATerrainLocator.h"
+#  include "Input/AInputHandler.h"
 #  include "UnitMovement/PathfindingNetworks/AInteriorNetworkManager.h"
 #  include "UnitMovement/PathfindingNetworks/AInteriorArea.h"
 #  include "UnitMovement/PathfindingNetworks/AInteriorGoal.h"
@@ -120,6 +124,10 @@ AInteriorNetworkPlacementState::AInteriorNetworkPlacementState()
     , m_fDrawDistance( 1.0f )
     , m_fCostStep( 1.0f )
     , m_bCostHighlight( TFALSE )
+    , m_bLocatorSnap( TFALSE )
+    , m_bMouseLook( TFALSE )
+    , m_iMouseLookX( 0 )
+    , m_iMouseLookY( 0 )
     , m_pDialog( TNULL )
     , m_pDialog2( TNULL )
     , m_ePanel( PANEL_OPTIONS )
@@ -180,6 +188,34 @@ TBOOL AInteriorNetworkPlacementState::ProcessInput( const TInputInterface::Input
 	}
 
 	// NOTE: Nicktoons also checks here that none of its buttons is under the pointer (GetWidgetUnderPointer covers it)
+
+	// NOTE: ours, mouse look: the right button (when nothing is dragged) or the middle one turns the camera with the mouse,
+	// the pointer stays where it was
+	if ( a_pInputEvent->GetDoodad() == TInputDeviceMouse::AXIS_CURSOR && a_pInputEvent->GetEventType() == TInputInterface::EVENT_TYPE_MOVED && m_bMouseLook )
+	{
+		TurnCamera( TFLOAT( a_pInputEvent->GetMagnitudeInt( 0 ) ) * MOUSE_LOOK_SPEED, TFLOAT( a_pInputEvent->GetMagnitudeInt( 1 ) ) * MOUSE_LOOK_SPEED );
+
+		if ( pScreen )
+		{
+			AGUISystem::TGUIMemoryScope oMemoryScope;
+			pScreen->SetPointerPosition( m_iMouseLookX, m_iMouseLookY );
+		}
+
+		return TTRUE;
+	}
+
+	if ( ( a_pInputEvent->GetDoodad() == TInputDeviceMouse::BUTTON_2 && m_eMode != MODE_DRAG ) || a_pInputEvent->GetDoodad() == TInputDeviceMouse::BUTTON_3 )
+	{
+		if ( a_pInputEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN && pScreen )
+		{
+			m_bMouseLook = TTRUE;
+			pScreen->GetPointerPosition( m_iMouseLookX, m_iMouseLookY );
+		}
+		else if ( a_pInputEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_UP )
+		{
+			m_bMouseLook = TFALSE;
+		}
+	}
 
 	switch ( a_pInputEvent->GetDoodad() )
 	{
@@ -335,6 +371,13 @@ TBOOL AInteriorNetworkPlacementState::OnUpdate( TFLOAT a_fDeltaTime )
 	}
 
 	m_bCostHighlight = IsToggled( "CostHighlight" );
+	m_bLocatorSnap   = IsToggled( "BoneSnap" );
+
+	// The button of the mouse look can go up over a widget
+	TInputDeviceMouse* pMouse = AInputHandler::GetSingleton()->GetMouseDevice();
+
+	if ( m_bMouseLook && ( !pMouse || ( !pMouse->IsDown( TInputDeviceMouse::BUTTON_2 ) && !pMouse->IsDown( TInputDeviceMouse::BUTTON_3 ) ) ) )
+		m_bMouseLook = TFALSE;
 
 	ACameraManager::GetSingleton()->DetachCameraHelpers();
 	UpdateCamera( a_fDeltaTime );
@@ -413,7 +456,7 @@ void AInteriorNetworkPlacementState::OnActivate()
 	// NOTE: Nicktoons tells its entities that the editor starts (Barnyard has no counterpart)
 	SetNetwork( m_pNetwork ? m_pNetwork : AInteriorNetworkManager::GetSingleton()->GetAnyNetwork() );
 
-#  ifdef TRENDERINTERFACE_DX8
+#  ifdef AWORLDDEBUGDRAW
 	// NOTE: the network is drawn in the world by the network layer of the world debug drawing
 	if ( AWorldDebugDraw::IsSingletonCreated() )
 		AWorldDebugDraw::GetSingleton()->SetNetworkEditor( this );
@@ -445,8 +488,9 @@ void AInteriorNetworkPlacementState::OnDeactivate()
 	}
 
 	m_iHeldCommands = 0;
+	m_bMouseLook    = TFALSE;
 
-#  ifdef TRENDERINTERFACE_DX8
+#  ifdef AWORLDDEBUGDRAW
 	if ( AWorldDebugDraw::IsSingletonCreated() )
 		AWorldDebugDraw::GetSingleton()->SetNetworkEditor( TNULL );
 #  endif
@@ -492,7 +536,7 @@ void AInteriorNetworkPlacementState::CreateDialogs()
 	if ( !pGUISystem->CreateTGUI() )
 		return;
 
-	// NOTE: the dialogs are in Data/GUI/main.gui, loaded once (also by "-tguidemo")
+	// NOTE: the dialogs are in Data/GUI/main.gui, loaded once
 	if ( !TGUIManager::GetSingleton()->FindTopLevelInstance( TPS8D( "AInteriorNetworkPlacementDialog" ), 0xffffffff ) )
 		pGUISystem->LoadTGUIDefinitionFile( "Data/GUI/main.gui" );
 
@@ -1129,6 +1173,16 @@ void AInteriorNetworkPlacementState::MoveElement( const Element& a_rcElement, TF
 {
 	AInteriorNetwork::INetwork* pINetwork = m_pNetwork->m_pINetwork;
 
+	// NOTE: ours, the Locators toggle snaps the corners and the goals to a terrain locator close to them
+	TVector4 vLocator;
+
+	if ( m_bLocatorSnap && ATerrainInterface::GetSingleton() && ATerrainInterface::GetSingleton()->GetLocatorList() &&
+	     ATerrainInterface::GetSingleton()->GetLocatorList()->FindClosestLocatorXZ( a_fX, a_fZ, LOCATOR_SNAP_DISTANCE, vLocator ) )
+	{
+		a_fX = vLocator.x;
+		a_fZ = vLocator.z;
+	}
+
 	if ( a_rcElement.eType == ELEMENT_POINT )
 	{
 		AInteriorArcBounds& rCorner = pINetwork->m_pAreas[ a_rcElement.iArea ].m_pArcBounds[ a_rcElement.iIndex ];
@@ -1404,29 +1458,17 @@ TBOOL AInteriorNetworkPlacementState::DeletePoint( const Element& a_rcElement )
 	return iDeleted > 0;
 }
 
-// Save writes a text dump of the network to the "-devnetworksave" path (nothing without it)
+// Save writes a text dump of the network to the editor.network_save_path file (nothing when it's empty)
 // NOTE: Nicktoons' Save button does nothing (its callback returns at once, 002adcf8)
 TBOOL AInteriorNetworkPlacementState::SaveNetwork()
 {
-	const TCHAR* szArg = TStringManager::String8FindString( GetCommandLineA(), "-devnetworksave " );
+	const TCHAR* szPath = APrimeDebug::GetNetworkSavePath();
 
-	if ( !szArg || !m_pNetwork )
+	if ( !szPath || szPath[ 0 ] == '\0' || !m_pNetwork )
 	{
-		TWARN( "[networkedit] Save: no -devnetworksave <path> on the command line, nothing written\n" );
+		TWARN( "[networkedit] Save: editor.network_save_path is empty, nothing written\n" );
 		return TFALSE;
 	}
-
-	TCHAR szPath[ 260 ];
-	szArg += TStringManager::String8Length( "-devnetworksave " );
-	TINT iLength = 0;
-
-	while ( szArg[ iLength ] != '\0' && szArg[ iLength ] != ' ' && iLength < TARRAYSIZE( szPath ) - 1 )
-	{
-		szPath[ iLength ] = szArg[ iLength ];
-		iLength++;
-	}
-
-	szPath[ iLength ] = '\0';
 
 	FILE* pFile = fopen( szPath, "w" );
 
@@ -1530,11 +1572,11 @@ void AInteriorNetworkPlacementState::UpdateCamera( TFLOAT a_fDeltaTime )
 	TVector4&  rPos    = rMatrix.GetTranslation();
 	TFLOAT     fStep   = a_fDeltaTime * CAMERA_SPEED;
 
+	// NOTE: Nicktoons: cross( up, forward ), its up is +y. Barnyard's up is -y: cross( forward, up ) is the right
 	TVector4 vRight;
-	vRight.CrossProduct( ACamera::sm_vWorldUp, m_vCameraForward );
+	vRight.CrossProduct( m_vCameraForward, ACamera::sm_vWorldUp );
 	vRight.Normalise();
 
-	// Nicktoons: cross( up, forward ), Barnyard's up is -y
 	if ( m_iHeldCommands & HELDCOMMAND_LEFT ) rPos.Add( vRight * -fStep );
 	if ( m_iHeldCommands & HELDCOMMAND_RIGHT ) rPos.Add( vRight * fStep );
 	if ( m_iHeldCommands & HELDCOMMAND_FORWARD ) rPos.Add( m_vCameraForward * fStep );
@@ -1641,8 +1683,8 @@ void AInteriorNetworkPlacementState::Render( TGUIScreen* a_pScreen )
 	const TGUIColour oGoalColour( TUINT8( 255 ), TUINT8( 0 ), TUINT8( 255 ), TUINT8( 255 ) );
 	const TGUIColour oCursor( TUINT8( 0 ), TUINT8( 255 ), TUINT8( 255 ), TUINT8( 255 ) );
 
-#  ifndef TRENDERINTERFACE_DX8
-	// NOTE: with DX8 the areas and the goals are drawn in the world, with depth (AWorldDebugDraw)
+#  ifndef AWORLDDEBUGDRAW
+	// NOTE: with the world debug drawing the areas and the goals are drawn in the world, with depth (AWorldDebugDraw)
 	for ( TINT iArea = 0; iArea < pINetwork->m_iNumAreas; iArea++ )
 	{
 		const AInteriorArea& rcArea = pINetwork->m_pAreas[ iArea ];
@@ -1784,26 +1826,9 @@ TBOOL __stdcall AInteriorNetworkPlacementState::FindButtonsCallback( TGUIWidget*
 
 TBOOL __stdcall AInteriorNetworkPlacementState::OnScreenPaint( AInteriorNetworkPlacementState* a_pState, TGUIScreen* a_pScreen, TGUIScreenPaintEvent* a_pEvent )
 {
+	// The pointer is drawn by AGUISystem
 	if ( a_pEvent->ePhase == TGUIScreenPaintEvent::Phase_Begin )
-	{
 		a_pState->Render( a_pScreen );
-	}
-	else if ( a_pScreen->IsPointerVisible() )
-	{
-		// The pointer, an arrow above the widgets
-		TGUIDisplayContext* pContext = a_pScreen->GetDisplayContext();
-		const TGUIColour    oWhite( TUINT8( 255 ), TUINT8( 255 ), TUINT8( 255 ), TUINT8( 255 ) );
-		const TGUIColour    oBlack( TUINT8( 0 ), TUINT8( 0 ), TUINT8( 0 ), TUINT8( 255 ) );
-
-		TINT iX, iY;
-		a_pScreen->GetPointerPosition( iX, iY );
-
-		for ( TINT i = 0; i < 12; i++ )
-			pContext->DrawLine( iX, iY + i, iX + i * 2 / 3, iY + i, ( i == 11 ) ? oBlack : oWhite );
-
-		pContext->DrawLine( iX - 1, iY, iX - 1, iY + 12, oBlack );
-		pContext->DrawLine( iX, iY - 1, iX + 9, iY + 10, oBlack );
-	}
 
 	return TTRUE;
 }
@@ -1849,7 +1874,7 @@ TBOOL __stdcall AInteriorNetworkPlacementState::OnButtonAction( AInteriorNetwork
 	else
 	{
 		// TODO: AddArea, AddGoal, DeleteArea, DeleteGoal, AddPoint (the network's arrays are in its TRB file and can't
-		// grow), MoveAll, Model, ShowCollision and the collision draw options, BoneSnap (Locators), CollisionGroupPrev/Next.
+		// grow), MoveAll, Model, ShowCollision and the collision draw options, CollisionGroupPrev/Next.
 		// The toggle buttons (PointSnap, CostHighlight) are read when they're used.
 		if ( !a_pButton->IsA( &TGetClass( PGUIToggleButton ) ) )
 			TWARN( "[networkedit] %s isn't implemented\n", szName );

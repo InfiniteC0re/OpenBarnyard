@@ -276,11 +276,6 @@ private:
 	// Sets the flag (ASkinMaterial +0x64) of the materials of the first LOD of the model of a_pUnit
 	void SetMaterialsFlag( AAnimatedUnit* a_pUnit, TBOOL a_bFlag );
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// -devautoplay: aims a human turn at a ball and shoots
-	void UpdateDevAutoPlay( TFLOAT a_fDeltaTime );
-#endif
-
 private:
 	View                    m_aViews[ NUM_VIEWS ];      // 0xbac, 0-3 around the table, 4-6 behind the cue
 	Toshi::TVector4         m_vAimTarget;               // 0xc8c, where the cue points at (the AUnitPoolBfa)
@@ -362,12 +357,6 @@ private:
 	TFLOAT                  m_fMessageTimer;            // 0x20708
 	TBOOL                   m_bGroupsAnnounced;         // 0x2070c
 	STATE                   m_eNextState;               // 0x20710, after STATE_MESSAGE
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// -devautoplay (not in retail, keep it last)
-	TFLOAT m_fDevAutoPlayTimer;
-	TINT   m_iDevAutoPlayShots;
-#endif
 };
 
 #ifndef BARNYARD_COMMUNITY_PATCH

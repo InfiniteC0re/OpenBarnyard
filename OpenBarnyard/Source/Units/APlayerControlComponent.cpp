@@ -205,15 +205,6 @@ void APlayerControlComponent::UpdateAI( TFLOAT a_fDeltaTime )
 
 	if ( IsActionAllowed( pOwner ) )
 	{
-#ifdef BARNYARD_COMMUNITY_PATCH
-		if ( ms_bDevStick )
-		{
-			// Dev: feed the fake left stick like AInputCommand_Move events would
-			TInputInterface::InputEvent oEvent( TNULL, 0, TInputInterface::EVENT_TYPE_MOVED, ms_vDevStick.x, ms_vDevStick.y );
-			ASimplePlayerControlComponent::ProcessCommand( AInputCommand_Move, &oEvent );
-		}
-#endif
-
 		ASimplePlayerControlComponent::UpdateAI( a_fDeltaTime );
 	}
 
@@ -225,18 +216,6 @@ void APlayerControlComponent::UpdateAI( TFLOAT a_fDeltaTime )
 
 	if ( GetOwner()->FindComponent( &TGetClass( AInteractionComponent ) ) )
 		UpdateContextTimer( a_fDeltaTime );
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-	if ( ms_bDevInteract )
-	{
-		// Dev: press the action button like AInputCommand_Interact would
-		ms_bDevInteract = TFALSE;
-		TINFO( "[devtalk] interact, target %s, conversation unit %s, context text set: %d\n", m_pTargetUnit ? m_pTargetUnit->GetType()->GetName().GetString() : "none", m_pConversationUnit ? m_pConversationUnit->GetType()->GetName().GetString() : "none", m_wszContextText != TNULL );
-
-		TInputInterface::InputEvent oEvent( TNULL, 0, TInputInterface::EVENT_TYPE_GONE_DOWN );
-		ProcessCommand( AInputCommand_Interact, &oEvent );
-	}
-#endif
 
 	UpdateBushes( a_fDeltaTime );
 	UpdateLookAt( pOwner );

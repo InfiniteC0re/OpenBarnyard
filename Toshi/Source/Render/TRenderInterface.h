@@ -177,6 +177,8 @@ public:
 	// $Barnyard: FUNCTION 006be950
 	TNodeList<TRenderAdapter>* GetAdapterList() { return &m_AdapterList; }
 	TKeyframeLibraryManager&   GetKeyframeLibraryManager() { return m_KeyframeManager; }
+	TGenericEmitter&           GetBeginSceneEmitter() { return m_BeginSceneEmitter; }
+	TGenericEmitter&           GetEndSceneEmitter() { return m_EndSceneEmitter; }
 	TStack<TMatrix44, 20>&     GetTransforms() { return m_Transforms; }
 	TTexture*                  GetInvalidTexture() { return m_pInvalidTexture; }
 

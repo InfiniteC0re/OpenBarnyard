@@ -62,6 +62,12 @@ private:
 private:
 	inline static TBOOL ms_bSkipLoadedTextures = TFALSE;
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+public:
+	// Console render.texture_overrides: textures in Data\Textures replace the ones of the libraries loaded next
+	inline static TINT ms_iTextureOverrides = 1;
+#endif
+
 private:
 	Toshi::TString8 m_Path;
 	ATexture*       m_pTexturesArray;

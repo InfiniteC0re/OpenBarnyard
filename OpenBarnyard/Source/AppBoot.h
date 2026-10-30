@@ -17,6 +17,9 @@ public:
 #ifdef BARNYARD_COMMUNITY_PATCH
 	// NOTE: the original doesn't override OnUpdate. The community patch uses it to limit the frame rate (see AppBoot.cpp)
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) OVERRIDE;
+
+	// Console game.fps_limit: the frame rate cap (0: none, like retail)
+	inline static TFLOAT ms_fFPSLimit = 0.0f;
 #endif
 
 public:

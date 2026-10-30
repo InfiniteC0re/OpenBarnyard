@@ -472,9 +472,9 @@ void AGolfMinigameState::OnInsertion()
 	AAnimatableObjectManager* pAnimObjManager = AAnimatableObjectManager::GetSingleton();
 
 #ifdef BARNYARD_COMMUNITY_PATCH
-	// Development: "-devplayers <n>" (multiplayer turns). The golf library of the PC data only has the
+	// Development: minigame.players (multiplayer turns). The golf library of the PC data only has the
 	// first player's ball, so load the models of the other players' balls and gophers from Data/ModelTypes
-	if ( m_iNumPlayers > 1 && T2String8::FindString( GetCommandLineA(), "-devplayers" ) )
+	if ( m_iNumPlayers > 1 && AGameLoader::ms_iDevMiniGamePlayers > 1 )
 	{
 		const TCHAR* aUnitTypes[] = { "golfball", "golfgopher" };
 
@@ -489,7 +489,7 @@ void AGolfMinigameState::OnInsertion()
 
 				if ( !pAnimObjManager->FindType( rcModelName ) )
 				{
-					TINFO( "-devplayers: loading model type '%s'\n", rcModelName.GetString() );
+					TINFO( "[golf] loading model type '%s'\n", rcModelName.GetString() );
 					pAnimObjManager->LoadAnimObjType( rcModelName, TNULL, TFALSE );
 				}
 			}

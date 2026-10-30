@@ -79,32 +79,6 @@ TBOOL AWeatherManager::OnDateChangeCallback( AWeatherManager* a_pCaller, AGameTi
 {
 	a_pCaller->m_eCurrentWeather = a_pCaller->m_eNextWeather;
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// Development: "-devweather <name>" (e.g. heavyrain) forces the weather from the first change of the date,
-	// use it with "-devdayphase <N>" to get one right away
-	if ( const TCHAR* szArg = TStringManager::String8FindString( GetCommandLineA(), "-devweather " ) )
-	{
-		TCHAR szName[ 32 ];
-		TINT  iLength = 0;
-		szArg += TStringManager::String8Length( "-devweather " );
-
-		while ( *szArg != '\0' && *szArg != ' ' && iLength < TARRAYSIZE( szName ) - 1 )
-			szName[ iLength++ ] = *szArg++;
-
-		szName[ iLength ] = '\0';
-
-		WEATHERTYPE eWeather = GetWeatherFromName( szName );
-
-		if ( eWeather != -1 )
-		{
-			TINFO( "[devweather] forcing the weather %s\n", szName );
-			a_pCaller->m_eCurrentWeather = eWeather;
-			a_pCaller->m_eNextWeather    = eWeather;
-			return TTRUE;
-		}
-	}
-#endif
-
 	if ( a_pEvent->m_eUpdateType == AGameTimeManager::DATECHANGETYPE_DAYPHASE && --ms_iDayPhasesLeft <= 0 )
 	{
 		TRandom oRandom;
