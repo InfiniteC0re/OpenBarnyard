@@ -647,8 +647,20 @@ static void __stdcall AffectorForce( AParticleGenericEmitter* a_pEmitter, TINT a
 
 	TFLOAT fGravity = a_fDeltaTime * pParams->afValues[ 4 ];
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Fix for high framerates
+	TFLOAT fThreshold = 0.01f * 60.0f;
+	TFLOAT fScale     = pParams->afValues[ 3 ];
+	TFLOAT fForceX    = pParams->afValues[ 0 ] * fScale;
+	TFLOAT fForceY    = pParams->afValues[ 1 ] * fScale;
+	TFLOAT fForceZ    = pParams->afValues[ 2 ] * fScale;
+
+	if ( fForceX > fThreshold || fForceY > fThreshold || fForceZ > fThreshold ||
+	     fForceX < -fThreshold || fForceY < -fThreshold || fForceZ < -fThreshold )
+#else
 	if ( vecForce.x > 0.01f || vecForce.y > 0.01f || vecForce.z > 0.01f ||
 	     vecForce.x < -0.01f || vecForce.y < -0.01f || vecForce.z < -0.01f )
+#endif
 	{
 		for ( TINT i = a_iStart; i < a_iEnd; i++ )
 		{
