@@ -123,7 +123,7 @@ TBOOL TTextureResourceHAL::Create( void* a_pData, TUINT a_uiDataSize, TUINT a_eT
 	m_uiHeight        = a_uiHeight;
 	m_uiMipLevels     = 0;
 	m_eResourceFormat = TTEXTURERESOURCEFORMAT::Unknown;
-	m_uiMipFlags      = MIPFLAGS_USE_MIPLEVELS;
+	m_uiMipFlags      = MIPFLAGS_FULL_CHAIN;
 	m_bLoadFromMemory = TTRUE;
 	m_pData           = a_pData;
 	m_uiDataSize      = a_uiDataSize;
@@ -145,7 +145,7 @@ TBOOL TTextureResourceHAL::Create( const TCHAR* a_szFileName, TUINT a_eTextureFl
 	m_eTextureFlags  = a_eTextureFlags;
 	m_eAddressUState = ADDRESSINGMODE_WRAP;
 	m_eAddressVState = ADDRESSINGMODE_WRAP;
-	m_uiMipFlags     = MIPFLAGS_USE_MIPLEVELS;
+	m_uiMipFlags     = MIPFLAGS_FULL_CHAIN;
 
 	return TTRUE;
 }
@@ -177,7 +177,7 @@ TBOOL TTextureResourceHAL::CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_
 // $Barnyard: FUNCTION 006c1280
 TBOOL TTextureResourceHAL::CreateFromFormat()
 {
-	TUINT uiMipLevels = ( m_uiMipFlags & MIPFLAGS_USE_MIPLEVELS ) ? m_uiMipLevels : 0;
+	TUINT uiMipLevels = ( m_uiMipFlags & MIPFLAGS_FULL_CHAIN ) ? 0 : m_uiMipLevels;
 
 	switch ( m_eResourceFormat )
 	{
@@ -307,8 +307,8 @@ TBOOL TTextureResourceHAL::CreateFromMemoryDDS( TUINT a_uiWidth, TUINT a_uiHeigh
 	    0,
 	    D3DFMT_UNKNOWN,
 	    D3DPOOL_MANAGED,
-	    D3DFILTER_LINEARMIPNEAREST,
-	    D3DFILTER_LINEARMIPNEAREST,
+	    D3DX_DEFAULT,
+	    D3DX_DEFAULT,
 	    0,
 	    &m_ImageInfo,
 	    NULL,
@@ -336,8 +336,8 @@ TBOOL TTextureResourceHAL::CreateFromFileDDS( TUINT a_uiWidth, TUINT a_uiHeight,
 	    0,
 	    D3DFMT_UNKNOWN,
 	    D3DPOOL_MANAGED,
-	    D3DFILTER_LINEARMIPNEAREST,
-	    D3DFILTER_LINEARMIPNEAREST,
+	    D3DX_FILTER_BOX,
+	    D3DX_FILTER_BOX,
 	    0,
 	    &m_ImageInfo,
 	    NULL,
@@ -408,7 +408,28 @@ TBOOL TTextureResourceHAL::Validate()
 				}
 				else
 				{
-					CreateFromMemoryDDS( m_uiWidth, m_uiHeight, -1, m_pData );
+					HRESULT hRes = D3DXCreateTextureFromFileInMemoryEx(
+					    pRenderer->GetDirect3DDevice(),
+					    m_pData,
+					    m_uiDataSize,
+					    -1,
+					    -1,
+					    -1,
+					    0,
+					    D3DFMT_UNKNOWN,
+					    D3DPOOL_MANAGED,
+					    D3DX_FILTER_BOX,
+					    D3DX_FILTER_BOX,
+					    0,
+					    &m_ImageInfo,
+					    NULL,
+					    &m_pD3DTexture
+					);
+
+					if ( FAILED( hRes ) )
+					{
+						TRenderD3DInterface::PrintError( hRes, TNULL );
+					}
 				}
 			}
 		}

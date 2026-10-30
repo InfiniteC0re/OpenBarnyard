@@ -122,7 +122,7 @@ public:
 	enum MIPFLAGS_ : MIPFLAGS
 	{
 		MIPFLAGS_NONE          = 0,
-		MIPFLAGS_USE_MIPLEVELS = BITFLAG( 0 ), // CreateFromFormat creates the given number of mip levels (otherwise a full chain)
+		MIPFLAGS_FULL_CHAIN    = BITFLAG( 0 ), // CreateFromFormat creates a full mip chain (otherwise the given number of mip levels)
 		MIPFLAGS_UNK2          = BITFLAG( 2 ),
 	};
 

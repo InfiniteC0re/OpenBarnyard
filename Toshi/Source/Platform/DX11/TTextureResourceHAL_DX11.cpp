@@ -148,7 +148,7 @@ TBOOL TTextureResourceHAL::Create( void* a_pData, TUINT a_uiDataSize, TUINT a_eT
 	m_uiHeight        = a_uiHeight;
 	m_uiMipLevels     = 0;
 	m_eResourceFormat = TTEXTURERESOURCEFORMAT::Unknown;
-	m_uiMipFlags      = MIPFLAGS_USE_MIPLEVELS;
+	m_uiMipFlags      = MIPFLAGS_FULL_CHAIN;
 	m_bLoadFromMemory = TTRUE;
 	m_pData           = a_pData;
 	m_uiDataSize      = a_uiDataSize;
@@ -169,7 +169,7 @@ TBOOL TTextureResourceHAL::Create( const TCHAR* a_szFileName, TUINT a_eTextureFl
 	m_eTextureFlags  = a_eTextureFlags;
 	m_eAddressUState = ADDRESSINGMODE_WRAP;
 	m_eAddressVState = ADDRESSINGMODE_WRAP;
-	m_uiMipFlags     = MIPFLAGS_USE_MIPLEVELS;
+	m_uiMipFlags     = MIPFLAGS_FULL_CHAIN;
 
 	return TTRUE;
 }
@@ -199,7 +199,7 @@ TBOOL TTextureResourceHAL::CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_
 
 TBOOL TTextureResourceHAL::CreateFromFormat()
 {
-	TUINT uiMipLevels = ( m_uiMipFlags & MIPFLAGS_USE_MIPLEVELS ) ? m_uiMipLevels : 0;
+	TUINT uiMipLevels = ( m_uiMipFlags & MIPFLAGS_FULL_CHAIN ) ? 0 : m_uiMipLevels;
 
 	switch ( m_eResourceFormat )
 	{

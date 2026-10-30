@@ -481,7 +481,7 @@ TTexture* PGUITRTextureFactory::ReadPPM( TUINT8* a_pData, TINT a_iSize, TINT& a_
 		TUINT8* pDst = TSTATICCAST( TUINT8, TMalloc( iDstSize ) );
 		QuantiseRGBA16( pSrc, iWidth, iHeight, iSrcPitch, iSrcBytesPerPixel, pDst, iDstWidth, iDstHeight, iDstPitch, iDstBytesPerPixel, bGrey, bAlpha );
 
-		pTexture = pTextureFactory->CreateEx( pDst, iDstSize, iDstWidth, iDstHeight, 1, TTEXTURERESOURCEFORMAT::R5G5B5A1, TTexture::MIPFLAGS_USE_MIPLEVELS );
+		pTexture = pTextureFactory->CreateEx( pDst, iDstSize, iDstWidth, iDstHeight, 1, TTEXTURERESOURCEFORMAT::R5G5B5A1, TTexture::MIPFLAGS_NONE );
 	}
 	else if ( iDstBytesPerPixel == 4 )
 	{
@@ -489,7 +489,7 @@ TTexture* PGUITRTextureFactory::ReadPPM( TUINT8* a_pData, TINT a_iSize, TINT& a_
 		TUINT8* pDst = TSTATICCAST( TUINT8, TMalloc( iDstSize ) );
 		TUtil::MemCopy( pDst, pSrc, iDstSize );
 
-		pTexture = pTextureFactory->CreateEx( pDst, iDstSize, iDstWidth, iDstHeight, 1, TTEXTURERESOURCEFORMAT::R8G8B8A8, TTexture::MIPFLAGS_USE_MIPLEVELS );
+		pTexture = pTextureFactory->CreateEx( pDst, iDstSize, iDstWidth, iDstHeight, 1, TTEXTURERESOURCEFORMAT::R8G8B8A8, TTexture::MIPFLAGS_NONE );
 	}
 
 	// NOTE: the original sets the field 0x30 of the texture to 2, assumed to be the addressing mode (clamp)
