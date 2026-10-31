@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "AGrassMaterialHAL_DX11.h"
+#include "AGrassShaderHAL_DX11.h"
 
 #include <Platform/DX11/TRenderInterface_DX11.h>
 #include <Platform/DX11/TRenderContext_DX11.h>
@@ -29,7 +30,6 @@ void AGrassMaterialHAL::PreRender()
 	TRenderContextD3D*   pCurrentContext  = TRenderContextD3D::Upcast( pRenderInterface->GetCurrentContext() );
 	TTextureResourceHAL* pTextureHAL      = TSTATICCAST( TTextureResourceHAL, m_aTextures[ 0 ] );
 
-	extern TTextureResourceHAL* g_pGrassShaderTerrainTexture; // AGrassShaderHAL_DX11.cpp
 	g_pGrassShaderTerrainTexture = TSTATICCAST( TTextureResourceHAL, m_aTextures[ 0 ] );
 
 	if ( pTextureHAL )

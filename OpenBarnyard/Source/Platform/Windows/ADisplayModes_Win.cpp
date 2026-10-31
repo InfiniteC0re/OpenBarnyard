@@ -47,6 +47,10 @@ void ADisplayModes_Win::Initialise()
 					auto uiWidth  = pDevice->GetMode()->GetWidth();
 					auto uiHeight = pDevice->GetMode()->GetHeight();
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+					{
+						if ( 640 <= uiWidth && 480 <= uiHeight )
+#else
 					if ( uiWidth == ( uiHeight / 3 ) * 4 ||  // 4:3
 					     uiHeight == ( uiWidth / 3 ) * 4 ||  // 4:3
 					     uiWidth == ( uiHeight / 4 ) * 5 ||  // 5:4
@@ -59,6 +63,7 @@ void ADisplayModes_Win::Initialise()
 						     ( 1024 <= uiWidth && 1280 <= uiHeight ) || // 4:5
 						     ( 1280 <= uiWidth && 720 <= uiHeight ) ||  // 16:9
 						     ( 1440 <= uiWidth && 900 <= uiHeight ) )   // 16:10
+#endif // BARNYARD_COMMUNITY_PATCH
 						{
 							if ( pDevice->GetMode()->Is16Bit() )
 							{

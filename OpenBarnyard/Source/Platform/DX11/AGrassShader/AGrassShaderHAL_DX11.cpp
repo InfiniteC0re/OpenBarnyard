@@ -25,7 +25,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AGrassShaderHAL );
 
-TTextureResourceHAL* g_pGrassShaderTerrainTexture = TNULL;
+MODAPI TTextureResourceHAL* g_pGrassShaderTerrainTexture = TNULL;
 static TVector3      g_vecAnimationDataOffset;
 static TVector4      g_vecAnimOffset;
 static const TFLOAT  g_fAnimationSpeed = 2.25f;

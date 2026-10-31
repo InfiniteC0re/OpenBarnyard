@@ -41,7 +41,17 @@ void TCameraObject::Render()
 
 		if ( m_eScaling == FOV_SCALING_TYPE_HORIZONTAL )
 		{
+#ifdef BARNYARD_COMMUNITY_PATCH
+			// Hor+
+			TFLOAT fWidth = pRenderContext->GetWidth();
+
+			if ( m_eMode == TRenderContext::CameraMode_Perspective )
+				fWidth = TMath::Min( fWidth, pRenderContext->GetHeight() * ( 4.0f / 3.0f ) );
+
+			projParams.m_Proj.x = ( fWidth * 0.5f ) / tan( m_fFOV * 0.5f );
+#else
 			projParams.m_Proj.x = ( pRenderContext->GetWidth() * 0.5f ) / tan( m_fFOV * 0.5f );
+#endif // BARNYARD_COMMUNITY_PATCH
 			projParams.m_Proj.y = projParams.m_Proj.x;
 
 			if ( m_eMode == TRenderContext::CameraMode_Perspective )

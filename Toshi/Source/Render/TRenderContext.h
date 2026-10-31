@@ -40,6 +40,9 @@ using TFrustum = TPlane[ WORLDPLANE_NUMOF ];
 class MODAPI TRenderContext
 {
 public:
+	static TFLOAT ms_fPerspectiveFarClip;
+
+public:
 	typedef TUINT32 FLAG;
 	enum FLAG_ : FLAG
 	{

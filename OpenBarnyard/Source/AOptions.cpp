@@ -209,6 +209,9 @@ void AOptions::LoadSettings()
 // $Barnyard: FUNCTION 00662d90
 TBOOL AOptions::IsResolutionCompatible( TINT a_iWidth, TINT a_iHeight )
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	return a_iWidth > 0 && a_iHeight > 0;
+#else
 	static constexpr struct
 	{
 		TINT iWidth;
@@ -237,6 +240,7 @@ TBOOL AOptions::IsResolutionCompatible( TINT a_iWidth, TINT a_iHeight )
 	}
 
 	return TFALSE;
+#endif // BARNYARD_COMMUNITY_PATCH
 }
 
 // $Barnyard: FUNCTION 00662d70

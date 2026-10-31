@@ -17,6 +17,9 @@ public:
 	};
 
 public:
+	static TBOOL ms_bDistanceCulling;
+
+public:
 	TSceneObject();
 	~TSceneObject();
 

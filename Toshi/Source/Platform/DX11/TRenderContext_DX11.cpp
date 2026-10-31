@@ -76,6 +76,11 @@ void TRenderContextD3D::Update()
 	{
 		if ( m_eCameraMode == CameraMode_Perspective )
 		{
+#ifdef BARNYARD_COMMUNITY_PATCH
+			if ( ms_fPerspectiveFarClip > 0.0f )
+				m_oProjParams.m_fFarClip = ms_fPerspectiveFarClip;
+#endif // BARNYARD_COMMUNITY_PATCH
+
 			ComputePerspectiveProjection();
 			ComputePerspectiveFrustum();
 		}

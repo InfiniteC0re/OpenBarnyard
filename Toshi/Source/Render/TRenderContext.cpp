@@ -10,6 +10,8 @@
 
 TOSHI_NAMESPACE_START
 
+TFLOAT TRenderContext::ms_fPerspectiveFarClip = 0.0f;
+
 void TRenderContext::SetDirty( TBOOL a_bDirty )
 {
 	if ( a_bDirty ) m_eFlags |= FLAG_DIRTY;

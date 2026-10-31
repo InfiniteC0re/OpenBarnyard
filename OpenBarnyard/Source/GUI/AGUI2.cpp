@@ -69,7 +69,18 @@ TBOOL AGUI2::OnCreate()
 	T2GUI::CreateContext()->SetRenderer( new AGUI2RendererDX8 );
 
 	m_pRootElement = T2GUI::GetContext()->GetRootElement();
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	auto         pDisplayParams = TRenderInterface::GetSingleton()->GetCurrentDisplayParams();
+	const TFLOAT fAspectRatio   = ( pDisplayParams && pDisplayParams->uiHeight > 0 ) ? TFLOAT( pDisplayParams->uiWidth ) / TFLOAT( pDisplayParams->uiHeight ) : 4.0f / 3.0f;
+
+	if ( fAspectRatio >= 4.0f / 3.0f )
+		m_pRootElement->SetDimensions( 600.0f * fAspectRatio, 600.0f );
+	else
+		m_pRootElement->SetDimensions( 800.0f, 800.0f / fAspectRatio );
+#else
 	m_pRootElement->SetDimensions( 800.0f, 600.0f );
+#endif // BARNYARD_COMMUNITY_PATCH
 	m_pRootElement->SetPostRenderCallback( MainPostRenderCallback );
 
 	T2GUIFontManager::Open( "data/gui/fonts.trb" );

@@ -373,6 +373,17 @@ void AMapState::SetZoom( TINT a_iZoom, TFLOAT a_fScrollX, TFLOAT a_fScrollY )
 	TMath::Clip( a_iZoom, 0, 1 );
 
 	TFLOAT fMaxX = ( s_afZoomScales[ a_iZoom ] - 1.0f ) * 0.5f;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// The dialog can be wider than the map, stop scrolling once the edge of the map reaches the edge of the dialog
+	if ( m_fMapWidth > 0.0f )
+	{
+		TFLOAT fContentWidth, fContentHeight;
+		m_oDialog.GetContentDimensions( fContentWidth, fContentHeight );
+		fMaxX = TMath::Max( fMaxX - TMath::Max( ( fContentWidth / m_fMapWidth - 1.0f ) * 0.5f, 0.0f ), 0.0f );
+	}
+#endif // BARNYARD_COMMUNITY_PATCH
+
 	TFLOAT fMinX = -fMaxX;
 	TMath::Clip( a_fScrollX, fMinX, fMaxX );
 
@@ -389,9 +400,20 @@ void AMapState::SetZoom( TINT a_iZoom, TFLOAT a_fScrollX, TFLOAT a_fScrollY )
 
 	m_iZoom = a_iZoom;
 
+	TFLOAT fZoomScale = s_afZoomScales[ m_iZoom ];
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	TFLOAT fContentWidth, fContentHeight;
+	m_oDialog.GetContentDimensions( fContentWidth, fContentHeight );
+
+	// The zoomed out map covers the whole dialog when it's wider than 4:3
+	if ( a_iZoom == 0 && m_fMapWidth > 0.0f )
+		fZoomScale = TMath::Max( fZoomScale, fContentWidth / m_fMapWidth );
+#endif // BARNYARD_COMMUNITY_PATCH
+
 	T2GUITransform& rTransform = m_oMap.GetTransform();
 	rTransform.SetIdentity();
-	rTransform.Scale( s_afZoomScales[ m_iZoom ], s_afZoomScales[ m_iZoom ] );
+	rTransform.Scale( fZoomScale, fZoomScale );
 
 	if ( a_iZoom != 0 )
 	{
@@ -415,7 +437,15 @@ void AMapState::SetZoom( TINT a_iZoom, TFLOAT a_fScrollX, TFLOAT a_fScrollY )
 	}
 	else
 	{
+#ifdef BARNYARD_COMMUNITY_PATCH
+		// Shifted no further than the edge of the map reaching the edge of the dialog
+		TFLOAT fMaxShift = TMath::Max( ( fZoomScale * m_fMapWidth - fContentWidth ) * 0.5f, 0.0f );
+		TFLOAT fShift    = m_fMapWidth * -0.08f;
+		TMath::Clip( fShift, -fMaxShift, fMaxShift );
+		rTransform.SetTranslation( fShift, m_fMapHeight * 0.0f );
+#else
 		rTransform.SetTranslation( m_fMapWidth * -0.08f, m_fMapHeight * 0.0f );
+#endif // BARNYARD_COMMUNITY_PATCH
 
 		m_aLayers[ LAYER_ZOOMEDOUT ].Show();
 		m_aLayers[ LAYER_ZOOMEDOUT_TOP ].Show();
@@ -460,19 +490,26 @@ void AMapState::CreateGUI()
 	m_uiMapBlendState = m_pMapSection->GetMaterial()->GetBlendState();
 	m_pMapSection->GetMaterial()->SetBlendState( T2GUIMaterial::BLENDSTATE_OPAQUE );
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// The map is laid out for a 4:3 canvas, a wider one would make it taller than the screen
+	const TFLOAT fMapWidth = TMath::Min( fScreenWidth, fScreenHeight * ( 4.0f / 3.0f ) );
+#else
+	const TFLOAT fMapWidth = fScreenWidth;
+#endif // BARNYARD_COMMUNITY_PATCH
+
 	m_oDialog.Create();
 	m_oDialog.SetDialogSize( fScreenWidth, fScreenHeight * 0.9f );
-	m_fScrollMarginY = ( fScreenHeight / fScreenWidth * 0.9f - 0.5f ) * 0.5f;
+	m_fScrollMarginY = ( fScreenHeight / fMapWidth * 0.9f - 0.5f ) * 0.5f;
 
 	// The map keeps the aspect of the texture (whose pixels aren't square)
-	TFLOAT fMapHeight = TMath::Abs( fSectionHeight ) * 0.5f / TMath::Abs( fSectionWidth ) * fScreenWidth;
-	m_oMap.SetDimensions( fScreenWidth, fMapHeight );
+	TFLOAT fMapHeight = TMath::Abs( fSectionHeight ) * 0.5f / TMath::Abs( fSectionWidth ) * fMapWidth;
+	m_oMap.SetDimensions( fMapWidth, fMapHeight );
 	m_oMap.SetTextureSection( m_pMapSection );
 
 	m_oDialog.SetAttachment( T2GUIATTACHMENT_TOPCENTER, T2GUIATTACHMENT_TOPCENTER );
 	m_oDialog.SetTransform( 0.0f, fScreenHeight * 0.05f );
 	m_oDialog.SetUseScissor( TTRUE );
-	m_fMapWidth  = fScreenWidth;
+	m_fMapWidth  = fMapWidth;
 	m_fMapHeight = fMapHeight;
 
 	// The arrows on the edges of the dialog

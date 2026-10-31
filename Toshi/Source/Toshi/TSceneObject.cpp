@@ -11,6 +11,8 @@
 
 TOSHI_NAMESPACE_START
 
+TBOOL TSceneObject::ms_bDistanceCulling = TTRUE;
+
 // $Barnyard: FUNCTION 006cb4f0
 TSceneObject::TSceneObject()
 {
@@ -75,7 +77,11 @@ TBOOL TSceneObject::Render( TUINT a_uiClipFlags, const TVector3& a_rBounding )
 		if ( m_vFadeParams.y <= 0.0f )
 			return TFALSE;
 	}
+#ifdef BARNYARD_COMMUNITY_PATCH
+	else if ( ms_bDistanceCulling && ( m_eFlags & FLAGS_DISTANCE_CULLING ) && fDistance >= m_vFadeDistances.x && m_vFadeDistances.x < m_vFadeDistances.y && fDistance > m_vFadeDistances.y )
+#else
 	else if ( ( m_eFlags & FLAGS_DISTANCE_CULLING ) && fDistance >= m_vFadeDistances.x && m_vFadeDistances.x < m_vFadeDistances.y && fDistance > m_vFadeDistances.y )
+#endif // BARNYARD_COMMUNITY_PATCH
 	{
 		// Too far away
 		return TFALSE;

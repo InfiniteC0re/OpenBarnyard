@@ -5,6 +5,13 @@
 
 #include <d3d11.h>
 
+namespace Toshi
+{
+class TTextureResourceHAL;
+}
+
+extern MODAPI Toshi::TTextureResourceHAL* g_pGrassShaderTerrainTexture;
+
 class MODAPI AGrassShaderHAL
     : public AGrassShader
 {
