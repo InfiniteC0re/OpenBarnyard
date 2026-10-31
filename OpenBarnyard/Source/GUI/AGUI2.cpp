@@ -63,6 +63,21 @@ AGUI2::~AGUI2()
 {
 }
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+void AGUI2::UpdateRootDimensions()
+{
+	auto         pDisplayParams = TRenderInterface::GetSingleton()->GetCurrentDisplayParams();
+	const TFLOAT fAspectRatio   = ( pDisplayParams && pDisplayParams->uiHeight > 0 ) ? TFLOAT( pDisplayParams->uiWidth ) / TFLOAT( pDisplayParams->uiHeight ) : 4.0f / 3.0f;
+
+	if ( fAspectRatio >= 4.0f / 3.0f )
+		m_pRootElement->SetDimensions( 600.0f * fAspectRatio, 600.0f );
+	else
+		m_pRootElement->SetDimensions( 800.0f, 800.0f / fAspectRatio );
+}
+
+#endif // BARNYARD_COMMUNITY_PATCH
+
 // $Barnyard: FUNCTION 006355a0
 TBOOL AGUI2::OnCreate()
 {
@@ -71,13 +86,7 @@ TBOOL AGUI2::OnCreate()
 	m_pRootElement = T2GUI::GetContext()->GetRootElement();
 
 #ifdef BARNYARD_COMMUNITY_PATCH
-	auto         pDisplayParams = TRenderInterface::GetSingleton()->GetCurrentDisplayParams();
-	const TFLOAT fAspectRatio   = ( pDisplayParams && pDisplayParams->uiHeight > 0 ) ? TFLOAT( pDisplayParams->uiWidth ) / TFLOAT( pDisplayParams->uiHeight ) : 4.0f / 3.0f;
-
-	if ( fAspectRatio >= 4.0f / 3.0f )
-		m_pRootElement->SetDimensions( 600.0f * fAspectRatio, 600.0f );
-	else
-		m_pRootElement->SetDimensions( 800.0f, 800.0f / fAspectRatio );
+	UpdateRootDimensions();
 #else
 	m_pRootElement->SetDimensions( 800.0f, 600.0f );
 #endif // BARNYARD_COMMUNITY_PATCH

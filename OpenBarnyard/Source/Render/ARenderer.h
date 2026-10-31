@@ -100,6 +100,12 @@ public:
 	Toshi::TRenderAdapter::Mode::Device* FindSuitableDevice( Toshi::TRenderInterface::DISPLAYPARAMS& a_rDisplayParams, bool a_bReverseOrder );
 
 	Toshi::TViewport*     GetMainViewport() const { return m_pViewport; }
+	ADisplayModes_Win&    GetDisplayModes() { return m_DisplayModes; }
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	TBOOL ChangeDisplay( TINT a_iWidth, TINT a_iHeight, TBOOL a_bWindowed, TBOOL a_bBorderless );
+#endif // BARNYARD_COMMUNITY_PATCH
+
 	Toshi::TCameraObject* GetCameraObject() const { return m_pCameraObject; }
 
 	Toshi::TEmitter<ARenderer, TBOOL*>& GetAnimationUpdateStartEmitter() { return m_AnimationUpdateStartEmitter; }

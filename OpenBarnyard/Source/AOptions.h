@@ -61,6 +61,22 @@ public:
 	TINT                  GetWidth() const { return m_iWidth; }
 	TINT                  GetHeight() const { return m_iHeight; }
 	TBOOL                 IsWindowed() const;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	void SetDisplay( TINT a_iWidth, TINT a_iHeight, TBOOL a_bWindowed, TBOOL a_bBorderless )
+	{
+		m_iWidth          = a_iWidth;
+		m_iHeight         = a_iHeight;
+		m_bForcedWindowed = a_bWindowed;
+		ms_bBorderless    = a_bBorderless;
+	}
+
+	TBOOL IsBorderless() const { return ms_bBorderless; }
+
+	// Not a member, the size of the class and the saved settings stay the same
+	static TBOOL ms_bBorderless;
+#endif // BARNYARD_COMMUNITY_PATCH
+
 	TBOOL                 IsControllerEnabled() const { return m_bControllerEnabled; }
 	TBOOL                 IsHighDetailGrassEnabled() const { return m_bHighDetailGrass; }
 	TBOOL                 IsMouseInverted() const { return m_eFlags & Flags_InvertMouse; }

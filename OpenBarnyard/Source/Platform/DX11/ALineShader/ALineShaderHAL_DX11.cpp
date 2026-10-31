@@ -193,11 +193,7 @@ void ALineShaderHAL::FlushLines()
 	if ( m_uiNumLineVertices == 0 && m_uiNumTriangleVertices == 0 ) return;
 
 	TRenderD3DInterface* pRender = TRenderD3DInterface::Interface();
-#ifdef BARNYARD_COMMUNITY_PATCH
 	TRenderContextD3D* pContext = TRenderContextD3D::Upcast( pRender->GetCurrentContext() );
-#else
-	TRenderContextD3D* pContext = TRenderContextD3D::Upcast( pRender->GetCreatedContext() );
-#endif
 
 	// World is the model view matrix and view is the identity
 	TMatrix44 oModelViewProjection;
@@ -251,13 +247,9 @@ void ALineShaderHAL::AddLineDirect( const TVector3& a_rcStart, const TVector3& a
 
 void ALineShaderHAL::AddTriangle( const TVector3 a_aVertices[ 3 ], TUINT32 a_uiColour )
 {
-#ifdef BARNYARD_COMMUNITY_PATCH
 	// NOTE: the original only flushes when the array is full, 40000 isn't a multiple of 3, so the
 	// 13334th triangle was written past the end of the array
 	if ( m_uiNumTriangleVertices + 3 > MAX_NUM_VERTICES )
-#else
-	if ( m_uiNumTriangleVertices >= MAX_NUM_VERTICES )
-#endif // BARNYARD_COMMUNITY_PATCH
 		FlushLines();
 
 	m_aTriangleVertices[ m_uiNumTriangleVertices ].uiColour        = a_uiColour;

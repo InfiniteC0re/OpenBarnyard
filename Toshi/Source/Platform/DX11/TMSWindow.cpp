@@ -32,14 +32,12 @@ TMSWindow::TMSWindow()
 	TString8 rendererName = TGetClass( TRenderD3DInterface ).GetName();
 	UnregisterWindowClass();
 
-#ifdef BARNYARD_COMMUNITY_PATCH
 	// Background test runs don't touch the user's sticky keys setting (several runs at once would mix it up)
 	if ( IsBackgroundMode() )
 	{
 		ms_bIsFocused = TFALSE; // nothing to restore in UnregisterWindowClass
 		return;
 	}
-#endif
 
 	ms_StickyKeys.cbSize = sizeof( STICKYKEYS );
 	SystemParametersInfoA( SPI_GETSTICKYKEYS, sizeof( STICKYKEYS ), &ms_StickyKeys, 0 );
@@ -134,9 +132,7 @@ void TMSWindow::UnregisterWindowClass()
 
 void TMSWindow::SetFocused( TBOOL a_bFocused )
 {
-#ifdef BARNYARD_COMMUNITY_PATCH
 	if ( IsBackgroundMode() ) return;
-#endif
 
 	if ( ms_bIsFocused != a_bFocused )
 	{
@@ -157,9 +153,20 @@ void TMSWindow::SetFocused( TBOOL a_bFocused )
 	}
 }
 
+void TMSWindow::SetBorderless( TBOOL a_bBorderless )
+{
+	const LONG uStyle    = GetWindowLongA( m_HWND, GWL_STYLE );
+	const LONG uNewStyle = a_bBorderless ? ( uStyle & ~WS_CAPTION ) : ( uStyle | WS_CAPTION );
+
+	if ( uNewStyle == uStyle )
+		return;
+
+	SetWindowLongA( m_HWND, GWL_STYLE, uNewStyle );
+	SetWindowPos( m_HWND, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE );
+}
+
 void TMSWindow::SetPosition( UINT x, UINT y, UINT width, UINT height )
 {
-#ifdef BARNYARD_COMMUNITY_PATCH
 	if ( m_bWindowed )
 	{
 		RECT oRect = { 0, 0, LONG( width ), LONG( height ) };
@@ -179,12 +186,10 @@ void TMSWindow::SetPosition( UINT x, UINT y, UINT width, UINT height )
 		SetWindowPos( m_HWND, HWND_BOTTOM, iX, iY, width, height, SWP_NOACTIVATE );
 		return;
 	}
-#endif
 
 	SetWindowPos( m_HWND, HWND_TOP, x, y, width, height, 0 );
 }
 
-#ifdef BARNYARD_COMMUNITY_PATCH
 
 TBOOL TMSWindow::IsBackgroundMode()
 {
@@ -210,7 +215,6 @@ void TMSWindow::Dev_SetKeepRunning( TBOOL a_bKeepRunning )
 	}
 }
 
-#endif // BARNYARD_COMMUNITY_PATCH
 
 TBOOL TMSWindow::Create( TRenderInterface* renderer, LPCSTR title )
 {
@@ -236,10 +240,8 @@ TBOOL TMSWindow::Create( TRenderInterface* renderer, LPCSTR title )
 
 	DWORD uiExStyle = 0;
 
-#ifdef BARNYARD_COMMUNITY_PATCH
 	// Not in the taskbar/alt-tab and never activated by clicks
 	if ( IsBackgroundMode() ) uiExStyle = WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE;
-#endif
 
 	m_HWND = CreateWindowExA(
 	    uiExStyle,
@@ -260,7 +262,6 @@ TBOOL TMSWindow::Create( TRenderInterface* renderer, LPCSTR title )
 
 	EnableWindow( m_HWND, TRUE );
 
-#ifdef BARNYARD_COMMUNITY_PATCH
 	if ( IsBackgroundMode() )
 	{
 		// Move it out of the desktop before it's shown, and don't take the focus
@@ -268,7 +269,6 @@ TBOOL TMSWindow::Create( TRenderInterface* renderer, LPCSTR title )
 		ShowWindow( m_HWND, SW_SHOWNOACTIVATE );
 		return TTRUE;
 	}
-#endif
 
 	ShowWindow( m_HWND, SW_SHOW );
 
@@ -300,7 +300,6 @@ LRESULT CALLBACK TMSWindow::WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 			if ( pWindow->m_bDestroyed )
 				return 0;
 
-#ifdef BARNYARD_COMMUNITY_PATCH
 			// Background test runs keep running while another application is active
 			if ( IsBackgroundMode() || IsNoPauseMode() ) return 0;
 
@@ -315,11 +314,13 @@ LRESULT CALLBACK TMSWindow::WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 				ms_bDevSkippedPause = TFALSE;
 			}
-#endif
 
 			const TBOOL bPaused = wParam != TRUE;
 			g_oSystemManager.Pause( bPaused );
 			s_bIsPaused = bPaused;
+
+			if ( bPaused && !pWindow->m_bWindowed )
+				ShowWindow( hWnd, SW_MINIMIZE );
 
 			return 0;
 		}
@@ -338,7 +339,6 @@ LRESULT CALLBACK TMSWindow::WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 			return DefWindowProcA( hWnd, uMsg, wParam, lParam );
 		}
 
-#ifdef BARNYARD_COMMUNITY_PATCH
 		case WM_CLOSE:
 			{
 				TRenderD3DInterface* pRenderer = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
@@ -347,7 +347,6 @@ LRESULT CALLBACK TMSWindow::WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 				g_oSystemManager.Destroy();
 				return 0;
 			}
-#endif // BARNYARD_COMMUNITY_PATCH
 
 		case WM_SYSCOMMAND:
 			if ( wParam == SC_CLOSE )

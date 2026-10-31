@@ -37,6 +37,8 @@ public:
 		m_bWindowed = TFALSE;
 	}
 
+	void SetBorderless( TBOOL a_bBorderless );
+
 	TBOOL IsDestroyed() const
 	{
 		return m_bDestroyed;
@@ -54,7 +56,6 @@ public:
 
 	static void SetFocused( TBOOL a_bFocused );
 
-#ifdef BARNYARD_COMMUNITY_PATCH
 	// Development: "-background" keeps the window of unattended test runs out of the user's way.
 	// The window is placed outside of the desktop, never activated and not shown in the taskbar,
 	// and the game keeps running (no pause) while it isn't the active application.
@@ -73,7 +74,6 @@ private:
 	inline static TBOOL ms_bDevSkippedPause = TFALSE; // deactivated while ms_bDevKeepRunning was set
 
 public:
-#endif
 
 private:
 	static LRESULT CALLBACK WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );

@@ -191,6 +191,8 @@ public:
 	// Own methods
 	//-----------------------------------------------------------------------------
 	virtual TBOOL  RecreateDisplay( const DISPLAYPARAMS& a_rDisplayParams );
+
+	TBOOL          ChangeDisplay( TUINT32 a_uiWidth, TUINT32 a_uiHeight, TBOOL a_bWindowed, TBOOL a_bBorderless );
 	virtual void   SetContrast( TFLOAT a_fConstrast );
 	virtual void   SetBrightness( TFLOAT a_fBrightness );
 	virtual void   SetGamma( TFLOAT a_fGamma );
@@ -520,6 +522,13 @@ private:
 
 	TBOOL CreateBackBufferViews();
 	void  DestroyBackBufferViews();
+
+	TBOOL ResizeSwapChainBuffers();
+	void  RestoreFullscreen();
+	TBOOL EnterFullscreen();
+	void  PlaceWindow();
+
+	DXGI_MODE_DESC FindFullscreenMode( TUINT32 a_uiWidth, TUINT32 a_uiHeight );
 
 	TBOOL CreateDepthTarget( UINT a_uiSampleCount, DEPTHTARGET& a_rTarget );
 	void  DestroyDepthTarget( DEPTHTARGET& a_rTarget );

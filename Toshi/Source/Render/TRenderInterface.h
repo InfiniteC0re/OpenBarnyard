@@ -65,6 +65,10 @@ public:
 		TUINT32            uiColourDepth;
 		DEPTHSTENCILFORMAT eDepthStencilFormat;
 		TBOOL              bWindowed;
+		
+#ifdef BARNYARD_COMMUNITY_PATCH
+		TBOOL bBorderless = TFALSE;
+#endif // BARNYARD_COMMUNITY_PATCH
 	};
 
 #ifdef BARNYARD_COMMUNITY_PATCH

@@ -104,6 +104,9 @@ TBOOL ARenderer::CreateTRender()
 	displayParams.uiWidth             = iWidth;
 	displayParams.uiHeight            = iHeight;
 	displayParams.bWindowed           = bWindowed;
+#ifdef BARNYARD_COMMUNITY_PATCH
+	displayParams.bBorderless = AOptions::GetSingleton() && AOptions::GetSingleton()->IsBorderless();
+#endif // BARNYARD_COMMUNITY_PATCH
 	displayParams.uiColourDepth       = 32;
 	displayParams.eDepthStencilFormat = TRenderInterface::DEPTHSTENCILFORMAT_D16;
 
@@ -981,6 +984,50 @@ void ARenderer::CreateMainViewport()
 
 	m_pCameraObject = new TCameraObject();
 }
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+TBOOL ARenderer::ChangeDisplay( TINT a_iWidth, TINT a_iHeight, TBOOL a_bWindowed, TBOOL a_bBorderless )
+{
+#  ifdef TRENDERINTERFACE_DX11
+	if ( !m_DisplayModes.DoesModeExist( a_iWidth, a_iHeight, 32 ) )
+		return TFALSE;
+
+	if ( !TRenderD3DInterface::Interface()->ChangeDisplay( a_iWidth, a_iHeight, a_bWindowed, a_bBorderless ) )
+		return TFALSE;
+
+	// The viewports were sized once in CreateMainViewport and AGUISystem::OnCreate
+	TViewport* apViewports[] = { m_pViewport, m_pHALViewport1, m_pHALViewport2 };
+
+	for ( TViewport* pViewport : apViewports )
+	{
+		pViewport->SetWidth( TFLOAT( a_iWidth ) );
+		pViewport->SetHeight( TFLOAT( a_iHeight ) );
+	}
+
+	if ( AGUISystem::IsSingletonCreated() )
+	{
+		for ( TUINT i = 0; i < AGUISystem::NUM_RENDER_OBJECTS; i++ )
+		{
+			TViewport* pViewport = AGUISystem::GetSingleton()->GetRenderObject( i )->GetViewport();
+			pViewport->SetWidth( TFLOAT( a_iWidth ) );
+			pViewport->SetHeight( TFLOAT( a_iHeight ) );
+		}
+	}
+
+	if ( AGUI2::IsSingletonCreated() )
+		AGUI2::GetSingleton()->UpdateRootDimensions();
+
+	if ( AOptions::GetSingleton() )
+		AOptions::GetSingleton()->SetDisplay( a_iWidth, a_iHeight, a_bWindowed, a_bBorderless );
+
+	return TTRUE;
+#  else
+	return TFALSE;
+#  endif // TRENDERINTERFACE_DX11
+}
+
+#endif // BARNYARD_COMMUNITY_PATCH
 
 // $Barnyard: FUNCTION 0060bf70
 void ARenderer::GetScreenRay( const ACamera* a_pCamera, const TVector2& a_rcScreenPos, TVector4& a_rOutPosition, TVector4& a_rOutDirection )

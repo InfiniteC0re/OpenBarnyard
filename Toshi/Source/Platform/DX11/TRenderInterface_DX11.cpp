@@ -278,10 +278,12 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 		oSwapChainDesc.AlphaMode             = DXGI_ALPHA_MODE_IGNORE;
 		oSwapChainDesc.Flags                 = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
+		const DXGI_MODE_DESC oFullscreenMode = FindFullscreenMode( pDisplayParams->uiWidth, pDisplayParams->uiHeight );
+
 		DXGI_SWAP_CHAIN_FULLSCREEN_DESC oFullscreenDesc = {};
-		oFullscreenDesc.RefreshRate                     = pMode->GetDescription().RefreshRate;
-		oFullscreenDesc.ScanlineOrdering                = pMode->GetDescription().ScanlineOrdering;
-		oFullscreenDesc.Scaling                         = pMode->GetDescription().Scaling;
+		oFullscreenDesc.RefreshRate                     = oFullscreenMode.RefreshRate;
+		oFullscreenDesc.ScanlineOrdering                = oFullscreenMode.ScanlineOrdering;
+		oFullscreenDesc.Scaling                         = oFullscreenMode.Scaling;
 		oFullscreenDesc.Windowed                        = TRUE;
 
 		HRESULT hRes = pFactory->CreateSwapChainForHwnd( m_pDevice11, m_Window.GetHWND(), &oSwapChainDesc, &oFullscreenDesc, TNULL, &m_pSwapChain );
@@ -340,19 +342,21 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 		// Set window position and size
 		m_Window.SetPosition( uiWindowPosX, uiWindowPosY, pDisplayParams->uiWidth, pDisplayParams->uiHeight );
 
+		if ( pDisplayParams->bWindowed && pDisplayParams->bBorderless )
+			PlaceWindow();
+
 		if ( !pDisplayParams->bWindowed )
 		{
-			hRes = m_pSwapChain->SetFullscreenState( TRUE, TNULL );
-
-			if ( FAILED( hRes ) )
-				PrintError( hRes, "Failed to switch to fullscreen!" );
+			if ( EnterFullscreen() && !ResizeSwapChainBuffers() )
+			{
+				OnInitializationFailureDevice();
+				return TFALSE;
+			}
 		}
 
 		// Set cursor position to center of window
-#ifdef BARNYARD_COMMUNITY_PATCH
 		// Background test runs leave the user's mouse cursor alone
 		if ( !TMSWindow::IsBackgroundMode() )
-#endif
 			SetCursorPos(
 			    uiWindowPosX + pDisplayParams->uiWidth / 2,
 			    uiWindowPosY + pDisplayParams->uiHeight / 2
@@ -466,9 +470,170 @@ TBOOL TRenderD3DInterface::EndScene()
 		}
 
 		m_bInScene = TFALSE;
+
+		if ( !m_oDisplayParams.bWindowed )
+			RestoreFullscreen();
 	}
 
 	return TTRUE;
+}
+
+TBOOL TRenderD3DInterface::ResizeSwapChainBuffers()
+{
+	DestroyBackBufferViews();
+
+	HRESULT hRes = m_pSwapChain->ResizeBuffers( 0, m_uiBackBufferWidth, m_uiBackBufferHeight, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH );
+
+	if ( FAILED( hRes ) )
+		PrintError( hRes, "Failed to resize the swap chain!" );
+
+	return CreateBackBufferViews();
+}
+
+void TRenderD3DInterface::RestoreFullscreen()
+{
+	BOOL bFullscreen = FALSE;
+
+	if ( FAILED( m_pSwapChain->GetFullscreenState( &bFullscreen, TNULL ) ) || bFullscreen )
+		return;
+
+	HWND hWnd = m_Window.GetHWND();
+
+	if ( GetForegroundWindow() != hWnd || IsIconic( hWnd ) )
+		return;
+
+	if ( !EnterFullscreen() )
+		return;
+
+	ResizeSwapChainBuffers();
+	m_bOccluded = TFALSE;
+}
+
+TBOOL TRenderD3DInterface::EnterFullscreen()
+{
+	const HRESULT hRes = m_pSwapChain->SetFullscreenState( TRUE, TNULL );
+
+	if ( FAILED( hRes ) )
+	{
+		PrintError( hRes, "Failed to switch to fullscreen!" );
+		return TFALSE;
+	}
+
+	const DXGI_MODE_DESC oMode = FindFullscreenMode( m_uiBackBufferWidth, m_uiBackBufferHeight );
+	m_pSwapChain->ResizeTarget( &oMode );
+
+	return TTRUE;
+}
+
+DXGI_MODE_DESC TRenderD3DInterface::FindFullscreenMode( TUINT32 a_uiWidth, TUINT32 a_uiHeight )
+{
+	auto pMode = TSTATICCAST( TD3DAdapter::Mode, m_pDevice->GetMode() );
+
+	auto fnGetRefreshRate = []( const DXGI_MODE_DESC& a_rcMode ) {
+		return ( a_rcMode.RefreshRate.Denominator != 0 ) ? TFLOAT( a_rcMode.RefreshRate.Numerator ) / TFLOAT( a_rcMode.RefreshRate.Denominator ) : 0.0f;
+	};
+
+	TINT iDesktopRate = 0;
+
+	MONITORINFOEXA oMonitorInfo = {};
+	oMonitorInfo.cbSize         = sizeof( oMonitorInfo );
+
+	if ( GetMonitorInfoA( MonitorFromWindow( m_Window.GetHWND(), MONITOR_DEFAULTTONEAREST ), &oMonitorInfo ) )
+	{
+		DEVMODEA oDesktopMode = {};
+		oDesktopMode.dmSize   = sizeof( oDesktopMode );
+
+		if ( EnumDisplaySettingsA( oMonitorInfo.szDevice, ENUM_REGISTRY_SETTINGS, &oDesktopMode ) && oDesktopMode.dmDisplayFrequency > 1 )
+			iDesktopRate = TINT( oDesktopMode.dmDisplayFrequency );
+	}
+
+	// A size the display doesn't list lets DXGI pick the refresh rate
+	DXGI_MODE_DESC oResult = pMode->GetDescription();
+	oResult.Width          = a_uiWidth;
+	oResult.Height         = a_uiHeight;
+	oResult.RefreshRate    = { 0, 0 };
+
+	TBOOL bDesktopRate = TFALSE;
+
+	T2_FOREACH( *pMode->GetAdapter()->GetModeList(), pOtherMode )
+	{
+		const DXGI_MODE_DESC& rcOther = TSTATICCAST( TD3DAdapter::Mode, pOtherMode.Get() )->GetDescription();
+
+		if ( TSTATICCAST( TD3DAdapter::Mode, pOtherMode.Get() )->GetDisplayIndex() != pMode->GetDisplayIndex() ||
+		     rcOther.Width != a_uiWidth || rcOther.Height != a_uiHeight || bDesktopRate )
+			continue;
+
+		if ( iDesktopRate != 0 && TMath::Abs( fnGetRefreshRate( rcOther ) - TFLOAT( iDesktopRate ) ) < 0.5f )
+		{
+			oResult      = rcOther;
+			bDesktopRate = TTRUE;
+		}
+		else if ( fnGetRefreshRate( rcOther ) > fnGetRefreshRate( oResult ) )
+		{
+			oResult = rcOther;
+		}
+	}
+
+	return oResult;
+}
+
+void TRenderD3DInterface::PlaceWindow()
+{
+	MONITORINFO oMonitorInfo = { sizeof( MONITORINFO ) };
+	GetMonitorInfoA( MonitorFromWindow( m_Window.GetHWND(), MONITOR_DEFAULTTONEAREST ), &oMonitorInfo );
+
+	const RECT& rcMonitor       = oMonitorInfo.rcMonitor;
+	const TINT  iMonitorWidth   = TINT( rcMonitor.right - rcMonitor.left );
+	const TINT  iMonitorHeight  = TINT( rcMonitor.bottom - rcMonitor.top );
+	const TBOOL bBorderless     = m_oDisplayParams.bWindowed && m_oDisplayParams.bBorderless;
+
+	m_Window.SetBorderless( bBorderless );
+
+	if ( bBorderless )
+		m_Window.SetPosition( rcMonitor.left, rcMonitor.top, iMonitorWidth, iMonitorHeight );
+	else if ( m_oDisplayParams.bWindowed )
+		m_Window.SetPosition(
+		    rcMonitor.left + TMath::Max( iMonitorWidth - TINT( m_oDisplayParams.uiWidth ), 0 ) / 2,
+		    rcMonitor.top + TMath::Max( iMonitorHeight - TINT( m_oDisplayParams.uiHeight ), 0 ) / 2,
+		    m_oDisplayParams.uiWidth,
+		    m_oDisplayParams.uiHeight
+		);
+	else
+		m_Window.SetPosition( rcMonitor.left, rcMonitor.top, m_oDisplayParams.uiWidth, m_oDisplayParams.uiHeight );
+}
+
+TBOOL TRenderD3DInterface::ChangeDisplay( TUINT32 a_uiWidth, TUINT32 a_uiHeight, TBOOL a_bWindowed, TBOOL a_bBorderless )
+{
+	if ( !IsDisplayCreated() || !m_pSwapChain )
+		return TFALSE;
+
+	BOOL bFullscreen = FALSE;
+	m_pSwapChain->GetFullscreenState( &bFullscreen, TNULL );
+
+	if ( bFullscreen && a_bWindowed )
+		m_pSwapChain->SetFullscreenState( FALSE, TNULL );
+
+	m_oDisplayParams.uiWidth     = a_uiWidth;
+	m_oDisplayParams.uiHeight    = a_uiHeight;
+	m_oDisplayParams.bWindowed   = a_bWindowed;
+	m_oDisplayParams.bBorderless = a_bBorderless;
+	m_uiBackBufferWidth          = a_uiWidth;
+	m_uiBackBufferHeight         = a_uiHeight;
+
+	if ( a_bWindowed )
+	{
+		m_Window.SetWindowed();
+		PlaceWindow();
+	}
+	else
+	{
+		m_Window.SetFullscreen();
+		PlaceWindow();
+		EnterFullscreen();
+	}
+
+	m_bOccluded = TFALSE;
+	return ResizeSwapChainBuffers();
 }
 
 TRenderAdapter::Mode::Device* TRenderD3DInterface::GetCurrentDevice()
@@ -807,10 +972,7 @@ void TRenderD3DInterface::DestroyDebugText()
 	{
 		m_pDebugText->Destroy();
 
-#ifdef BARNYARD_COMMUNITY_PATCH
-		// Retail doesn't clear the pointer
 		m_pDebugText = TNULL;
-#endif
 	}
 }
 
@@ -891,7 +1053,9 @@ void TRenderD3DInterface::UpdateColourSettings()
 		BOOL         bFullscreen = FALSE;
 		IDXGIOutput* pOutput     = TNULL;
 
-		if ( SUCCEEDED( m_pSwapChain->GetFullscreenState( &bFullscreen, &pOutput ) ) && bFullscreen && pOutput )
+		const TBOOL bUseOutputGamma = TFALSE;
+
+		if ( bUseOutputGamma && SUCCEEDED( m_pSwapChain->GetFullscreenState( &bFullscreen, &pOutput ) ) && bFullscreen && pOutput )
 		{
 			DXGI_GAMMA_CONTROL_CAPABILITIES oCaps;
 

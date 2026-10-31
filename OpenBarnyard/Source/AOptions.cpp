@@ -30,6 +30,10 @@ TPSTRING8_DECLARE( Ingame );
 // NOTE: GetClass 00662d60, CreateObject 00663360, CreateObjectInPlace 006633c0
 TDEFINE_CLASS( AOptions );
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+TBOOL AOptions::ms_bBorderless = TFALSE;
+#endif // BARNYARD_COMMUNITY_PATCH
+
 // $Barnyard: FUNCTION 006632d0
 AOptions::AOptions()
 {
@@ -140,6 +144,16 @@ void AOptions::LoadSettings()
 		{
 			m_bForcedWindowed = dwData != FALSE;
 		}
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+		// NOTE: Borderless fullscreen, a windowed mode without a frame
+		dwSize = sizeof( dwData );
+		if ( ERROR_SUCCESS == RegQueryValueExA( hKey, "Borderless", NULL, &dwType, (LPBYTE)&dwData, &dwSize ) &&
+		     dwType == REG_DWORD )
+		{
+			ms_bBorderless = dwData != FALSE;
+		}
+#endif // BARNYARD_COMMUNITY_PATCH
 
 		dwSize = sizeof( dwData );
 		if ( ERROR_SUCCESS == RegQueryValueExA( hKey, "HighDetailGrass", NULL, &dwType, (LPBYTE)&dwData, &dwSize ) &&

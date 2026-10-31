@@ -36,6 +36,11 @@ public:
 	~AGUI2();
 
 	virtual TBOOL OnCreate() override;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	void UpdateRootDimensions();
+#endif // BARNYARD_COMMUNITY_PATCH
+
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) override;
 	virtual void  OnDestroy() override;
 
