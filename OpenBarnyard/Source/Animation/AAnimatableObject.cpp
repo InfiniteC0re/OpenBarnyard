@@ -204,7 +204,6 @@ TBOOL AAnimatableObject::PlayAnimation( const Toshi::TPString8& a_strName )
 TBOOL AAnimatableObject::StartAnimation( const TPString8& a_strName )
 {
 	ANamedAnimation* pAnimation = m_oToshiAnimInterface.GetAnimationSet()->GetNamedAnimation( a_strName );
-	TVALIDPTR( pAnimation );
 
 	if ( !pAnimation )
 		return TTRUE;

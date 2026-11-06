@@ -370,7 +370,7 @@ void ATreasueHuntMicroGame::Start()
 		pControlComponent->SetOverrideText( TNULL );
 	}
 
-	m_HUDParams.SetFlags( AHudElement::MASK_UNK4 | AHudElement::MASK_UNK5 | AHudElement::MASK_MENU_NAV | AHudElement::MASK_UNK9 | AHudElement::MASK_MINIMAP | AHudElement::MASK_UNK11 | AHudElement::MASK_UNK12 | AHudElement::MASK_GAME_TIME | AHudElement::MASK_ITEM_COUNT | AHudElement::MASK_TERRAIN_SECTION | AHudElement::MASK_PLAYER_MAIN | AHudElement::MASK_TIME_LEFT );
+	m_HUDParams.SetFlags( AHudElement::MASK_SIM );
 	m_fBeepFlash = 0.0f;
 	m_fBeepTimer = 0.0f;
 
