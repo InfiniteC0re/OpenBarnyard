@@ -538,7 +538,14 @@ void ATreeManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 	}
 }
 
-static constexpr TUINT                      MAX_RENDERED_INSTANCES = 240;
+static constexpr TUINT MAX_RENDERED_INSTANCES = 
+#ifdef BARNYARD_COMMUNITY_PATCH
+    512
+#else // BARNYARD_COMMUNITY_PATCH
+    240
+#endif // !BARNYARD_COMMUNITY_PATCH
+;
+
 static ATreeManager::TreeInstanceRenderData s_aInstanceMatrices[ MAX_RENDERED_INSTANCES ];
 
 // $Barnyard: FUNCTION 005ef2b0

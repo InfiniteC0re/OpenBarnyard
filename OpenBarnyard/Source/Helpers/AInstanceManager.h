@@ -106,7 +106,13 @@ public:
 
 	inline static constexpr TSIZE NUM_MODELS             = TARRAYSIZE( ms_aModelDefinitions );
 	inline static constexpr TSIZE MAX_INSTANCES          = 5000;
-	inline static constexpr TSIZE MAX_RENDERED_INSTANCES = 240;
+	static constexpr TSIZE        MAX_RENDERED_INSTANCES =
+#ifdef BARNYARD_COMMUNITY_PATCH
+	    512
+#else  // BARNYARD_COMMUNITY_PATCH
+	    240
+#endif // !BARNYARD_COMMUNITY_PATCH
+	    ;
 	inline static constexpr TINT  MAX_NUM_LODS           = 2;
 
 	struct RenderListEntry
