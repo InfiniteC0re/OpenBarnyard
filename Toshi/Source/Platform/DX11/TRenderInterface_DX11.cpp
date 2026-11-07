@@ -2091,7 +2091,7 @@ ID3D11ShaderResourceView* TRenderD3DInterface::CreateTextureFromFileInMemory( co
 	{
 		DirectX::ScratchImage oMipChain;
 
-		if ( SUCCEEDED( DirectX::GenerateMipMaps( oImage.GetImages(), oImage.GetImageCount(), oMetadata, DirectX::TEX_FILTER_DEFAULT, 0, oMipChain ) ) )
+		if ( SUCCEEDED( DirectX::GenerateMipMaps( oImage.GetImages(), oImage.GetImageCount(), oMetadata, DirectX::TEX_FILTER_DEFAULT | DirectX::TEX_FILTER_FORCE_NON_WIC, 0, oMipChain ) ) )
 		{
 			oImage    = std::move( oMipChain );
 			oMetadata = oImage.GetMetadata();
