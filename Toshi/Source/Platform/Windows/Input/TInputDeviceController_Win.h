@@ -68,6 +68,11 @@ private:
 	static TFLOAT        NormaliseStick( TINT a_iValue );
 	static BOOL CALLBACK EnumerateObjectCallback( LPCDIDEVICEOBJECTINSTANCEA a_poDeviceInstance, LPVOID a_pData );
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	TBOOL       IsSonyController() const;
+	static void RemapSonyState( DIJOYSTATE& a_rState );
+#endif
+
 private:
 	DIDEVICEINSTANCEA     m_oDeviceInstance; // 0x54
 	DIDEVCAPS             m_oDIDevCaps;      // 0x298

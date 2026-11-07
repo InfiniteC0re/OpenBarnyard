@@ -127,7 +127,11 @@ void AOptions::LoadSettings()
 	m_iHeight            = 600;
 	m_fSensitivity       = 0.5f;
 	m_bHighDetailGrass   = TTRUE;
+#ifdef BARNYARD_COMMUNITY_PATCH
+	m_bControllerEnabled = TTRUE;
+#else
 	m_bControllerEnabled = TFALSE;
+#endif
 	m_bForcedWindowed    = TFALSE;
 
 	HKEY hKey;
@@ -311,15 +315,8 @@ void AOptions::GetExtraSettingsPath( TCHAR ( &a_rPath )[ 260 ], TCHAR ( &a_rDir 
 	}
 #  endif
 
-	// <exe directory>Save\OpenBarnyard.cfg, next to savedata.by (SaveLoadSKU)
-	GetModuleFileNameA( NULL, a_rDir, sizeof( a_rDir ) - 32 );
-	a_rDir[ sizeof( a_rDir ) - 32 ] = '\0';
-	TCHAR* pSlash                   = strrchr( a_rDir, '\\' );
-
-	if ( pSlash )
-		pSlash[ 1 ] = '\0';
-
-	strcat( a_rDir, "Save" );
+	// Save\OpenBarnyard.cfg, next to savedata.by (SaveLoadSKU)
+	TStringManager::String8Copy( a_rDir, SaveLoadSKU::GetSaveDirectory(), sizeof( a_rDir ) - 32 );
 	strcpy( a_rPath, a_rDir );
 	strcat( a_rPath, "\\OpenBarnyard.cfg" );
 }

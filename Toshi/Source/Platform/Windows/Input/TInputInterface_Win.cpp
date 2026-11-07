@@ -98,7 +98,16 @@ BOOL TInputDXInterface::EnumerateDeviceCallback( LPCDIDEVICEINSTANCEA a_poDevice
 
 	auto pInput8 = pInputInterface->m_poDirectInput8;
 
-	switch ( GET_DIDEVICE_TYPE( a_poDeviceInstance->dwDevType ) )
+	DWORD uiDevType = GET_DIDEVICE_TYPE( a_poDeviceInstance->dwDevType );
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Detect PS5/PS4 controllers
+	if ( ( a_poDeviceInstance->dwDevType & DIDEVTYPE_HID ) && a_poDeviceInstance->wUsagePage == 0x01 &&
+	     ( a_poDeviceInstance->wUsage == 0x04 || a_poDeviceInstance->wUsage == 0x05 ) )
+		uiDevType = DI8DEVTYPE_GAMEPAD;
+#endif
+
+	switch ( uiDevType )
 	{
 		case DI8DEVTYPE_MOUSE:
 		{
@@ -230,6 +239,8 @@ BOOL TInputDXInterface::EnumerateDeviceCallback( LPCDIDEVICEINSTANCEA a_poDevice
 				delete pController;
 				return DIENUM_CONTINUE;
 			}
+
+			TINFO( "TInputDXInterface: added controller '%s'\n", a_poDeviceInstance->tszProductName );
 
 			pController->Initialise();
 			pInputInterface->AddDevice( pController );

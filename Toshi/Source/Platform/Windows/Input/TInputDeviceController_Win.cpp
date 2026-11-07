@@ -83,6 +83,11 @@ void TInputDXDeviceController::Update( TFLOAT a_fDeltaTime )
 	if ( FAILED( m_poDXInputDevice->GetDeviceState( sizeof( DIJOYSTATE ), &m_oJoyState ) ) )
 		return;
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	if ( IsSonyController() )
+		RemapSonyState( m_oJoyState );
+#endif
+
 	m_afSticks[ 0 ] = NormaliseStick( m_oJoyState.lX );
 	m_afSticks[ 1 ] = NormaliseStick( m_oJoyState.lY );
 	m_afSticks[ 2 ] = NormaliseStick( m_oJoyState.lZ );
@@ -307,5 +312,71 @@ BOOL CALLBACK TInputDXDeviceController::EnumerateObjectCallback( LPCDIDEVICEOBJE
 {
 	return DIENUM_CONTINUE;
 }
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+TBOOL TInputDXDeviceController::IsSonyController() const
+{
+	if ( LOWORD( m_oDeviceInstance.guidProduct.Data1 ) != 0x054C )
+		return TFALSE;
+
+	// DualSense, DualSense Edge, DualShock 4 v1/v2 and its wireless adapter
+	switch ( HIWORD( m_oDeviceInstance.guidProduct.Data1 ) )
+	{
+		case 0x0CE6:
+		case 0x0DF2:
+		case 0x05C4:
+		case 0x09CC:
+		case 0x0BA0:
+			return TTRUE;
+		default:
+			return TFALSE;
+	}
+}
+
+void TInputDXDeviceController::RemapSonyState( DIJOYSTATE& a_rState )
+{
+	// DualSense/DualShock 4 button index -> retail layout index (-1: unused, PS and touchpad)
+	static constexpr TINT s_aRemap[] = {
+		3,  // Square
+		2,  // Cross
+		1,  // Circle
+		0,  // Triangle
+		6,  // L1
+		7,  // R1
+		4,  // L2
+		5,  // R2
+		8,  // Create/Share -> Select
+		11, // Options -> Start
+		9,  // L3
+		10, // R3
+		-1, // PS
+		-1, // Touchpad
+	};
+
+	BYTE aButtons[ NUM_DX_BUTTONS ] = {};
+
+	for ( TINT i = 0; i < TARRAYSIZE( s_aRemap ); i++ )
+	{
+		if ( s_aRemap[ i ] >= 0 )
+			aButtons[ s_aRemap[ i ] ] = a_rState.rgbButtons[ i ];
+	}
+
+	// D-pad comes as a hat in hundredths of degrees, diagonals press both directions
+	DWORD uiPOV = a_rState.rgdwPOV[ 0 ];
+
+	if ( LOWORD( uiPOV ) != 0xFFFF )
+	{
+		if ( uiPOV >= 31500 || uiPOV <= 4500 ) aButtons[ 12 ] = 0x80;
+		if ( uiPOV >= 4500 && uiPOV <= 13500 ) aButtons[ 13 ] = 0x80;
+		if ( uiPOV >= 13500 && uiPOV <= 22500 ) aButtons[ 14 ] = 0x80;
+		if ( uiPOV >= 22500 && uiPOV <= 31500 ) aButtons[ 15 ] = 0x80;
+	}
+
+	TUtil::MemCopy( a_rState.rgbButtons, aButtons, sizeof( aButtons ) );
+	TUtil::MemClear( a_rState.rgbButtons + NUM_DX_BUTTONS, sizeof( a_rState.rgbButtons ) - NUM_DX_BUTTONS );
+}
+
+#endif // BARNYARD_COMMUNITY_PATCH
 
 TOSHI_NAMESPACE_END
