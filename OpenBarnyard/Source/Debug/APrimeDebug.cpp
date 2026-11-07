@@ -27,6 +27,7 @@
 #	include "Cameras/ACameraManager.h"
 #	include "Debug/ADebugMenuState.h"
 #	include "GameInterface/ASimState.h"
+#	include "GameInterface/SaveLoadSKU.h"
 #	include "GUI/AGUISystem.h"
 #	include "Input/AInputHandler.h"
 #	include "Player/APlayerManager.h"
@@ -354,21 +355,13 @@ static TBOOL IsSettingLine( const TCHAR* a_szLine )
 }
 
 #  ifdef PRIMEDEBUG_DEV
-// <exe directory>Save\OpenBarnyard_dev.cfg
+// Save\OpenBarnyard_dev.cfg, next to savedata.by (SaveLoadSKU)
 static const TCHAR* GetDevConfigPath()
 {
 	static TCHAR s_szPath[ MAX_PATH ];
 
 	if ( s_szPath[ 0 ] == '\0' )
-	{
-		GetModuleFileNameA( NULL, s_szPath, MAX_PATH - 32 );
-		s_szPath[ MAX_PATH - 32 ] = '\0';
-
-		if ( TCHAR* pSlash = strrchr( s_szPath, '\\' ) )
-			pSlash[ 1 ] = '\0';
-
-		strcat( s_szPath, "Save\\OpenBarnyard_dev.cfg" );
-	}
+		TStringManager::String8Format( s_szPath, sizeof( s_szPath ), "%s\\OpenBarnyard_dev.cfg", SaveLoadSKU::GetSaveDirectory() );
 
 	return s_szPath;
 }
