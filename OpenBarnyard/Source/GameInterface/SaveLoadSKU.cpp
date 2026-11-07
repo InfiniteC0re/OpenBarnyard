@@ -170,6 +170,10 @@ SaveLoadSKU::SaveLoadSKU( APlayerProgress* a_pProgress, TBOOL a_bBackground, AGa
 	m_eResult    = RESULT_NONE;
 	ms_pInstance = this;
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	TStringManager::String8Copy( m_szSaveDir, GetSaveDirectory(), sizeof( m_szSaveDir ) );
+	TCHAR* pSlash;
+#else
 	// <exe directory>Save
 	GetModuleFileNameA( NULL, m_szSaveDir, 0x103 );
 	TCHAR* pSlash = strrchr( m_szSaveDir, '\\' );
@@ -178,6 +182,7 @@ SaveLoadSKU::SaveLoadSKU( APlayerProgress* a_pProgress, TBOOL a_bBackground, AGa
 		pSlash[ 1 ] = '\0';
 
 	strcat( m_szSaveDir, "Save" );
+#endif
 
 	// <exe directory>Save\savedata.by
 	strcpy( m_szSavePath, m_szSaveDir );
@@ -332,6 +337,95 @@ void SaveLoadSKU::SetMessage( const TWCHAR* a_wszText )
 }
 
 #ifdef BARNYARD_COMMUNITY_PATCH
+
+// Creates a_szDir and its missing parents
+static TBOOL CreateDirectories( const TCHAR* a_szDir )
+{
+	TCHAR szPath[ MAX_PATH ];
+	TStringManager::String8Copy( szPath, a_szDir, sizeof( szPath ) );
+
+	for ( TCHAR* pChar = szPath + 3; *pChar != '\0'; pChar++ )
+	{
+		if ( *pChar == '\\' )
+		{
+			*pChar = '\0';
+			_mkdir( szPath );
+			*pChar = '\\';
+		}
+	}
+
+	_mkdir( szPath );
+	return GetFileAttributesA( szPath ) != INVALID_FILE_ATTRIBUTES;
+}
+
+static TBOOL IsDirectoryWritable( const TCHAR* a_szDir )
+{
+	if ( GetFileAttributesA( a_szDir ) == INVALID_FILE_ATTRIBUTES && _mkdir( a_szDir ) != 0 )
+		return TFALSE;
+
+	TCHAR szTestFile[ MAX_PATH ];
+	TStringManager::String8Format( szTestFile, sizeof( szTestFile ), "%s\\~writetest.tmp", a_szDir );
+
+	HANDLE hFile = CreateFileA( szTestFile, GENERIC_WRITE, 0, TNULL, CREATE_ALWAYS, FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE, TNULL );
+
+	if ( hFile == INVALID_HANDLE_VALUE )
+		return TFALSE;
+
+	CloseHandle( hFile );
+	return TTRUE;
+}
+
+const TCHAR* SaveLoadSKU::GetSaveDirectory()
+{
+	static TCHAR s_szDir[ MAX_PATH ];
+
+	if ( s_szDir[ 0 ] != '\0' )
+		return s_szDir;
+
+	TCHAR szExeSaveDir[ MAX_PATH ];
+	GetModuleFileNameA( NULL, szExeSaveDir, MAX_PATH - 8 );
+	szExeSaveDir[ MAX_PATH - 8 ] = '\0';
+
+	if ( TCHAR* pSlash = strrchr( szExeSaveDir, '\\' ) )
+		pSlash[ 1 ] = '\0';
+
+	strcat( szExeSaveDir, "Save" );
+	TStringManager::String8Copy( s_szDir, szExeSaveDir, sizeof( s_szDir ) );
+
+	if ( IsDirectoryWritable( szExeSaveDir ) )
+		return s_szDir;
+
+	// %LOCALAPPDATA%\VirtualStore\<exe path without the drive>
+	TCHAR      szVirtualDir[ MAX_PATH ];
+	const char* szLocalAppData = getenv( "LOCALAPPDATA" );
+
+	if ( !szLocalAppData || szExeSaveDir[ 1 ] != ':' )
+		return s_szDir;
+
+	TStringManager::String8Format( szVirtualDir, sizeof( szVirtualDir ), "%s\\VirtualStore%s", szLocalAppData, szExeSaveDir + 2 );
+
+	if ( !CreateDirectories( szVirtualDir ) || !IsDirectoryWritable( szVirtualDir ) )
+	{
+		TWARN( "SaveLoadSKU: neither %s nor %s is writable\n", szExeSaveDir, szVirtualDir );
+		return s_szDir;
+	}
+
+	// Files saved before in the install directory are copied once, as UAC virtualisation would read them
+	static constexpr const TCHAR* s_aFiles[] = { s_szSaveFileName, "OpenBarnyard.cfg", "OpenBarnyard_dev.cfg" };
+
+	for ( const TCHAR* szFile : s_aFiles )
+	{
+		TCHAR szFrom[ MAX_PATH ];
+		TCHAR szTo[ MAX_PATH ];
+		TStringManager::String8Format( szFrom, sizeof( szFrom ), "%s\\%s", szExeSaveDir, szFile );
+		TStringManager::String8Format( szTo, sizeof( szTo ), "%s\\%s", szVirtualDir, szFile );
+		CopyFileA( szFrom, szTo, TRUE );
+	}
+
+	TINFO( "SaveLoadSKU: %s isn't writable, saving to %s\n", szExeSaveDir, szVirtualDir );
+	TStringManager::String8Copy( s_szDir, szVirtualDir, sizeof( s_szDir ) );
+	return s_szDir;
+}
 
 void SaveLoadSKU::Dev_SetSavePath( const TCHAR* a_szPath )
 {

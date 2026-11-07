@@ -115,6 +115,8 @@ public:
 	const TCHAR* GetSavePath() const { return m_szSavePath; }
 
 #ifdef BARNYARD_COMMUNITY_PATCH
+	static const TCHAR* GetSaveDirectory();
+
 	// Development: makes every SaveLoadSKU use a_szPath instead of Save\savedata.by (TNULL goes back to it)
 	static void Dev_SetSavePath( const TCHAR* a_szPath );
 
