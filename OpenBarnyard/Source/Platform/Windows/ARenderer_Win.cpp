@@ -59,21 +59,23 @@ ARenderer::ARenderer()
 // $Barnyard: FUNCTION 006154c0
 TBOOL ARenderer::CreateTRender()
 {
-#if defined( TOSHI_SKU_WINDOWS ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) )
-	TString8 strRenderInterfaceName = "TRenderD3DInterface";
-#endif
+	TString8 strRenderInterfaceName = STRINGIFY( TRenderInterfaceHAL );
 
 	TKernelInterface::GetSingleton()->LoadInterface( strRenderInterfaceName );
 
 	const TClass*        pRendererClass = TClass::Find( strRenderInterfaceName );
-	TRenderD3DInterface* pRenderer      = TSTATICCAST( TRenderD3DInterface, pRendererClass->CreateObject() );
+	TRenderInterfaceHAL* pRenderer      = TSTATICCAST( TRenderInterfaceHAL, pRendererClass->CreateObject() );
 
 	pRenderer->SetAutoCreateSystemResources( TFALSE );
 	pRenderer->Create( "Barnyard" );
 
 	HMODULE hModuleHandle = GetModuleHandleA( TNULL );
 	HICON   hIcon         = LoadIconA( hModuleHandle, MAKEINTRESOURCE( IDI_ICON1 ) );
+	#ifdef TRENDERINTERFACE_GL
+	SendMessageA( pRenderer->GetWindow()->GetHWND(), 0x80, TRUE, (LPARAM)hIcon );
+#else
 	SendMessageA( pRenderer->GetMSWindow()->GetHWND(), 0x80, TRUE, (LPARAM)hIcon );
+#endif
 
 	m_DisplayModes.Initialise();
 
@@ -153,7 +155,7 @@ TBOOL ARenderer::CreateTRender()
 // $Barnyard: FUNCTION 006150e0
 TBOOL ARenderer::CreateTRenderResources()
 {
-	auto pRenderer = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
+	auto pRenderer = TSTATICCAST( TRenderInterfaceHAL, TRenderInterface::GetSingleton() );
 
 	// Vertex factories
 	pRenderer->SetResourceExplicit( pRenderer->CreateResource( &TGetClass( TNullResource ), "VFactories", TNULL ), SYSRESOURCE_VFactories );
@@ -262,7 +264,7 @@ TBOOL ARenderer::CreateTRenderResources()
 // $Barnyard: FUNCTION 0060aee0
 TRenderAdapter::Mode::Device* ARenderer::FindSuitableDevice( TRenderInterface::DISPLAYPARAMS& a_rDisplayParams, bool a_bReverseOrder )
 {
-	auto                          pRenderer = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
+	auto                          pRenderer = TSTATICCAST( TRenderInterfaceHAL, TRenderInterface::GetSingleton() );
 	TRenderAdapter::Mode::Device* pDevice   = TNULL;
 
 	if ( a_bReverseOrder )
@@ -330,7 +332,7 @@ TRenderAdapter::Mode::Device* ARenderer::FindSuitableDevice( TRenderInterface::D
 // $Barnyard: FUNCTION 0060b6f0
 void ARenderer::RenderGUI()
 {
-	auto pRender   = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
+	auto pRender   = TSTATICCAST( TRenderInterfaceHAL, TRenderInterface::GetSingleton() );
 	auto pViewport = g_pGUISystem->GetRenderObject( 0 )->GetViewport();
 
 	auto pOldContext = pRender->SetCurrentRenderContext( pViewport->GetRenderContext() );
@@ -462,10 +464,10 @@ TBOOL ARenderer::OnCreate()
 		pRenderContext->SetFogDistance( 60.0f, 160.0f );
 		pRenderContext->EnableFog( TTRUE );
 
-		g_pRenderD3D->SetDeviceLostCallback( OnRenderDeviceLost );
-		g_pRenderD3D->SetDeviceFoundCallback( OnRenderDeviceFound );
+		TRenderInterfaceHAL::Interface()->SetDeviceLostCallback( OnRenderDeviceLost );
+		TRenderInterfaceHAL::Interface()->SetDeviceFoundCallback( OnRenderDeviceFound );
 
-#if !defined( TOSHI_FINAL ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) )
+#if !defined( TOSHI_FINAL ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) || defined( TRENDERINTERFACE_GL ) )
 		ADebugOverlay::CreateSingleton();
 #endif
 
@@ -503,7 +505,7 @@ void ARenderer::OnDestroy()
 	APrimeDebug::Destroy();
 #endif
 
-#if !defined( TOSHI_FINAL ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) )
+#if !defined( TOSHI_FINAL ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) || defined( TRENDERINTERFACE_GL ) )
 	if ( ADebugOverlay::IsSingletonCreated() )
 		ADebugOverlay::DestroySingleton();
 #endif
@@ -576,7 +578,7 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 	{
 		m_pViewport->AllowDepthClear( TTRUE );
 
-		auto  pRender         = TRenderD3DInterface::Interface();
+		auto  pRender         = TRenderInterfaceHAL::Interface();
 		auto  pCameraObject   = m_pCameraObject;
 		auto  pViewport       = m_pViewport;
 		auto  pOldContext     = pRender->SetCurrentRenderContext( pViewport->GetRenderContext() );
@@ -727,7 +729,7 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 // $Barnyard: FUNCTION 0060c5e0
 TBOOL ARenderer::OnUpdate( TFLOAT a_fDeltaTime )
 {
-	TRenderD3DInterface* pRender = TRenderD3DInterface::Interface();
+	TRenderInterfaceHAL* pRender = TRenderInterfaceHAL::Interface();
 
 	if ( g_oTheApp.IsDestroyed() )
 		return TTRUE;
@@ -782,7 +784,7 @@ TBOOL ARenderer::OnUpdate( TFLOAT a_fDeltaTime )
 		if ( m_bRenderGUI )
 			RenderGUI();
 
-#if !defined( TOSHI_FINAL ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) )
+#if !defined( TOSHI_FINAL ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) || defined( TRENDERINTERFACE_GL ) )
 		if ( ADebugOverlay::IsSingletonCreated() )
 			ADebugOverlay::GetSingleton()->Render( a_fDeltaTime );
 #endif
@@ -989,11 +991,11 @@ void ARenderer::CreateMainViewport()
 
 TBOOL ARenderer::ChangeDisplay( TINT a_iWidth, TINT a_iHeight, TBOOL a_bWindowed, TBOOL a_bBorderless )
 {
-#  ifdef TRENDERINTERFACE_DX11
+#  if defined( TRENDERINTERFACE_DX11 ) || defined( TRENDERINTERFACE_GL )
 	if ( !m_DisplayModes.DoesModeExist( a_iWidth, a_iHeight, 32 ) )
 		return TFALSE;
 
-	if ( !TRenderD3DInterface::Interface()->ChangeDisplay( a_iWidth, a_iHeight, a_bWindowed, a_bBorderless ) )
+	if ( !TRenderInterfaceHAL::Interface()->ChangeDisplay( a_iWidth, a_iHeight, a_bWindowed, a_bBorderless ) )
 		return TFALSE;
 
 	// The viewports were sized once in CreateMainViewport and AGUISystem::OnCreate
@@ -1024,7 +1026,7 @@ TBOOL ARenderer::ChangeDisplay( TINT a_iWidth, TINT a_iHeight, TBOOL a_bWindowed
 	return TTRUE;
 #  else
 	return TFALSE;
-#  endif // TRENDERINTERFACE_DX11
+#  endif // TRENDERINTERFACE_DX11 || TRENDERINTERFACE_GL
 }
 
 #endif // BARNYARD_COMMUNITY_PATCH

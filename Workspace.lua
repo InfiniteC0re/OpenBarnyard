@@ -96,6 +96,12 @@ function OpenBarnyardWorkspaceSettings()
 			"TRENDERINTERFACE_DX11"
 		}
 
+	filter "options:renderer=GL"
+		defines
+		{
+			"TRENDERINTERFACE_GL"
+		}
+
 	filter "configurations:Debug"
 		runtime "Debug"
 		defines "TOSHI_DEBUG"

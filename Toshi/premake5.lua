@@ -138,6 +138,35 @@ project "Toshi"
 				"Vendor/DirectXTex/*.inl"
 			}
 
+		filter { "system:windows", "options:renderer=GL" }
+			links
+			{
+				"opengl32.lib",
+				"glew32s.lib",
+				"legacy_stdio_definitions.lib",
+				"winmm.lib",
+				"dinput8.lib",
+				"dxguid.lib"
+			}
+
+			includedirs
+			{
+				"%{IncludeDir.glew}"
+			}
+
+			libdirs
+			{
+				"%{LibDir.glew}"
+			}
+
+			files
+			{
+				"Source/Platform/GL/**.cpp",
+				"Source/Platform/GL/**.c",
+				"Source/Platform/GL/**.h"
+			}
+
+		filter "system:windows"
 		defines
 		{
 			"TOSHI_SKU_WINDOWS"

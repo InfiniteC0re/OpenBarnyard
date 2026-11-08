@@ -6,6 +6,20 @@
 // Platform/<Backend>/ headers themselves, so a new backend is only added here.
 //-----------------------------------------------------------------------------
 
+#if defined( TRENDERINTERFACE_GL )
+#  define TRenderInterfaceHAL TRenderGLInterface
+#  define TRenderContextHAL   TRenderContextGL
+#  define TRenderAdapterHAL   TGLAdapter
+#  define TWindowHAL          TGLWindow
+#  define TDebugFontHAL       TGLFont
+#else
+#  define TRenderInterfaceHAL TRenderD3DInterface
+#  define TRenderContextHAL   TRenderContextD3D
+#  define TRenderAdapterHAL   TD3DAdapter
+#  define TWindowHAL          TMSWindow
+#  define TDebugFontHAL       CD3DFont
+#endif
+
 #if defined( TRENDERINTERFACE_DX8 )
 #  include "Platform/DX8/TRenderInterface_DX8.h"
 #  include "Platform/DX8/TRenderAdapter_DX8.h"
@@ -44,4 +58,24 @@
 #  include "Platform/DX11/TIndexBlockResource_DX11.h"
 #  include "Platform/DX11/TIndexPoolResource_DX11.h"
 #  include "Platform/DX11/TIndexFactoryResource_DX11.h"
+#elif defined( TRENDERINTERFACE_GL )
+#  include "Platform/GL/TRenderInterface_GL.h"
+#  include "Platform/GL/TRenderAdapter_GL.h"
+#  include "Platform/GL/TRenderContext_GL.h"
+#  include "Platform/GL/TRenderCapture_GL.h"
+#  include "Platform/GL/TDebugText_GL.h"
+#  include "Platform/GL/TViewport_GL.h"
+#  ifdef TOSHI_SKU_WINDOWS
+#	include "Platform/GL/TMouse_GL.h"
+#  endif
+#  include "Platform/GL/TModel_GL.h"
+#  include "Platform/GL/T2Texture_GL.h"
+#  include "Platform/GL/TTextureResourceHAL_GL.h"
+#  include "Platform/GL/TTextureFactoryHAL_GL.h"
+#  include "Platform/GL/TVertexBlockResource_GL.h"
+#  include "Platform/GL/TVertexPoolResource_GL.h"
+#  include "Platform/GL/TVertexFactoryResource_GL.h"
+#  include "Platform/GL/TIndexBlockResource_GL.h"
+#  include "Platform/GL/TIndexPoolResource_GL.h"
+#  include "Platform/GL/TIndexFactoryResource_GL.h"
 #endif

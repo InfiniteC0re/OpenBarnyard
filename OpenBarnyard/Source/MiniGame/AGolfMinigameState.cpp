@@ -1000,7 +1000,7 @@ static void FillPowerQuad( ASysMesh* a_pMesh, const TMatrix44& a_rcTransform, TF
 // $Barnyard: FUNCTION 00472080
 void AGolfMinigameState::OnRenderOverlay( TFLOAT a_fDeltaTime )
 {
-	TRenderD3DInterface* pRender = TRenderD3DInterface::Interface();
+	TRenderInterfaceHAL* pRender = TRenderInterfaceHAL::Interface();
 
 	TRenderContext* pOldContext = pRender->GetCurrentContext();
 

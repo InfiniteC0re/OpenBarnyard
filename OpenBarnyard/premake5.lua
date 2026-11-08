@@ -167,3 +167,21 @@ project "OpenBarnyard"
 				"Source/Platform/DX11/**.h",
 				"../Toshi/Vendor/imgui/backends/imgui_impl_dx11.*"
 			}
+
+		filter "options:renderer=GL"
+			includedirs
+			{
+				"%{IncludeDir.glew}"
+			}
+
+			libdirs
+			{
+				"%{LibDir.glew}"
+			}
+
+			files
+			{
+				"Source/Platform/GL/**.cpp",
+				"Source/Platform/GL/**.h"
+			}
+

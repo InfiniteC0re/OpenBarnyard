@@ -267,7 +267,7 @@ void ABarnYardPoolMiniGameState::OnRenderOverlay( TFLOAT a_fDeltaTime )
 	if ( !m_aCue[ 0 ] || !m_aCue[ 0 ]->GetUnit() || !m_pCue || m_pCue->IsVisible() != TTRUE )
 		return;
 
-	TRenderD3DInterface* pRender = TRenderD3DInterface::Interface();
+	TRenderInterfaceHAL* pRender = TRenderInterfaceHAL::Interface();
 	pRender->FlushShaders();
 
 	TRenderContext* pOldContext = pRender->GetCurrentContext();

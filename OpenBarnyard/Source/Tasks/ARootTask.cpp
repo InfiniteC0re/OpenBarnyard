@@ -272,7 +272,7 @@ TBOOL ARootTask::OnUpdate( TFLOAT a_fDeltaTime )
 
 #  if defined( TOSHI_SKU_WINDOWS )
 	// The one-shot dev switches keep counting while the window isn't active (retail pauses the whole game then)
-	TMSWindow::Dev_SetKeepRunning( AGameLoader::Dev_IsRequestPending() );
+	TWindowHAL::Dev_SetKeepRunning( AGameLoader::Dev_IsRequestPending() );
 #  endif // TOSHI_SKU_WINDOWS
 
 #endif

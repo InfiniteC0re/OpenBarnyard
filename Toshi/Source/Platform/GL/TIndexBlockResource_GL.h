@@ -1,0 +1,75 @@
+#pragma once
+#include "Toshi/TFreeList.h"
+#include "Render/TResource.h"
+#include "Render/TIndexPoolResourceInterface.h"
+#include "Render/TIndexFactoryResourceInterface.h"
+
+#include "Platform/GL/TGLHeaders.h"
+
+TOSHI_NAMESPACE_START
+
+class TIndexPoolResource;
+
+class MODAPI TIndexBlockResource : public TResource
+{
+public:
+	TDECLARE_CLASS( TIndexBlockResource, TResource );
+	TDECLARE_FREELIST_ALLOCATOR( TIndexBlockResource );
+
+	static TIndexBlockResource* CreateNew()
+	{
+		return new TIndexBlockResource();
+	}
+
+public:
+	struct MODAPI HALBuffer
+	{
+		TUINT16                uiIndexOffset = 0;
+		TUINT16                uiUnknown;
+		GLuint  pIndexBuffer = 0;
+	};
+
+private:
+	TIndexBlockResource();
+	//~TIndexBlockResource();
+
+public:
+	virtual TBOOL Validate() override;
+	virtual void  Invalidate() override;
+	virtual TBOOL TryInvalidate() override;
+	virtual TBOOL TryValidate() override;
+
+	TBOOL AttachPool( TIndexPoolResource* a_pPool );
+	TBOOL DettachPool( TIndexPoolResource* a_pPool );
+	TBOOL CanFit( TIndexPoolResource* a_pPoolResource ) const;
+
+	void ChildIndexUsedChanged( TINT a_iChange );
+
+	TBOOL Lock( TIndexPoolResourceInterface::LockBuffer* a_pLockBuffer, TUINT16 a_uiNumIndices );
+	void  Unlock( TUINT a_uiNumIndices = TUINT( -1 ) );
+
+	TBOOL Create( TIndexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxIndices, TUINT32 a_uiFlags );
+
+	TBOOL CreateHAL();
+	void  DestroyHAL();
+
+	TBOOL GetHALBuffer( HALBuffer* a_pHALBuffer ) const;
+
+private:
+	inline static TINT s_iHALMemoryUsage;
+
+public:
+	TIndexFactoryResourceInterface* m_pFactory;
+	TUINT                           m_uiFlags;
+	TUINT16                         m_uiMaxIndices;
+	TUINT                           m_uiOffset;
+	TUINT                           m_uiIndicesUsed;
+	TUINT                           m_uiLockCount;
+	TUINT                           m_Unk1;
+	HALBuffer                       m_HALBuffer;
+	TIndexType*                     m_pStaging;
+	TUINT                           m_uiLockOffset;
+	TBOOL                           m_bLockDiscard;
+};
+
+TOSHI_NAMESPACE_END

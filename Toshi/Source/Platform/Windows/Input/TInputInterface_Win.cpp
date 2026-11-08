@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TInputInterface_Win.h"
+#include "Render/TBackend.h"
 #include "TInputDeviceController_Win.h"
 #include "TInputDeviceController_XInput.h"
 #include "TInputDeviceMouse_Win.h"
@@ -26,7 +27,7 @@ TBOOL TInputDXInterface::Initialise()
 	{
 		if ( m_hMainWindow == NULL )
 		{
-			m_hMainWindow = FindWindowA( "TRenderD3DInterface", NULL );
+			m_hMainWindow = FindWindowA( STRINGIFY( TRenderInterfaceHAL ), NULL );
 		}
 
 #ifdef BARNYARD_COMMUNITY_PATCH

@@ -192,7 +192,7 @@ void ClassLink_Win::ReferenceGameClasses()
 // $Barnyard: FUNCTION 006064b0
 void ClassLink_Win::ReferenceEngineClasses()
 {
-	REFERENCE_CLASS( TRenderD3DInterface );
+	REFERENCE_CLASS( TRenderInterfaceHAL );
 	REFERENCE_CLASS( TTextureFactoryHAL );
 	REFERENCE_CLASS( TTextureResourceHAL );
 	REFERENCE_CLASS( TIndexFactoryResource );

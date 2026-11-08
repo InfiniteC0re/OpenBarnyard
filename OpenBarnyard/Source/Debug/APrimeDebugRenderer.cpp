@@ -16,6 +16,8 @@
 #	include <Platform/DX8/CD3DFont.h>
 #  elif defined( TRENDERINTERFACE_DX11 )
 #	include <Platform/DX11/CD3DFont.h>
+#  elif defined( TRENDERINTERFACE_GL )
+#	include <Platform/GL/TGLFont.h>
 #  endif
 
 #  include <Render/TBackend.h>
@@ -101,7 +103,7 @@ void APrimeDebugRenderer::End2D()
 			continue;
 
 		TFLOAT    fCharWidth;
-		CD3DFont* pFont = GetFont( iPixels, fCharWidth );
+		TDebugFontHAL* pFont = GetFont( iPixels, fCharWidth );
 
 		TCHAR  szChar[ 2 ] = { rcGlyph.cChar, '\0' };
 		TFLOAT fX          = TFLOAT( TINT( rcGlyph.fX * fScreenWidth - fCharWidth * 0.5f ) );
@@ -136,7 +138,7 @@ void APrimeDebugRenderer::DrawRect( TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fWidth, T
 
 #  ifdef APRIMEDEBUG_D3DFONT
 
-CD3DFont* APrimeDebugRenderer::GetFont( TINT a_iPixels, TFLOAT& a_rfCharWidth )
+TDebugFontHAL* APrimeDebugRenderer::GetFont( TINT a_iPixels, TFLOAT& a_rfCharWidth )
 {
 	for ( TINT i = 0; i < m_iNumFonts; i++ )
 	{
@@ -170,20 +172,26 @@ CD3DFont* APrimeDebugRenderer::GetFont( TINT a_iPixels, TFLOAT& a_rfCharWidth )
 
 	TINT iPoints = TMath::Max( 4, ( a_iPixels * 72 + iDPI / 2 ) / iDPI );
 
-	CD3DFont* pFont = new CD3DFont( "Lucida Console", DWORD( iPoints ), 0 );
+	TDebugFontHAL* pFont = new TDebugFontHAL( "Lucida Console", DWORD( iPoints ), 0 );
 #	ifdef TRENDERINTERFACE_DX8
-	pFont->InitDeviceObjects( TRenderD3DInterface::Interface()->GetDirect3DDevice() );
+	pFont->InitDeviceObjects( TRenderInterfaceHAL::Interface()->GetDirect3DDevice() );
 #	else
-	pFont->InitDeviceObjects( TRenderD3DInterface::Interface() );
+	pFont->InitDeviceObjects( TRenderInterfaceHAL::Interface() );
 #	endif
 	pFont->RestoreDeviceObjects();
 
+#	ifdef TRENDERINTERFACE_GL
+	TINT iCharWidth = 0, iCharHeight = 0;
+	pFont->GetTextExtent( "W", &iCharWidth, &iCharHeight );
+#	else
 	SIZE oSize = {};
 	pFont->GetTextExtent( "W", &oSize );
+	const TINT iCharWidth = oSize.cx;
+#	endif
 
 	Font& rFont      = m_aFonts[ m_iNumFonts++ ];
 	rFont.iPixels    = a_iPixels;
-	rFont.fCharWidth = TFLOAT( oSize.cx );
+	rFont.fCharWidth = TFLOAT( iCharWidth );
 	rFont.pFont      = pFont;
 
 	a_rfCharWidth = rFont.fCharWidth;
@@ -266,7 +274,7 @@ void APrimeDebugRenderer::DrawTriangles3D( const PDebugVertex* a_pVertices, TINT
 
 void APrimeDebugRenderer::Draw3D( const PDebugVertex* a_pVertices, TINT a_iNumVertices, TBOOL a_bDepth, TBOOL a_bLines, TBOOL a_bOverSolid )
 {
-#  if defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 )
+#  if defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) || defined( TRENDERINTERFACE_GL )
 	if ( a_iNumVertices <= 0 || !ALineShader::IsSingletonCreated() )
 		return;
 
@@ -312,13 +320,28 @@ void APrimeDebugRenderer::Draw3D( const PDebugVertex* a_pVertices, TINT a_iNumVe
 	}
 
 	// As AWorldDebugDraw: in the space of the world view matrix of the main viewport's context
-	TRenderD3DInterface* pRender    = TRenderD3DInterface::Interface();
+	TRenderInterfaceHAL* pRender    = TRenderInterfaceHAL::Interface();
 	TRenderContext*      pContext   = pRender->GetCurrentContext();
 	TMatrix44            oOldMatrix = pContext->GetModelViewMatrix();
 
 	pContext->SetModelViewMatrix( pContext->GetWorldViewMatrix() );
 
-#	ifdef TRENDERINTERFACE_DX11
+#	ifdef TRENDERINTERFACE_GL
+	TRenderInterfaceHAL::CULLMODE eCull = pRender->GetCullMode();
+	pRender->SetZEnable( a_bDepth );
+	pRender->SetZWriteEnable( a_bDepth && !a_bLines );
+	pRender->SetAlphaBlendEnable( TTRUE );
+	pRender->SetSrcBlend( GL_SRC_ALPHA );
+	pRender->SetDestBlend( GL_ONE_MINUS_SRC_ALPHA );
+	pRender->SetCullMode( TRenderInterfaceHAL::CULL_NONE );
+
+	pLineShader->FlushLines();
+
+	pRender->SetZEnable( TTRUE );
+	pRender->SetZWriteEnable( TTRUE );
+	pRender->SetAlphaBlendEnable( TFALSE );
+	pRender->SetCullMode( eCull );
+#	elif defined( TRENDERINTERFACE_DX11 )
 	// The states are cached by the renderer: the main pass's ones are set back
 	D3D11_CULL_MODE eCull = pRender->GetCullMode();
 	// The tested solids write the depth, so the wires drawn after them (a little nearer) hide behind them

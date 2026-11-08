@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ADebugOverlay.h"
 
-#if !defined( TOSHI_FINAL ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) )
+#if !defined( TOSHI_FINAL ) && ( defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) || defined( TRENDERINTERFACE_GL ) )
 #  include "Render/ARenderer.h"
 #  include "Debug/APrimeDebug.h"
 #  include "Cameras/ACameraManager.h"
@@ -39,7 +39,7 @@ ADebugOverlay::~ADebugOverlay()
 {
 	if ( m_pDebugText )
 	{
-		TRenderD3DInterface::Interface()->DestroyDebugText();
+		TRenderInterfaceHAL::Interface()->DestroyDebugText();
 		m_pDebugText = TNULL;
 	}
 }
@@ -54,7 +54,7 @@ void ADebugOverlay::SetEnabled( TBOOL a_bEnabled )
 TDebugText* ADebugOverlay::GetDebugText()
 {
 	if ( !m_pDebugText )
-		m_pDebugText = TRenderD3DInterface::Interface()->CreateDebugText();
+		m_pDebugText = TRenderInterfaceHAL::Interface()->CreateDebugText();
 
 	return m_pDebugText;
 }
@@ -91,7 +91,7 @@ void ADebugOverlay::PrintWorldText( ACamera* a_pCamera, const TVector4& a_rcPosi
 	if ( !pDebugText || !ARenderer::GetSingleton()->ProjectToScreen( a_pCamera, a_rcPosition, vScreenPos ) )
 		return;
 
-	TRenderInterface::DISPLAYPARAMS* pDisplayParams = TRenderD3DInterface::Interface()->GetCurrentDisplayParams();
+	TRenderInterface::DISPLAYPARAMS* pDisplayParams = TRenderInterfaceHAL::Interface()->GetCurrentDisplayParams();
 
 	if ( vScreenPos.x < 0.0f || vScreenPos.x >= TFLOAT( pDisplayParams->uiWidth ) || vScreenPos.y < 0.0f || vScreenPos.y >= TFLOAT( pDisplayParams->uiHeight ) )
 		return;
@@ -148,7 +148,7 @@ void ADebugOverlay::Render( TFLOAT a_fDeltaTime )
 	// Frame time and FPS at the bottom
 	if ( a_fDeltaTime > 0.0f )
 	{
-		TRenderInterface::DISPLAYPARAMS* pDisplayParams = TRenderD3DInterface::Interface()->GetCurrentDisplayParams();
+		TRenderInterface::DISPLAYPARAMS* pDisplayParams = TRenderInterfaceHAL::Interface()->GetCurrentDisplayParams();
 
 		TFLOAT fMilliseconds = a_fDeltaTime * 1000.0f;
 		TFLOAT fFPS          = 1.0f / a_fDeltaTime;
@@ -171,7 +171,7 @@ void ADebugOverlay::RenderUnitLabels( ACamera* a_pCamera )
 	if ( !AUnitManager::IsSingletonCreated() )
 		return;
 
-	TRenderInterface::DISPLAYPARAMS* pDisplayParams = TRenderD3DInterface::Interface()->GetCurrentDisplayParams();
+	TRenderInterface::DISPLAYPARAMS* pDisplayParams = TRenderInterfaceHAL::Interface()->GetCurrentDisplayParams();
 	ARenderer*                       pRenderer      = ARenderer::GetSingleton();
 	const TVector4&                  rcCameraPos    = a_pCamera->GetMatrix().GetTranslation();
 
@@ -237,4 +237,4 @@ void ADebugOverlay::RenderUnitLabels( ACamera* a_pCamera )
 	}
 }
 
-#endif // !TOSHI_FINAL && ( TRENDERINTERFACE_DX8 || TRENDERINTERFACE_DX11 )
+#endif // !TOSHI_FINAL && ( TRENDERINTERFACE_DX8 || TRENDERINTERFACE_DX11 || TRENDERINTERFACE_GL )

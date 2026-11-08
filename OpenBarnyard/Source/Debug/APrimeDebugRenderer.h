@@ -5,14 +5,16 @@
 #  include <Draw/PDebugRenderer.h>
 #  include <Util/PArray.h>
 
-#  if defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 )
+#  include <Render/TBackend.h>
+
+#  if defined( TRENDERINTERFACE_DX8 ) || defined( TRENDERINTERFACE_DX11 ) || defined( TRENDERINTERFACE_GL )
 #	define APRIMEDEBUG_D3DFONT // the debug text font of TOSHI's D3D renderers (CD3DFont)
 #  endif
 
 namespace Toshi
 {
 class T2GUIFont;
-class CD3DFont;
+class TDebugFontHAL;
 } // namespace Toshi
 
 class APrimeDebugRenderer : public PDebugRenderer
@@ -47,7 +49,7 @@ private:
 
 #  ifdef APRIMEDEBUG_D3DFONT
 	// The debug text font for characters a_iPixels high (created once for each height)
-	Toshi::CD3DFont* GetFont( TINT a_iPixels, TFLOAT& a_rfCharWidth );
+	Toshi::TDebugFontHAL* GetFont( TINT a_iPixels, TFLOAT& a_rfCharWidth );
 #  endif
 
 	// Lines (a_bLines) or triangles of the world with the line shader
@@ -61,7 +63,7 @@ private:
 	{
 		TINT             iPixels;
 		TFLOAT           fCharWidth;
-		Toshi::CD3DFont* pFont;
+		Toshi::TDebugFontHAL* pFont;
 	};
 
 	Font                m_aFonts[ MAX_FONTS ];

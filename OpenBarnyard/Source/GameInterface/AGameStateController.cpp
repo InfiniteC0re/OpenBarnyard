@@ -709,8 +709,10 @@ TBOOL AGameStateController::ProcessInput( const TInputInterface::InputEvent* a_p
 {
 #if defined( BARNYARD_COMMUNITY_PATCH )
 	// The mod settings overlay takes the input before the game sees it
+#ifndef TRENDERINTERFACE_GL
 	if ( AImGui::IsSingletonCreated() && AImGui::GetSingleton()->ProcessInput( a_pEvent ) )
 		return TTRUE;
+#endif
 #endif
 
 	if ( m_eFlags.bIgnoreInput ) return TTRUE;

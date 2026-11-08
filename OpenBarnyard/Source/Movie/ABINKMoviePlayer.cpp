@@ -146,7 +146,7 @@ TBOOL ABINKMoviePlayer::OnUpdate( TFLOAT a_fDeltaTime )
 #elif defined( TRENDERINTERFACE_DX11 )
 			if ( m_bVideoFitsBackBuffer )
 			{
-				ID3D11DeviceContext*     pDeviceContext = TRenderD3DInterface::Interface()->GetDeviceContext();
+				ID3D11DeviceContext*     pDeviceContext = TRenderInterfaceHAL::Interface()->GetDeviceContext();
 				D3D11_MAPPED_SUBRESOURCE oMapped;
 
 				if ( SUCCEEDED( pDeviceContext->Map( m_pSurface, 0, D3D11_MAP_WRITE, 0, &oMapped ) ) )
@@ -166,6 +166,15 @@ TBOOL ABINKMoviePlayer::OnUpdate( TFLOAT a_fDeltaTime )
 					m_eFormat &= ~BINKCOPYALL;
 					m_pRects[ 0 ].pTexture->Unlock();
 				}
+			}
+#elif defined( TRENDERINTERFACE_GL )
+			TTexture::LOCKSTATE oLockState;
+
+			if ( m_pRects[ 0 ].pTexture->Lock( oLockState ) )
+			{
+				BinkCopyToBuffer( m_Bink, oLockState.pBits, oLockState.Pitch, m_Bink->Height, 0, 0, m_eFormat );
+				m_eFormat &= ~BINKCOPYALL;
+				m_pRects[ 0 ].pTexture->Unlock();
 			}
 #endif
 		}
@@ -218,7 +227,7 @@ TBOOL ABINKMoviePlayer::PlayMovie( const TCHAR* a_szFileName, PLAYFLAGS a_eFlags
 TBOOL ABINKMoviePlayer::CreateSurfaces()
 {
 #if defined( TRENDERINTERFACE_DX8 )
-	auto pRender = TRenderD3DInterface::Interface();
+	auto pRender = TRenderInterfaceHAL::Interface();
 	auto pDevice = pRender->GetDirect3DDevice();
 
 	IDirect3DSurface8* pSurface;
@@ -273,7 +282,7 @@ TBOOL ABINKMoviePlayer::CreateSurfaces()
 
 	return hRes == S_OK;
 #elif defined( TRENDERINTERFACE_DX11 )
-	auto pRender = TRenderD3DInterface::Interface();
+	auto pRender = TRenderInterfaceHAL::Interface();
 
 	D3D11_TEXTURE2D_DESC desc;
 	pRender->GetRenderTargetTexture()->GetDesc( &desc );
@@ -319,6 +328,11 @@ TBOOL ABINKMoviePlayer::CreateSurfaces()
 	}
 
 	return hRes == S_OK;
+#elif defined( TRENDERINTERFACE_GL )
+	auto pDisplayParams = TRenderInterfaceHAL::Interface()->GetCurrentDisplayParams();
+
+	m_bVideoFitsBackBuffer = TFALSE;
+	return CreateAGUISurfaces( pDisplayParams->uiWidth, pDisplayParams->uiHeight );
 #endif
 }
 
@@ -361,7 +375,7 @@ void ABINKMoviePlayer::Render( TFLOAT a_fDeltaTime )
 	if ( IsMoviePlaying() && m_bVisible )
 	{
 #if defined( TRENDERINTERFACE_DX8 )
-		auto pDevice = TRenderD3DInterface::Interface()->GetDirect3DDevice();
+		auto pDevice = TRenderInterfaceHAL::Interface()->GetDirect3DDevice();
 #endif
 
 		if ( m_bVideoFitsBackBuffer )
@@ -376,7 +390,7 @@ void ABINKMoviePlayer::Render( TFLOAT a_fDeltaTime )
 				pSurface->Release();
 			}
 #elif defined( TRENDERINTERFACE_DX11 )
-			auto pRender = TRenderD3DInterface::Interface();
+			auto pRender = TRenderInterfaceHAL::Interface();
 			pRender->GetDeviceContext()->CopyResource( pRender->GetRenderTargetTexture(), m_pSurface );
 #endif
 		}
@@ -407,7 +421,7 @@ void ABINKMoviePlayer::SetMovieFile( const TCHAR* a_szFile )
 // $Barnyard: FUNCTION 00605d50
 TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D3DFORMAT a_eFormat )
 {
-	auto pDevice = TRenderD3DInterface::Interface()->GetDirect3DDevice();
+	auto pDevice = TRenderInterfaceHAL::Interface()->GetDirect3DDevice();
 
 	D3DCAPS8 caps;
 	auto     hRes = pDevice->GetDeviceCaps( &caps );
@@ -422,7 +436,7 @@ TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D
 		m_iNumRects = ( ( uiHeight - 1 ) + uiMaxTextureHeight ) / uiMaxTextureHeight * ( ( uiWidth - 1 ) + uiMaxTextureWidth ) / uiMaxTextureWidth;
 		m_pRects    = new Rect[ m_iNumRects ];
 
-		auto pDisplayParams = TRenderD3DInterface::Interface()->GetCurrentDisplayParams();
+		auto pDisplayParams = TRenderInterfaceHAL::Interface()->GetCurrentDisplayParams();
 
 		TFLOAT fWidth, fHeight;
 		AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
@@ -500,19 +514,28 @@ TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D
 
 	return hRes == S_OK;
 }
-#elif defined( TRENDERINTERFACE_DX11 )
+#elif defined( TRENDERINTERFACE_DX11 ) || defined( TRENDERINTERFACE_GL )
+#  ifdef TRENDERINTERFACE_GL
+TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight )
+#  else
 TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, DXGI_FORMAT a_eFormat )
+#  endif
 {
 	{
 		TUINT uiWidth            = m_Bink->Width;
 		TUINT uiHeight           = m_Bink->Height;
+#  ifdef TRENDERINTERFACE_GL
+		TUINT uiMaxTextureWidth  = 2048;
+		TUINT uiMaxTextureHeight = 2048;
+#  else
 		TUINT uiMaxTextureWidth  = D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION;
 		TUINT uiMaxTextureHeight = D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION;
+#  endif
 
 		m_iNumRects = ( ( uiHeight - 1 ) + uiMaxTextureHeight ) / uiMaxTextureHeight * ( ( uiWidth - 1 ) + uiMaxTextureWidth ) / uiMaxTextureWidth;
 		m_pRects    = new Rect[ m_iNumRects ];
 
-		auto pDisplayParams = TRenderD3DInterface::Interface()->GetCurrentDisplayParams();
+		auto pDisplayParams = TRenderInterfaceHAL::Interface()->GetCurrentDisplayParams();
 
 		TFLOAT fWidth, fHeight;
 		AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
@@ -522,6 +545,10 @@ TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D
 
 		TTEXTURERESOURCEFORMAT eFormat;
 
+#  ifdef TRENDERINTERFACE_GL
+		eFormat   = TTEXTURERESOURCEFORMAT::R8G8B8;
+		m_eFormat = BINKSURFACE32;
+#  else
 		// NOTE: the textures are B8G8R8A8/B8G8R8X8 like on D3D8, which the back buffer (R8G8B8A8) isn't
 		if ( a_eFormat == DXGI_FORMAT_B8G8R8A8_UNORM )
 		{
@@ -541,6 +568,7 @@ TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D
 		{
 			return TFALSE;
 		}
+#  endif
 
 		TFLOAT fVideoWidth  = TMath::Abs( TFLOAT( m_Bink->Width ) );
 		TFLOAT fVideoHeight = TMath::Abs( TFLOAT( m_Bink->Height ) );

@@ -207,7 +207,7 @@ void AGUI2ModelRendererScreen::GetObjectWorldTransform( AAnimatableObject* a_pOb
 // $Barnyard: FUNCTION 00645980
 void AGUI2ModelRendererScreen::RenderObjects()
 {
-	TRenderD3DInterface* pRender         = TRenderD3DInterface::Interface();
+	TRenderInterfaceHAL* pRender         = TRenderInterfaceHAL::Interface();
 	auto&                rTransformStack = pRender->GetTransforms();
 	TRenderContext*      pContext        = m_pViewport->GetRenderContext();
 	TCameraObject*       pOldCamera      = pContext->GetCameraObject();
@@ -264,7 +264,7 @@ void AGUI2ModelRendererScreen::Render()
 	if ( !m_bEnabled || !GetNumObjects() )
 		return;
 
-	TRenderD3DInterface* pRender      = TRenderD3DInterface::Interface();
+	TRenderInterfaceHAL* pRender      = TRenderInterfaceHAL::Interface();
 	TViewport*           pGUIViewport = AGUISystem::GetSingleton()->GetRenderObject( 0 )->GetViewport();
 	TRenderContext*      pOldContext  = pRender->GetCurrentContext();
 

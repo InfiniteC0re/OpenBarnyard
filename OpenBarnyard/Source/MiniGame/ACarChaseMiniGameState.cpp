@@ -417,7 +417,7 @@ void ACarChaseMiniGameState::OnRender( TFLOAT a_fDeltaTime )
 void ACarChaseMiniGameState::OnRenderOverlay( TFLOAT a_fDeltaTime )
 {
 	if ( m_bIsActivated )
-		TRenderD3DInterface::FlushShaders();
+		TRenderInterfaceHAL::FlushShaders();
 }
 
 // $Barnyard: FUNCTION 004ee340

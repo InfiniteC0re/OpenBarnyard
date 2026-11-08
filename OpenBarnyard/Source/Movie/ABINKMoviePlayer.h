@@ -58,6 +58,8 @@ private:
 	TBOOL CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D3DFORMAT a_eFormat );
 #elif defined( TRENDERINTERFACE_DX11 )
 	TBOOL CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, DXGI_FORMAT a_eFormat );
+#elif defined( TRENDERINTERFACE_GL )
+	TBOOL CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight );
 #endif
 
 	void DestroySurfaces();
@@ -72,6 +74,8 @@ private:
 	IDirect3DSurface8* m_pSurface;
 #elif defined( TRENDERINTERFACE_DX11 )
 	ID3D11Texture2D* m_pSurface;
+#elif defined( TRENDERINTERFACE_GL )
+	void* m_pSurface; // the frames always go through a texture
 #endif
 	TUINT              m_eFormat;
 	TBOOL              m_bVideoFitsBackBuffer;

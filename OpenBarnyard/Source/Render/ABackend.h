@@ -8,6 +8,12 @@
 // added here.
 //-----------------------------------------------------------------------------
 
+#if defined( TRENDERINTERFACE_GL )
+#  define AGUI2RendererHAL AGUI2RendererGL
+#else
+#  define AGUI2RendererHAL AGUI2RendererDX8
+#endif
+
 #if defined( TRENDERINTERFACE_DX8 )
 #  include "Platform/DX8/AGUI2Renderer_DX8.h"
 #  include "Platform/DX8/AFXShader/AFXShader_DX8.h"
@@ -50,4 +56,25 @@
 #  include "Platform/DX11/AWorldShader/AWorldShader_DX11.h"
 #  include "Platform/DX11/AWorldShader/AWorldMaterial_DX11.h"
 #  include "Platform/DX11/AWorldShader/AWorldMesh_DX11.h"
+#elif defined( TRENDERINTERFACE_GL )
+#  include "Platform/GL/AGUI2Renderer_GL.h"
+#  include "Platform/GL/AFXShader/AFXShader_GL.h"
+#  include "Platform/GL/AFXShader/AFXMaterial_GL.h"
+#  include "Platform/GL/AFXShader/AFXMesh_GL.h"
+#  include "Platform/GL/AGrassShader/AGrassShaderHAL_GL.h"
+#  include "Platform/GL/AGrassShader/AGrassMaterialHAL_GL.h"
+#  include "Platform/GL/AGrassShader/AGrassMeshHAL_GL.h"
+#  include "Platform/GL/ALineShader/ALineShaderHAL_GL.h"
+#  include "Platform/GL/ASkinShader/ASkinShader_GL.h"
+#  include "Platform/GL/ASkinShader/ASkinMaterial_GL.h"
+#  include "Platform/GL/ASkinShader/ASkinMesh_GL.h"
+#  include "Platform/GL/AStaticInstanceShader/AStaticInstanceShaderHAL_GL.h"
+#  include "Platform/GL/AStaticInstanceShader/AStaticInstanceMaterialHAL_GL.h"
+#  include "Platform/GL/AStaticInstanceShader/AStaticInstanceMeshHAL_GL.h"
+#  include "Platform/GL/ASysShader/ASysShader_GL.h"
+#  include "Platform/GL/ASysShader/ASysMaterial_GL.h"
+#  include "Platform/GL/ASysShader/ASysMesh_GL.h"
+#  include "Platform/GL/AWorldShader/AWorldShader_GL.h"
+#  include "Platform/GL/AWorldShader/AWorldMaterial_GL.h"
+#  include "Platform/GL/AWorldShader/AWorldMesh_GL.h"
 #endif

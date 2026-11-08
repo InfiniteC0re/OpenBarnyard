@@ -26,7 +26,7 @@ group "Third-Party"
 	include "Toshi/Vendor/Opcode"
 	include "Toshi/Vendor/minhook"
 
-if _OPTIONS["renderer"] ~= 'DX11' then
+if _OPTIONS["renderer"] ~= 'DX11' and _OPTIONS["renderer"] ~= 'GL' then
 	group "SDK"
 		include "SDK/BYardSDK"
 		include "SDK/BYModCore"

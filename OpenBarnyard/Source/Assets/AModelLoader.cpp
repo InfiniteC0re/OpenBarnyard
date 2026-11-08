@@ -340,7 +340,7 @@ TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMa
 		// Retail falls back silently
 		pTexture = TDYNAMICCAST(
 		    TTextureResourceHAL,
-		    TRenderD3DInterface::Interface()->GetInvalidTexture()
+		    TRenderInterfaceHAL::Interface()->GetInvalidTexture()
 		);
 	}
 
@@ -357,6 +357,11 @@ TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMa
 	const TBOOL bIsAlpha       = eTextureFormat == DXGI_FORMAT_B8G8R8A8_UNORM ||
 	    eTextureFormat == DXGI_FORMAT_B4G4R4A4_UNORM ||
 	    eTextureFormat == DXGI_FORMAT_BC3_UNORM;
+#elif defined( TRENDERINTERFACE_GL )
+	auto        eTextureFormat = pTexture->GetImageInfo().Format;
+	const TBOOL bIsAlpha       = eTextureFormat == GL_RGBA8 ||
+	    eTextureFormat == GL_RGBA4 ||
+	    eTextureFormat == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 #endif
 	if ( a_pShader->IsA( &TGetClass( ASkinShader ) ) )
 	{
@@ -753,7 +758,7 @@ TBOOL AModelLoader::LoadTRBModelLODs( TModel* a_pModel )
 			case TTMDBase::SHADERTYPE_GRASS:
 			{
 				// The grass is rendered as a world mesh without pixel shaders or with the low detail grass
-				auto pDevice = TSTATICCAST( TD3DAdapter::Mode::Device, TRenderD3DInterface::Interface()->GetCurrentDevice() );
+				auto pDevice = TSTATICCAST( TRenderAdapterHAL::Mode::Device, TRenderInterfaceHAL::Interface()->GetCurrentDevice() );
 
 				if ( pDevice->SupportsPixelShaders() && AOptions::GetSingleton()->IsHighDetailGrassEnabled() )
 					LoadGrassMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );

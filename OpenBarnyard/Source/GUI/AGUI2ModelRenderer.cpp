@@ -429,7 +429,7 @@ void AGUI2ModelRenderer::Render()
 	if ( m_pObjects->iNumObjects == 0 || !m_bRender )
 		return;
 
-	TRenderD3DInterface* pRender      = TRenderD3DInterface::Interface();
+	TRenderInterfaceHAL* pRender      = TRenderInterfaceHAL::Interface();
 	TViewport*           pGUIViewport = AGUISystem::GetSingleton()->GetRenderObject( 0 )->GetViewport();
 	TRenderContext*      pOldContext  = pRender->GetCurrentContext();
 

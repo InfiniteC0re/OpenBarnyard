@@ -108,7 +108,7 @@ AImGui::AImGui()
 	style.Colors[ ImGuiCol_TabHovered ]           = ImVec4( 0.60f, 0.60f, 0.90f, 1.00f );
 	style.Colors[ ImGuiCol_TabActive ]            = ImVec4( 0.28f, 0.56f, 0.96f, 1.00f );
 
-	TRenderD3DInterface* pRender = TRenderD3DInterface::Interface();
+	TRenderInterfaceHAL* pRender = TRenderInterfaceHAL::Interface();
 
 #  ifdef TRENDERINTERFACE_DX8
 	ImGui_ImplDX8_Init( pRender->GetDirect3DDevice() );
@@ -189,7 +189,7 @@ void AImGui::BeginScene()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	m_oDisplayParams = *TRenderD3DInterface::Interface()->GetCurrentDisplayParams();
+	m_oDisplayParams = *TRenderInterfaceHAL::Interface()->GetCurrentDisplayParams();
 
 	// The game draws its own cursor, convert its position from the AGUI2 space to pixels
 	TVector2 vecCursorPos = AGUI2::GetMouseCursor().GetMousePos();
@@ -215,7 +215,7 @@ void AImGui::EndScene()
 #  else
 	// The backend draws into the bound render target and restores the device state after,
 	// the renderer only has to send its own state first and forget it after
-	TRenderD3DInterface* pRender = TRenderD3DInterface::Interface();
+	TRenderInterfaceHAL* pRender = TRenderInterfaceHAL::Interface();
 	pRender->ApplyDesiredState();
 	ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData() );
 	pRender->InvalidateStateCache();

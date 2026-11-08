@@ -23,7 +23,7 @@ ADisplayModes_Win::~ADisplayModes_Win()
 // $Barnyard: FUNCTION 00614e00
 void ADisplayModes_Win::Initialise()
 {
-	auto pRenderer    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
+	auto pRenderer    = TSTATICCAST( TRenderInterfaceHAL, TRenderInterface::GetSingleton() );
 	auto pAdapterList = pRenderer->GetAdapterList();
 
 	T2_FOREACH( *pAdapterList, pAdapter )

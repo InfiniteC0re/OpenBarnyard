@@ -9,5 +9,9 @@ public:
 	TDECLARE_CLASS( AGUI2Material, Toshi::TMaterial );
 
 public:
+#ifdef TRENDERINTERFACE_GL
+	friend class AGUI2RendererGL;
+#else
 	friend class AGUI2RendererDX8;
+#endif
 };

@@ -81,7 +81,7 @@ void AGUI2::UpdateRootDimensions()
 // $Barnyard: FUNCTION 006355a0
 TBOOL AGUI2::OnCreate()
 {
-	T2GUI::CreateContext()->SetRenderer( new AGUI2RendererDX8 );
+	T2GUI::CreateContext()->SetRenderer( new AGUI2RendererHAL );
 
 	m_pRootElement = T2GUI::GetContext()->GetRootElement();
 
