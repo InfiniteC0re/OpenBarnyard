@@ -248,3 +248,10 @@ function StartAudio()
 	for ( var szEvent of [ "pointerdown", "keydown", "touchend" ] )
 		window.addEventListener( szEvent, Unlock );
 }
+
+if ( window.isSecureContext && bCanShareMemory )
+{
+	var oGameScript = document.createElement( "script" );
+	oGameScript.src = "OpenBarnyard.js";
+	document.body.appendChild( oGameScript );
+}

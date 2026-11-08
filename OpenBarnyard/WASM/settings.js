@@ -188,7 +188,9 @@ var oPageSettings = {
 		var oPanel = document.createElement( "div" );
 		oPanel.id  = "settings";
 		oPanel.innerHTML =
-			'<div class="title">Settings</div>' +
+			'<div class="head"><div class="title">Settings</div>' +
+			'<div class="about">Based on <a href="https://github.com/InfiniteC0re/OpenBarnyard" target="_blank" rel="noopener">OpenBarnyard decompilation</a></div></div>' +
+			'<div class="section">Display</div>' +
 			'<label>Resolution <select data-key="szResolution">' +
 			'<option value="auto">Auto</option><option value="540">540 lines</option><option value="720">720 lines</option>' +
 			'<option value="1080">1080 lines</option><option value="full">Screen</option></select></label>' +
@@ -196,10 +198,10 @@ var oPageSettings = {
 			'<option value="auto">Auto</option><option value="on">On</option><option value="off">Off</option></select></label>' +
 			'<label>Show FPS <input type="checkbox" data-key="bShowFps"></label>' +
 			'<div class="hint" id="settingsAuto"></div>' +
-			'<label>Cheat code <input type="text" id="settingsCheat" autocomplete="off" autocapitalize="characters" spellcheck="false"></label>' +
-			'<div class="buttons"><button id="settingsSendCheat">Enter code</button></div>' +
+			'<div class="section">Cheats</div>' +
+			'<div class="row"><input type="text" id="settingsCheat" placeholder="Cheat code" autocomplete="off" autocapitalize="characters" spellcheck="false"><button id="settingsSendCheat">Enter</button></div>' +
 			'<div class="hint" id="settingsRestartHint">Restarts the game. Saves are kept, progress since the last save is lost.</div>' +
-			'<div class="buttons"><button id="settingsRestart">Restart</button><button id="settingsClose">Close</button></div>';
+			'<div class="buttons"><button id="settingsRestart" class="accent">Restart</button><button id="settingsClose">Close</button></div>';
 		document.body.appendChild( oPanel );
 
 		var oStarted = {
