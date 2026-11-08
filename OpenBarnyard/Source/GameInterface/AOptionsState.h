@@ -11,10 +11,6 @@ public:
 	{
 		OPTIONSBUTTON_AUDIO,
 		OPTIONSBUTTON_CONTROLS,
-#ifdef BARNYARD_COMMUNITY_PATCH
-		// NOTE: only the EU PS2 builds have it (item 2, opens AFrontEndLanguageState)
-		OPTIONSBUTTON_LANGUAGE,
-#endif
 #ifdef BARNYARD_LATEST
 		// NOTE: the latest version (Wii) hides the controls button and adds this one
 		OPTIONSBUTTON_CAMERA,
@@ -27,9 +23,6 @@ public:
 	inline constexpr static TINT OPTIONSBUTTON_TEXTS[ OPTIONSBUTTON_NUMOF ] = {
 		282,
 		281,
-#ifdef BARNYARD_COMMUNITY_PATCH
-		1120, // "Language"
-#endif
 #ifdef BARNYARD_LATEST
 		3482, // ACameraOptionsState::CAMERA_SPEED_TEXT (the button shows ACameraOptionsState::GetCameraText)
 		3476, // ADifficultyOptionState::TITLE_TEXT (the button shows ADifficultyOptionState::GetText)

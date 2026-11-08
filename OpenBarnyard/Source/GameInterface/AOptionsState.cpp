@@ -9,7 +9,6 @@
 #include "AAudioOptionsState.h"
 #include "ACameraOptionsState.h"
 #include "ADifficultyOptionState.h"
-#include "AFrontEndLanguageState.h"
 #include "SaveLoadSKU.h"
 #include "Helpers/APlayerProgress.h"
 
@@ -132,10 +131,6 @@ void AOptionsState::OnMenuClose()
 			pState = new AAudioOptionsState();
 		else if ( m_iActivatedButtonID == OPTIONSBUTTON_CONTROLS )
 			pState = new AControlOptionsState();
-#ifdef BARNYARD_COMMUNITY_PATCH
-		else if ( m_iActivatedButtonID == OPTIONSBUTTON_LANGUAGE )
-			pState = new AFrontEndLanguageState( TNULL, TFALSE );
-#endif
 #ifdef BARNYARD_LATEST
 		else if ( m_iActivatedButtonID == OPTIONSBUTTON_CAMERA )
 			pState = new ACameraOptionsState();

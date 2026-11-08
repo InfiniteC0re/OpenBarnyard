@@ -5,17 +5,7 @@
 #include <T2Locale/T2Locale.h>
 
 //-----------------------------------------------------------------------------
-// Purpose: the language select screen. A list of language names (each in its
-// own language); the dialog title and the menu navigation bar show the focused
-// language's "Language" / "Confirm" / "Cancel". Picking one sets AOptions and
-// the locale and refreshes the texts of the screens under it.
-// The EU PS2 builds (SLES_543.76/.78) push it from Options ("Language", item 2)
-// and, at boot, before the save is loaded when the console language isn't one
-// the disc has (then it can't be cancelled and replaces itself with the save
-// load state). PC retail only has the TClass (size 0x11fc, parent AGameState)
-// and an unreferenced 5 language table (0x007167b8, with German); the class is
-// recovered from SLES_543.78 (vtable 0x0050a800, size 0x1020, 4 languages).
-// In community builds it's reached from Options -> Language.
+// Purpose: the language select screen
 //-----------------------------------------------------------------------------
 class AFrontEndLanguageState
     : public ABYardMenuState

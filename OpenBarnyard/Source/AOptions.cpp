@@ -103,8 +103,6 @@ TBOOL AOptions::ApplySettings()
 	if ( m_eUpdatedSettings & UpdatedSettings_Language )
 	{
 #ifdef BARNYARD_COMMUNITY_PATCH
-		// The language picked in Options -> Language (AFrontEndLanguageState), kept in the options of the save.
-		// Retail always uses English (UK) here, so it still loads such a save
 		if ( !ALocaleManager::IsLanguageSupported( m_eLanguage ) )
 			m_eLanguage = ALocaleManager::Lang_EnglishUK;
 

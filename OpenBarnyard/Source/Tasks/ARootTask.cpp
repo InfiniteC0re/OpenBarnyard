@@ -418,9 +418,7 @@ void ARootTask::CreateStartupGameStates()
 	pSaveLoad->StartLoad();
 
 #ifdef BARNYARD_COMMUNITY_PATCH
-	// NOTE: from the EU PS2 builds (SLES_543.78 0x00107cc8). Without a console language the disc has, they ask for
-	// the language before the save is loaded, otherwise the save's language is used (retail PC keeps English). The
-	// PC always has a default language, so here the language comes from the save (Options -> Language sets it)
+	// Doesn't present in every build, only those with multilanguage assets
 	if ( ALocaleManager::GetDefaultLanguage() == ALocaleManager::Lang_UNKNOWN )
 	{
 		AGameStateController::GetSingleton()->PushState( new AFrontEndLanguageState( pSaveLoad, TTRUE ) );
