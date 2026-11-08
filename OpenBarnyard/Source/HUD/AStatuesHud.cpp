@@ -2,6 +2,7 @@
 #include "AStatuesHud.h"
 #include "Locale/ALocaleManager.h"
 #include "Locale/ALocale.h"
+#include "Input/AInputHandler.h"
 
 #include <GUI/T2GUITextureSectionManager.h>
 #include <GUI/T2GUIFontManager.h>
@@ -372,20 +373,45 @@ void AStatuesHud::SetKeyIcon( TINT a_iRow, TINT a_iIndex, STATUESKEY a_eKey, TBO
 {
 	TString8 strTexSection( 16 );
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	constexpr static const char* WIN_GLYPHS[]  = { "3_Key", "1_Key", "2_Key", "Space_Key" };
+	constexpr static const char* GC_GLYPHS[]  = { "gc_A", "gc_Y", "gc_B", "gc_X" };
+	constexpr static const char* PS2_GLYPHS[] = { "ps2_cross_big_old", "ps2_tri_big_old", "ps2_circle_big_old", "ps2_squ_big_old" };
+
+	TBOOL bIsCurrentlyUsingController = AInputHandler::GetSingleton()->IsControllerUsed();
+	TBOOL bIsCurrentlyUsingXInput     = AInputHandler::GetSingleton()->IsControllerXInput();
+
+	const char* const* aCurrentGlyphs = WIN_GLYPHS;
+
+	// Update glyphs based on current controller
+	if ( bIsCurrentlyUsingController )
+		aCurrentGlyphs = bIsCurrentlyUsingXInput ? GC_GLYPHS : PS2_GLYPHS;
+
+#endif // BARNYARD_COMMUNITY_PATCH
+
 	switch ( a_eKey )
 	{
-		case STATUESKEY_UP:
+#ifdef BARNYARD_COMMUNITY_PATCH
+		case STATUESKEY_1:
+		case STATUESKEY_2:
+		case STATUESKEY_3:
+		case STATUESKEY_DOWN:
+			strTexSection = aCurrentGlyphs[ a_eKey ];
+			break;
+#else // BARNYARD_COMMUNITY_PATCH
+		case STATUESKEY_1:
 			strTexSection = "3_Key";
 			break;
-		case STATUESKEY_LEFT:
+		case STATUESKEY_2:
 			strTexSection = "1_Key";
 			break;
-		case STATUESKEY_RIGHT:
+		case STATUESKEY_3:
 			strTexSection = "2_Key";
 			break;
 		case STATUESKEY_DOWN:
 			strTexSection = "Space_Key";
 			break;
+#endif // !BARNYARD_COMMUNITY_PATCH
 		case STATUESKEY_NONE:
 			m_aKeyRows[ a_iRow ].aKeys[ a_iIndex ].Hide();
 			return;

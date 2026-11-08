@@ -17,11 +17,11 @@
 //-----------------------------------------------------------------------------
 enum STATUESKEY : TINT
 {
-	STATUESKEY_UP,    // 0, 3_Key
-	STATUESKEY_LEFT,  // 1, 1_Key
-	STATUESKEY_RIGHT, // 2, 2_Key
-	STATUESKEY_DOWN,  // 3, Space_Key, also drops the player onto all fours
-	STATUESKEY_NONE,  // 4, end of a combo / no key pressed
+	STATUESKEY_1,    // 0, 3_Key
+	STATUESKEY_2,    // 1, 1_Key
+	STATUESKEY_3,    // 2, 2_Key
+	STATUESKEY_DOWN, // 3, Space_Key, also drops the player onto all fours
+	STATUESKEY_NONE, // 4, end of a combo / no key pressed
 	STATUESKEY_NUMOF = STATUESKEY_NONE
 };
 

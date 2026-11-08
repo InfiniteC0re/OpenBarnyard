@@ -166,16 +166,16 @@ TBOOL AStatuesMiniGameState::ProcessCommand( AInputCommand a_eInputCommand, cons
 			if ( m_bIntroStarted ) break;
 			return TTRUE;
 		case AInputCommand_Up:
-			m_eKey = STATUESKEY_UP;
+			m_eKey = STATUESKEY_1;
 			return TTRUE;
 		case AInputCommand_Down:
 			m_eKey = STATUESKEY_DOWN;
 			return TTRUE;
 		case AInputCommand_Left:
-			m_eKey = STATUESKEY_LEFT;
+			m_eKey = STATUESKEY_2;
 			return TTRUE;
 		case AInputCommand_Right:
-			m_eKey = STATUESKEY_RIGHT;
+			m_eKey = STATUESKEY_3;
 			return TTRUE;
 	}
 
