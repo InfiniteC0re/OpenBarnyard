@@ -13,6 +13,7 @@
 #include "Input/TInputInterface.h"
 
 #include <d3dcompiler.h>
+#include <d3d11shader.h>
 #include <DirectXTex.h>
 #include <cmath>
 
@@ -137,6 +138,7 @@ TRenderD3DInterface::TRenderD3DInterface()
 	TUtil::MemClear( &m_oCurrent, sizeof( m_oCurrent ) );
 	TUtil::MemClear( &m_oApplied, sizeof( m_oApplied ) );
 	m_bStateCacheValid = TFALSE;
+	m_uiDirtyGroups    = DIRTY_ALL;
 	m_uiVSConstantBufferSlots = 0;
 	m_uiPSConstantBufferSlots = 0;
 	m_pBackBufferRTView  = TNULL;
@@ -158,12 +160,17 @@ TRenderD3DInterface::TRenderD3DInterface()
 	m_uiConstantBufferSize   = 0;
 	m_bConstantBufferChanged = TFALSE;
 	m_uiConstantBufferIndex  = 0;
+	m_uiUploadedConstantSize = 0;
 	TUtil::MemClear( m_aConstantBuffers, sizeof( m_aConstantBuffers ) );
 
 	m_pImmediateVertexBuffer         = TNULL;
 	m_uiImmediateVertexCurrentOffset = 0;
 	m_pImmediateIndexBuffer          = TNULL;
 	m_uiImmediateIndexCurrentOffset  = 0;
+	m_pStripBatchIndices             = TNULL;
+	m_uiStripBatchCount              = 0;
+	m_pStripBatchVertexBuffer        = TNULL;
+	m_uiStripBatchStride             = 0;
 
 	TUtil::MemClear( m_apSamplerStates, sizeof( m_apSamplerStates ) );
 	TUtil::MemClear( m_aGammaRamp, sizeof( m_aGammaRamp ) );
@@ -217,6 +224,12 @@ TRenderD3DInterface::TRenderD3DInterface()
 TRenderD3DInterface::~TRenderD3DInterface()
 {
 	Destroy();
+
+	if ( m_pStripBatchIndices )
+	{
+		TFree( m_pStripBatchIndices );
+		m_pStripBatchIndices = TNULL;
+	}
 }
 
 TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
@@ -460,7 +473,8 @@ TBOOL TRenderD3DInterface::EndScene()
 			m_pPendingCapture = TNULL;
 		}
 
-		HRESULT hPresentRes = m_pSwapChain->Present( m_bOccluded ? 0 : 1, m_bOccluded ? DXGI_PRESENT_TEST : 0 );
+		// Background (test) runs aren't synced to the display
+		HRESULT hPresentRes = m_pSwapChain->Present( ( m_bOccluded || TMSWindow::IsBackgroundMode() ) ? 0 : 1, m_bOccluded ? DXGI_PRESENT_TEST : 0 );
 		m_bOccluded         = hPresentRes == DXGI_STATUS_OCCLUDED;
 
 		if ( hPresentRes == DXGI_ERROR_DEVICE_REMOVED || hPresentRes == DXGI_ERROR_DEVICE_RESET )
@@ -661,6 +675,65 @@ void TRenderD3DInterface::FlushShaders()
 	}
 }
 
+// How much of the b0 constant buffer each shader reads, uploads copy only that
+static T2Map<const void*, TUINT32> s_oShaderConstantSizes;
+
+static void StoreShaderConstantSize( const void* a_pShader, const void* a_pShaderBytecode, SIZE_T a_uiBytecodeLength )
+{
+	TUINT32                 uiSize      = 0;
+	ID3D11ShaderReflection* pReflection = TNULL;
+
+	if ( FAILED( D3DReflect( a_pShaderBytecode, a_uiBytecodeLength, __uuidof( ID3D11ShaderReflection ), TREINTERPRETCAST( void**, &pReflection ) ) ) )
+		uiSize = TRenderD3DInterface::CONSTANT_BUFFER_SIZE;
+
+	if ( pReflection )
+	{
+		D3D11_SHADER_DESC oDesc;
+		pReflection->GetDesc( &oDesc );
+
+		for ( UINT i = 0; i < oDesc.BoundResources; i++ )
+		{
+			D3D11_SHADER_INPUT_BIND_DESC oBind;
+
+			if ( SUCCEEDED( pReflection->GetResourceBindingDesc( i, &oBind ) ) && oBind.Type == D3D_SIT_CBUFFER && oBind.BindPoint == 0 )
+			{
+				D3D11_SHADER_BUFFER_DESC oBuffer;
+
+				if ( SUCCEEDED( pReflection->GetConstantBufferByName( oBind.Name )->GetDesc( &oBuffer ) ) )
+					uiSize = oBuffer.Size;
+			}
+		}
+
+		pReflection->Release();
+	}
+
+	// A new shader can get the address of a released one
+	auto it = s_oShaderConstantSizes.Find( a_pShader );
+
+	if ( it != s_oShaderConstantSizes.End() )
+		it->GetSecond() = uiSize;
+	else
+		s_oShaderConstantSizes.Insert( a_pShader, uiSize );
+}
+
+static TUINT32 GetShaderConstantSize( const void* a_pShader )
+{
+	static const void* s_pLastShader = TNULL;
+	static TUINT32     s_uiLastSize  = 0;
+
+	if ( !a_pShader )
+		return 0;
+
+	if ( a_pShader != s_pLastShader )
+	{
+		auto it       = s_oShaderConstantSizes.Find( a_pShader );
+		s_uiLastSize  = it != s_oShaderConstantSizes.End() ? it->GetSecond() : TRenderD3DInterface::CONSTANT_BUFFER_SIZE;
+		s_pLastShader = a_pShader;
+	}
+
+	return s_uiLastSize;
+}
+
 TBOOL TRenderD3DInterface::CreateVertexShader( const void* a_pShaderBytecode, SIZE_T a_uiBytecodeLength, ID3D11VertexShader** a_ppVertexShader )
 {
 	HRESULT hRes = Interface()->GetDevice()->CreateVertexShader( a_pShaderBytecode, a_uiBytecodeLength, TNULL, a_ppVertexShader );
@@ -671,6 +744,7 @@ TBOOL TRenderD3DInterface::CreateVertexShader( const void* a_pShaderBytecode, SI
 		return TFALSE;
 	}
 
+	StoreShaderConstantSize( *a_ppVertexShader, a_pShaderBytecode, a_uiBytecodeLength );
 	return TTRUE;
 }
 
@@ -684,6 +758,7 @@ TBOOL TRenderD3DInterface::CreatePixelShader( const void* a_pShaderBytecode, SIZ
 		return TFALSE;
 	}
 
+	StoreShaderConstantSize( *a_ppPixelShader, a_pShaderBytecode, a_uiBytecodeLength );
 	return TTRUE;
 }
 
@@ -780,6 +855,7 @@ TBOOL TRenderD3DInterface::Destroy()
 		{
 			m_pDeviceContext->ClearState();
 			TUtil::MemClear( &m_oCurrent, sizeof( m_oCurrent ) );
+			m_uiDirtyGroups = DIRTY_ALL;
 			InvalidateStateCache();
 			m_pDeviceContext->Release();
 			m_pDeviceContext = TNULL;
@@ -1829,16 +1905,30 @@ void TRenderD3DInterface::CreateDeviceObjects()
 	for ( TUINT32 i = 0; i < NUMCONSTANTBUFFERS; i++ )
 		m_aConstantBuffers[ i ] = CreateBuffer( D3D11_BIND_CONSTANT_BUFFER, CONSTANT_BUFFER_SIZE, TNULL, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
 
+	m_pConstantRing        = TNULL;
+	m_uiConstantRingOffset = CONSTANT_RING_SIZE;
+
+	D3D11_FEATURE_DATA_D3D11_OPTIONS oOptions = {};
+
+	if ( m_pDeviceContext1 && SUCCEEDED( m_pDevice11->CheckFeatureSupport( D3D11_FEATURE_D3D11_OPTIONS, &oOptions, sizeof( oOptions ) ) ) && oOptions.ConstantBufferOffsetting )
+		m_pConstantRing = CreateBuffer( D3D11_BIND_CONSTANT_BUFFER, CONSTANT_RING_SIZE, TNULL, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
+
 	m_pConstantBufferData = TSTATICCAST( TUINT8, TMemalign( CONSTANT_BUFFER_SIZE, 16 ) );
 	TUtil::MemClear( m_pConstantBufferData, CONSTANT_BUFFER_SIZE );
 	m_uiConstantBufferSize   = 0;
 	m_bConstantBufferChanged = TFALSE;
 	m_uiConstantBufferIndex  = 0;
+	m_uiUploadedConstantSize = 0;
 
 	m_pImmediateVertexBuffer         = CreateBuffer( D3D11_BIND_VERTEX_BUFFER, IMMEDIATE_VERTEX_BUFFER_SIZE, TNULL, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
 	m_uiImmediateVertexCurrentOffset = 0;
 	m_pImmediateIndexBuffer          = CreateBuffer( D3D11_BIND_INDEX_BUFFER, IMMEDIATE_INDEX_BUFFER_SIZE, TNULL, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
 	m_uiImmediateIndexCurrentOffset  = 0;
+
+	if ( !m_pStripBatchIndices )
+		m_pStripBatchIndices = TSTATICCAST( TUINT32, TMalloc( STRIP_BATCH_MAX_INDICES * sizeof( TUINT32 ) ) );
+
+	m_uiStripBatchCount = 0;
 
 	ID3DBlob* pVSBlob = CompileShader( s_szFixedFunctionShader, "vs_main", "vs_4_0", TNULL );
 	ID3DBlob* pPSBlob = CompileShader( s_szFixedFunctionShader, "ps_main", "ps_4_0", TNULL );
@@ -1926,6 +2016,12 @@ void TRenderD3DInterface::DestroyDeviceObjects()
 		}
 	}
 
+	if ( m_pConstantRing )
+	{
+		m_pConstantRing->Release();
+		m_pConstantRing = TNULL;
+	}
+
 	if ( m_pConstantBufferData )
 	{
 		TFree( m_pConstantBufferData );
@@ -1973,6 +2069,9 @@ void TRenderD3DInterface::DestroyDeviceObjects()
 		m_pImmediateIndexBuffer->Release();
 		m_pImmediateIndexBuffer = TNULL;
 	}
+
+	m_uiStripBatchCount       = 0;
+	m_pStripBatchVertexBuffer = TNULL;
 
 	for ( auto it = m_DepthStates.Begin(); it != m_DepthStates.End(); it++ )
 		it->second->Release();
@@ -2220,6 +2319,7 @@ void TRenderD3DInterface::Dispatch( UINT a_uiThreadGroupsX, UINT a_uiThreadGroup
 	if ( m_uiCSConstantBufferSlots )
 		UploadConstantBufferSlots( m_apCSConstantBuffers, m_oCurrent.apCSConstantBuffers, m_uiCSConstantBufferSlots );
 
+	m_uiDirtyGroups |= DIRTY_CS;
 	ApplyDesiredState();
 	m_pDeviceContext->Dispatch( a_uiThreadGroupsX, a_uiThreadGroupsY, a_uiThreadGroupsZ );
 }
@@ -2229,6 +2329,7 @@ void TRenderD3DInterface::DispatchIndirect( ID3D11Buffer* a_pArgsBuffer, UINT a_
 	if ( m_uiCSConstantBufferSlots )
 		UploadConstantBufferSlots( m_apCSConstantBuffers, m_oCurrent.apCSConstantBuffers, m_uiCSConstantBufferSlots );
 
+	m_uiDirtyGroups |= DIRTY_CS;
 	ApplyDesiredState();
 	m_pDeviceContext->DispatchIndirect( a_pArgsBuffer, a_uiArgsOffset );
 }
@@ -2366,6 +2467,9 @@ static TUINT32 CopyToImmediateBuffer( ID3D11DeviceContext* a_pDeviceContext, ID3
 
 	D3D11_MAP eMapType = D3D11_MAP_WRITE_NO_OVERWRITE;
 
+	// 32 bit indices need 4 byte aligned offsets
+	a_rCurrentOffset = ( a_rCurrentOffset + 3 ) & ~3u;
+
 	if ( a_rCurrentOffset + a_uiDataSize > a_uiBufferSize || a_rCurrentOffset == 0 )
 	{
 		a_rCurrentOffset = 0;
@@ -2400,6 +2504,53 @@ void TRenderD3DInterface::DrawImmediately( D3D11_PRIMITIVE_TOPOLOGY a_eTopology,
 	DrawIndexed( a_eTopology, a_uiIndexCount, m_pImmediateIndexBuffer, uiIndexOffset, a_eIndexFormat, m_pImmediateVertexBuffer, a_uiStride, uiVertexOffset );
 }
 
+TBOOL TRenderD3DInterface::AddStripToBatch( const TUINT16* a_pIndices, UINT a_uiIndexCount, ID3D11Buffer* a_pVertexBuffer, UINT a_uiStride, UINT a_uiVertexOffset )
+{
+	// Up to 3 indices join it to the previous strip
+	if ( !a_pIndices || !m_pStripBatchIndices || a_uiIndexCount == 0 || a_uiIndexCount + 3 > STRIP_BATCH_MAX_INDICES )
+		return TFALSE;
+
+	if ( m_uiStripBatchCount != 0 && ( a_pVertexBuffer != m_pStripBatchVertexBuffer || a_uiStride != m_uiStripBatchStride || m_uiStripBatchCount + a_uiIndexCount + 3 > STRIP_BATCH_MAX_INDICES ) )
+		FlushStripBatch();
+
+	m_pStripBatchVertexBuffer = a_pVertexBuffer;
+	m_uiStripBatchStride      = a_uiStride;
+
+	const TUINT32 uiBaseVertex = a_uiVertexOffset / a_uiStride;
+	TUINT32*      pOut         = m_pStripBatchIndices + m_uiStripBatchCount;
+
+	if ( m_uiStripBatchCount != 0 )
+	{
+		// Degenerate triangles, the new strip has to start on an even index to keep its winding
+		const TUINT32 uiFirst = a_pIndices[ 0 ] + uiBaseVertex;
+
+		*pOut = pOut[ -1 ];
+		pOut++;
+		*pOut++ = uiFirst;
+
+		if ( ( m_uiStripBatchCount + 2 ) & 1 )
+			*pOut++ = uiFirst;
+	}
+
+	for ( UINT i = 0; i < a_uiIndexCount; i++ )
+		*pOut++ = a_pIndices[ i ] + uiBaseVertex;
+
+	m_uiStripBatchCount = TUINT32( pOut - m_pStripBatchIndices );
+	return TTRUE;
+}
+
+void TRenderD3DInterface::FlushStripBatch()
+{
+	if ( m_uiStripBatchCount == 0 )
+		return;
+
+	const TUINT32 uiCount = m_uiStripBatchCount;
+	m_uiStripBatchCount   = 0;
+
+	const UINT uiIndexOffset = CopyToImmediateBuffer( m_pDeviceContext, m_pImmediateIndexBuffer, IMMEDIATE_INDEX_BUFFER_SIZE, m_uiImmediateIndexCurrentOffset, m_pStripBatchIndices, uiCount * sizeof( TUINT32 ) );
+	DrawIndexed( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, uiCount, m_pImmediateIndexBuffer, uiIndexOffset, DXGI_FORMAT_R32_UINT, m_pStripBatchVertexBuffer, m_uiStripBatchStride, 0 );
+}
+
 void TRenderD3DInterface::SetVec4InVSBuffer( TINT a_iIndex, const void* a_pSrc, TINT a_iCount )
 {
 	const TUINT32 uiOffset = a_iIndex * sizeof( TVector4 );
@@ -2419,7 +2570,42 @@ void TRenderD3DInterface::SetVec4InVSBuffer( TINT a_iIndex, const void* a_pSrc, 
 
 void TRenderD3DInterface::FlushConstantBuffers()
 {
-	if ( m_bConstantBufferChanged )
+	// Only what the current shaders read, and only when it changed or they read more than is uploaded
+	const TUINT32 uiNeeded = TMath::Min( TMath::Max( GetShaderConstantSize( m_oCurrent.pVertexShader ), GetShaderConstantSize( m_oCurrent.pPixelShader ) ), m_uiConstantBufferSize );
+
+	if ( m_pConstantRing )
+	{
+		if ( m_bConstantBufferChanged || uiNeeded > m_uiUploadedConstantSize || !m_oCurrent.uiConstantsNum )
+		{
+			// Offsets and sizes go in steps of 16 constants
+			const TUINT32 uiSize = TMath::Max( ( uiNeeded + 255 ) & ~255u, 256u );
+			D3D11_MAP     eMap   = D3D11_MAP_WRITE_NO_OVERWRITE;
+
+			if ( m_uiConstantRingOffset + uiSize > CONSTANT_RING_SIZE )
+			{
+				m_uiConstantRingOffset = 0;
+				eMap                   = D3D11_MAP_WRITE_DISCARD;
+			}
+
+			D3D11_MAPPED_SUBRESOURCE oMapped;
+
+			if ( SUCCEEDED( m_pDeviceContext->Map( m_pConstantRing, 0, eMap, 0, &oMapped ) ) )
+			{
+				TUtil::MemCopy( TSTATICCAST( TUINT8, oMapped.pData ) + m_uiConstantRingOffset, m_pConstantBufferData, uiNeeded );
+				m_pDeviceContext->Unmap( m_pConstantRing, 0 );
+			}
+
+			m_oCurrent.uiConstantsFirst         = m_uiConstantRingOffset / 16;
+			m_oCurrent.uiConstantsNum           = uiSize / 16;
+			m_oCurrent.apVSConstantBuffers[ 0 ] = m_pConstantRing;
+			m_oCurrent.apPSConstantBuffers[ 0 ] = m_pConstantRing;
+			m_uiConstantRingOffset += uiSize;
+			m_bConstantBufferChanged = TFALSE;
+			m_uiUploadedConstantSize = uiNeeded;
+			m_uiDirtyGroups |= DIRTY_VS_CB | DIRTY_PS_CB;
+		}
+	}
+	else if ( m_bConstantBufferChanged || uiNeeded > m_uiUploadedConstantSize )
 	{
 		m_uiConstantBufferIndex = ( m_uiConstantBufferIndex + 1 ) % NUMCONSTANTBUFFERS;
 		ID3D11Buffer* pBuffer   = m_aConstantBuffers[ m_uiConstantBufferIndex ];
@@ -2428,22 +2614,34 @@ void TRenderD3DInterface::FlushConstantBuffers()
 
 		if ( SUCCEEDED( m_pDeviceContext->Map( pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMapped ) ) )
 		{
-			TUtil::MemCopy( oMapped.pData, m_pConstantBufferData, m_uiConstantBufferSize );
+			TUtil::MemCopy( oMapped.pData, m_pConstantBufferData, uiNeeded );
 			m_pDeviceContext->Unmap( pBuffer, 0 );
 		}
 
 		m_bConstantBufferChanged = TFALSE;
+		m_uiUploadedConstantSize = uiNeeded;
 	}
 
-	ID3D11Buffer* pBuffer = m_aConstantBuffers[ m_uiConstantBufferIndex ];
-	m_oCurrent.apVSConstantBuffers[ 0 ] = pBuffer;
-	m_oCurrent.apPSConstantBuffers[ 0 ] = pBuffer;
+	ID3D11Buffer* pBuffer = m_pConstantRing ? m_pConstantRing : m_aConstantBuffers[ m_uiConstantBufferIndex ];
+
+	if ( m_oCurrent.apVSConstantBuffers[ 0 ] != pBuffer || m_oCurrent.apPSConstantBuffers[ 0 ] != pBuffer )
+	{
+		m_oCurrent.apVSConstantBuffers[ 0 ] = pBuffer;
+		m_oCurrent.apPSConstantBuffers[ 0 ] = pBuffer;
+		m_uiDirtyGroups |= DIRTY_VS_CB | DIRTY_PS_CB;
+	}
 
 	if ( m_uiVSConstantBufferSlots )
+	{
 		UploadConstantBufferSlots( m_apVSConstantBuffers, m_oCurrent.apVSConstantBuffers, m_uiVSConstantBufferSlots );
+		m_uiDirtyGroups |= DIRTY_VS_CB;
+	}
 
 	if ( m_uiPSConstantBufferSlots )
+	{
 		UploadConstantBufferSlots( m_apPSConstantBuffers, m_oCurrent.apPSConstantBuffers, m_uiPSConstantBufferSlots );
+		m_uiDirtyGroups |= DIRTY_PS_CB;
+	}
 }
 
 void TRenderD3DInterface::UploadConstantBufferSlots( TConstantBufferGeneric** a_ppBuffers, ID3D11Buffer** a_ppCurrent, TUINT32 a_uiSlots )
@@ -2485,24 +2683,28 @@ void TRenderD3DInterface::VSSetShaderResource( UINT a_uiSlot, ID3D11ShaderResour
 {
 	TASSERT( a_uiSlot < MAX_SRV_SLOTS );
 	m_oCurrent.apVSShaderResources[ a_uiSlot ] = a_pView;
+	m_uiDirtyGroups |= DIRTY_VS_SRV;
 }
 
 void TRenderD3DInterface::PSSetShaderResource( UINT a_uiSlot, ID3D11ShaderResourceView* a_pView )
 {
 	TASSERT( a_uiSlot < MAX_SRV_SLOTS );
 	m_oCurrent.apPSShaderResources[ a_uiSlot ] = a_pView;
+	m_uiDirtyGroups |= DIRTY_PS_SRV;
 }
 
 void TRenderD3DInterface::VSSetSampler( UINT a_uiSlot, ID3D11SamplerState* a_pSampler )
 {
 	TASSERT( a_uiSlot < MAX_SAMPLER_SLOTS );
 	m_oCurrent.apVSSamplers[ a_uiSlot ] = a_pSampler;
+	m_uiDirtyGroups |= DIRTY_VS_SAMPLER;
 }
 
 void TRenderD3DInterface::PSSetSampler( UINT a_uiSlot, ID3D11SamplerState* a_pSampler )
 {
 	TASSERT( a_uiSlot < MAX_SAMPLER_SLOTS );
 	m_oCurrent.apPSSamplers[ a_uiSlot ] = a_pSampler;
+	m_uiDirtyGroups |= DIRTY_PS_SAMPLER;
 
 	// It stays until the texture stage changes again
 	if ( a_uiSlot < NUM_TEXTURE_STAGES )
@@ -2513,18 +2715,21 @@ void TRenderD3DInterface::CSSetShaderResource( UINT a_uiSlot, ID3D11ShaderResour
 {
 	TASSERT( a_uiSlot < MAX_SRV_SLOTS );
 	m_oCurrent.apCSShaderResources[ a_uiSlot ] = a_pView;
+	m_uiDirtyGroups |= DIRTY_CS;
 }
 
 void TRenderD3DInterface::CSSetUnorderedAccessView( UINT a_uiSlot, ID3D11UnorderedAccessView* a_pView )
 {
 	TASSERT( a_uiSlot < MAX_UAV_SLOTS );
 	m_oCurrent.apCSUnorderedAccessViews[ a_uiSlot ] = a_pView;
+	m_uiDirtyGroups |= DIRTY_CS;
 }
 
 void TRenderD3DInterface::CSSetSampler( UINT a_uiSlot, ID3D11SamplerState* a_pSampler )
 {
 	TASSERT( a_uiSlot < MAX_SAMPLER_SLOTS );
 	m_oCurrent.apCSSamplers[ a_uiSlot ] = a_pSampler;
+	m_uiDirtyGroups |= DIRTY_CS;
 }
 
 void TRenderD3DInterface::SetCSConstantBuffer( UINT a_uiSlot, TConstantBufferGeneric* a_pBuffer )
@@ -2541,6 +2746,7 @@ void TRenderD3DInterface::SetCSConstantBuffer( UINT a_uiSlot, TConstantBufferGen
 	{
 		m_uiCSConstantBufferSlots &= ~( 1 << a_uiSlot );
 		m_oCurrent.apCSConstantBuffers[ a_uiSlot ] = TNULL;
+		m_uiDirtyGroups |= DIRTY_CS;
 	}
 }
 
@@ -2548,6 +2754,7 @@ void TRenderD3DInterface::UnbindComputeResources()
 {
 	TUtil::MemClear( m_oCurrent.apCSShaderResources, sizeof( m_oCurrent.apCSShaderResources ) );
 	TUtil::MemClear( m_oCurrent.apCSUnorderedAccessViews, sizeof( m_oCurrent.apCSUnorderedAccessViews ) );
+	m_uiDirtyGroups |= DIRTY_CS;
 }
 
 void TRenderD3DInterface::InvalidateUnorderedAccessView( ID3D11UnorderedAccessView* a_pView )
@@ -2560,6 +2767,8 @@ void TRenderD3DInterface::InvalidateUnorderedAccessView( ID3D11UnorderedAccessVi
 		if ( m_oCurrent.apCSUnorderedAccessViews[ i ] == a_pView )
 			m_oCurrent.apCSUnorderedAccessViews[ i ] = TNULL;
 	}
+
+	m_uiDirtyGroups |= DIRTY_CS;
 }
 
 void TRenderD3DInterface::InvalidateShaderResource( ID3D11ShaderResourceView* a_pView )
@@ -2573,6 +2782,8 @@ void TRenderD3DInterface::InvalidateShaderResource( ID3D11ShaderResourceView* a_
 		if ( m_oCurrent.apPSShaderResources[ i ] == a_pView ) m_oCurrent.apPSShaderResources[ i ] = TNULL;
 		if ( m_oCurrent.apCSShaderResources[ i ] == a_pView ) m_oCurrent.apCSShaderResources[ i ] = TNULL;
 	}
+
+	m_uiDirtyGroups |= DIRTY_VS_SRV | DIRTY_PS_SRV | DIRTY_CS;
 }
 
 // Sends the slots that differ in one call covering the first to the last of them
@@ -2615,12 +2826,19 @@ void TRenderD3DInterface::ApplyDesiredState()
 {
 	ID3D11DeviceContext* pContext = m_pDeviceContext;
 	const TBOOL          bForce   = !m_bStateCacheValid;
-	const TBOOL          bCompute = IsComputeSupported();
+	const TUINT32        uiDirty  = bForce ? TUINT32( DIRTY_ALL ) : m_uiDirtyGroups;
+	const TBOOL          bCompute = ( uiDirty & DIRTY_CS ) && IsComputeSupported();
+
+	m_uiDirtyGroups = 0;
 
 	if ( !bForce )
 	{
-		MergeReleasedViews( m_oApplied.apVSShaderResources, m_oCurrent.apVSShaderResources, MAX_SRV_SLOTS, [ pContext ]( UINT a_uiFirst, UINT a_uiNum, ID3D11ShaderResourceView* const* a_ppViews ) { pContext->VSSetShaderResources( a_uiFirst, a_uiNum, a_ppViews ); } );
-		MergeReleasedViews( m_oApplied.apPSShaderResources, m_oCurrent.apPSShaderResources, MAX_SRV_SLOTS, [ pContext ]( UINT a_uiFirst, UINT a_uiNum, ID3D11ShaderResourceView* const* a_ppViews ) { pContext->PSSetShaderResources( a_uiFirst, a_uiNum, a_ppViews ); } );
+		if ( uiDirty & DIRTY_VS_SRV )
+			MergeReleasedViews( m_oApplied.apVSShaderResources, m_oCurrent.apVSShaderResources, MAX_SRV_SLOTS, [ pContext ]( UINT a_uiFirst, UINT a_uiNum, ID3D11ShaderResourceView* const* a_ppViews ) { pContext->VSSetShaderResources( a_uiFirst, a_uiNum, a_ppViews ); } );
+
+		if ( uiDirty & DIRTY_PS_SRV )
+			MergeReleasedViews( m_oApplied.apPSShaderResources, m_oCurrent.apPSShaderResources, MAX_SRV_SLOTS, [ pContext ]( UINT a_uiFirst, UINT a_uiNum, ID3D11ShaderResourceView* const* a_ppViews ) { pContext->PSSetShaderResources( a_uiFirst, a_uiNum, a_ppViews ); } );
+
 		if ( bCompute )
 		{
 			MergeReleasedViews( m_oApplied.apCSShaderResources, m_oCurrent.apCSShaderResources, MAX_SRV_SLOTS, [ pContext ]( UINT a_uiFirst, UINT a_uiNum, ID3D11ShaderResourceView* const* a_ppViews ) { pContext->CSSetShaderResources( a_uiFirst, a_uiNum, a_ppViews ); } );
@@ -2652,12 +2870,39 @@ void TRenderD3DInterface::ApplyDesiredState()
 		pContext->PSSetShader( m_oCurrent.pPixelShader, TNULL, 0 );
 	}
 
-	MergeSlots( m_oApplied.apVSConstantBuffers, m_oCurrent.apVSConstantBuffers, MAX_CONSTANT_BUFFER_SLOTS, bForce, [ pContext ]( UINT a_uiFirst, UINT a_uiNum, ID3D11Buffer* const* a_ppBuffers ) { pContext->VSSetConstantBuffers( a_uiFirst, a_uiNum, a_ppBuffers ); } );
-	MergeSlots( m_oApplied.apPSConstantBuffers, m_oCurrent.apPSConstantBuffers, MAX_CONSTANT_BUFFER_SLOTS, bForce, [ pContext ]( UINT a_uiFirst, UINT a_uiNum, ID3D11Buffer* const* a_ppBuffers ) { pContext->PSSetConstantBuffers( a_uiFirst, a_uiNum, a_ppBuffers ); } );
-	MergeSlots( m_oApplied.apVSShaderResources, m_oCurrent.apVSShaderResources, MAX_SRV_SLOTS, bForce, [ pContext ]( UINT a_uiFirst, UINT a_uiNum, ID3D11ShaderResourceView* const* a_ppViews ) { pContext->VSSetShaderResources( a_uiFirst, a_uiNum, a_ppViews ); } );
-	MergeSlots( m_oApplied.apPSShaderResources, m_oCurrent.apPSShaderResources, MAX_SRV_SLOTS, bForce, [ pContext ]( UINT a_uiFirst, UINT a_uiNum, ID3D11ShaderResourceView* const* a_ppViews ) { pContext->PSSetShaderResources( a_uiFirst, a_uiNum, a_ppViews ); } );
-	MergeSlots( m_oApplied.apVSSamplers, m_oCurrent.apVSSamplers, MAX_SAMPLER_SLOTS, bForce, [ pContext ]( UINT a_uiFirst, UINT a_uiNum, ID3D11SamplerState* const* a_ppSamplers ) { pContext->VSSetSamplers( a_uiFirst, a_uiNum, a_ppSamplers ); } );
-	MergeSlots( m_oApplied.apPSSamplers, m_oCurrent.apPSSamplers, MAX_SAMPLER_SLOTS, bForce, [ pContext ]( UINT a_uiFirst, UINT a_uiNum, ID3D11SamplerState* const* a_ppSamplers ) { pContext->PSSetSamplers( a_uiFirst, a_uiNum, a_ppSamplers ); } );
+	// With the ring, b0 is a part of it and set below
+	const UINT uiFirstSlot = m_pConstantRing ? 1 : 0;
+
+	if ( uiDirty & DIRTY_VS_CB )
+		MergeSlots( m_oApplied.apVSConstantBuffers + uiFirstSlot, m_oCurrent.apVSConstantBuffers + uiFirstSlot, MAX_CONSTANT_BUFFER_SLOTS - uiFirstSlot, bForce, [ pContext, uiFirstSlot ]( UINT a_uiFirst, UINT a_uiNum, ID3D11Buffer* const* a_ppBuffers ) { pContext->VSSetConstantBuffers( a_uiFirst + uiFirstSlot, a_uiNum, a_ppBuffers ); } );
+
+	if ( uiDirty & DIRTY_PS_CB )
+		MergeSlots( m_oApplied.apPSConstantBuffers + uiFirstSlot, m_oCurrent.apPSConstantBuffers + uiFirstSlot, MAX_CONSTANT_BUFFER_SLOTS - uiFirstSlot, bForce, [ pContext, uiFirstSlot ]( UINT a_uiFirst, UINT a_uiNum, ID3D11Buffer* const* a_ppBuffers ) { pContext->PSSetConstantBuffers( a_uiFirst + uiFirstSlot, a_uiNum, a_ppBuffers ); } );
+
+	if ( m_pConstantRing && m_oCurrent.uiConstantsNum &&
+	     ( bForce || m_oApplied.apVSConstantBuffers[ 0 ] != m_pConstantRing || m_oApplied.apPSConstantBuffers[ 0 ] != m_pConstantRing ||
+	       m_oApplied.uiConstantsFirst != m_oCurrent.uiConstantsFirst || m_oApplied.uiConstantsNum != m_oCurrent.uiConstantsNum ) )
+	{
+		m_oApplied.apVSConstantBuffers[ 0 ] = m_pConstantRing;
+		m_oApplied.apPSConstantBuffers[ 0 ] = m_pConstantRing;
+		m_oApplied.uiConstantsFirst         = m_oCurrent.uiConstantsFirst;
+		m_oApplied.uiConstantsNum           = m_oCurrent.uiConstantsNum;
+
+		m_pDeviceContext1->VSSetConstantBuffers1( 0, 1, &m_pConstantRing, &m_oCurrent.uiConstantsFirst, &m_oCurrent.uiConstantsNum );
+		m_pDeviceContext1->PSSetConstantBuffers1( 0, 1, &m_pConstantRing, &m_oCurrent.uiConstantsFirst, &m_oCurrent.uiConstantsNum );
+	}
+
+	if ( uiDirty & DIRTY_VS_SRV )
+		MergeSlots( m_oApplied.apVSShaderResources, m_oCurrent.apVSShaderResources, MAX_SRV_SLOTS, bForce, [ pContext ]( UINT a_uiFirst, UINT a_uiNum, ID3D11ShaderResourceView* const* a_ppViews ) { pContext->VSSetShaderResources( a_uiFirst, a_uiNum, a_ppViews ); } );
+
+	if ( uiDirty & DIRTY_PS_SRV )
+		MergeSlots( m_oApplied.apPSShaderResources, m_oCurrent.apPSShaderResources, MAX_SRV_SLOTS, bForce, [ pContext ]( UINT a_uiFirst, UINT a_uiNum, ID3D11ShaderResourceView* const* a_ppViews ) { pContext->PSSetShaderResources( a_uiFirst, a_uiNum, a_ppViews ); } );
+
+	if ( uiDirty & DIRTY_VS_SAMPLER )
+		MergeSlots( m_oApplied.apVSSamplers, m_oCurrent.apVSSamplers, MAX_SAMPLER_SLOTS, bForce, [ pContext ]( UINT a_uiFirst, UINT a_uiNum, ID3D11SamplerState* const* a_ppSamplers ) { pContext->VSSetSamplers( a_uiFirst, a_uiNum, a_ppSamplers ); } );
+
+	if ( uiDirty & DIRTY_PS_SAMPLER )
+		MergeSlots( m_oApplied.apPSSamplers, m_oCurrent.apPSSamplers, MAX_SAMPLER_SLOTS, bForce, [ pContext ]( UINT a_uiFirst, UINT a_uiNum, ID3D11SamplerState* const* a_ppSamplers ) { pContext->PSSetSamplers( a_uiFirst, a_uiNum, a_ppSamplers ); } );
 
 	if ( bCompute )
 	{
@@ -2728,6 +2973,7 @@ void TRenderD3DInterface::SetVSConstantBuffer( UINT a_uiSlot, TConstantBufferGen
 	{
 		m_uiVSConstantBufferSlots &= ~( 1 << a_uiSlot );
 		m_oCurrent.apVSConstantBuffers[ a_uiSlot ] = TNULL;
+		m_uiDirtyGroups |= DIRTY_VS_CB;
 	}
 }
 
@@ -2745,6 +2991,7 @@ void TRenderD3DInterface::SetPSConstantBuffer( UINT a_uiSlot, TConstantBufferGen
 	{
 		m_uiPSConstantBufferSlots &= ~( 1 << a_uiSlot );
 		m_oCurrent.apPSConstantBuffers[ a_uiSlot ] = TNULL;
+		m_uiDirtyGroups |= DIRTY_PS_CB;
 	}
 }
 
@@ -2983,7 +3230,11 @@ void TRenderD3DInterface::SetTexture( UINT a_uiStage, ID3D11ShaderResourceView* 
 {
 	TASSERT( a_uiStage < NUM_TEXTURE_STAGES );
 
-	m_oCurrent.apPSShaderResources[ a_uiStage ] = a_pTexture;
+	if ( m_oCurrent.apPSShaderResources[ a_uiStage ] != a_pTexture )
+	{
+		m_oCurrent.apPSShaderResources[ a_uiStage ] = a_pTexture;
+		m_uiDirtyGroups |= DIRTY_PS_SRV;
+	}
 }
 
 void TRenderD3DInterface::SetTextureMinFilter( UINT a_uiStage, TEXTUREFILTER a_eFilter )
@@ -3054,6 +3305,7 @@ void TRenderD3DInterface::UpdateSamplerStates()
 
 		ID3D11SamplerState* pSamplerState = GetSamplerState( m_aMinFilters[ i ], m_aMagFilters[ i ], m_aMipFilters[ i ], m_aAddressU[ i ], m_aAddressV[ i ] );
 		m_oCurrent.apPSSamplers[ i ] = pSamplerState;
+		m_uiDirtyGroups |= DIRTY_PS_SAMPLER;
 	}
 }
 

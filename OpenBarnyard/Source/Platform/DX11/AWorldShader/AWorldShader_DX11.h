@@ -102,4 +102,8 @@ private:
 	TBOOL               m_bAlphaBlendMaterial;
 	Toshi::TVector4     m_ShadowColour;
 	Toshi::TVector4     m_AmbientColour;
+
+	// Of the strips in the open batch
+	Toshi::TMatrix44 m_oBatchMVP;
+	TBOOL            m_bBatchIsWater;
 };

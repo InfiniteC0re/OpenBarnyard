@@ -131,6 +131,8 @@ void AWorldMaterialHAL::PostRender()
 	auto pRender         = TRenderD3DInterface::Interface();
 	auto pCurrentContext = TRenderContextD3D::Upcast( pRender->GetCurrentContext() );
 
+	pRender->FlushStripBatch();
+
 	pRender->SetTexture( 0, TNULL );
 	pRender->SetTexture( 1, TNULL );
 	pRender->SetAlphaRef( 128 );

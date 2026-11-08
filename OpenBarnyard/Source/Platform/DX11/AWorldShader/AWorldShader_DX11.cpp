@@ -109,6 +109,7 @@ AWorldShaderHAL::AWorldShaderHAL()
 	m_bIsHighEndMode      = TTRUE;
 	m_bRenderEnvMap       = TFALSE;
 	m_bAlphaBlendMaterial = TFALSE;
+	m_bBatchIsWater      = TFALSE;
 }
 
 AWorldShaderHAL::~AWorldShaderHAL()
@@ -166,6 +167,7 @@ void AWorldShaderHAL::StartFlush()
 
 void AWorldShaderHAL::EndFlush()
 {
+	TRenderD3DInterface::Interface()->FlushStripBatch();
 	TRenderD3DInterface::Interface()->SetFogEnable( TFALSE );
 }
 
@@ -267,6 +269,30 @@ void AWorldShaderHAL::Render( TRenderPacket* a_pRenderPacket )
 
 		TMatrix44 mMVPTransposed;
 		mMVPTransposed.Transpose( mMVP );
+
+		auto pBatchMesh      = TSTATICCAST( AWorldMeshHAL, a_pRenderPacket->GetMesh() );
+		auto pBatchIndexPool = TSTATICCAST( TIndexPoolResource, pBatchMesh->GetSubMesh( 0 )->pIndexPool );
+		auto pBatchPool      = TSTATICCAST( TVertexPoolResource, pBatchMesh->GetVertexPool() );
+
+		// Fading meshes change the alpha test between packets
+		const TBOOL    bCanBatch = a_pRenderPacket->GetAlpha() >= 1.0f && pBatchIndexPool->GetIndices() != TNULL;
+		const TBOOL    bIsWater  = pBatchMesh->IsWater();
+		const TUINT16* pIndices  = bCanBatch ? pBatchIndexPool->GetIndices() : TNULL;
+
+		TVertexBlockResource::HALBuffer oBatchVertices;
+		pBatchPool->GetHALBuffer( &oBatchVertices );
+
+		if ( pRender->IsStripBatchOpen() )
+		{
+			if ( bCanBatch && bIsWater == m_bBatchIsWater && TUtil::MemCompare( &mMVPTransposed, &m_oBatchMVP, sizeof( m_oBatchMVP ) ) == 0 &&
+			     pRender->AddStripToBatch( pIndices, pBatchIndexPool->GetNumIndices(), oBatchVertices.apVertexBuffers[ 0 ], sizeof( WorldVertex ), oBatchVertices.uiVertexOffset * sizeof( WorldVertex ) ) )
+			{
+				return;
+			}
+
+			pRender->FlushStripBatch();
+		}
+
 		pRender->SetVec4InVSBuffer( CONSTANT_MVP, &mMVPTransposed, 4 );
 
 		if ( a_pRenderPacket->GetAlpha() >= 1.0f || isnan( a_pRenderPacket->GetAlpha() ) )
@@ -336,6 +362,13 @@ void AWorldShaderHAL::Render( TRenderPacket* a_pRenderPacket )
 
 		TIndexBlockResource::HALBuffer indexBuffer;
 		pIndexPool->GetHALBuffer( &indexBuffer );
+
+		if ( bCanBatch && pRender->AddStripToBatch( pIndices, pIndexPool->GetNumIndices(), vertexBuffer.apVertexBuffers[ 0 ], sizeof( WorldVertex ), vertexBuffer.uiVertexOffset * sizeof( WorldVertex ) ) )
+		{
+			m_oBatchMVP     = mMVPTransposed;
+			m_bBatchIsWater = bIsWater;
+			return;
+		}
 
 		pRender->DrawIndexed(
 		    D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,

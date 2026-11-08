@@ -37,8 +37,10 @@ public:
 	static constexpr TUINT32 SWAPCHAIN_BUFFER_COUNT       = 2;
 	static constexpr TUINT32 CONSTANT_BUFFER_SIZE         = 0x1000;
 	static constexpr TUINT32 NUMCONSTANTBUFFERS           = 16;
+	static constexpr TUINT32 CONSTANT_RING_SIZE           = 1024 * 1024;
 	static constexpr TUINT32 IMMEDIATE_VERTEX_BUFFER_SIZE = 0x100000;
 	static constexpr TUINT32 IMMEDIATE_INDEX_BUFFER_SIZE  = 0x10000;
+	static constexpr TUINT32 STRIP_BATCH_MAX_INDICES      = 4096;
 	static constexpr TUINT32 MAXIMUM_NUMBER_OF_MIPMAPS    = 15;
 	static constexpr TUINT32 NUM_TEXTURE_STAGES           = 8;
 
@@ -330,6 +332,12 @@ public:
 	void DrawNonIndexedImmediate( D3D11_PRIMITIVE_TOPOLOGY a_eTopology, const void* a_pVertices, UINT a_uiVertexCount, UINT a_uiStride );
 	void DrawImmediately( D3D11_PRIMITIVE_TOPOLOGY a_eTopology, UINT a_uiIndexCount, const void* a_pIndices, DXGI_FORMAT a_eIndexFormat, const void* a_pVertices, UINT a_uiStride, UINT a_uiVertexCount );
 
+	// Strips drawn one after another with the same state become one draw. The state has to stay the
+	// same until FlushStripBatch, returns TFALSE if it can't take this one
+	TBOOL AddStripToBatch( const TUINT16* a_pIndices, UINT a_uiIndexCount, ID3D11Buffer* a_pVertexBuffer, UINT a_uiStride, UINT a_uiVertexOffset );
+	void  FlushStripBatch();
+	TBOOL IsStripBatchOpen() const { return m_uiStripBatchCount != 0; }
+
 	void SetVec4InVSBuffer( TINT a_iIndex, const void* a_pSrc, TINT a_iCount = 1 );
 
 	void FlushConstantBuffers();
@@ -367,6 +375,8 @@ public:
 		ID3D11Buffer*             pIndexBuffer;
 		DXGI_FORMAT               eIndexFormat;
 		UINT                      uiIndexOffset;
+		UINT                      uiConstantsFirst; // of the b0 buffer in 16 byte units, when it's the ring
+		UINT                      uiConstantsNum;
 		ID3D11Buffer*             apVSConstantBuffers[ MAX_CONSTANT_BUFFER_SLOTS ];
 		ID3D11Buffer*             apPSConstantBuffers[ MAX_CONSTANT_BUFFER_SLOTS ];
 		ID3D11ShaderResourceView* apVSShaderResources[ MAX_SRV_SLOTS ];
@@ -403,7 +413,11 @@ public:
 	void VSSetSampler( UINT a_uiSlot, ID3D11SamplerState* a_pSampler );
 	void PSSetSampler( UINT a_uiSlot, ID3D11SamplerState* a_pSampler );
 
-	void SetComputeShader( ID3D11ComputeShader* a_pComputeShader ) { m_oCurrent.pComputeShader = a_pComputeShader; }
+	void SetComputeShader( ID3D11ComputeShader* a_pComputeShader )
+	{
+		m_oCurrent.pComputeShader = a_pComputeShader;
+		m_uiDirtyGroups |= DIRTY_CS;
+	}
 	void CSSetShaderResource( UINT a_uiSlot, ID3D11ShaderResourceView* a_pView );
 	void CSSetUnorderedAccessView( UINT a_uiSlot, ID3D11UnorderedAccessView* a_pView );
 	void CSSetSampler( UINT a_uiSlot, ID3D11SamplerState* a_pSampler );
@@ -579,6 +593,21 @@ private:
 	TUINT32                 m_uiCSConstantBufferSlots;
 
 	PIPELINESTATE m_oCurrent; // desired by the callers
+
+	// The slot arrays of m_oCurrent changed since the last ApplyDesiredState, the others aren't compared
+	enum DIRTY_ : TUINT32
+	{
+		DIRTY_VS_CB      = BITFLAG( 0 ),
+		DIRTY_PS_CB      = BITFLAG( 1 ),
+		DIRTY_VS_SRV     = BITFLAG( 2 ),
+		DIRTY_PS_SRV     = BITFLAG( 3 ),
+		DIRTY_VS_SAMPLER = BITFLAG( 4 ),
+		DIRTY_PS_SAMPLER = BITFLAG( 5 ),
+		DIRTY_CS         = BITFLAG( 6 ), // everything of the compute shader
+		DIRTY_ALL        = 0xFFFFFFFF
+	};
+
+	TUINT32 m_uiDirtyGroups;
 	PIPELINESTATE m_oApplied; // held by the device
 	TBOOL         m_bStateCacheValid;
 	ID3D11RenderTargetView* m_pBackBufferRTView;
@@ -600,11 +629,21 @@ private:
 	TBOOL         m_bConstantBufferChanged;
 	ID3D11Buffer* m_aConstantBuffers[ NUMCONSTANTBUFFERS ];
 	TUINT32       m_uiConstantBufferIndex;
+	TUINT32       m_uiUploadedConstantSize; // of the buffer at m_uiConstantBufferIndex
+
+	// With constant buffer offsets (D3D11.1) b0 is a part of one big buffer, not a whole small one
+	ID3D11Buffer* m_pConstantRing;
+	TUINT32       m_uiConstantRingOffset;
 
 	ID3D11Buffer* m_pImmediateVertexBuffer;
 	TUINT32       m_uiImmediateVertexCurrentOffset;
 	ID3D11Buffer* m_pImmediateIndexBuffer;
 	TUINT32       m_uiImmediateIndexCurrentOffset;
+
+	TUINT32*      m_pStripBatchIndices;
+	TUINT32       m_uiStripBatchCount;
+	ID3D11Buffer* m_pStripBatchVertexBuffer;
+	UINT          m_uiStripBatchStride;
 
 	ID3D11SamplerState* m_apSamplerStates[ TEXTUREFILTER_NUMOF ][ TEXTUREFILTER_NUMOF ][ TEXTUREFILTER_NUMOF ][ ADDRESSINGMODE_NUMOF ][ ADDRESSINGMODE_NUMOF ];
 	ADDRESSINGMODE      m_aAddressU[ NUM_TEXTURE_STAGES ];
