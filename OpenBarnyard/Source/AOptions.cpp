@@ -1,4 +1,9 @@
 #include "pch.h"
+
+#ifdef TOSHI_SKU_WASM
+#  include <Platform/WASM/TWindow_WASM.h>
+#endif
+
 #include "AOptions.h"
 #include "Locale/ALocaleManager.h"
 #include "Sound/ASoundManager.h"
@@ -123,8 +128,12 @@ TBOOL AOptions::ApplySettings()
 void AOptions::LoadSettings()
 {
 	m_fGamma             = 0.420849f;
+#ifdef TOSHI_SKU_WASM
+	TWindow_WASM::GetPageSize( m_iWidth, m_iHeight );
+#else
 	m_iWidth             = 800;
 	m_iHeight            = 600;
+#endif
 	m_fSensitivity       = 0.5f;
 	m_bHighDetailGrass   = TTRUE;
 #ifdef BARNYARD_COMMUNITY_PATCH

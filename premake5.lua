@@ -12,6 +12,7 @@ group "Engine"
 	include "PrimeDebug"
 	include "OpenBarnyard"
 
+if os.target() ~= "emscripten" then
 group "Tools"
 	include "Tools/AssetPack"
 	include "Tools/TMDL"
@@ -23,10 +24,13 @@ group "Tools"
 	include "Tools/Sounds2Enum"
 
 group "Third-Party"
-	include "Toshi/Vendor/Opcode"
 	include "Toshi/Vendor/minhook"
+end
 
-if _OPTIONS["renderer"] ~= 'DX11' and _OPTIONS["renderer"] ~= 'GL' then
+group "Third-Party"
+	include "Toshi/Vendor/Opcode"
+
+if os.target() ~= "emscripten" and _OPTIONS["renderer"] ~= 'DX11' and _OPTIONS["renderer"] ~= 'GL' then
 	group "SDK"
 		include "SDK/BYardSDK"
 		include "SDK/BYModCore"
@@ -35,8 +39,10 @@ if _OPTIONS["renderer"] ~= 'DX11' and _OPTIONS["renderer"] ~= 'GL' then
 		include "SDK/BYWinterMod"
 end
 
+if os.target() ~= "emscripten" then
 group "Mods"
 	include "Mods/BYSpeedrunHelper"
+end
 
 if _OPTIONS["profiler"] == 'perf' or _OPTIONS["profiler"] == 'perfmem' then
 	group "Utils"

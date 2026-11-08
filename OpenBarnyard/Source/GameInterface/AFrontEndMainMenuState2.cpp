@@ -127,6 +127,10 @@ TBOOL AFrontEndMainMenuState2::ProcessCommand( AInputCommand a_eInputCommand, co
 			}
 			else
 			{
+#ifdef TOSHI_SKU_WASM
+				// The page is closed instead, there's no Quit
+				return TTRUE;
+#endif
 				// Cancel command was sent
 				m_iActivatedButtonID = FRONTENDBUTTON_QUIT;
 				m_eMenuState         = MENUSTATE_MENU_DISAPPEAR;
@@ -211,6 +215,12 @@ void AFrontEndMainMenuState2::OnInsertion()
 		m_aButtons[ i ].SetImage( "Panel_01", 1.25f, 1.5f );
 		m_aButtons[ i ].SetTextShadow( TTRUE, 0xa0000000, 0.6f );
 		m_aButtons[ i ].SetTextShadowOffset( 5.0f, 5.0f );
+
+#ifdef TOSHI_SKU_WASM
+		if ( i == FRONTENDBUTTON_QUIT )
+			continue;
+#endif
+
 		m_oMenu.AddMenuItem( m_aButtons[ i ] );
 	}
 

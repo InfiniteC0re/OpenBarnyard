@@ -48,6 +48,9 @@ public:
 private:
 	void DrawTriangles( TUINT a_dwNumTriangles );
 
+#ifdef TOSHI_SKU_WASM
+	TBOOL BuildBuiltInAtlas();
+#endif
 
 private:
 	TCHAR                          m_szFontName[ 80 ];

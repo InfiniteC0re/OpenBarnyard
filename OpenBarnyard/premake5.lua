@@ -1,7 +1,7 @@
 project "OpenBarnyard"
 	language "C++"
 	staticruntime "off"
-	
+
 	-- Set debug dir to the Game folder
 	debugdir ("%{wks.location}/../Game")
 
@@ -12,16 +12,9 @@ project "OpenBarnyard"
 	{
 		"Toshi",
 		"PrimeDebug",
-		"OPCODE",
-		"MinHook",
-		"binkw32.lib"
+		"OPCODE"
 	}
-	
-	linkoptions
-	{
-		"%{wks.location}/bin-int/" .. outputdir .. "/Toshi/Toshi.res",
-	}
-	
+
 	defines
 	{
 		"MODAPI_HOST"
@@ -96,13 +89,13 @@ project "OpenBarnyard"
 		"../Toshi/Vendor/imgui/*.cpp",
 		"../Toshi/Vendor/imgui/backends/imgui_impl_win32.*"
 	}
-	
+
 	libdirs
 	{
 		"%{LibDir.fmod}",
 		"%{LibDir.bink}"
 	}
-	
+
 	includedirs
 	{
 		"Source",
@@ -116,17 +109,36 @@ project "OpenBarnyard"
 		"%{IncludeDir.minhook}",
 		"%{IncludeDir.imgui}"
 	}
-	
-	prebuildcommands
-	{
-		"\"" .. OpenBarnyardDir .. "/DevTools/PooledStrings/PooledStrings.exe\" \"%{prj.location}Source\\APooledStrings.txt\" \"%{prj.location}Source\\APooledStrings.cpp\""
-	}
-	
-	postbuildcommands
-	{
-		"{COPYDIR} \"" .. ClientContentCommon  .. "\" \"%{wks.location}bin/" .. outputdir .. "/%{prj.name}/\"",
-		"{COPYDIR} \"" .. ClientContentArch    .. "\" \"%{wks.location}bin/" .. outputdir .. "/%{prj.name}/\"",
-	}
+
+	if os.target() == "emscripten" then
+		prebuildcommands
+		{
+			"./DevTools/PooledStrings/PooledStrings.exe OpenBarnyard/Source/APooledStrings.txt OpenBarnyard/Source/APooledStrings.cpp"
+		}
+	else
+		prebuildcommands
+		{
+			"\"" .. OpenBarnyardDir .. "/DevTools/PooledStrings/PooledStrings.exe\" \"%{prj.location}Source\\APooledStrings.txt\" \"%{prj.location}Source\\APooledStrings.cpp\""
+		}
+
+		postbuildcommands
+		{
+			"{COPYDIR} \"" .. ClientContentCommon  .. "\" \"%{wks.location}bin/" .. outputdir .. "/%{prj.name}/\"",
+			"{COPYDIR} \"" .. ClientContentArch    .. "\" \"%{wks.location}bin/" .. outputdir .. "/%{prj.name}/\"",
+		}
+	end
+
+	filter "system:windows"
+		links
+		{
+			"MinHook",
+			"binkw32.lib"
+		}
+
+		linkoptions
+		{
+			"%{wks.location}/bin-int/" .. outputdir .. "/Toshi/Toshi.res",
+		}
 
 	filter "files:**/Toshi/Vendor/imgui/**.cpp"
 		enablepch "Off"
@@ -139,27 +151,27 @@ project "OpenBarnyard"
 
 	filter "configurations:Final"
 		kind "WindowedApp"
-	
+
 	filter "system:windows"
 		files
 		{
 			"Source/Platform/Windows/**.cpp",
 			"Source/Platform/Windows/**.h"
 		}
-		
+
 		filter "options:renderer=DX8"
 			libdirs
 			{
 				"%{LibDir.dx8}"
 			}
-			
+
 			files
 			{
 				"Source/Platform/DX8/**.cpp",
 				"Source/Platform/DX8/**.h",
 				"../Toshi/Vendor/imgui/backends/imgui_impl_dx8.*"
 			}
-			
+
 		filter "options:renderer=DX11"
 			files
 			{
@@ -185,3 +197,56 @@ project "OpenBarnyard"
 				"Source/Platform/GL/**.h"
 			}
 
+	-- The mods are DLLs, the movies and the sound go through the shims of Platform/Web
+	filter {}
+
+	if os.target() == "emscripten" then
+		enablepch "Off"
+		forceincludes { "pch.h" }
+		removeincludedirs { "%{IncludeDir.bink}" }
+
+		includedirs
+		{
+			OpenBarnyardDir .. "/Toshi/Source/Platform/WASM/Compat"
+		}
+
+		files
+		{
+			"Source/Platform/GL/**.cpp",
+			"Source/Platform/GL/**.h",
+			"Source/Platform/WASM/**.cpp",
+			"Source/Platform/WASM/**.h",
+			"Source/Platform/Windows/ARenderer_Win.cpp",
+			"Source/Platform/Windows/ADisplayModes_Win.*",
+			"Source/Platform/Windows/Input/AInputHandler_Win.cpp"
+		}
+
+		removefiles
+		{
+			"Source/Mod/AModLoader.*",
+			"Source/Mod/AModHooks.*",
+			"Source/Mod/AModExports.*",
+			"Source/Mod/ImGui/**",
+			"../Toshi/Vendor/imgui/**"
+		}
+
+		targetextension ".js"
+
+		linkoptions
+		{
+			"-sPROXY_TO_PTHREAD",
+			"-sEXIT_RUNTIME=0",
+			"-sINITIAL_MEMORY=384MB",
+			"-sMAXIMUM_MEMORY=1024MB",
+			"-sALLOW_MEMORY_GROWTH",
+			"-sDEFAULT_PTHREAD_STACK_SIZE=8MB",
+			"-sSTACK_SIZE=16MB",
+			"-sPTHREAD_POOL_SIZE=4",
+			"-sENVIRONMENT=web,worker",
+			"-sEXPORTED_RUNTIME_METHODS=wasmMemory,UTF8ToString,stringToUTF8,lengthBytesUTF8,HEAPU8,HEAP32,FS,IDBFS,addRunDependency,removeRunDependency",
+			"-lidbfs.js",
+			"-sFORCE_FILESYSTEM",
+			"--profiling-funcs",
+			"--pre-js OpenBarnyard/WASM/game_pre.js"
+		}
+	end

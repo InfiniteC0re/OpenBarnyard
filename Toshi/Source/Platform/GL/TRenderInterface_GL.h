@@ -4,12 +4,20 @@
 #include "Toshi/T2Map.h"
 #include "TRenderAdapter_GL.h"
 
+#ifdef TOSHI_SKU_WASM
+#  include "Platform/WASM/TWindow_WASM.h"
+#else
 #  include "Platform/GL/TMSWindow.h"
+#endif
 #include "Platform/GL/TGLHeaders.h"
 
 TOSHI_NAMESPACE_START
 
+#ifdef TOSHI_SKU_WASM
+using TGLWindow = TWindow_WASM;
+#else
 using TGLWindow = TMSWindow;
+#endif
 
 class TDebugGLText;
 class TRenderCaptureGL;

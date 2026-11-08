@@ -189,9 +189,10 @@ static const TPString8* s_apCrateTypes[ COWTIPPING_NUM_CRATE_TYPES ] = {
 	&TPS8( cowtipping_crate4 ),
 };
 
+
 // Rotates a_rcVector by a_rcQuaternion (w of the result is 1)
 // NOTE: a copy of 006c9740 (static in AModel.cpp)
-static void RotateVector( TVector4& a_rOutVector, const TQuaternion& a_rcQuaternion, const TVector4& a_rcVector )
+static void RotateVectorLocal( TVector4& a_rOutVector, const TQuaternion& a_rcQuaternion, const TVector4& a_rcVector )
 {
 	TQuaternion quatConjugate( -a_rcQuaternion.x, -a_rcQuaternion.y, -a_rcQuaternion.z, a_rcQuaternion.w );
 	TQuaternion quatVector( a_rcVector.x, a_rcVector.y, a_rcVector.z, 0.0f );
@@ -1110,10 +1111,10 @@ void ACowTippingMiniGameState::GetCowTransform( TINT a_iUnk1, Toshi::TMatrix44* 
 	vRight.Normalise();
 
 	TQuaternion quatRotation = TQuaternion::IDENTITY;
-	RotateVector( vForward, quatRotation, vForward );
+	RotateVectorLocal( vForward, quatRotation, vForward );
 
 	quatRotation = TQuaternion::IDENTITY;
-	RotateVector( vRight, quatRotation, vRight );
+	RotateVectorLocal( vRight, quatRotation, vRight );
 
 	TVector4 vUp;
 	vUp.CrossProduct( vRight, vForward );

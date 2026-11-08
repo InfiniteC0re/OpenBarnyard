@@ -50,7 +50,11 @@ TryLocking:
 			unsigned long      uiWaitTime  = 1 << ( ( iAttempts < 8 ) ? iAttempts : 8 );
 			unsigned long long uiEndRDTime = __rdtsc() + uiWaitTime;
 
+#ifdef TOSHI_SKU_WASM
+			do {}
+#else
 			do _mm_pause();
+#endif
 			while ( __rdtsc() < uiEndRDTime );
 		}
 		else

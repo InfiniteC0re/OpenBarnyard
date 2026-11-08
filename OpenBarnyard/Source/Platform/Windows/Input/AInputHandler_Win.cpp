@@ -13,6 +13,8 @@
 #  include <Platform/Windows/Input/TInputDeviceController_Win.h>
 #  include <Platform/Windows/Input/TInputDeviceController_XInput.h>
 #  include <Platform/Windows/Input/TInputDeviceMouse_Win.h>
+#elif defined( TOSHI_SKU_WASM )
+#  include <Platform/WASM/Input/TInputDeviceController_WASM.h>
 #endif
 
 //-----------------------------------------------------------------------------
@@ -45,7 +47,11 @@ AInputHandler::AInputHandler()
 	m_pRumbleController      = TNULL;
 	m_vRumblePosition        = TVector4::VEC_ZERO;
 
+#ifdef TOSHI_SKU_WASM
+	auto pInputInterfaceClass = TClass::Find( "TInputWASMInterface" );
+#else
 	auto pInputInterfaceClass = TClass::Find( "TInputDXInterface" );
+#endif
 	auto pInputInterface      = pInputInterfaceClass->CreateObject();
 	TASSERT( pInputInterface && pInputInterface->IsA( &TGetClass( TInputInterface ) ) );
 }
@@ -68,6 +74,10 @@ TBOOL AInputHandler::OnCreate()
 
 	m_pMouseDevice    = pInputInterface->GetDeviceByIndex<TInputDeviceMouse>( 0 );
 	m_pKeyboardDevice = pInputInterface->GetDeviceByIndex<TInputDeviceKeyboard>( 0 );
+
+#ifdef TOSHI_SKU_WASM
+	m_Devices.PushBack( pInputInterface->GetDeviceByIndex<TInputWASMDeviceController>( 0 ) );
+#endif
 
 #ifdef TOSHI_SKU_WINDOWS
 	if ( AOptions::GetSingleton()->IsControllerEnabled() )
@@ -354,7 +364,13 @@ TBOOL AInputHandler::ProcessInputEvent( Toshi::TInputInterface* a_pInputInterfac
 		if ( flMagTotal >= 0.1f || a_pEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN )
 		{
 			SetControllerUsed( TTRUE );
+#ifdef TOSHI_SKU_WINDOWS
 			m_bControllerXInput = pInputSource->GetClass()->IsA( &TGetClass( TInputXInputDeviceController ) );
+#elif defined( TOSHI_SKU_WASM )
+			m_bControllerXInput = !( pInputSource->GetClass()->IsA( &TGetClass( TInputWASMDeviceController ) ) && TSTATICCAST( TInputWASMDeviceController, pInputSource )->IsSonyController() );
+#else
+			m_bControllerXInput = TTRUE;
+#endif
 
 			TTRACE( "Controller is active (XInput: %d)\n", m_bControllerXInput );
 		}
@@ -369,6 +385,12 @@ TBOOL AInputHandler::ProcessInputEvent( Toshi::TInputInterface* a_pInputInterfac
 			TTRACE( "Controller is not active anymore due to %s\n", pInputSource->GetClass()->GetName() );
 		}
 	}
+
+#  ifdef TOSHI_SKU_WASM
+	// The page's pads and touch buttons are one controller, the glyphs follow the one used last
+	if ( IsControllerUsed() && pInputSource->GetClass()->IsA( &TGetClass( TInputWASMDeviceController ) ) )
+		m_bControllerXInput = !TSTATICCAST( TInputWASMDeviceController, pInputSource )->IsSonyController();
+#  endif
 #endif // BARNYARD_COMMUNITY_PATCH
 
 	// NOTE: the original first calls 006ce000 (RETURNS_FALSE stub) with the event

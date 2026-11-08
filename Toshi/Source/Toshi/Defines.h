@@ -68,7 +68,12 @@
 #  define TBREAK() do {} while( TFALSE )
 #endif // TBREAK
 
+#if defined( TOSHI_SKU_WASM ) && !defined( TOSHI_USER_ENGINE )
+// The game's objects aren't read from data, the wasm layout of derived classes differs from MSVC's
+#  define TSTATICASSERT( ... ) static_assert( true )
+#else
 #define TSTATICASSERT( ... )              static_assert( __VA_ARGS__, "Compile time assert failed: " #__VA_ARGS__ )
+#endif
 #define TREINTERPRETCAST( TYPE, VALUE )   ( reinterpret_cast<TYPE>( VALUE ) )
 #define TSTATICCAST( POINTERTYPE, VALUE ) ( static_cast<POINTERTYPE*>( VALUE ) )
 #define TCAST( TYPE, VALUE )              ( static_cast<TYPE>( VALUE ) )
@@ -78,7 +83,11 @@
 #define TINLINE                           inline
 #define TFORCEINLINE                      __forceinline
 #define TNOINLINE                         __declspec( noinline )
+#ifdef TOSHI_SKU_WASM
+#  define TNODISCARD
+#else
 #define TNODISCARD                        [[nodiscard]]
+#endif
 
 #define TANONYMOUSVAR_1( Y )                CONCATTOKEN( _anonymous, Y )
 #define TANONYMOUSVAR( TYPE )               TYPE TANONYMOUSVAR_1( __COUNTER__ )
@@ -148,12 +157,21 @@
 			  TWARN( "%s is not implemented: %s\n", __FUNCTION__, DESC ); \
 		  }                                                               \
 	  }
-#  define TASSERT( X, ... )                                                       \
-	  {                                                                           \
-		  TCALL_ONCE_IF( !( X ) )                                                 \
-		  if ( 1 == TDebug_AssertHandler( #X, __FILE__, __LINE__, __VA_ARGS__ ) ) \
-			  TBREAK();                                                           \
-	  }
+#  ifdef TOSHI_SKU_WASM
+#	define TASSERT( X, ... )                                                         \
+		{                                                                             \
+			TCALL_ONCE_IF( !( X ) )                                                   \
+			if ( 1 == TDebug_AssertHandler( #X, __FILE__, __LINE__, ##__VA_ARGS__ ) ) \
+				TBREAK();                                                             \
+		}
+#  else
+#	define TASSERT( X, ... )                                                       \
+		{                                                                           \
+			TCALL_ONCE_IF( !( X ) )                                                 \
+			if ( 1 == TDebug_AssertHandler( #X, __FILE__, __LINE__, __VA_ARGS__ ) ) \
+				TBREAK();                                                           \
+		}
+#  endif
 #  define TVALIDPTR( PTR ) TASSERT( TDebug_IsValidAddress( PTR ) )
 #else // TOSHI_ENABLE_ASSERTS
 #  define TWIP() do {} while( TFALSE )

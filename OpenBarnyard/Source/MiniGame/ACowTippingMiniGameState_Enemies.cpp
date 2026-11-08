@@ -95,8 +95,9 @@ static TBOOL IsBitSet( const TUINT8* a_puiBits, TUINT a_uiBit )
 	return ( a_puiBits[ a_uiBit >> 3 ] & TUINT8( 1 << ( a_uiBit & 7 ) ) ) != 0;
 }
 
+
 // NOTE: same as the static RotateVector of AModel.cpp (006c9740)
-static void RotateVector( TVector4& a_rOutVector, const TQuaternion& a_rcQuaternion, const TVector4& a_rcVector )
+static void RotateVectorLocal( TVector4& a_rOutVector, const TQuaternion& a_rcQuaternion, const TVector4& a_rcVector )
 {
 	TQuaternion quatConjugate( -a_rcQuaternion.x, -a_rcQuaternion.y, -a_rcQuaternion.z, a_rcQuaternion.w );
 	TQuaternion quatVector( a_rcVector.x, a_rcVector.y, a_rcVector.z, 0.0f );
@@ -789,7 +790,7 @@ TBOOL ACowTippingMiniGameState::MovePickupToLauncher( TFLOAT* a_pUnk1, TFLOAT a_
 			TMath::Clip( pPickup->fTurnProgress, 0.0f, 1.0f );
 
 			TQuaternion::Slerp( quatFrom, quatFrom, quatTo, pPickup->fTurnProgress );
-			RotateVector( vecUp, quatFrom, TVector4::VEC_POSZ );
+			RotateVectorLocal( vecUp, quatFrom, TVector4::VEC_POSZ );
 
 			pPickup->pObject->GetModelInstance()->SetDirection( vecUp, TVector4::VEC_POSZ );
 		}
@@ -817,7 +818,7 @@ TBOOL ACowTippingMiniGameState::MovePickupToLauncher( TFLOAT* a_pUnk1, TFLOAT a_
 		TMath::Clip( pPickup->fTurnProgress, 0.0f, 1.0f );
 
 		TQuaternion::Slerp( quatFrom, quatFrom, quatTo, pPickup->fTurnProgress );
-		RotateVector( vecUp, quatFrom, TVector4::VEC_POSZ );
+		RotateVectorLocal( vecUp, quatFrom, TVector4::VEC_POSZ );
 
 		pPickup->pObject->GetModelInstance()->SetDirection( vecUp, TVector4::VEC_POSZ );
 
@@ -862,7 +863,7 @@ TBOOL ACowTippingMiniGameState::MovePickupToBone2( TINT a_iUnk1, TFLOAT a_fUnk2 
 	TMath::Clip( pPickup->fTurnProgress, 0.0f, 1.0f );
 
 	TQuaternion::Slerp( quatFrom, quatFrom, quatTo, pPickup->fTurnProgress );
-	RotateVector( vecUp, quatFrom, TVector4::VEC_POSZ );
+	RotateVectorLocal( vecUp, quatFrom, TVector4::VEC_POSZ );
 
 	if ( fStep <= fDistance )
 	{
@@ -1889,7 +1890,7 @@ TBOOL ACowTippingMiniGameState::UpdateEnemies( TFLOAT a_fUnk1 )
 								TQuaternion::Slerp( quatFrom, quatFrom, quatTo, pEnemy->fTurnProgress );
 
 								TVector4 vecNewFacing;
-								RotateVector( vecNewFacing, quatFrom, TVector4::VEC_POSZ );
+								RotateVectorLocal( vecNewFacing, quatFrom, TVector4::VEC_POSZ );
 
 								pSteer->GetKinematics()->SetFacing( vecNewFacing );
 								CT_ENEMY_ANIM( pEnemy )->GetModelInstance()->SetDirection( vecNewFacing );

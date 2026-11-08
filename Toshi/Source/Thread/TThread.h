@@ -14,3 +14,7 @@
 #ifdef TOSHI_SKU_WINDOWS
 #  include "Platform/Windows/TThread_Win.h"
 #endif // TOSHI_SKU_WINDOWS
+
+#ifdef TOSHI_SKU_WASM
+#  include "Platform/WASM/TThread_WASM.h"
+#endif

@@ -54,6 +54,9 @@
 		//
 		//	2) for(udword i=0;i<nb;i++)	dest[i] = value;
 		//
+#ifdef __EMSCRIPTEN__
+		while ( nb-- ) *dest++ = value;
+#else
 		_asm push eax
 		_asm push ecx
 		_asm push edi
@@ -64,6 +67,7 @@
 		_asm pop edi
 		_asm pop ecx
 		_asm pop eax
+#endif
 	}
 
 	//!	Copies a buffer.

@@ -21,7 +21,11 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS( TRenderGLInterface );
 
+#ifdef TOSHI_SKU_WASM
+static const TCHAR s_szShaderVersion[] = "#version 300 es\n";
+#else
 static const TCHAR s_szShaderVersion[] = "#version 330 core\n";
+#endif
 
 // Prepended to every shader
 static const TCHAR s_szShaderCommon[] = R"(

@@ -61,10 +61,18 @@ TBOOL TRenderInterface::Create()
 	TASSERT( TFALSE == IsCreated(), "TRender already created" );
 	m_pCreatedContext = CreateRenderContext();
 
-#if defined( BARNYARD_COMMUNITY_PATCH ) && defined( TOSHI_SKU_WINDOWS )
+#if defined( BARNYARD_COMMUNITY_PATCH ) && ( defined( TOSHI_SKU_WINDOWS ) || defined( TOSHI_SKU_WASM ) )
+#  ifdef TOSHI_SKU_WASM
+	constexpr TSIZE uiMemBlockSize = 64 * 1024 * 1024;
+#  else
 	constexpr TSIZE uiMemBlockSize = 256 * 1024 * 1024;
+#  endif
 
+#  ifdef TOSHI_SKU_WASM
+	m_pMemBlockRaw = calloc( 1, uiMemBlockSize );
+#  else
 	m_pMemBlockRaw = HeapAlloc( GetProcessHeap(), HEAP_ZERO_MEMORY, uiMemBlockSize );
+#  endif
 	m_pMemBlock    = g_pMemory->CreateMemBlockInPlace( m_pMemBlockRaw, uiMemBlockSize, "TRenderInterface" );
 #endif // BARNYARD_COMMUNITY_PATCH && TOSHI_SKU_WINDOWS
 
@@ -99,7 +107,7 @@ TBOOL TRenderInterface::Destroy()
 	m_pCurrentContext = TNULL;
 	m_bCreated        = TFALSE;
 
-#if defined( BARNYARD_COMMUNITY_PATCH ) && defined( TOSHI_SKU_WINDOWS )
+#if defined( BARNYARD_COMMUNITY_PATCH ) && ( defined( TOSHI_SKU_WINDOWS ) || defined( TOSHI_SKU_WASM ) )
 
 	if ( m_pMemBlock )
 	{
@@ -113,7 +121,11 @@ TBOOL TRenderInterface::Destroy()
 
 	if ( m_pMemBlockRaw )
 	{
+#ifdef TOSHI_SKU_WASM
+		free( m_pMemBlockRaw );
+#else
 		HeapFree( GetProcessHeap(), 0, m_pMemBlockRaw );
+#endif
 		m_pMemBlockRaw = TNULL;
 	}
 
@@ -256,9 +268,11 @@ void TRenderInterface::DumpStats()
 			pFile->CPrintf( "  Sub-version : %u\r\n", pAdapter->GetSubVersion() );
 			pFile->CPrintf( "  Build       : %u\r\n", pAdapter->GetBuild() );
 
+#ifndef TOSHI_SKU_WASM
 			// NOTE: retail prints the address of Data4 as the last number
 			const GUID* pGUID = TSTATICCAST( const GUID, pAdapter->GetDeviceIdentifier() );
 			pFile->CPrintf( "  GUID        : %u-%u-%u-%u\r\n", pGUID->Data1, pGUID->Data2, pGUID->Data3, pGUID->Data4 );
+#endif
 
 			pFile->CPrintf( "  Supports %d modes:\r\n", pAdapter->GetModeList()->Count() );
 

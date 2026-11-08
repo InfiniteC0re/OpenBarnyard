@@ -5,10 +5,12 @@ function OpenBarnyardWorkspaceSettings()
 	characterset "ASCII"
 
 	configurations { "Debug", "Release", "Final" }
-	platforms "Win32"
+	platforms ( os.target() == "emscripten" and "WASM" or "Win32" )
 
 	-- Enables fast builds
-	multiprocessorcompile "on"
+	if os.target() ~= "emscripten" then
+		multiprocessorcompile "on"
+	end
 
 	disablewarnings
 	{
@@ -40,7 +42,7 @@ function OpenBarnyardWorkspaceSettings()
 		"%{IncludeDir.toshi}"
 	}
 	
-	filter "options:arch=x86"
+	filter { "options:arch=x86", "not system:emscripten" }
 		architecture "x86"
 
 	filter { "options:profiler=perf or options:profiler=perfmem" }
@@ -100,6 +102,41 @@ function OpenBarnyardWorkspaceSettings()
 		defines
 		{
 			"TRENDERINTERFACE_GL"
+		}
+
+	-- wasm32 with the layouts and the wide characters of the Windows build
+	filter "system:emscripten"
+		toolset "emcc"
+		architecture "wasm32"
+		exceptionhandling "Off"
+
+		defines
+		{
+			"TOSHI_SKU_WASM"
+		}
+
+		buildoptions
+		{
+			"-pthread",
+			"-fms-extensions",
+			"-fms-compatibility",
+			"-fms-compatibility-version=19.30",
+			"-U_MSC_VER",
+			"-U_MSC_FULL_VER",
+			"-U_MSC_BUILD",
+			"-U_MSC_EXTENSIONS",
+			"-fdelayed-template-parsing",
+			"-fdeclspec",
+			"-fshort-wchar",
+			-- The optimizer turns our string loops into wcslen, and the one in libc expects 4 byte characters
+			"-fno-builtin-wcslen",
+			"-fno-strict-aliasing",
+			"-w"
+		}
+
+		linkoptions
+		{
+			"-pthread"
 		}
 
 	filter "configurations:Debug"

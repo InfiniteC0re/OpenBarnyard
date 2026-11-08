@@ -99,7 +99,11 @@
 #include "Units/AHysteresisDriveFunction.h"
 #include "Units/ATestDriveFunction.h"
 
-#include <Platform/Windows/Input/TInputInterface_Win.h>
+#ifdef TOSHI_SKU_WASM
+#  include <Platform/WASM/Input/TInputInterface_WASM.h>
+#else
+#  include <Platform/Windows/Input/TInputInterface_Win.h>
+#endif
 #include <Render/TBackend.h>
 #include "Quests/AQuestManager.h"
 #include "Quests/ADummyQuestElement.h"
@@ -199,7 +203,11 @@ void ClassLink_Win::ReferenceEngineClasses()
 	REFERENCE_CLASS( TIndexPoolResource );
 	REFERENCE_CLASS( TVertexFactoryResource );
 	REFERENCE_CLASS( TVertexPoolResource );
+#ifdef TOSHI_SKU_WASM
+	REFERENCE_CLASS( TInputWASMInterface );
+#else
 	REFERENCE_CLASS( TInputDXInterface );
+#endif
 }
 
 void ClassLink_Win::ReferenceClasses()
@@ -208,7 +216,11 @@ void ClassLink_Win::ReferenceClasses()
 	ReferenceEngineClasses();
 
 	REFERENCE_CLASS( TTextureFactoryHAL );
+#ifdef TOSHI_SKU_WASM
+	REFERENCE_CLASS( TInputWASMInterface );
+#else
 	REFERENCE_CLASS( TInputDXInterface );
+#endif
 	REFERENCE_CLASS( TInputInterface );
 
 	// Animation breakpoints (created by name in AAnimationBreakpoint::CreateBreakpoint and ANamedAnimation::CreateBreakpointRuntime)

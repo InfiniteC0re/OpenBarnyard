@@ -58,6 +58,11 @@ void TFileStream::Stop()
 	if ( m_hThreadHnd == TNULL )
 		return;
 
+#ifdef TOSHI_SKU_WASM
+	TFileStreamJob* pStopJob = TNULL;
+	m_Jobs.Push( &pStopJob );
+	return;
+#else
 	// TThread::Exit closes m_hThreadHnd on the thread itself, so wait on a copy of it
 	HANDLE hThread = NULL;
 	if ( !DuplicateHandle( GetCurrentProcess(), m_hThreadHnd, GetCurrentProcess(), &hThread, SYNCHRONIZE, FALSE, 0 ) )
@@ -69,6 +74,7 @@ void TFileStream::Stop()
 	DWORD uiResult = WaitForSingleObject( hThread, 10000 );
 	TASSERT( uiResult == WAIT_OBJECT_0, "TFileStream::Stop: the thread didn't finish its jobs" );
 	CloseHandle( hThread );
+#endif
 }
 
 //-----------------------------------------------------------------------------

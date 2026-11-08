@@ -2,7 +2,7 @@
 #include "Cameras/ACamera.h"
 #include "ASkyDome.h"
 
-#ifdef TOSHI_SKU_WINDOWS
+#if defined( TOSHI_SKU_WINDOWS ) || defined( TOSHI_SKU_WASM )
 #  include "Platform/Windows/ADisplayModes_Win.h"
 #endif // TOSHI_SKU_WINDOWS
 

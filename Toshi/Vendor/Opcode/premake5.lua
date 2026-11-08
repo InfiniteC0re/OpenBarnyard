@@ -34,3 +34,10 @@ project "OPCODE"
 	filter "configurations:Final"
 		runtime "Release"
 		optimize "On"
+
+	filter {}
+
+	if os.target() == "emscripten" then
+		language "C++"
+		enablepch "Off"
+	end

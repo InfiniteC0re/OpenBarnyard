@@ -38,6 +38,30 @@ project "Toshi"
 		"Source/TGUI/**.cpp"
 	}
 
+	if os.target() == "emscripten" then
+		enablepch "Off"
+		forceincludes { "ToshiPCH.h" }
+
+		includedirs
+		{
+			"Source/Platform/WASM/Compat"
+		}
+
+		files
+		{
+			"Source/Platform/GL/**.cpp",
+			"Source/Platform/GL/**.h",
+			"Source/Platform/WASM/**.cpp",
+			"Source/Platform/WASM/**.h"
+		}
+
+		removefiles
+		{
+			"Source/Platform/GL/TMSWindow.*",
+			"Source/Platform/GL/TMouse_GL.*"
+		}
+	end
+
 	includedirs
 	{
 		"Source",
@@ -82,7 +106,7 @@ project "Toshi"
 			"Resources/*.rc"
 		}
 		
-		filter "options:renderer=DX8"
+		filter { "system:windows", "options:renderer=DX8" }
 			links
 			{
 				"d3d8.lib",
@@ -111,7 +135,7 @@ project "Toshi"
 				"Source/Platform/DX8/**.h"
 			}
 			
-		filter "options:renderer=DX11"
+		filter { "system:windows", "options:renderer=DX11" }
 			links
 			{
 				"d3d11.lib",

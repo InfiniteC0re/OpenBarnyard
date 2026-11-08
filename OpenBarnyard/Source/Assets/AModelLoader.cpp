@@ -9,7 +9,7 @@
 
 #include "Render/ABackend.h"
 
-#ifdef TOSHI_SKU_WINDOWS
+#if defined( TOSHI_SKU_WINDOWS ) || defined( TOSHI_SKU_WASM )
 #  include <Render/TTMDWin.h>
 #endif // TOSHI_SKU_WINDOWS
 

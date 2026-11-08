@@ -437,10 +437,10 @@ TBOOL ASSeq::UpdateResume( TINT a_iTrack, TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 00627ab0
-AParticleEffectHandle** __stdcall ASSeq::OnParticleFinished( AParticleEffectHandle* a_pHandle, AParticleEffectHandle** a_ppSlot )
+void __stdcall ASSeq::OnParticleFinished( AParticleEffectHandle* a_pHandle, AParticleEffectHandle** a_ppSlot )
 {
+	// NOTE: retail also returns a_ppSlot, nothing reads it and wasm can't call this as void if it returns something
 	*a_ppSlot = TNULL;
-	return a_ppSlot;
 }
 
 // $Barnyard: FUNCTION 00627ac0

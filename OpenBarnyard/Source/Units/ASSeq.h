@@ -231,7 +231,7 @@ private:
 	}
 
 	// Called by the particle effects when they are over
-	static AParticleEffectHandle** __stdcall OnParticleFinished( AParticleEffectHandle* a_pHandle, AParticleEffectHandle** a_ppSlot );
+	static void __stdcall OnParticleFinished( AParticleEffectHandle* a_pHandle, AParticleEffectHandle** a_ppSlot );
 
 	// Scheduler delta time calculator used while a sequence is playing: keeps the game time
 	// in sync with the voice-over

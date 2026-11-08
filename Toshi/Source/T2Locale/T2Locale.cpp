@@ -44,13 +44,13 @@ T2Locale::~T2Locale()
 }
 
 // $Barnyard: FUNCTION 006be7d0
-void* __stdcall T2Locale::TRBAllocator( TTRB::AllocType alloctype, TSIZE size, short unk, TSIZE unk2, void* userData )
+void* __stdcall T2Locale::TRBAllocator( TTRB::AllocType alloctype, TUINT32 size, short unk, TUINT32 unk2, void* userData )
 {
 	return TSTATICCAST( T2Locale, userData )->TRBAlloc( size );
 }
 
 // $Barnyard: FUNCTION 00539d40
-void __stdcall T2Locale::TRBDeallocator( TTRB::AllocType alloctype, void* ptr, short unk, TSIZE unk2, void* userData )
+void __stdcall T2Locale::TRBDeallocator( TTRB::AllocType alloctype, void* ptr, short unk, TUINT32 unk2, void* userData )
 {
 	// T2Locale doesn't have deallocator
 }

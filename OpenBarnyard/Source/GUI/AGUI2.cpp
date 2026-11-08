@@ -16,6 +16,11 @@
 
 #include "Render/ABackend.h"
 
+#ifdef TOSHI_SKU_WASM
+#  include "Input/AInputHandler.h"
+#  include <Platform/WASM/Input/TInputDeviceController_WASM.h>
+#endif
+
 #ifdef BARNYARD_LATEST
 #  include "GUI/XUI/AGUI2XUIResource.h"
 #  include <Platform/Windows/TNativeFile_Win.h>
@@ -32,6 +37,14 @@
 #include <Core/TMemoryDebugOn.h>
 
 TOSHI_NAMESPACE_USING
+
+#ifdef TOSHI_SKU_WASM
+// The cursor only makes sense with a mouse, not with a pad or the touch buttons
+static TBOOL ShouldHideCursor()
+{
+	return TInputWASMDeviceController::IsMouseMissing() || ( AInputHandler::IsSingletonCreated() && AInputHandler::GetSingleton()->IsControllerUsed() );
+}
+#endif
 
 // NOTE: GetClass 00635350, CreateObject 00635b40, CreateObjectInPlace 00635ba0
 TDEFINE_CLASS( AGUI2 );
@@ -425,7 +438,11 @@ void AGUI2::MainPostRenderCallback()
 {
 	FIRE_EVENT( AGUI2::PostRender );
 
+#ifdef TOSHI_SKU_WASM
+	if ( AGUI2::GetSingleton()->IsCursorVisible() && !ShouldHideCursor() )
+#else
 	if ( AGUI2::GetSingleton()->IsCursorVisible() )
+#endif
 	{
 		auto& mouseCursor = AGUI2::GetSingleton()->m_oMouseCursor;
 

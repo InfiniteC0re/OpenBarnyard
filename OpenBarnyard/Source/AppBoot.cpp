@@ -23,7 +23,9 @@
 #include "GUI/AGUI2.h"
 #include "CVar/AVarType.h"
 #include "Tasks/ARootTask.h"
-#include "Mod/AModLoader.h"
+#ifndef TOSHI_SKU_WASM
+#  include "Mod/AModLoader.h"
+#endif
 #include "Assets/AAssetLoader.h"
 #include "Debug/APrimeDebug.h"
 
@@ -40,7 +42,10 @@
 // destructors (TClass, free lists of the engine...) rely on the memory being still there.
 static int __cdecl InitialiseMemory()
 {
-#ifdef BARNYARD_COMMUNITY_PATCH
+#ifdef TOSHI_SKU_WASM
+	// Phones can't spare more, the biggest scenes measured use 88 MB
+	Toshi::TMemory::Initialise( 160 * 1024 * 1024, 0 );
+#elif defined( BARNYARD_COMMUNITY_PATCH )
 	// NOTE: twice the 128 MB of retail, big levels (the merged world of the remaster) run out of it
 	Toshi::TMemory::Initialise( 256 * 1024 * 1024, 0 );
 #else
@@ -160,6 +165,7 @@ static void ShowSystemMessage( SYSTEMMESSAGE a_eText, SYSTEMMESSAGE a_eCaption )
 	}
 }
 
+#ifndef TOSHI_SKU_WASM
 // NOTE: in the original, this is a C initialiser too (.CRT$XI*), run before the memory gets initialised
 // $Barnyard: FUNCTION 00404240
 static int __cdecl CheckVirtualMemory()
@@ -181,7 +187,22 @@ static int __cdecl CheckVirtualMemory()
 
 	return 0;
 }
+#endif // !TOSHI_SKU_WASM
 
+#ifdef TOSHI_SKU_WASM
+#  include <emscripten.h>
+
+// Before every static object, like the C initialisers below
+__attribute__( ( constructor( 101 ) ) ) static void InitialiseMemoryConstructor()
+{
+	InitialiseMemory();
+}
+
+// The page shows that the game was closed (the Android app closes itself)
+EM_JS( void, WASM_OnGameQuit, (), {
+	postMessage( { bQuit : true } );
+} );
+#else
 #pragma section( ".CRT$XIT", long, read )
 extern "C" __declspec( allocate( ".CRT$XIT" ) ) int( __cdecl* g_pfnCheckVirtualMemory )() = CheckVirtualMemory;
 #pragma comment( linker, "/include:_g_pfnCheckVirtualMemory" )
@@ -194,6 +215,7 @@ extern "C" __declspec( allocate( ".CRT$XTU" ) ) void( __cdecl* g_pfnDeinitialise
 
 #pragma comment( linker, "/include:_g_pfnInitialiseMemory" )
 #pragma comment( linker, "/include:_g_pfnDeinitialiseMemory" )
+#endif // TOSHI_SKU_WASM
 
 // Handle to the BARNYARD mutex
 static HANDLE s_hBarnyardHandle;
@@ -202,12 +224,13 @@ MODAPI AApplication g_oTheApp;
 
 TOSHI_NAMESPACE_USING
 
-#ifdef TOSHI_FINAL
+#if defined( TOSHI_FINAL ) && !defined( TOSHI_SKU_WASM )
 #  define TOSHI_ENTRY int WINAPI WinMain( HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, INT cmdShow )
 #else // TOSHI_FINAL
 #  define TOSHI_ENTRY int main( int argc, TCHAR** argv )
 #endif // !TOSHI_FINAL
 
+#ifndef TOSHI_SKU_WASM
 static const TCHAR* GetOSName( OSVERSIONINFOEX& osVersionInfo )
 {
 	TBOOL isWorkstation = osVersionInfo.wProductType == VER_NT_WORKSTATION;
@@ -232,6 +255,7 @@ static const TCHAR* GetOSName( OSVERSIONINFOEX& osVersionInfo )
 
 	return "unknown";
 }
+#endif // !TOSHI_SKU_WASM
 
 static void EngineQuitCallback();
 static void CreateEngine( const TCHAR* a_pchCommandLine )
@@ -248,7 +272,7 @@ static void CreateEngine( const TCHAR* a_pchCommandLine )
 	AMemory::CreatePool( AMemory::POOL_StringPool );
 	TUtil::Log( "Build Version %s\n", "0.28" );
 
-#ifdef BARNYARD_COMMUNITY_PATCH
+#if defined( BARNYARD_COMMUNITY_PATCH ) && !defined( TOSHI_SKU_WASM )
 	OSVERSIONINFOEX osVersionInfo = { sizeof( osVersionInfo ) };
 
 	const TCHAR* osName = "unknown";
@@ -293,7 +317,9 @@ static void DestroyLocaleManager()
 // $Barnyard: FUNCTION 004042c0
 static void DestroyEngine()
 {
+#ifndef TOSHI_SKU_WASM
 	ReleaseMutex( s_hBarnyardHandle );
+#endif
 
 	if ( ARootTask::IsSingletonCreated() )
 		ARootTask::GetSingleton()->Shutdown();
@@ -334,6 +360,11 @@ static void DestroyEngine()
 static void EngineQuitCallback()
 {
 	DestroyEngine();
+
+#ifdef TOSHI_SKU_WASM
+	WASM_OnGameQuit();
+#endif
+
 	exit( 0 );
 }
 
@@ -345,6 +376,7 @@ TOSHI_ENTRY
 	// Create core systems
 	CreateEngine( pchCommandLine );
 
+#ifndef TOSHI_SKU_WASM
 #ifdef BARNYARD_COMMUNITY_PATCH
 	if ( !T2String8::FindString( pchCommandLine, "-multiinstance" ) )
 #endif
@@ -360,6 +392,7 @@ TOSHI_ENTRY
 			return 0;
 		}
 	}
+#endif // !TOSHI_SKU_WASM
 
 	// NOTE: TFreeList::DumpAll (006c19c0) walks a list until its end and does nothing with it (a cut out debug check)
 	TMemory::TestMemIntegrity( TNULL );
@@ -402,6 +435,11 @@ TOSHI_ENTRY
 #endif
 
 	DestroyEngine();
+
+#ifdef TOSHI_SKU_WASM
+	WASM_OnGameQuit();
+#endif
+
 	return 0;
 }
 
@@ -502,9 +540,11 @@ TBOOL AApplication::OnCreate( int argc, TCHAR** argv )
 
 #ifdef BARNYARD_COMMUNITY_PATCH
 	// Load mods before the game systems are created, so they can hook them
+#ifndef TOSHI_SKU_WASM
 	AModLoader* pModLoader = pScheduler->CreateTask<AModLoader>();
 	pModLoader->Create();
 	pModLoader->Activate( TTRUE );
+#endif
 #endif
 
 	m_pRootTask = pScheduler->CreateTask<ARootTask>();

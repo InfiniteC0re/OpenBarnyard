@@ -24,3 +24,10 @@ project "PrimeDebug"
 	{
 		"_CRT_SECURE_NO_WARNINGS"
 	}
+
+	filter {}
+
+	if os.target() == "emscripten" then
+		enablepch "Off"
+		forceincludes { "PrimeDebugPCH.h" }
+	end

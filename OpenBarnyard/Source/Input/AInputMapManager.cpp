@@ -165,14 +165,21 @@ void AInputMapManager::GetEventCommands( const Toshi::TInputInterface::InputEven
 #ifdef BARNYARD_COMMUNITY_PATCH
 	
 	TBOOL bIsCurrentlyUsingController = AInputHandler::GetSingleton()->IsControllerUsed();
+	TBOOL bIsCurrentlyUsingXInput     = AInputHandler::GetSingleton()->IsControllerXInput();
 
-	if ( m_bIsUsingController != bIsCurrentlyUsingController )
+	// Another kind of controller needs other glyphs
+	if ( m_bIsUsingController != bIsCurrentlyUsingController || ( bIsCurrentlyUsingController && m_bIsUsingXInput != bIsCurrentlyUsingXInput ) )
 	{
 		if ( bIsCurrentlyUsingController )
 		{
 			// Unbind keyboard and mouse
-			DeinitMouseDoodads();
-			DeinitKeyboardDoodads();
+			if ( !m_bIsUsingController )
+			{
+				DeinitMouseDoodads();
+				DeinitKeyboardDoodads();
+			}
+
+			m_oDoodadToCustomNameMap.Clear();
 
 			// Apply correct remaps to draw controller glyphs
 			TSIZE             iNumRemaps = ( AInputHandler::GetSingleton()->IsControllerXInput() ) ? TARRAYSIZE( s_aGlyphsGC ) : TARRAYSIZE( s_aGlyphsPS2 );
@@ -193,6 +200,7 @@ void AInputMapManager::GetEventCommands( const Toshi::TInputInterface::InputEven
 		AMenuNavHudElement::UpdateText();
 
 		m_bIsUsingController = bIsCurrentlyUsingController;
+		m_bIsUsingXInput     = bIsCurrentlyUsingXInput;
 	}
 #endif // BARNYARD_COMMUNITY_PATCH
 

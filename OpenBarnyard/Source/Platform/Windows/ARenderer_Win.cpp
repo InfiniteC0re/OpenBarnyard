@@ -69,12 +69,14 @@ TBOOL ARenderer::CreateTRender()
 	pRenderer->SetAutoCreateSystemResources( TFALSE );
 	pRenderer->Create( "Barnyard" );
 
+#ifndef TOSHI_SKU_WASM
 	HMODULE hModuleHandle = GetModuleHandleA( TNULL );
 	HICON   hIcon         = LoadIconA( hModuleHandle, MAKEINTRESOURCE( IDI_ICON1 ) );
 	#ifdef TRENDERINTERFACE_GL
 	SendMessageA( pRenderer->GetWindow()->GetHWND(), 0x80, TRUE, (LPARAM)hIcon );
 #else
 	SendMessageA( pRenderer->GetMSWindow()->GetHWND(), 0x80, TRUE, (LPARAM)hIcon );
+#endif
 #endif
 
 	m_DisplayModes.Initialise();

@@ -1,4 +1,8 @@
 #pragma once
+
+#ifdef TOSHI_SKU_WASM
+#  include "Platform/WASM/TTypes_WASM.h"
+#endif
 #include <cstdint>
 
 using TFLOAT   = float;

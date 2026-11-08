@@ -244,7 +244,7 @@ void AFrontEndPlayersState::OnActivate()
 	pScreenElem->AddChildTail(&m_oDialog);
 	*/
 
-#ifndef TOSHI_SKU_WINDOWS
+#if !defined( TOSHI_SKU_WINDOWS ) && !defined( TOSHI_SKU_WASM )
 	// Unlock the inputhandler so that new controllers can be recognised
 	AInputHandler::GetSingleton()->Lock( TFALSE );
 #endif // !TOSHI_SKU_WINDOWS
@@ -283,7 +283,7 @@ void AFrontEndPlayersState::OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem )
 
 	// Lock the inputhandler to the current control set
 	// so that new controllers won't be recognised
-#ifndef TOSHI_SKU_WINDOWS
+#if !defined( TOSHI_SKU_WINDOWS ) && !defined( TOSHI_SKU_WASM )
 	AInputHandler::GetSingleton()->Lock( TTRUE );
 #endif // !TOSHI_SKU_WINDOWS
 

@@ -124,5 +124,6 @@ private:
 
 #ifdef BARNYARD_COMMUNITY_PATCH
 	TBOOL m_bIsUsingController  = TFALSE;
+	TBOOL m_bIsUsingXInput      = TFALSE;
 #endif // BARNYARD_COMMUNITY_PATCH
 };

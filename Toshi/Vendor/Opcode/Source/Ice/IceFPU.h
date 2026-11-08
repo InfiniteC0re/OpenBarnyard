@@ -12,6 +12,8 @@
 #ifndef __ICEFPU_H__
 #define __ICEFPU_H__
 
+#include <string.h>
+
 	#define	SIGN_BITMASK			0x80000000
 
 	//! Integer representation of a floating-point value.
@@ -41,6 +43,14 @@
 	//! Fast square root for floating-point values.
 	inline_ float FastSqrt(float square)
 	{
+#ifdef __EMSCRIPTEN__
+		int iBits;
+		memcpy( &iBits, &square, sizeof( iBits ) );
+		iBits = ( ( iBits - 0x3F800000 ) >> 1 ) + 0x3F800000;
+		float retval;
+		memcpy( &retval, &iBits, sizeof( retval ) );
+		return retval;
+#else
 			float retval;
 
 			__asm {
@@ -51,6 +61,7 @@
 					mov             [retval], eax
 			}
 			return retval;
+#endif
 	}
 
 	//! Saturates positive to zero.
@@ -221,6 +232,9 @@
 	//! A global function to find MAX(a,b) using FCOMI/FCMOV
 	inline_ float FCMax2(float a, float b)
 	{
+#ifdef __EMSCRIPTEN__
+		return b < a ? a : b;
+#else
 		float Res;
 		_asm	fld		[a]
 		_asm	fld		[b]
@@ -229,11 +243,15 @@
 		_asm	fstp	[Res]
 		_asm	fcomp
 		return Res;
+#endif
 	}
 
 	//! A global function to find MIN(a,b) using FCOMI/FCMOV
 	inline_ float FCMin2(float a, float b)
 	{
+#ifdef __EMSCRIPTEN__
+		return a < b ? a : b;
+#else
 		float Res;
 		_asm	fld		[a]
 		_asm	fld		[b]
@@ -242,11 +260,15 @@
 		_asm	fstp	[Res]
 		_asm	fcomp
 		return Res;
+#endif
 	}
 
 	//! A global function to find MAX(a,b,c) using FCOMI/FCMOV
 	inline_ float FCMax3(float a, float b, float c)
 	{
+#ifdef __EMSCRIPTEN__
+		float Res = c; if ( Res < b ) Res = b; if ( Res < a ) Res = a; return Res;
+#else
 		float Res;
 		_asm	fld		[a]
 		_asm	fld		[b]
@@ -258,11 +280,15 @@
 		_asm	fstp	[Res]
 		_asm	fcompp
 		return Res;
+#endif
 	}
 
 	//! A global function to find MIN(a,b,c) using FCOMI/FCMOV
 	inline_ float FCMin3(float a, float b, float c)
 	{
+#ifdef __EMSCRIPTEN__
+		float Res = c; if ( b < Res ) Res = b; if ( a < Res ) Res = a; return Res;
+#else
 		float Res;
 		_asm	fld		[a]
 		_asm	fld		[b]
@@ -274,6 +300,7 @@
 		_asm	fstp	[Res]
 		_asm	fcompp
 		return Res;
+#endif
 	}
 
 	inline_ int ConvertToSortable(float f)

@@ -104,9 +104,10 @@ static const TClass* GetCarChaseMiniGameStateClass()
 // NOTE: defined in AGTAStyleCameraHelper.cpp (006186a0)
 TBOOL SweepSphere( const TVector4& a_rcStart, const TVector4& a_rcDirection, TFLOAT a_fRadius, TFLOAT a_fLength, TFLOAT* a_pOutFraction, TVector4* a_pOutNormal, TINT a_iFlags, TUINT a_uiCollisionMask );
 
+
 // Rotates a_rcVector by a_rcQuaternion (w of the result is 1)
 // NOTE: a copy of 006c9740 (static in AModel.cpp)
-static void RotateVector( TVector4& a_rOutVector, const TQuaternion& a_rcQuaternion, const TVector4& a_rcVector )
+static void RotateVectorLocal( TVector4& a_rOutVector, const TQuaternion& a_rcQuaternion, const TVector4& a_rcVector )
 {
 	TQuaternion quatConjugate( -a_rcQuaternion.x, -a_rcQuaternion.y, -a_rcQuaternion.z, a_rcQuaternion.w );
 	TQuaternion quatVector( a_rcVector.x, a_rcVector.y, a_rcVector.z, 0.0f );
@@ -426,7 +427,7 @@ TBOOL ABikePhysicsCameraHelper::OnUpdate( TFLOAT a_fDeltaTime )
 		TQuaternion quatYaw;
 		QuaternionFromEuler( quatYaw, vEuler );
 
-		RotateVector( vCameraPos, quatYaw, m_vCameraOffset );
+		RotateVectorLocal( vCameraPos, quatYaw, m_vCameraOffset );
 		vCameraPos.x = vVehiclePos.x + vCameraPos.x;
 		vCameraPos.y = vVehiclePos.y + vCameraPos.y;
 		vCameraPos.z = vVehiclePos.z + vCameraPos.z;

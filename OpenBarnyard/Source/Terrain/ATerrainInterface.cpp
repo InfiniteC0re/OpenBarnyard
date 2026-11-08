@@ -1257,7 +1257,7 @@ void ATerrainInterface::MoveAllFinishedJobs( Toshi::T2SList<JobSlot>& a_rFreeJob
 	}
 }
 
-#ifdef TOSHI_SKU_WINDOWS
+#if defined( TOSHI_SKU_WINDOWS ) || defined( TOSHI_SKU_WASM )
 
 // $Barnyard: FUNCTION 005e7cb0
 static void RenderWorldWin( TModelInstance* a_pModelInstance )

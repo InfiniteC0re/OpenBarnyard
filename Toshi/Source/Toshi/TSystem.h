@@ -1,4 +1,8 @@
 #pragma once
+
+#ifdef TOSHI_SKU_WASM
+#  include "Platform/WASM/TSystemDLL_WASM.h"
+#endif
 #include "TEvent.h"
 #include "TSingleton.h"
 #include "THPTimer.h"
@@ -15,6 +19,9 @@ class TPString8Pool;
 class TKernelInterfaceDLL :
 #ifdef TOSHI_SKU_WINDOWS
     public TSystemDLLWin
+    ,
+#elif defined( TOSHI_SKU_WASM )
+    public TSystemDLLWASM
     ,
 #else
 #  error Unsupported platform

@@ -1,6 +1,9 @@
 #include "ToshiPCH.h"
 #include "TRenderAdapter_GL.h"
 
+#ifdef TOSHI_SKU_WASM
+#  include "Platform/WASM/TWindow_WASM.h"
+#endif
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

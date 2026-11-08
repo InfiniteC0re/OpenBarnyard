@@ -152,6 +152,8 @@ void TFileLexerUTF8::DefinePlatformSymbols()
 	Define( "TOSHI_SKU_GC" );
 #elif defined( TOSHI_SKU_WII )
 	Define( "TOSHI_SKU_WII" );
+#elif defined( TOSHI_SKU_WASM )
+	Define( "TOSHI_SKU_WASM" );
 #else
 #  error Wrong define?
 #endif

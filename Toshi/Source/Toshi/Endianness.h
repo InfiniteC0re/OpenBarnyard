@@ -10,7 +10,7 @@ enum Endianess_ : Endianess
 };
 
 inline constexpr Endianess CURRENT_ENDIANESS =
-#ifdef TOSHI_SKU_WINDOWS
+#if defined( TOSHI_SKU_WINDOWS ) || defined( TOSHI_SKU_WASM )
     Endianess_Little;
 #endif
 

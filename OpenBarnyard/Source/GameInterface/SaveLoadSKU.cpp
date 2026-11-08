@@ -338,6 +338,7 @@ void SaveLoadSKU::SetMessage( const TWCHAR* a_wszText )
 
 #ifdef BARNYARD_COMMUNITY_PATCH
 
+#  ifndef TOSHI_SKU_WASM
 // Creates a_szDir and its missing parents
 static TBOOL CreateDirectories( const TCHAR* a_szDir )
 {
@@ -374,6 +375,7 @@ static TBOOL IsDirectoryWritable( const TCHAR* a_szDir )
 	CloseHandle( hFile );
 	return TTRUE;
 }
+#  endif // !TOSHI_SKU_WASM
 
 const TCHAR* SaveLoadSKU::GetSaveDirectory()
 {
@@ -392,6 +394,10 @@ const TCHAR* SaveLoadSKU::GetSaveDirectory()
 	strcat( szExeSaveDir, "Save" );
 	TStringManager::String8Copy( s_szDir, szExeSaveDir, sizeof( s_szDir ) );
 
+#  ifdef TOSHI_SKU_WASM
+	// The saves are in IndexedDB, always writable
+	return s_szDir;
+#  else
 	if ( IsDirectoryWritable( szExeSaveDir ) )
 		return s_szDir;
 
@@ -425,6 +431,7 @@ const TCHAR* SaveLoadSKU::GetSaveDirectory()
 	TINFO( "SaveLoadSKU: %s isn't writable, saving to %s\n", szExeSaveDir, szVirtualDir );
 	TStringManager::String8Copy( s_szDir, szVirtualDir, sizeof( s_szDir ) );
 	return s_szDir;
+#  endif // !TOSHI_SKU_WASM
 }
 
 void SaveLoadSKU::Dev_SetSavePath( const TCHAR* a_szPath )

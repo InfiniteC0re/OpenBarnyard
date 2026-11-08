@@ -1,5 +1,5 @@
 #pragma once
 
-#ifdef TOSHI_SKU_WINDOWS
+#if defined( TOSHI_SKU_WINDOWS ) || defined( TOSHI_SKU_WASM )
 #include "ClassLink_Win.h"
 #endif
