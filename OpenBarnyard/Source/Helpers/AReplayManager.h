@@ -181,6 +181,11 @@ public:
 
 	void Render( TBOOL a_bOnTop );
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Kills the "Gamezone" effects while the stars are hidden, plays them again after
+	void SetStarEffectsHidden( TBOOL a_bHidden );
+#endif
+
 	AReplayableGame* GetFirstReplay() const { return m_pReplays; }
 	AReplayableGame* FindReplay( Toshi::TPString8 a_strName );
 
@@ -223,6 +228,10 @@ public:
 
 	// Never set in retail (DAT_00783e2c)
 	inline static TBOOL ms_bRenderOnTop;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	inline static TBOOL ms_bStarEffectsHidden;
+#endif
 
 private:
 	AReplayableGame*       m_pReplays;           // 0x004, linked list of the replays

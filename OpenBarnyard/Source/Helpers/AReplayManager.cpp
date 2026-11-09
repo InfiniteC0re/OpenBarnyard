@@ -1111,6 +1111,11 @@ void AReplayManager::PlaceStar( AReplayableGame* a_pReplay )
 // $Barnyard: FUNCTION 00548110
 void AReplayManager::PlayStarEffect( AReplayableGame* a_pReplay )
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	if ( ms_bStarEffectsHidden )
+		return;
+#endif
+
 	if ( !a_pReplay->m_pEffect )
 	{
 		TINT iEffect = AParticleEffectManager::FindEffect( "Gamezone" );
@@ -1168,10 +1173,45 @@ void AReplayManager::RotateStars( TFLOAT a_fDeltaTime )
 	}
 }
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+void AReplayManager::SetStarEffectsHidden( TBOOL a_bHidden )
+{
+	if ( ms_bStarEffectsHidden == a_bHidden )
+		return;
+
+	ms_bStarEffectsHidden = a_bHidden;
+
+	for ( AReplayableGame* pReplay = m_pReplays; pReplay != TNULL; pReplay = pReplay->m_pNext )
+	{
+		if ( a_bHidden )
+		{
+			if ( pReplay->m_pEffect )
+			{
+				pReplay->m_pEffect->GetInstance()->Kill();
+				pReplay->m_pEffect = TNULL;
+			}
+		}
+		else if ( m_bStarsCreated && pReplay->m_pStar && ( pReplay->m_eStarState == AReplayableGame::STARSTATE_AVAILABLE || pReplay->m_eStarState == AReplayableGame::STARSTATE_COMPLETED ) )
+		{
+			PlayStarEffect( pReplay );
+		}
+	}
+}
+
+#endif
+
 // $Barnyard: FUNCTION 00547c80
 void AReplayManager::Render( TBOOL a_bOnTop )
 {
-	if ( ASSeqState::IsPlaying() || AGameStateController::GetSingleton()->FindGameStateOnStack( TPS8( ASleepCycleState ) ) )
+	TBOOL bHidden = ASSeqState::IsPlaying() || AGameStateController::GetSingleton()->FindGameStateOnStack( TPS8( ASleepCycleState ) ) != TNULL;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Retail hides only the star models here
+	SetStarEffectsHidden( bHidden );
+#endif
+
+	if ( bHidden )
 		return;
 
 	if ( a_bOnTop && !ms_bRenderOnTop )
