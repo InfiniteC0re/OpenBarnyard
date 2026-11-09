@@ -117,10 +117,21 @@ var oPageSettings = {
 			window.dispatchEvent( new KeyboardEvent( a_szType, { code : a_szCode, key : a_szCode.replace( "Key", "" ).toLowerCase(), bubbles : true } ) );
 		}
 
-		// A few frames per key so the game sees each one, even when slow
-		var iStep = 0;
+		// A press or release every two game frames (the game may read input a frame after the page shows one),
+		// so the game sees each one however fast it runs
+		var iStep = 0, iLastFrames = -2, fLastStep = 0;
 
 		var iTimer = setInterval( function () {
+			var iFrames = Module.oStats ? Module.oStats.iFrames : 0;
+			var fNow    = performance.now();
+
+			// Two frames passed, or the game isn't drawing (hidden) and it's been a while
+			if ( iFrames - iLastFrames < 2 && fNow - fLastStep < 1000 )
+				return;
+
+			iLastFrames = iFrames;
+			fLastStep   = fNow;
+
 			var iKey = iStep >> 1;
 
 			if ( iKey == aKeys.length )
@@ -141,7 +152,7 @@ var oPageSettings = {
 			}
 
 			iStep++;
-		}, 120 );
+		}, 4 );
 	},
 
 	ShowFps : function ( a_bShow )
@@ -198,6 +209,7 @@ var oPageSettings = {
 			'<option value="auto">Auto</option><option value="on">On</option><option value="off">Off</option></select></label>' +
 			'<label>Show FPS <input type="checkbox" data-key="bShowFps"></label>' +
 			'<div class="hint" id="settingsAuto"></div>' +
+			'<div class="buttons" id="settingsTouchRow"><button id="settingsTouchLayout">Edit touch buttons</button></div>' +
 			'<div class="section">Cheats</div>' +
 			'<div class="row"><input type="text" id="settingsCheat" placeholder="Cheat code" autocomplete="off" autocapitalize="characters" spellcheck="false"><button id="settingsSendCheat">Enter</button></div>' +
 			'<div class="section" id="settingsDataSection">Game data</div>' +
@@ -279,7 +291,8 @@ var oPageSettings = {
 			if ( oContext )
 				szText += ". Sound " + oContext.sampleRate + " Hz, " + Math.round( ( Module.iAudioLag || 0 ) * 1000 / 44100 ) + " ms in the buffer (worst " +
 					Math.round( ( Module.iAudioWorst || 0 ) * 1000 / 44100 ) + " ms), " + Math.round( ( ( oContext.baseLatency || 0 ) + ( oContext.outputLatency || 0 ) ) * 1000 ) + " ms output, " +
-					( Module.iAudioGaps || 0 ) + " gaps, " + ( Module.iAudioSkips || 0 ) + " skips";
+					( Module.iAudioGaps || 0 ) + " gaps, " + ( Module.iAudioSkips || 0 ) + " skips" +
+					( Module._WASM_GetAudioWorstStart ? ", sounds start within " + Math.round( Module._WASM_GetAudioWorstStart() ) + " ms" : "" );
 
 			document.getElementById( "settingsAbout" ).textContent = szText;
 			document.getElementById( "settingsUpdateButtons" ).style.display = navigator.serviceWorker && !/[?&]app(&|$)/.test( location.search ) ? "" : "none";
@@ -321,6 +334,7 @@ var oPageSettings = {
 
 		function UpdatePanel()
 		{
+			document.getElementById( "settingsTouchRow" ).style.display = document.getElementById( "touch" ) ? "" : "none";
 			UpdateData();
 			UpdateAbout();
 
@@ -425,6 +439,11 @@ var oPageSettings = {
 			}
 
 			location.reload();
+		} );
+
+		document.getElementById( "settingsTouchLayout" ).addEventListener( "click", function () {
+			oPanel.style.display = "none";
+			oGameInput.EditTouchLayout();
 		} );
 
 		document.getElementById( "settingsSendCheat" ).addEventListener( "click", function () {

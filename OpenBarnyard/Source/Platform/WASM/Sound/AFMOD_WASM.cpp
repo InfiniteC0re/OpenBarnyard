@@ -53,6 +53,13 @@ extern "C" EMSCRIPTEN_KEEPALIVE volatile int* WASM_GetAudioRead()
 	return &s_iRingRead;
 }
 
+static volatile float s_fWorstStartMs;
+
+extern "C" EMSCRIPTEN_KEEPALIVE float WASM_GetAudioWorstStart()
+{
+	return s_fWorstStartMs;
+}
+
 struct SampleInfo
 {
 	TCHAR   szName[ 32 ];
@@ -129,6 +136,7 @@ struct Channel
 	TFLOAT         afPosition[ 3 ];
 	TFLOAT         fMinDistance;
 	TFLOAT         fMaxDistance;
+	double         dRequested; // when the game asked for it to play, until the mixer starts it
 };
 
 static Channel         s_aChannels[ MAX_CHANNELS ];
@@ -677,7 +685,19 @@ static void* MixThread( void* )
 			for ( Channel& rChannel : s_aChannels )
 			{
 				if ( !rChannel.bPaused && IsChannelPlaying( rChannel ) )
+				{
+					if ( rChannel.dRequested > 0.0 )
+					{
+						const TFLOAT fWaitMs = TFLOAT( dNow - rChannel.dRequested );
+
+						if ( fWaitMs > s_fWorstStartMs )
+							s_fWorstStartMs = fWaitMs;
+
+						rChannel.dRequested = 0.0;
+					}
+
 					MixChannel( rChannel, afMix, MIX_CHUNK );
+				}
 			}
 
 			MixMovieVoice( afMix, MIX_CHUNK );
@@ -855,6 +875,7 @@ static Channel* StartChannel( TINT a_iWanted )
 	pChannel->iGeneration  = ( s_iNextGeneration++ & 0x7FFFF ) | 1;
 	pChannel->fMinDistance = 1.0f;
 	pChannel->fMaxDistance = 1000000000.0f;
+	pChannel->dRequested   = emscripten_get_now();
 
 	return pChannel;
 }
@@ -1021,7 +1042,13 @@ extern "C"
 
 	signed char F_API FSOUND_SetPaused( int channel, signed char paused )
 	{
-		return ForChannels( channel, [ & ]( Channel& a_rChannel ) { a_rChannel.bPaused = paused != 0; } );
+		return ForChannels( channel, [ & ]( Channel& a_rChannel ) {
+			// The game starts sounds paused and sets them up first, the wait counts from here
+			if ( a_rChannel.bPaused && !paused && a_rChannel.dRequested > 0.0 )
+				a_rChannel.dRequested = emscripten_get_now();
+
+			a_rChannel.bPaused = paused != 0;
+		} );
 	}
 
 	signed char F_API FSOUND_SetVolume( int channel, int vol )

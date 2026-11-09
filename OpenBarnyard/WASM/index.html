@@ -107,6 +107,51 @@
 			background: rgba(255, 255, 255, 0.45);
 		}
 
+		#touch.editing {
+			background: rgba(0, 0, 0, 0.35);
+		}
+
+		#touch.editing .button {
+			border-style: dashed;
+		}
+
+		#touch.editing .button.selected {
+			border: 2px solid #f2c14e;
+			background: rgba(242, 193, 78, 0.35);
+		}
+
+		#layoutBar {
+			position: absolute;
+			left: 50%;
+			top: 12px;
+			transform: translateX(-50%);
+			z-index: 25;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			padding: 8px 10px;
+			border-radius: 12px;
+			background: rgba(28, 24, 19, 0.94);
+			color: #eee;
+			font: 14px system-ui, sans-serif;
+			white-space: nowrap;
+		}
+
+		#layoutBar button {
+			font: 600 15px system-ui, sans-serif;
+			color: #eee;
+			background: #3e372d;
+			border: none;
+			border-radius: 8px;
+			padding: 6px 12px;
+			min-width: 36px;
+		}
+
+		#layoutBar button.accent {
+			background: #f2c14e;
+			color: #241d12;
+		}
+
 		#touch .stick {
 			display: none;
 			position: absolute;

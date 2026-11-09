@@ -49,7 +49,8 @@ void OutputDebugStringA( const char* a_szString )
 }
 
 EM_JS( char*, WASM_GetCommandLine, (), {
-	var szArgs = "OpenBarnyard " + ( new URLSearchParams( location.search ).get( "args" ) || "" );
+	var szSearch = typeof g_szPageSearch !== "undefined" ? g_szPageSearch : location.search;
+	var szArgs   = "OpenBarnyard " + ( new URLSearchParams( szSearch ).get( "args" ) || "" );
 	var iSize  = lengthBytesUTF8( szArgs ) + 1;
 	var pArgs  = _malloc( iSize );
 	stringToUTF8( szArgs, pArgs, iSize );

@@ -2,7 +2,7 @@
 if ( typeof Module === "undefined" ) var Module = {};
 
 // ?log: the workers send their console to the page, phones have no other way to show it
-if ( typeof importScripts === "function" && location.search.indexOf( "log" ) >= 0 )
+if ( typeof importScripts === "function" && ( typeof g_szPageSearch !== "undefined" ? g_szPageSearch : location.search ).indexOf( "log" ) >= 0 )
 {
 	for ( const szName of [ "log", "warn", "error" ] )
 	{

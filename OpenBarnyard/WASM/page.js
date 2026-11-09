@@ -89,7 +89,8 @@ window.addEventListener( "unhandledrejection", function ( a_oEvent ) {
 	window.Worker = function ( a_szUrl, a_oOptions )
 	{
 		// Workers read the page's query (game arguments, data url) from their own location
-		var oWorker = new fnWorker( String( a_szUrl ) + location.search, a_oOptions );
+		var szUrl   = String( a_szUrl );
+		var oWorker = new fnWorker( szUrl.indexOf( "blob:" ) == 0 ? szUrl : szUrl + location.search, a_oOptions );
 
 		oWorker.addEventListener( "error", function ( a_oEvent ) {
 			PageLog( "worker error: " + a_oEvent.message + " (" + a_oEvent.filename + ":" + a_oEvent.lineno + ")", true );
@@ -227,48 +228,62 @@ function StartAudio()
 		}
 	}
 
-	// The device's own rate: iOS adds a lot of delay when asked for another one, the worklet resamples the game's 44100 Hz
-	var oContext = new AudioContext( { latencyHint : "interactive" } );
-	Module.oAudioContext = oContext;
+	var oContext = null;
 
-	oContext.addEventListener( "statechange", function () {
-		PageLog( "audio " + oContext.state );
-	} );
+	// iOS can pick a long output buffer for a whole session when the audio starts before the first tap,
+	// so the audio is made in the first tap (or key press). The game's mixer runs on its own clock until then
+	function CreateContext()
+	{
+		// The device's own rate: iOS adds a lot of delay when asked for another one, the worklet resamples the game's 44100 Hz
+		oContext = new AudioContext( { latencyHint : "interactive" } );
+		Module.oAudioContext = oContext;
 
-	MakeScriptBlob( "audio_worklet.js" ).then( function ( a_szUrl ) {
-		return oContext.audioWorklet.addModule( a_szUrl );
-	} ).then( function () {
-		var oNode = new AudioWorkletNode( oContext, "game-audio", {
-			numberOfOutputs : 1,
-			outputChannelCount : [ 2 ],
-			processorOptions : {
-				oMemory : Module.HEAPU8.buffer,
-				pRing : Module._WASM_GetAudioRing(),
-				pWrite : Module._WASM_GetAudioWrite(),
-				pRead : Module._WASM_GetAudioRead ? Module._WASM_GetAudioRead() : 0,
-				iFrames : 8192,
-				iRate : 44100
-			}
+		oContext.addEventListener( "statechange", function () {
+			PageLog( "audio " + oContext.state );
 		} );
 
-		PageLog( "audio " + oContext.sampleRate + " Hz, output latency " + Math.round( ( ( oContext.baseLatency || 0 ) + ( oContext.outputLatency || 0 ) ) * 1000 ) + " ms" );
+		MakeScriptBlob( "audio_worklet.js" ).then( function ( a_szUrl ) {
+			return oContext.audioWorklet.addModule( a_szUrl );
+		} ).then( function () {
+			var oNode = new AudioWorkletNode( oContext, "game-audio", {
+				numberOfOutputs : 1,
+				outputChannelCount : [ 2 ],
+				processorOptions : {
+					oMemory : Module.HEAPU8.buffer,
+					pRing : Module._WASM_GetAudioRing(),
+					pWrite : Module._WASM_GetAudioWrite(),
+					pRead : Module._WASM_GetAudioRead ? Module._WASM_GetAudioRead() : 0,
+					iFrames : 8192,
+					iRate : 44100
+				}
+			} );
 
-		oNode.connect( oContext.destination );
-		Module.oAudioNode = oNode;
+			PageLog( "audio " + oContext.sampleRate + " Hz, output latency " + Math.round( ( ( oContext.baseLatency || 0 ) + ( oContext.outputLatency || 0 ) ) * 1000 ) + " ms" );
 
-		oNode.port.onmessage = function ( a_oEvent ) {
-			var oData = a_oEvent.data;
-			Module.iAudioLag   = oData.iLag;
-			Module.iAudioWorst = Math.max( Module.iAudioWorst || 0, oData.iWorst );
-			Module.iAudioGaps  = oData.iGaps;
-			Module.iAudioSkips = oData.iSkips;
-		};
-	} );
+			oNode.connect( oContext.destination );
+			Module.oAudioNode = oNode;
+
+			oNode.port.onmessage = function ( a_oEvent ) {
+				var oData = a_oEvent.data;
+				Module.iAudioLag   = oData.iLag;
+				Module.iAudioWorst = Math.max( Module.iAudioWorst || 0, oData.iWorst );
+				Module.iAudioGaps  = oData.iGaps;
+				Module.iAudioSkips = oData.iSkips;
+			};
+		} );
+
+	}
 
 	// Older iOS also wants a sound started from the tap itself
 	function Unlock()
 	{
-		if ( document.hidden || oContext.state == "running" )
+		if ( document.hidden )
+			return;
+
+		if ( !oContext )
+			CreateContext();
+
+		if ( oContext.state == "running" )
 			return;
 
 		oContext.resume();
@@ -280,14 +295,22 @@ function StartAudio()
 	}
 
 	document.addEventListener( "visibilitychange", function () {
+		if ( !oContext )
+			return;
+
 		if ( document.hidden )
 			oContext.suspend();
 		else
 			oContext.resume();
 	} );
 
-	for ( var szEvent of [ "pointerdown", "keydown", "touchend" ] )
+	// Only these count as a tap for iOS (touchstart and pointerdown don't)
+	for ( var szEvent of [ "touchend", "pointerup", "click", "keydown" ] )
 		window.addEventListener( szEvent, Unlock, true );
+
+	// The Android app plays sound without a tap
+	if ( /[?&]app(&|$)/.test( location.search ) )
+		CreateContext();
 }
 
 // iOS doesn't send the requests of workers and worklets through the service worker, so offline they fail.
@@ -327,8 +350,11 @@ async function LoadGame()
 		return new URL( a_szPath, location.href ).href;
 	};
 
+	// A blob has no query of its own: the threads get the page's
+	var szSearch = location.search;
+
 	var oGameScript = document.createElement( "script" );
-	oGameScript.src = await MakeScriptBlob( "OpenBarnyard.js", "var g_szDataUrl = " + JSON.stringify( szDataUrl ) + ";\n" );
+	oGameScript.src = await MakeScriptBlob( "OpenBarnyard.js", "var g_szDataUrl = " + JSON.stringify( szDataUrl ) + ", g_szPageSearch = " + JSON.stringify( szSearch ) + ";\n" );
 	document.body.appendChild( oGameScript );
 }
 

@@ -115,6 +115,97 @@ var oGameInput = {
 		{ szLabel : "R2", iBit : 15, fRight : 61, fBottom : 9, fSize : 11 }
 	],
 
+	// Saved places and sizes of the touch buttons, by label
+	LoadTouchLayout : function ()
+	{
+		try
+		{
+			return JSON.parse( localStorage.getItem( "oTouchLayout" ) || "{}" );
+		}
+		catch ( e )
+		{
+			return {};
+		}
+	},
+
+	PlaceTouchButton : function ( a_oElement )
+	{
+		var oPlace = a_oElement.oPlace;
+
+		a_oElement.style.right      = oPlace.fRight + "vmin";
+		a_oElement.style.bottom     = oPlace.fBottom + "vmin";
+		a_oElement.style.width      = oPlace.fSize + "vmin";
+		a_oElement.style.height     = oPlace.fSize + "vmin";
+		a_oElement.style.lineHeight = oPlace.fSize + "vmin";
+		a_oElement.style.fontSize   = ( oPlace.fSize * 0.4 ) + "vmin";
+	},
+
+	// Drag a button to move it, - and + resize the selected one (all of them when none is)
+	EditTouchLayout : function ()
+	{
+		var oLayer = document.getElementById( "touch" );
+
+		if ( !oLayer || oGameInput.bEditingLayout )
+			return;
+
+		oGameInput.bEditingLayout = true;
+		oGameInput.uiTouchButtons = 0;
+		oGameInput.afTouchSticks.fill( 0 );
+		oLayer.classList.add( "editing" );
+
+		var oBar = document.createElement( "div" );
+		oBar.id  = "layoutBar";
+		oBar.innerHTML = '<span>Drag a button to move it</span><button data-action="smaller">\u2212</button><button data-action="bigger">+</button>' +
+			'<button data-action="reset">Reset</button><button data-action="done" class="accent">Done</button>';
+		document.body.appendChild( oBar );
+
+		oGameInput.oSelectedButton = null;
+
+		oBar.addEventListener( "click", function ( a_oEvent ) {
+			var szAction = a_oEvent.target.dataset && a_oEvent.target.dataset.action;
+			var aElements = oGameInput.aTouchElements;
+
+			if ( szAction == "smaller" || szAction == "bigger" )
+			{
+				for ( var oElement of oGameInput.oSelectedButton ? [ oGameInput.oSelectedButton ] : aElements )
+				{
+					oElement.oPlace.fSize = Math.max( 8, Math.min( 30, oElement.oPlace.fSize + ( szAction == "bigger" ? 2 : -2 ) ) );
+					oGameInput.PlaceTouchButton( oElement );
+				}
+			}
+			else if ( szAction == "reset" )
+			{
+				for ( var oElement of aElements )
+				{
+					oElement.oPlace = Object.assign( {}, oElement.oDefault );
+					oGameInput.PlaceTouchButton( oElement );
+				}
+			}
+			else if ( szAction == "done" )
+			{
+				var oLayout = {};
+
+				for ( var oElement of aElements )
+					oLayout[ oElement.oDefault.szLabel ] = { fRight : oElement.oPlace.fRight, fBottom : oElement.oPlace.fBottom, fSize : oElement.oPlace.fSize };
+
+				try
+				{
+					localStorage.setItem( "oTouchLayout", JSON.stringify( oLayout ) );
+				}
+				catch ( e )
+				{
+				}
+
+				if ( oGameInput.oSelectedButton )
+					oGameInput.oSelectedButton.classList.remove( "selected" );
+
+				oLayer.classList.remove( "editing" );
+				oBar.remove();
+				oGameInput.bEditingLayout = false;
+			}
+		} );
+	},
+
 	CreateTouchControls : function ()
 	{
 		var oLayer = document.createElement( "div" );
@@ -130,21 +221,30 @@ var oGameInput = {
 		oStickKnob.className = "knob";
 		oStickBase.appendChild( oStickKnob );
 
+		var oLayout = oGameInput.LoadTouchLayout();
+		oGameInput.aTouchElements = [];
+
 		for ( var oButton of oGameInput.aTouchButtons )
 		{
 			var oElement = document.createElement( "div" );
 
-			oElement.className     = "button";
-			oElement.textContent   = oButton.szLabel;
-			oElement.dataset.iBit  = oButton.iBit;
-			oElement.style.right   = oButton.fRight + "vmin";
-			oElement.style.bottom  = oButton.fBottom + "vmin";
-			oElement.style.width   = oButton.fSize + "vmin";
-			oElement.style.height  = oButton.fSize + "vmin";
-			oElement.style.lineHeight = oButton.fSize + "vmin";
-			oElement.style.fontSize   = ( oButton.fSize * 0.4 ) + "vmin";
+			oElement.className    = "button";
+			oElement.textContent  = oButton.szLabel;
+			oElement.dataset.iBit = oButton.iBit;
+			oElement.oDefault     = oButton;
+			oElement.oPlace       = Object.assign( {}, oButton, oLayout[ oButton.szLabel ] || {} );
 
+			oGameInput.PlaceTouchButton( oElement );
+			oGameInput.aTouchElements.push( oElement );
 			oLayer.appendChild( oElement );
+		}
+
+		// Layout editing: a touch on a button selects and drags it
+		var oDrag = null;
+
+		function VMin()
+		{
+			return Math.min( window.innerWidth, window.innerHeight ) / 100;
 		}
 
 		// A touch that starts on a button stays that button, the left half moves, the right half looks around
@@ -178,6 +278,25 @@ var oGameInput = {
 		{
 			a_oEvent.preventDefault();
 
+			if ( oGameInput.bEditingLayout )
+			{
+				var oTouch  = a_oEvent.changedTouches[ 0 ];
+				var oTarget = oTouch.target;
+
+				if ( oGameInput.oSelectedButton )
+					oGameInput.oSelectedButton.classList.remove( "selected" );
+
+				oGameInput.oSelectedButton = oTarget.oPlace ? oTarget : null;
+
+				if ( oTarget.oPlace )
+				{
+					oTarget.classList.add( "selected" );
+					oDrag = { oElement : oTarget, iId : oTouch.identifier, fX : oTouch.clientX, fY : oTouch.clientY, fRight : oTarget.oPlace.fRight, fBottom : oTarget.oPlace.fBottom };
+				}
+
+				return;
+			}
+
 			for ( var oTouch of a_oEvent.changedTouches )
 			{
 				var oTarget = oTouch.target;
@@ -207,6 +326,25 @@ var oGameInput = {
 		{
 			a_oEvent.preventDefault();
 
+			if ( oGameInput.bEditingLayout )
+			{
+				for ( var oTouch of a_oEvent.changedTouches )
+				{
+					if ( !oDrag || oTouch.identifier != oDrag.iId )
+						continue;
+
+					var oPlace  = oDrag.oElement.oPlace;
+					var fVMin   = VMin();
+					var fMaxX   = window.innerWidth / fVMin - oPlace.fSize;
+					var fMaxY   = window.innerHeight / fVMin - oPlace.fSize;
+					oPlace.fRight  = Math.max( 0, Math.min( fMaxX, oDrag.fRight - ( oTouch.clientX - oDrag.fX ) / fVMin ) );
+					oPlace.fBottom = Math.max( 0, Math.min( fMaxY, oDrag.fBottom - ( oTouch.clientY - oDrag.fY ) / fVMin ) );
+					oGameInput.PlaceTouchButton( oDrag.oElement );
+				}
+
+				return;
+			}
+
 			for ( var oTouch of a_oEvent.changedTouches )
 			{
 				var oState = oTouches[ oTouch.identifier ];
@@ -219,6 +357,12 @@ var oGameInput = {
 		function OnEnd( a_oEvent )
 		{
 			a_oEvent.preventDefault();
+
+			if ( oGameInput.bEditingLayout )
+			{
+				oDrag = null;
+				return;
+			}
 
 			for ( var oTouch of a_oEvent.changedTouches )
 			{

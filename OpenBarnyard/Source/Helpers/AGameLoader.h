@@ -250,7 +250,13 @@ public:
 		DEVANTICS_NUMOF,
 	};
 
-	inline static TINT ms_iDevFrontEndAntics = DEVANTICS_NORMAL;
+	inline static TINT ms_iDevFrontEndAntics =
+#ifdef TOSHI_SKU_WASM
+	DEVANTICS_DEBUGMENU
+#else
+	DEVANTICS_NORMAL
+#endif
+	;
 
 	inline static TINT ms_iDevMiniGameVariant = -1;
 	inline static TINT ms_iDevMiniGamePlayers = 0;
