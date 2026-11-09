@@ -253,6 +253,10 @@ var oGameInput = {
 		oLayer.addEventListener( "touchend", OnEnd, { passive : false } );
 		oLayer.addEventListener( "touchcancel", OnEnd, { passive : false } );
 
+		// iPhones only go fullscreen as a Home Screen app
+		if ( !document.documentElement.requestFullscreen && !document.documentElement.webkitRequestFullscreen && !navigator.standalone && !/[?&]app(&|$)/.test( location.search ) )
+			oGameInput.ShowHomeScreenHint();
+
 		// Android can go fullscreen and hold landscape from a gesture, iPhones ignore this
 		oLayer.addEventListener( "touchend", function () {
 			if ( document.documentElement.requestFullscreen && !document.fullscreenElement )
@@ -263,6 +267,35 @@ var oGameInput = {
 				} ).catch( function () {} );
 			}
 		}, { once : true } );
+	},
+
+	ShowHomeScreenHint : function ()
+	{
+		try
+		{
+			if ( localStorage.getItem( "bHomeHintSeen" ) )
+				return;
+		}
+		catch ( e )
+		{
+		}
+
+		var oHint = document.createElement( "div" );
+		oHint.id  = "homeHint";
+		oHint.innerHTML = "<span>For fullscreen, tap Share and then Add to Home Screen</span><button>OK</button>";
+		document.body.appendChild( oHint );
+
+		oHint.querySelector( "button" ).addEventListener( "click", function () {
+			oHint.remove();
+
+			try
+			{
+				localStorage.setItem( "bHomeHintSeen", "1" );
+			}
+			catch ( e )
+			{
+			}
+		} );
 	},
 
 	// The mouse moves the game's own cursor and camera, so the real one is locked

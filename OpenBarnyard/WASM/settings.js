@@ -200,6 +200,13 @@ var oPageSettings = {
 			'<div class="hint" id="settingsAuto"></div>' +
 			'<div class="section">Cheats</div>' +
 			'<div class="row"><input type="text" id="settingsCheat" placeholder="Cheat code" autocomplete="off" autocapitalize="characters" spellcheck="false"><button id="settingsSendCheat">Enter</button></div>' +
+			'<div class="section" id="settingsDataSection">Game data</div>' +
+			'<div class="hint" id="settingsDataText"></div>' +
+			'<div class="buttons" id="settingsDataButtons"><button id="settingsDataDownload">Download</button><button id="settingsDataFile">From file</button>' +
+			'<button id="settingsDataDelete">Delete</button><input type="file" id="settingsDataInput" hidden></div>' +
+			'<div class="section">Stats</div>' +
+			'<div class="hint" id="settingsAbout"></div>' +
+			'<div class="buttons" id="settingsUpdateButtons"><button id="settingsUpdate">Get the newest version</button></div>' +
 			'<div class="hint" id="settingsRestartHint">Restarts the game. Saves are kept, progress since the last save is lost.</div>' +
 			'<div class="buttons"><button id="settingsRestart" class="accent">Restart</button><button id="settingsClose">Close</button></div>';
 		document.body.appendChild( oPanel );
@@ -209,13 +216,120 @@ var oPageSettings = {
 			szLowLatency : oPageSettings.oValues.szLowLatency
 		};
 
+		// The stored data pack: bStored is what's in storage now, the game uses what was there at the start
+		var oData = { bStored : false, bChanged : false, szBusy : "" };
+
+		function UpdateData()
+		{
+			var bSupported = oDataPack.IsSupported();
+			document.getElementById( "settingsDataSection" ).style.display = bSupported ? "" : "none";
+			document.getElementById( "settingsDataText" ).style.display    = bSupported ? "" : "none";
+			document.getElementById( "settingsDataButtons" ).style.display = bSupported ? "" : "none";
+
+			// The stored pack is found after the panel is made
+			oData.bStored = oData.bStored || !!oDataPack.oPack;
+
+			var szText;
+
+			if ( oData.szBusy )
+				szText = oData.szBusy;
+			else if ( oData.bStored && oDataPack.oPack )
+				szText = "Stored on this device (" + ( oDataPack.oPack.oFile.size / 1073741824 ).toFixed( 1 ) + " GB), the game loads from there";
+			else if ( oData.bStored )
+				szText = "Stored on this device, restart to use it";
+			else
+				szText = "Loaded from the server while you play. A copy on this device (about 1.7 GB) loads faster";
+
+			document.getElementById( "settingsDataText" ).textContent = szText;
+
+			var bBusy = !!oDataPack.oWorker;
+			document.getElementById( "settingsDataDownload" ).style.display = oData.bStored ? "none" : "";
+			document.getElementById( "settingsDataFile" ).style.display     = oData.bStored ? "none" : "";
+			document.getElementById( "settingsDataDelete" ).style.display   = oData.bStored ? "" : "none";
+
+			for ( var szId of [ "settingsDataDownload", "settingsDataFile", "settingsDataDelete" ] )
+				document.getElementById( szId ).disabled = bBusy;
+		}
+
+		function StoreData( a_oMessage, a_szVerb )
+		{
+			oData.szBusy = a_szVerb + "...";
+			UpdatePanel();
+
+			oDataPack.Store( a_oMessage, function ( a_fProgress, a_iWritten ) {
+				oData.szBusy = a_fProgress >= 0 ? a_szVerb + " " + Math.floor( a_fProgress * 100 ) + "%" : a_szVerb + ", " + Math.round( a_iWritten / 1048576 ) + " MB";
+				UpdatePanel();
+			} ).then( function () {
+				oData.szBusy   = "";
+				oData.bStored  = true;
+				oData.bChanged = true;
+				UpdatePanel();
+			} ).catch( function ( a_oError ) {
+				oData.szBusy = "Couldn't store the data: " + a_oError.message;
+				UpdatePanel();
+			} );
+		}
+
+		// The page's date shows whether an installed app got the newest files
+		function UpdateAbout()
+		{
+			var szText = "Page from " + document.lastModified;
+			var oContext = Module.oAudioContext;
+
+			if ( oContext )
+				szText += ". Sound " + oContext.sampleRate + " Hz, " + Math.round( ( Module.iAudioLag || 0 ) * 1000 / 44100 ) + " ms in the buffer (worst " +
+					Math.round( ( Module.iAudioWorst || 0 ) * 1000 / 44100 ) + " ms), " + Math.round( ( ( oContext.baseLatency || 0 ) + ( oContext.outputLatency || 0 ) ) * 1000 ) + " ms output, " +
+					( Module.iAudioGaps || 0 ) + " gaps, " + ( Module.iAudioSkips || 0 ) + " skips";
+
+			document.getElementById( "settingsAbout" ).textContent = szText;
+			document.getElementById( "settingsUpdateButtons" ).style.display = navigator.serviceWorker && !/[?&]app(&|$)/.test( location.search ) ? "" : "none";
+
+			// Offline starts need the service worker running this page, the page files it keeps and the stored data
+			if ( navigator.serviceWorker && window.caches && !/[?&]app(&|$)/.test( location.search ) )
+			{
+				GetOfflineState().then( function ( a_szState ) {
+					document.getElementById( "settingsAbout" ).textContent = szText + ". " + a_szState;
+				} );
+			}
+		}
+
+		async function GetOfflineState()
+		{
+			try
+			{
+				if ( !navigator.serviceWorker.controller )
+					return "Offline: not ready, open the game again while online";
+
+				var iKept = 0;
+
+				for ( var szName of await caches.keys() )
+				{
+					if ( szName.indexOf( "barnyard-" ) == 0 && await ( await caches.open( szName ) ).match( new URL( "OpenBarnyard.wasm", location.href ).href ) )
+						iKept++;
+				}
+
+				if ( !iKept )
+					return "Offline: not ready, the page files aren't kept yet";
+
+				return oData.bStored ? "Offline: ready" : "Offline: needs the game data (Download above)";
+			}
+			catch ( e )
+			{
+				return "Offline: unknown (" + e.message + ")";
+			}
+		}
+
 		function UpdatePanel()
 		{
-			var bRestart = oStarted.szResolution != oPageSettings.oValues.szResolution || oStarted.szLowLatency != oPageSettings.oValues.szLowLatency;
+			UpdateData();
+			UpdateAbout();
+
+			var bRestart = oStarted.szResolution != oPageSettings.oValues.szResolution || oStarted.szLowLatency != oPageSettings.oValues.szLowLatency || oData.bChanged;
 
 			document.getElementById( "settingsRestart" ).style.display     = bRestart ? "" : "none";
 			document.getElementById( "settingsRestartHint" ).style.display = bRestart ? "" : "none";
-			document.getElementById( "settingsAuto" ).textContent = "Now " + Module.oCanvas.width + "x" + Module.oCanvas.height + ( oPageSettings.IsSlowDevice() ? ", auto treats this device as slow" : "" );
+			document.getElementById( "settingsAuto" ).textContent = "Now " + Module.oCanvas.width + "x" + Module.oCanvas.height + ( oPageSettings.IsSlowDevice() ? ", auto treats this device as slow" : "" ) +
+				( Module.oAudioContext && Module.oAudioContext.state != "running" ? ", sound is " + Module.oAudioContext.state : "" );
 		}
 
 		for ( var oControl of oPanel.querySelectorAll( "[data-key]" ) )
@@ -254,6 +368,62 @@ var oPageSettings = {
 		} );
 
 		document.getElementById( "settingsRestart" ).addEventListener( "click", function () {
+			location.reload();
+		} );
+
+		document.getElementById( "settingsDataDownload" ).addEventListener( "click", function () {
+			StoreData( { szUrl : oDataPack.GetPackUrl() }, "Downloading" );
+		} );
+
+		document.getElementById( "settingsDataFile" ).addEventListener( "click", function () {
+			document.getElementById( "settingsDataInput" ).click();
+		} );
+
+		// A .tar or .tar.gz of the Data folder
+		document.getElementById( "settingsDataInput" ).addEventListener( "change", function ( a_oEvent ) {
+			var oFile = a_oEvent.target.files[ 0 ];
+			a_oEvent.target.value = "";
+
+			if ( oFile )
+				StoreData( { oFile : oFile }, "Copying" );
+		} );
+
+		// The running game reads the stored copy, so it restarts right away
+		document.getElementById( "settingsDataDelete" ).addEventListener( "click", function () {
+			if ( !confirm( "Delete the game data stored on this device?" ) )
+				return;
+
+			oDataPack.Store( { bDelete : true }, function () {} ).then( function () {
+				location.reload();
+			} ).catch( function ( a_oError ) {
+				oData.szBusy = "Couldn't delete the data: " + a_oError.message;
+				UpdatePanel();
+			} );
+		} );
+
+		// Drops the kept page files (not the game data) and loads them again from the server
+		document.getElementById( "settingsUpdate" ).addEventListener( "click", async function () {
+			if ( !navigator.onLine )
+			{
+				document.getElementById( "settingsAbout" ).textContent = "Getting the newest version needs a connection";
+				return;
+			}
+
+			try
+			{
+				for ( var oRegistration of await navigator.serviceWorker.getRegistrations() )
+					await oRegistration.unregister();
+
+				for ( var szName of await caches.keys() )
+				{
+					if ( szName.indexOf( "barnyard-" ) == 0 )
+						await caches.delete( szName );
+				}
+			}
+			catch ( e )
+			{
+			}
+
 			location.reload();
 		} );
 

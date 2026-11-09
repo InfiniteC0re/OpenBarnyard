@@ -32,8 +32,11 @@ static constexpr TINT   BLOCK_FRAMES = 64;
 static constexpr TINT   BLOCK_BYTES  = 0x24;
 static constexpr TUINT8 FSB_BASICHEADERS = 2;
 
+static constexpr TINT AHEAD_FRAMES = 2048;
+
 static TFLOAT       s_afRing[ RING_FRAMES * 2 ];
 static volatile int s_iRingWrite;
+static volatile int s_iRingRead = -1; // where the page's audio worklet plays
 
 extern "C" EMSCRIPTEN_KEEPALIVE float* WASM_GetAudioRing()
 {
@@ -43,6 +46,11 @@ extern "C" EMSCRIPTEN_KEEPALIVE float* WASM_GetAudioRing()
 extern "C" EMSCRIPTEN_KEEPALIVE volatile int* WASM_GetAudioWrite()
 {
 	return &s_iRingWrite;
+}
+
+extern "C" EMSCRIPTEN_KEEPALIVE volatile int* WASM_GetAudioRead()
+{
+	return &s_iRingRead;
 }
 
 struct SampleInfo
@@ -276,12 +284,12 @@ static void GetLoopRange( const SampleInfo& a_rInfo, double& a_rdStart, double& 
 	a_rdEnd   = uiEnd;
 }
 
-static void DecodeSample( FSOUND_SAMPLE* a_pSample )
+static TINT16* DecodeSampleData( const FSOUND_SAMPLE* a_pSample )
 {
 	const SampleInfo& rInfo     = a_pSample->oInfo;
 	const TINT        iChannels = rInfo.iChannels;
 
-	a_pSample->pDecoded = TSTATICCAST( TINT16, TMalloc( rInfo.uiLength * iChannels * sizeof( TINT16 ) + BLOCK_FRAMES * iChannels * sizeof( TINT16 ) ) );
+	TINT16* pDecoded = TSTATICCAST( TINT16, TMalloc( rInfo.uiLength * iChannels * sizeof( TINT16 ) + BLOCK_FRAMES * iChannels * sizeof( TINT16 ) ) );
 
 	if ( rInfo.uiMode & FSOUND_IMAADPCM )
 	{
@@ -289,19 +297,21 @@ static void DecodeSample( FSOUND_SAMPLE* a_pSample )
 		const TUINT32 uiNumBlocks  = rInfo.uiCompressed / uiBlockBytes;
 
 		for ( TUINT32 b = 0; b < uiNumBlocks && b * BLOCK_FRAMES < rInfo.uiLength; b++ )
-			DecodeImaBlock( rInfo, a_pSample->pData + b * uiBlockBytes, a_pSample->pDecoded + b * BLOCK_FRAMES * iChannels );
+			DecodeImaBlock( rInfo, a_pSample->pData + b * uiBlockBytes, pDecoded + b * BLOCK_FRAMES * iChannels );
 	}
 	else if ( rInfo.uiMode & FSOUND_8BITS )
 	{
 		const TBOOL bUnsigned = ( rInfo.uiMode & FSOUND_UNSIGNED ) != 0;
 
 		for ( TUINT32 i = 0; i < rInfo.uiLength * iChannels; i++ )
-			a_pSample->pDecoded[ i ] = bUnsigned ? TINT16( ( TINT( a_pSample->pData[ i ] ) - 128 ) << 8 ) : TINT16( TINT8( a_pSample->pData[ i ] ) << 8 );
+			pDecoded[ i ] = bUnsigned ? TINT16( ( TINT( a_pSample->pData[ i ] ) - 128 ) << 8 ) : TINT16( TINT8( a_pSample->pData[ i ] ) << 8 );
 	}
 	else
 	{
-		TUtil::MemCopy( a_pSample->pDecoded, a_pSample->pData, TMath::Min( rInfo.uiCompressed, rInfo.uiLength * iChannels * 2 ) );
+		TUtil::MemCopy( pDecoded, a_pSample->pData, TMath::Min( rInfo.uiCompressed, rInfo.uiLength * iChannels * 2 ) );
 	}
+
+	return pDecoded;
 }
 
 //-----------------------------------------------------------------------------
@@ -360,7 +370,7 @@ static void MixChannel( Channel& a_rChannel, TFLOAT* a_pOut, TINT a_iFrames )
 	const SampleInfo& rInfo = *a_rChannel.pInfo;
 
 	if ( a_rChannel.pSample && !a_rChannel.pSample->pDecoded )
-		DecodeSample( a_rChannel.pSample );
+		a_rChannel.pSample->pDecoded = DecodeSampleData( a_rChannel.pSample );
 
 	TFLOAT fGain = a_rChannel.aiVolumes[ 0 ] / 255.0f;
 	TFLOAT fPan  = a_rChannel.aiPans[ 0 ] < 0 ? 0.5f : a_rChannel.aiPans[ 0 ] / 255.0f;
@@ -626,8 +636,10 @@ static void MixMovieVoice( TFLOAT* a_pOut, TINT a_iFrames )
 
 static void* MixThread( void* )
 {
-	double dLast = emscripten_get_now();
-	double dDebt = 0.0;
+	double dLast         = emscripten_get_now();
+	double dDebt         = 0.0;
+	TINT   iLastRead     = -1;
+	double dLastReadTime = 0.0;
 
 	for ( ;; )
 	{
@@ -635,7 +647,24 @@ static void* MixThread( void* )
 		dDebt += ( dNow - dLast ) * MIX_RATE / 1000.0;
 		dLast = dNow;
 
-		// The sounds finish on time even if nothing is listening
+		const TINT iRead = __atomic_load_n( &s_iRingRead, __ATOMIC_ACQUIRE );
+
+		if ( iRead != iLastRead )
+		{
+			iLastRead     = iRead;
+			dLastReadTime = dNow;
+		}
+
+		if ( iRead >= 0 && dNow - dLastReadTime < 200.0 )
+		{
+			TINT iAhead = ( __atomic_load_n( &s_iRingWrite, __ATOMIC_RELAXED ) - iRead ) & 0x7FFFFFFF;
+
+			if ( iAhead > RING_FRAMES )
+				iAhead = 0;
+
+			dDebt = iAhead < AHEAD_FRAMES ? double( ( AHEAD_FRAMES - iAhead + MIX_CHUNK - 1 ) / MIX_CHUNK * MIX_CHUNK ) : 0.0;
+		}
+
 		while ( dDebt >= MIX_CHUNK )
 		{
 			dDebt -= MIX_CHUNK;
@@ -937,6 +966,18 @@ extern "C"
 	{
 		if ( !sptr )
 			return -1;
+
+		if ( !sptr->pDecoded )
+		{
+			TINT16* pDecoded = DecodeSampleData( sptr );
+
+			ScopedAudioLock oLock;
+
+			if ( sptr->pDecoded )
+				TFree( pDecoded );
+			else
+				sptr->pDecoded = pDecoded;
+		}
 
 		ScopedAudioLock oLock;
 

@@ -16,14 +16,25 @@
 
 // Downloads a whole text file, the caller frees the result
 EM_JS( char*, WASM_DownloadText, ( const char* a_szUrl ), {
-	var oRequest = new XMLHttpRequest();
-	oRequest.open( "GET", Module.szDataUrl + UTF8ToString( a_szUrl ), false );
-	oRequest.send();
+	var szText;
 
-	if ( oRequest.status != 200 )
-		return 0;
+	// The stored data pack has its own index
+	if ( Module.oDataPack && UTF8ToString( a_szUrl ) == "index.txt" )
+	{
+		szText = Module.oDataPack.szIndex;
+	}
+	else
+	{
+		var oRequest = new XMLHttpRequest();
+		oRequest.open( "GET", Module.szDataUrl + UTF8ToString( a_szUrl ), false );
+		oRequest.send();
 
-	var szText = oRequest.responseText;
+		if ( oRequest.status != 200 )
+			return 0;
+
+		szText = oRequest.responseText;
+	}
+
 	var iSize  = lengthBytesUTF8( szText ) + 1;
 	var pText  = _malloc( iSize );
 	stringToUTF8( szText, pText, iSize );
@@ -32,7 +43,19 @@ EM_JS( char*, WASM_DownloadText, ( const char* a_szUrl ), {
 
 // Downloads a part of a file. It's a blocking request, which only workers can do, and the game runs on one
 EM_JS( int, WASM_DownloadRange, ( const char* a_szPath, unsigned int a_uiOffset, unsigned int a_uiSize, unsigned char* a_pDst ), {
-	var szUrl = Module.szDataUrl + UTF8ToString( a_szPath ).split( "/" ).map( encodeURIComponent ).join( "/" );
+	var szPath = UTF8ToString( a_szPath );
+
+	// Reads of the stored data pack don't leave the device
+	if ( Module.oDataPack && Module.oDataPack.oOffsets.has( szPath ) )
+	{
+		var iStart = Module.oDataPack.oOffsets.get( szPath ) + a_uiOffset;
+		var oData  = new Uint8Array( Module.oDataPack.oReader.readAsArrayBuffer( Module.oDataPack.oFile.slice( iStart, iStart + a_uiSize ) ) );
+
+		HEAPU8.set( oData, a_pDst );
+		return oData.length;
+	}
+
+	var szUrl = Module.szDataUrl + szPath.split( "/" ).map( encodeURIComponent ).join( "/" );
 
 	for ( var iTry = 0; iTry < 5; iTry++ )
 	{
@@ -254,10 +277,9 @@ static void LoadIndex()
 		s_aBlocks[ i ].iEntry = -1;
 }
 
-static const TUINT8* GetBlock( TINT a_iEntry, TUINT32 a_uiBlock, TUINT32& a_ruiUsed )
+// Copies from a cached block, -1 if it isn't cached. Needs the lock
+static TINT CopyFromBlock( TINT a_iEntry, TUINT32 a_uiBlock, TUINT32 a_uiOffset, TUINT8* a_pDst, TUINT32 a_uiMax )
 {
-	WASMFileBlock* pOldest = &s_aBlocks[ 0 ];
-
 	for ( TINT i = 0; i < MAX_BLOCKS; i++ )
 	{
 		WASMFileBlock& rBlock = s_aBlocks[ i ];
@@ -265,32 +287,46 @@ static const TUINT8* GetBlock( TINT a_iEntry, TUINT32 a_uiBlock, TUINT32& a_ruiU
 		if ( rBlock.iEntry == a_iEntry && rBlock.uiBlock == a_uiBlock )
 		{
 			rBlock.uiLastUse = ++s_uiUseCounter;
-			a_ruiUsed        = rBlock.uiUsed;
-			return rBlock.pData;
+
+			if ( a_uiOffset >= rBlock.uiUsed )
+				return 0;
+
+			const TUINT32 uiCopy = TMath::Min( a_uiMax, rBlock.uiUsed - a_uiOffset );
+			TUtil::MemCopy( a_pDst, rBlock.pData + a_uiOffset, uiCopy );
+			return TINT( uiCopy );
+		}
+	}
+
+	return -1;
+}
+
+// Puts a downloaded block in place of the oldest one, which takes the data. Needs the lock
+static void AddBlock( TINT a_iEntry, TUINT32 a_uiBlock, TUINT8* a_pData, TUINT32 a_uiUsed )
+{
+	WASMFileBlock* pOldest = &s_aBlocks[ 0 ];
+
+	for ( TINT i = 0; i < MAX_BLOCKS; i++ )
+	{
+		WASMFileBlock& rBlock = s_aBlocks[ i ];
+
+		// Another thread got the same block meanwhile
+		if ( rBlock.iEntry == a_iEntry && rBlock.uiBlock == a_uiBlock )
+		{
+			free( a_pData );
+			return;
 		}
 
 		if ( rBlock.iEntry == -1 || rBlock.uiLastUse < pOldest->uiLastUse )
 			pOldest = &rBlock;
 	}
 
-	if ( !pOldest->pData )
-		pOldest->pData = TSTATICCAST( TUINT8, malloc( BLOCK_SIZE ) );
-
-	const WASMFileEntry& rEntry = s_pEntries[ a_iEntry ];
-
-	const TUINT32 uiOffset = a_uiBlock * BLOCK_SIZE;
-	const TUINT32 uiSize   = TMath::Min( rEntry.uiSize - uiOffset, BLOCK_SIZE );
+	free( pOldest->pData );
 
 	pOldest->iEntry    = a_iEntry;
 	pOldest->uiBlock   = a_uiBlock;
 	pOldest->uiLastUse = ++s_uiUseCounter;
-	pOldest->uiUsed    = WASM_DownloadRange( rEntry.szPath, uiOffset, uiSize, pOldest->pData );
-
-	if ( pOldest->uiUsed != uiSize )
-		TERROR( "TNativeFile: couldn't download %s (%u bytes at %u)\n", rEntry.szPath, uiSize, uiOffset );
-
-	a_ruiUsed = pOldest->uiUsed;
-	return pOldest->pData;
+	pOldest->uiUsed    = a_uiUsed;
+	pOldest->pData     = a_pData;
 }
 
 TNativeFileSystem::TNativeFileSystem( const TCHAR* name )
@@ -490,20 +526,31 @@ void TNativeFile::FlushBuffers()
 
 TSIZE TNativeFile::Read( void* a_pDst, TSIZE a_uiSize )
 {
-	TMutexLock oLock( s_oMutex );
+	// Downloads run without the lock: a long read on one thread mustn't stall the others (the sound mixer streams music)
+	TCHAR   szPath[ MAX_PATH_LEN ];
+	TUINT32 uiFileSize;
+	TUINT32 uiToRead;
 
-	const WASMFileEntry& rEntry = s_pEntries[ m_iEntry ];
-
-	if ( m_uiPosition >= rEntry.uiSize )
-		return 0;
-
-	const TUINT32 uiToRead = TMath::Min( TUINT32( a_uiSize ), rEntry.uiSize - m_uiPosition );
-
-	if ( rEntry.pWritten )
 	{
-		TUtil::MemCopy( a_pDst, rEntry.pWritten + m_uiPosition, uiToRead );
-		m_uiPosition += uiToRead;
-		return uiToRead;
+		TMutexLock oLock( s_oMutex );
+
+		const WASMFileEntry& rEntry = s_pEntries[ m_iEntry ];
+
+		if ( m_uiPosition >= rEntry.uiSize )
+			return 0;
+
+		uiToRead = TMath::Min( TUINT32( a_uiSize ), rEntry.uiSize - m_uiPosition );
+
+		if ( rEntry.pWritten )
+		{
+			TUtil::MemCopy( a_pDst, rEntry.pWritten + m_uiPosition, uiToRead );
+			m_uiPosition += uiToRead;
+			return uiToRead;
+		}
+
+		T2String8::Copy( szPath, rEntry.szPath, MAX_PATH_LEN - 1 );
+		szPath[ MAX_PATH_LEN - 1 ] = '\0';
+		uiFileSize                 = rEntry.uiSize;
 	}
 
 	TUINT8* pDst  = TSTATICCAST( TUINT8, a_pDst );
@@ -518,11 +565,11 @@ TSIZE TNativeFile::Read( void* a_pDst, TSIZE a_uiSize )
 		if ( uiOffset == 0 && uiLeft >= BLOCK_SIZE )
 		{
 			const TUINT32 uiWhole = uiLeft - uiLeft % BLOCK_SIZE;
-			const TUINT32 uiGot   = WASM_DownloadRange( rEntry.szPath, m_uiPosition, uiWhole, pDst );
+			const TUINT32 uiGot   = WASM_DownloadRange( szPath, m_uiPosition, uiWhole, pDst );
 
 			if ( uiGot != uiWhole )
 			{
-				TERROR( "TNativeFile: couldn't download %s\n", rEntry.szPath );
+				TERROR( "TNativeFile: couldn't download %s\n", szPath );
 				break;
 			}
 
@@ -532,18 +579,37 @@ TSIZE TNativeFile::Read( void* a_pDst, TSIZE a_uiSize )
 			continue;
 		}
 
-		TUINT32       uiUsed = 0;
-		const TUINT8* pBlock = GetBlock( m_iEntry, uiBlock, uiUsed );
+		TINT iCopied;
 
-		if ( uiOffset >= uiUsed )
+		{
+			TMutexLock oLock( s_oMutex );
+			iCopied = CopyFromBlock( m_iEntry, uiBlock, uiOffset, pDst, uiLeft );
+		}
+
+		if ( iCopied < 0 )
+		{
+			const TUINT32 uiBlockStart = uiBlock * BLOCK_SIZE;
+			const TUINT32 uiSize       = TMath::Min( uiFileSize - uiBlockStart, BLOCK_SIZE );
+
+			TUINT8*       pData  = TSTATICCAST( TUINT8, malloc( BLOCK_SIZE ) );
+			const TUINT32 uiUsed = WASM_DownloadRange( szPath, uiBlockStart, uiSize, pData );
+
+			if ( uiUsed != uiSize )
+				TERROR( "TNativeFile: couldn't download %s (%u bytes at %u)\n", szPath, uiSize, uiBlockStart );
+
+			iCopied = uiOffset < uiUsed ? TINT( TMath::Min( uiLeft, uiUsed - uiOffset ) ) : 0;
+			TUtil::MemCopy( pDst, pData + uiOffset, TUINT32( iCopied ) );
+
+			TMutexLock oLock( s_oMutex );
+			AddBlock( m_iEntry, uiBlock, pData, uiUsed );
+		}
+
+		if ( iCopied == 0 )
 			break;
 
-		const TUINT32 uiCopy = TMath::Min( uiLeft, uiUsed - uiOffset );
-		TUtil::MemCopy( pDst, pBlock + uiOffset, uiCopy );
-
-		pDst += uiCopy;
-		m_uiPosition += uiCopy;
-		uiLeft -= uiCopy;
+		pDst += iCopied;
+		m_uiPosition += iCopied;
+		uiLeft -= iCopied;
 	}
 
 	return uiToRead - uiLeft;

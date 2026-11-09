@@ -215,9 +215,29 @@ var Module = {
 // Browsers keep sound off until the page is touched or a key is pressed
 function StartAudio()
 {
-	var oContext = new AudioContext( { sampleRate : 44100, latencyHint : "interactive" } );
+	// iOS mutes web audio in silent mode unless the page plays media
+	if ( navigator.audioSession )
+	{
+		try
+		{
+			navigator.audioSession.type = "playback";
+		}
+		catch ( e )
+		{
+		}
+	}
 
-	oContext.audioWorklet.addModule( "audio_worklet.js" ).then( function () {
+	// The device's own rate: iOS adds a lot of delay when asked for another one, the worklet resamples the game's 44100 Hz
+	var oContext = new AudioContext( { latencyHint : "interactive" } );
+	Module.oAudioContext = oContext;
+
+	oContext.addEventListener( "statechange", function () {
+		PageLog( "audio " + oContext.state );
+	} );
+
+	MakeScriptBlob( "audio_worklet.js" ).then( function ( a_szUrl ) {
+		return oContext.audioWorklet.addModule( a_szUrl );
+	} ).then( function () {
 		var oNode = new AudioWorkletNode( oContext, "game-audio", {
 			numberOfOutputs : 1,
 			outputChannelCount : [ 2 ],
@@ -225,17 +245,38 @@ function StartAudio()
 				oMemory : Module.HEAPU8.buffer,
 				pRing : Module._WASM_GetAudioRing(),
 				pWrite : Module._WASM_GetAudioWrite(),
-				iFrames : 8192
+				pRead : Module._WASM_GetAudioRead ? Module._WASM_GetAudioRead() : 0,
+				iFrames : 8192,
+				iRate : 44100
 			}
 		} );
 
+		PageLog( "audio " + oContext.sampleRate + " Hz, output latency " + Math.round( ( ( oContext.baseLatency || 0 ) + ( oContext.outputLatency || 0 ) ) * 1000 ) + " ms" );
+
 		oNode.connect( oContext.destination );
+		Module.oAudioNode = oNode;
+
+		oNode.port.onmessage = function ( a_oEvent ) {
+			var oData = a_oEvent.data;
+			Module.iAudioLag   = oData.iLag;
+			Module.iAudioWorst = Math.max( Module.iAudioWorst || 0, oData.iWorst );
+			Module.iAudioGaps  = oData.iGaps;
+			Module.iAudioSkips = oData.iSkips;
+		};
 	} );
 
+	// Older iOS also wants a sound started from the tap itself
 	function Unlock()
 	{
-		if ( !document.hidden )
-			oContext.resume();
+		if ( document.hidden || oContext.state == "running" )
+			return;
+
+		oContext.resume();
+
+		var oSource = oContext.createBufferSource();
+		oSource.buffer = oContext.createBuffer( 1, 1, oContext.sampleRate );
+		oSource.connect( oContext.destination );
+		oSource.start();
 	}
 
 	document.addEventListener( "visibilitychange", function () {
@@ -246,12 +287,50 @@ function StartAudio()
 	} );
 
 	for ( var szEvent of [ "pointerdown", "keydown", "touchend" ] )
-		window.addEventListener( szEvent, Unlock );
+		window.addEventListener( szEvent, Unlock, true );
+}
+
+// iOS doesn't send the requests of workers and worklets through the service worker, so offline they fail.
+// A blob made from what the page fetched works everywhere, the plain file is the fallback
+async function MakeScriptBlob( a_szFile, a_szPrefix )
+{
+	try
+	{
+		var oResponse = await fetch( a_szFile );
+
+		if ( !oResponse.ok )
+			return a_szFile;
+
+		return URL.createObjectURL( new Blob( [ a_szPrefix || "", await oResponse.text() ], { type : "text/javascript" } ) );
+	}
+	catch ( e )
+	{
+		return a_szFile;
+	}
+}
+
+// A stored data pack has to be found before the game's threads start
+async function LoadGame()
+{
+	await oDataPack.Open();
+
+	// Without a connection only a stored data pack can be read
+	if ( !navigator.onLine && !oDataPack.oPack && !/[?&]app(&|$)/.test( location.search ) )
+	{
+		document.getElementById( "status" ).textContent = "No connection. To play offline, store the game data while online: Settings, Game data, Download";
+		return;
+	}
+
+	var szDataUrl = new URL( new URLSearchParams( location.search ).get( "data" ) || "game/", location.href ).href;
+
+	Module.locateFile = function ( a_szPath ) {
+		return new URL( a_szPath, location.href ).href;
+	};
+
+	var oGameScript = document.createElement( "script" );
+	oGameScript.src = await MakeScriptBlob( "OpenBarnyard.js", "var g_szDataUrl = " + JSON.stringify( szDataUrl ) + ";\n" );
+	document.body.appendChild( oGameScript );
 }
 
 if ( window.isSecureContext && bCanShareMemory )
-{
-	var oGameScript = document.createElement( "script" );
-	oGameScript.src = "OpenBarnyard.js";
-	document.body.appendChild( oGameScript );
-}
+	LoadGame();

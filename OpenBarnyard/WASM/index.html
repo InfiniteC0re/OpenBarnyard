@@ -7,7 +7,26 @@
 		content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-title" content="Barnyard">
+	<link rel="manifest" href="manifest.json">
+	<link rel="apple-touch-icon" href="icon.png">
+	<link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+	<link rel="icon" type="image/png" sizes="192x192" href="icon.png">
 	<title>Barnyard</title>
+	<meta name="description" content="A web version of Barnyard the video game.">
+	<meta property="og:type" content="website">
+	<meta property="og:site_name" content="OpenBarnyard">
+	<meta property="og:title" content="OpenBarnyard">
+	<meta property="og:description" content="A web version of Barnyard the video game.">
+	<meta property="og:url" content="https://opentoshi.net/barnyard/">
+	<meta property="og:image" content="https://opentoshi.net/barnyard/icon512.png">
+	<meta property="og:image:width" content="512">
+	<meta property="og:image:height" content="512">
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:title" content="OpenBarnyard">
+	<meta name="twitter:description" content="A web version of Barnyard the video game.">
+	<meta name="twitter:image" content="https://opentoshi.net/barnyard/icon512.png">
 	<style>
 		html,
 		body {
@@ -277,6 +296,36 @@
 			background: #f2c14e;
 		}
 
+		#homeHint {
+			position: absolute;
+			left: 50%;
+			top: 12px;
+			transform: translateX(-50%);
+			z-index: 15;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			max-width: 90vw;
+			padding: 10px 14px;
+			border-radius: 12px;
+			background: rgba(28, 24, 19, 0.92);
+			color: #eee;
+			font: 14px system-ui, sans-serif;
+		}
+
+		#homeHint button {
+			font: 600 14px system-ui, sans-serif;
+			color: #241d12;
+			background: #f2c14e;
+			border: none;
+			border-radius: 8px;
+			padding: 6px 12px;
+		}
+
+		#settings button:disabled {
+			opacity: 0.5;
+		}
+
 		#rotate {
 			display: none;
 			position: absolute;
@@ -336,9 +385,15 @@
 			var szEngine = (navigator.userAgent.match(/Chrome\/[\d.]+/) || [navigator.userAgent])[0];
 			document.getElementById("status").textContent = "This web engine can't share memory with the game's threads, the game can't run here (" + szEngine + ")";
 		}
+
+		// The service worker also keeps the page for offline starts
+		if (window.isSecureContext && window.crossOriginIsolated && navigator.serviceWorker && location.search.indexOf("nosw") < 0 && !/[?&]app(&|$)/.test(location.search)) {
+			navigator.serviceWorker.register("sw.js").catch(function () {});
+		}
 	</script>
 	<script src="gl_replay.js"></script>
 	<script src="input.js"></script>
+	<script src="datapack.js"></script>
 	<script src="settings.js"></script>
 	<script src="page.js"></script>
 </body>

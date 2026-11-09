@@ -4,6 +4,7 @@
 TOSHI_NAMESPACE_START
 
 // The game's files live on a static server: index.txt lists them and they're read in blocks with Range requests.
+// A data pack the page stored (datapack.js) is read instead when there is one.
 // Files the game writes stay in memory, the page keeps a copy in IndexedDB.
 class TNativeFileSystem : public TFileSystem
 {
