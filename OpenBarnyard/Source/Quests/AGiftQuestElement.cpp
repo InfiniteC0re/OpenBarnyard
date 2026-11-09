@@ -140,8 +140,8 @@ AQuestElement::PROGRESS AGiftQuestElement::CheckProgress( AInteractionActivityDa
 	if ( !pReceiver )
 		return PROGRESS_RUNNING;
 
-	// The player has to witness giving enough items of the type to the receiver
-	AUnitGameEventComponent* pGameEvents = TSTATICCAST( AUnitGameEventComponent, pPlayer->FindComponentExact( &TGetClass( AUnitGameEventComponent ) ) );
+	// The receiver has to witness the player giving enough items of the type
+	AUnitGameEventComponent* pGameEvents = TSTATICCAST( AUnitGameEventComponent, pReceiver->FindComponentExact( &TGetClass( AUnitGameEventComponent ) ) );
 	TINT                     iNumEvents  = pGameEvents->GetNumWitnessedEvents();
 
 	for ( TINT i = 0; i < iNumEvents; i++ )
@@ -162,16 +162,18 @@ AQuestElement::PROGRESS AGiftQuestElement::CheckProgress( AInteractionActivityDa
 
 		if ( pGiftEvent->GetGiftType() == m_strGiftType && pGiftEvent->GetCount() >= m_iAmount )
 		{
-			// The gift is done, the player has no use for the remaining items of the type
-			AInventoryComponentInterface* pInventory = TSTATICCAST( AInventoryComponentInterface, pPlayer->FindComponent( &TGetClass( AInventoryComponent ) ) );
+			// The receiver gets rid of the gifted items
+			AInventoryComponentInterface* pInventory = TSTATICCAST( AInventoryComponentInterface, pReceiver->FindComponent( &TGetClass( AInventoryComponent ) ) );
 
 #ifdef BARNYARD_COMMUNITY_PATCH
-			// NOTE: the player only has an AInventoryGroupComponent, retail dereferences TNULL here
+			// NOTE: retail doesn't check that the receiver has an AInventoryComponent
 			if ( !pInventory )
-				pInventory = AInventoryComponentInterface::GetInventory( pPlayer );
-#endif
+				pInventory = AInventoryComponentInterface::GetInventory( pReceiver );
 
-			pInventory->RemoveItems( m_strGiftType, pInventory->GetNumItemsOfType( m_strGiftType ), TTRUE );
+			if ( pInventory )
+#endif
+				pInventory->RemoveItems( m_strGiftType, pInventory->GetNumItemsOfType( m_strGiftType ), TTRUE );
+
 			return PROGRESS_COMPLETE;
 		}
 	}
