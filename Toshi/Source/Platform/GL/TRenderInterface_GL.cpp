@@ -257,6 +257,7 @@ TRenderGLInterface::TRenderGLInterface()
 	m_uiStripBatchVertexBuffer       = 0;
 	m_uiStripBatchStride             = 0;
 	m_uiNextSmallDrawBuffer          = 0;
+	m_uiNextBatchDrawBuffer          = 0;
 	m_uiImmediateVertexBuffer        = 0;
 	m_uiImmediateVertexCurrentOffset = 0;
 	m_uiImmediateIndexBuffer         = 0;
@@ -1189,6 +1190,9 @@ void TRenderGLInterface::CreateDeviceObjects()
 	for ( TUINT32 i = 0; i < NUM_SMALL_DRAW_BUFFERS; i++ )
 		m_auiSmallDrawBuffers[ i ] = CreateBuffer( GL_ARRAY_BUFFER, SMALL_DRAW_BUFFER_SIZE, TNULL, GL_DYNAMIC_DRAW );
 
+	for ( TUINT32 i = 0; i < NUM_BATCH_DRAW_BUFFERS; i++ )
+		m_auiBatchDrawBuffers[ i ] = CreateBuffer( GL_ARRAY_BUFFER, BATCH_DRAW_BUFFER_SIZE, TNULL, GL_DYNAMIC_DRAW );
+
 	for ( TUINT32 i = 0; i < NUM_STRIP_BATCH_BUFFERS; i++ )
 		m_auiStripBatchBuffers[ i ] = CreateBuffer( GL_ELEMENT_ARRAY_BUFFER, STRIP_BATCH_MAX_INDICES * sizeof( TUINT32 ), TNULL, GL_DYNAMIC_DRAW );
 
@@ -1235,6 +1239,12 @@ void TRenderGLInterface::DestroyDeviceObjects()
 	{
 		DestroyBuffer( m_auiSmallDrawBuffers[ i ] );
 		m_auiSmallDrawBuffers[ i ] = 0;
+	}
+
+	for ( TUINT32 i = 0; i < NUM_BATCH_DRAW_BUFFERS; i++ )
+	{
+		DestroyBuffer( m_auiBatchDrawBuffers[ i ] );
+		m_auiBatchDrawBuffers[ i ] = 0;
 	}
 
 	m_uiFixedFunctionProgram  = 0;
@@ -1883,6 +1893,14 @@ void TRenderGLInterface::DrawIndexed( GLenum a_eTopology, TUINT a_uiIndexCount, 
 	glDrawElements( a_eTopology, a_uiIndexCount, a_eIndexFormat, TREINTERPRETCAST( const void*, TUINTPTR( a_uiIndexBufferOffset ) ) );
 }
 
+void TRenderGLInterface::DrawIndexedInstanced( GLenum a_eTopology, TUINT a_uiIndexCount, GLuint a_uiIndexBuffer, TUINT a_uiIndexBufferOffset, GLenum a_eIndexFormat, GLuint a_uiVertexBuffer, TUINT a_uiStride, TUINT a_uiOffset, TUINT a_uiNumInstances )
+{
+	SetVertexBuffer( 0, a_uiVertexBuffer, a_uiStride, a_uiOffset );
+	SetIndexBuffer( a_uiIndexBuffer, a_eIndexFormat, a_uiIndexBufferOffset );
+	PrepareDraw();
+	glDrawElementsInstanced( a_eTopology, a_uiIndexCount, a_eIndexFormat, TREINTERPRETCAST( const void*, TUINTPTR( a_uiIndexBufferOffset ) ), a_uiNumInstances );
+}
+
 TBOOL TRenderGLInterface::AddStripToBatch( const TUINT16* a_pIndices, TUINT a_uiIndexCount, GLuint a_uiVertexBuffer, TUINT a_uiStride, TUINT a_uiVertexOffset )
 {
 	// Up to 3 indices join it to the previous strip
@@ -1966,6 +1984,20 @@ void TRenderGLInterface::DrawNonIndexedImmediate( GLenum a_eTopology, const void
 	{
 		const GLuint uiBuffer = m_auiSmallDrawBuffers[ m_uiNextSmallDrawBuffer ];
 		m_uiNextSmallDrawBuffer = ( m_uiNextSmallDrawBuffer + 1 ) % NUM_SMALL_DRAW_BUFFERS;
+
+		UpdateBuffer( uiBuffer, GL_ARRAY_BUFFER, 0, uiSize, a_pVertices );
+
+		m_bImmediateDraw = TTRUE;
+		DrawNonIndexed( a_eTopology, uiBuffer, a_uiVertexCount, a_uiStride, 0, 0 );
+		m_bImmediateDraw = TFALSE;
+		return;
+	}
+
+	// Batches of GUI rectangles (a text) for the same reason, a few bigger buffers
+	if ( uiSize <= BATCH_DRAW_BUFFER_SIZE )
+	{
+		const GLuint uiBuffer   = m_auiBatchDrawBuffers[ m_uiNextBatchDrawBuffer ];
+		m_uiNextBatchDrawBuffer = ( m_uiNextBatchDrawBuffer + 1 ) % NUM_BATCH_DRAW_BUFFERS;
 
 		UpdateBuffer( uiBuffer, GL_ARRAY_BUFFER, 0, uiSize, a_pVertices );
 

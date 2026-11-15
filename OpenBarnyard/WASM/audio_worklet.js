@@ -38,7 +38,7 @@ class GameAudioProcessor extends AudioWorkletProcessor
 		// Stay a little behind the mixer. After a stall the mixer catches up in a burst, then this skips ahead so the delay doesn't stay
 		const iAvailable = ( iWrite - this.iRead ) & 0x7FFFFFFF;
 
-		if ( this.iRead < 0 || iAvailable > 4096 )
+		if ( this.iRead < 0 || iAvailable > this.iFrames - 1024 )
 		{
 			if ( this.iRead >= 0 )
 				this.iSkips++;

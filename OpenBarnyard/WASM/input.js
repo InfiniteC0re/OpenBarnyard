@@ -271,7 +271,7 @@ var oGameInput = {
 			oGameInput.afTouchSticks[ a_oState.iStick * 2 + 1 ] = fY;
 
 			if ( a_oState.iStick == 0 )
-				oStickKnob.style.transform = "translate(" + ( fX * 100 ) + "%," + ( fY * 100 ) + "%)";
+				oStickKnob.style.transform = "translate3d(" + ( fX * 100 ) + "%," + ( fY * 100 ) + "%,0)";
 		}
 
 		function OnStart( a_oEvent )
@@ -315,9 +315,8 @@ var oGameInput = {
 
 				if ( iStick == 0 )
 				{
-					oStickBase.style.left    = oTouch.clientX + "px";
-					oStickBase.style.top     = oTouch.clientY + "px";
-					oStickBase.style.display = "block";
+					oStickBase.style.transform = "translate3d(" + oTouch.clientX + "px," + oTouch.clientY + "px,0)";
+					oStickBase.style.opacity   = "1";
 				}
 			}
 		}
@@ -378,7 +377,7 @@ var oGameInput = {
 
 					if ( oState.iStick == 0 )
 					{
-						oStickBase.style.display = "none";
+						oStickBase.style.opacity   = "0";
 						oStickKnob.style.transform = "";
 					}
 				}

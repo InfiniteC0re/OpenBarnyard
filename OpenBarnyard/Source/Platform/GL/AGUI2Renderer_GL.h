@@ -53,10 +53,14 @@ public:
 
 	void UpdateTransform();
 
+	void FlushBatch();
+
 	// The transform of the element being drawn as the world transform of the render interface, for a mod
 	// that draws with its own shaders
 	void ApplyTransform()
 	{
+		FlushBatch();
+
 		if ( m_bIsTransformDirty )
 			UpdateTransform();
 	}
@@ -66,6 +70,10 @@ private:
 
 public:
 	inline static Vertex sm_Vertices[ MAX_VERTICES ];
+
+	inline constexpr static TUINT32 MAX_BATCH_VERTICES = 6 * 256;
+	inline static Vertex            sm_aBatchVertices[ MAX_BATCH_VERTICES ];
+	inline static TUINT32           sm_uiNumBatchVertices = 0;
 
 #ifdef BARNYARD_LATEST
 	// NOTE: the Wii renderer sends the vertices of the XUI figures straight to the GPU; DX8 draws them from this buffer

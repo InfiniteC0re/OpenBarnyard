@@ -76,6 +76,8 @@ public:
 	static constexpr TUINT32 STRIP_BATCH_MAX_INDICES      = 4096;
 	static constexpr TUINT32 MAX_VERTEX_ARRAYS            = 4096;
 	static constexpr TUINT32 NUM_SMALL_DRAW_BUFFERS       = 512;
+	static constexpr TUINT32 BATCH_DRAW_BUFFER_SIZE       = 0xA000;
+	static constexpr TUINT32 NUM_BATCH_DRAW_BUFFERS       = 64;
 	static constexpr TUINT32 NUM_TEXTURE_STAGES           = 8;
 	static constexpr TUINT   MAX_VERTEX_STREAMS           = 3;
 	static constexpr TUINT   MAX_VERTEX_ATTRIBUTES        = 8;
@@ -258,6 +260,7 @@ public:
 	//-----------------------------------------------------------------------------
 	void DrawNonIndexed( GLenum a_eTopology, GLuint a_uiVertexBuffer, TUINT a_uiVertexCount, TUINT a_uiStride, TUINT a_uiStartVertex, TUINT a_uiOffset );
 	void DrawIndexed( GLenum a_eTopology, TUINT a_uiIndexCount, GLuint a_uiIndexBuffer, TUINT a_uiIndexBufferOffset, GLenum a_eIndexFormat, GLuint a_uiVertexBuffer, TUINT a_uiStride, TUINT a_uiOffset );
+	void DrawIndexedInstanced( GLenum a_eTopology, TUINT a_uiIndexCount, GLuint a_uiIndexBuffer, TUINT a_uiIndexBufferOffset, GLenum a_eIndexFormat, GLuint a_uiVertexBuffer, TUINT a_uiStride, TUINT a_uiOffset, TUINT a_uiNumInstances );
 	void DrawNonIndexedImmediate( GLenum a_eTopology, const void* a_pVertices, TUINT a_uiVertexCount, TUINT a_uiStride );
 	void DrawImmediately( GLenum a_eTopology, TUINT a_uiIndexCount, const void* a_pIndices, GLenum a_eIndexFormat, const void* a_pVertices, TUINT a_uiStride, TUINT a_uiVertexCount );
 
@@ -479,6 +482,8 @@ private:
 
 	GLuint  m_auiSmallDrawBuffers[ NUM_SMALL_DRAW_BUFFERS ];
 	TUINT32 m_uiNextSmallDrawBuffer;
+	GLuint  m_auiBatchDrawBuffers[ NUM_BATCH_DRAW_BUFFERS ];
+	TUINT32 m_uiNextBatchDrawBuffer;
 	GLuint  m_uiImmediateVertexBuffer;
 	TUINT32 m_uiImmediateVertexCurrentOffset;
 	GLuint  m_uiImmediateIndexBuffer;

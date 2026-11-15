@@ -75,6 +75,8 @@ public:
 
 	// Not a member, the size of the class and the saved settings stay the same
 	static TBOOL ms_bBorderless;
+
+	static TFLOAT GetRenderDistanceScale();
 #endif // BARNYARD_COMMUNITY_PATCH
 
 	TBOOL                 IsControllerEnabled() const { return m_bControllerEnabled; }

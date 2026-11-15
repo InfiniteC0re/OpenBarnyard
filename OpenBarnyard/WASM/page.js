@@ -210,6 +210,7 @@ var Module = {
 
 		oPageSettings.ShowFps( oPageSettings.oValues.bShowFps );
 		oPageSettings.WatchFrameRate();
+		oPageSettings.ApplyFrameLimit();
 	}
 };
 
@@ -235,7 +236,13 @@ function StartAudio()
 	function CreateContext()
 	{
 		// The device's own rate: iOS adds a lot of delay when asked for another one, the worklet resamples the game's 44100 Hz
-		oContext = new AudioContext( { latencyHint : "interactive" } );
+		// "Smoother" in the settings: bigger buffers on both sides, for phones where the sound crackles
+		var bSmooth = oPageSettings.oValues.szSound == "smooth";
+
+		if ( bSmooth && Module._WASM_SetAudioLead )
+			Module._WASM_SetAudioLead( 4096 );
+
+		oContext = new AudioContext( { latencyHint : bSmooth ? "playback" : "interactive" } );
 		Module.oAudioContext = oContext;
 
 		oContext.addEventListener( "statechange", function () {
@@ -350,8 +357,16 @@ async function LoadGame()
 		return new URL( a_szPath, location.href ).href;
 	};
 
-	// A blob has no query of its own: the threads get the page's
-	var szSearch = location.search;
+	// A blob has no query of its own: the threads get the page's, with the game arguments of the settings
+	var oParams = new URLSearchParams( location.search );
+
+	if ( oPageSettings.IsLowGrass() )
+		oParams.set( "args", ( ( oParams.get( "args" ) || "" ) + " -lowgrass" ).trim() );
+
+	if ( oPageSettings.GetDrawDistance() < 100 )
+		oParams.set( "args", ( ( oParams.get( "args" ) || "" ) + " -renderdistance " + oPageSettings.GetDrawDistance() ).trim() );
+
+	var szSearch = oParams.toString() ? "?" + oParams.toString() : "";
 
 	var oGameScript = document.createElement( "script" );
 	oGameScript.src = await MakeScriptBlob( "OpenBarnyard.js", "var g_szDataUrl = " + JSON.stringify( szDataUrl ) + ", g_szPageSearch = " + JSON.stringify( szSearch ) + ";\n" );

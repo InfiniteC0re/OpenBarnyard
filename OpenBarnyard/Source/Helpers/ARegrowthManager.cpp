@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ARegrowthManager.h"
+#include "AOptions.h"
 #include "ASimPersistData.h"
 #include "AGameTimeManager.h"
 #include "AInstanceLightingHelper.h"
@@ -494,6 +495,10 @@ ARegrowthManager::ARegrowthManager()
 	m_fLODDistance           = 30.0f;
 	m_fRenderDistance        = 60.0f;
 	m_fFadeDistance          = 50.0f;
+#ifdef BARNYARD_COMMUNITY_PATCH
+	m_fRenderDistance *= AOptions::GetRenderDistanceScale();
+	m_fFadeDistance *= AOptions::GetRenderDistanceScale();
+#endif
 	m_pRenderData            = TNULL;
 	m_eFlags                 = FLAGS_NONE;
 	m_iNumRespawned          = 0;

@@ -3,6 +3,7 @@
 #include <fmod/fmod.h>
 
 #include <File/TFile.h>
+#include <Platform/WASM/TNativeFile_WASM.h>
 
 #include "Platform/WASM/Movie/AMovieVoice_WASM.h"
 
@@ -32,7 +33,20 @@ static constexpr TINT   BLOCK_FRAMES = 64;
 static constexpr TINT   BLOCK_BYTES  = 0x24;
 static constexpr TUINT8 FSB_BASICHEADERS = 2;
 
-static constexpr TINT AHEAD_FRAMES = 2048;
+static constexpr TINT AHEAD_FRAMES     = 2048;
+static constexpr TINT MAX_AHEAD_FRAMES = 6144;
+
+static volatile int s_iAheadFrames = AHEAD_FRAMES;
+
+extern "C" EMSCRIPTEN_KEEPALIVE int WASM_GetAudioLead()
+{
+	return s_iAheadFrames;
+}
+
+extern "C" EMSCRIPTEN_KEEPALIVE void WASM_SetAudioLead( int a_iFrames )
+{
+	s_iAheadFrames = a_iFrames < AHEAD_FRAMES ? AHEAD_FRAMES : ( a_iFrames > MAX_AHEAD_FRAMES ? MAX_AHEAD_FRAMES : a_iFrames );
+}
 
 static TFLOAT       s_afRing[ RING_FRAMES * 2 ];
 static volatile int s_iRingWrite;
@@ -110,6 +124,7 @@ struct FSOUND_STREAM
 	TUINT32     uiTimeMs;
 	TFile*      pFile;
 	TINT        iCachedBlock;
+	TBOOL       bWaiting; // its data is still loading, the mixer holds its position
 	TINT16      aiBlock[ BLOCK_FRAMES * 4 ];
 
 	// What FSOUND_GetCurrentSample answers for a stream: captions are found by the name of the line
@@ -360,8 +375,12 @@ static const TINT16* GetStreamFrame( FSOUND_STREAM* a_pStream, const SampleInfo&
 			if ( !a_pStream->pFile )
 				return TNULL;
 
+			// Never a download here: the game thread waits for the audio lock this runs under
 			a_pStream->pFile->Seek( uiOffset, TSEEK_SET );
-			a_pStream->pFile->Read( pBlock, uiBlockBytes );
+			a_pStream->bWaiting = !TSTATICCAST( TNativeFile, a_pStream->pFile )->ReadIfCached( pBlock, uiBlockBytes );
+
+			if ( a_pStream->bWaiting )
+				return TNULL;
 		}
 
 		if ( bCompressed )
@@ -429,6 +448,10 @@ static void MixChannel( Channel& a_rChannel, TFLOAT* a_pOut, TINT a_iFrames )
 			break;
 
 		const TINT16* pFrame = a_rChannel.pSample ? a_rChannel.pSample->pDecoded + iFrame * iChannels : GetStreamFrame( a_rChannel.pStream, rInfo, iFrame );
+
+		// The stream goes on from here once its data is loaded
+		if ( !pFrame && a_rChannel.pStream && a_rChannel.pStream->bWaiting )
+			break;
 
 		if ( pFrame )
 		{
@@ -648,6 +671,8 @@ static void* MixThread( void* )
 	double dDebt         = 0.0;
 	TINT   iLastRead     = -1;
 	double dLastReadTime = 0.0;
+	double dFollowStart  = 0.0;
+	double dLastGrowth   = 0.0;
 
 	for ( ;; )
 	{
@@ -670,7 +695,22 @@ static void* MixThread( void* )
 			if ( iAhead > RING_FRAMES )
 				iAhead = 0;
 
-			dDebt = iAhead < AHEAD_FRAMES ? double( ( AHEAD_FRAMES - iAhead + MIX_CHUNK - 1 ) / MIX_CHUNK * MIX_CHUNK ) : 0.0;
+			if ( dFollowStart == 0.0 )
+				dFollowStart = dNow;
+
+			// The speaker caught up: stay further ahead from now on
+			if ( iAhead < 128 && dNow - dFollowStart > 2000.0 && dNow - dLastGrowth > 1000.0 && s_iAheadFrames < MAX_AHEAD_FRAMES )
+			{
+				WASM_SetAudioLead( s_iAheadFrames + 1024 );
+				dLastGrowth    = dNow;
+			}
+
+			const TINT iTarget = s_iAheadFrames;
+			dDebt              = iAhead < iTarget ? double( ( iTarget - iAhead + MIX_CHUNK - 1 ) / MIX_CHUNK * MIX_CHUNK ) : 0.0;
+		}
+		else
+		{
+			dFollowStart = 0.0;
 		}
 
 		while ( dDebt >= MIX_CHUNK )

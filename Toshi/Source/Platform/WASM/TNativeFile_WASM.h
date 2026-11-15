@@ -49,6 +49,8 @@ public:
 	virtual TINT    VCPrintf( const TCHAR* a_szFormat, va_list a_vargs ) OVERRIDE;
 	virtual TINT    VWPrintf( const TWCHAR* a_wszFormat, va_list a_vargs ) OVERRIDE;
 
+	TBOOL ReadIfCached( void* a_pDst, TSIZE a_uiSize );
+
 	TBOOL Open( const TString8& a_FileName, TFILEMODE a_Mode );
 	void  Close();
 

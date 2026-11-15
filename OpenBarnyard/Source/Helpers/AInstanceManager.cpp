@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "AInstanceManager.h"
+#include "AOptions.h"
 #include "Assets/AKeyFrameLibraryManager.h"
 #include "Assets/AMaterialLibraryManager.h"
 #include "ALoadScreen.h"
@@ -73,6 +74,11 @@ AInstanceManager::AInstanceManager()
 {
 	m_iNumModels = NUM_MODELS;
 	m_pModels    = new Model[ NUM_MODELS ];
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+    m_flVisibilityDistanceBlendEnd *= AOptions::GetRenderDistanceScale();
+    m_flVisibilityDistanceBlendStart *= AOptions::GetRenderDistanceScale();
+#endif
 
 	for ( TSIZE i = 0; i < TARRAYSIZE( m_aInstances ); i++ )
 		m_llFreeInstances.PushFront( &m_aInstances[ i ] );

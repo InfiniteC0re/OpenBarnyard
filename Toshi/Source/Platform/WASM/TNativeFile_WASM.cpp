@@ -7,6 +7,8 @@
 #include <emscripten.h>
 #include <emscripten/console.h>
 #include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -275,6 +277,135 @@ static void LoadIndex()
 
 	for ( TINT i = 0; i < MAX_BLOCKS; i++ )
 		s_aBlocks[ i ].iEntry = -1;
+}
+
+// The longest a thread waited for a part of a file, shown by the page's stats
+static volatile float s_fWorstReadMs;
+
+extern "C" EMSCRIPTEN_KEEPALIVE float WASM_GetFileWorstReadMs()
+{
+	return s_fWorstReadMs;
+}
+
+static TUINT32 DownloadRange( const TCHAR* a_szPath, TUINT32 a_uiOffset, TUINT32 a_uiSize, TUINT8* a_pDst )
+{
+	const double  dStart = emscripten_get_now();
+	const TUINT32 uiGot  = WASM_DownloadRange( a_szPath, a_uiOffset, a_uiSize, a_pDst );
+	const TFLOAT  fTime  = TFLOAT( emscripten_get_now() - dStart );
+
+	if ( fTime > s_fWorstReadMs )
+		s_fWorstReadMs = fTime;
+
+	return uiGot;
+}
+
+// Blocks asked for ahead of time, a thread of its own gets them: readers that mustn't wait (the sound mixer) use it
+static constexpr TINT MAX_PREFETCH = 8;
+
+struct WASMPrefetch
+{
+	TINT    iEntry;
+	TUINT32 uiBlock;
+};
+
+static WASMPrefetch s_aPrefetch[ MAX_PREFETCH ];
+static TINT         s_iNumPrefetch;
+static TBOOL        s_bPrefetchThread;
+
+static void AddBlock( TINT a_iEntry, TUINT32 a_uiBlock, TUINT8* a_pData, TUINT32 a_uiUsed );
+
+static void* PrefetchThread( void* )
+{
+	for ( ;; )
+	{
+		TCHAR        szPath[ MAX_PATH_LEN ];
+		WASMPrefetch oRequest;
+		TUINT32      uiSize = 0;
+
+		{
+			TMutexLock oLock( s_oMutex );
+
+			if ( s_iNumPrefetch > 0 )
+			{
+				oRequest = s_aPrefetch[ 0 ];
+
+				const WASMFileEntry& rEntry = s_pEntries[ oRequest.iEntry ];
+				T2String8::Copy( szPath, rEntry.szPath, MAX_PATH_LEN - 1 );
+				szPath[ MAX_PATH_LEN - 1 ] = '\0';
+
+				const TUINT32 uiStart = oRequest.uiBlock * BLOCK_SIZE;
+				uiSize                = uiStart < rEntry.uiSize ? TMath::Min( rEntry.uiSize - uiStart, BLOCK_SIZE ) : 0;
+			}
+		}
+
+		if ( uiSize == 0 )
+		{
+			if ( s_iNumPrefetch > 0 )
+			{
+				TMutexLock oLock( s_oMutex );
+				s_iNumPrefetch = 0;
+			}
+
+			usleep( 2000 );
+			continue;
+		}
+
+		TUINT8*       pData  = TSTATICCAST( TUINT8, malloc( BLOCK_SIZE ) );
+		const TUINT32 uiUsed = WASM_DownloadRange( szPath, oRequest.uiBlock * BLOCK_SIZE, uiSize, pData );
+
+		TMutexLock oLock( s_oMutex );
+
+		if ( uiUsed == uiSize )
+			AddBlock( oRequest.iEntry, oRequest.uiBlock, pData, uiUsed );
+		else
+			free( pData );
+
+		// The request stays queued while it downloads, so it isn't asked for twice
+		for ( TINT i = 1; i < s_iNumPrefetch; i++ )
+			s_aPrefetch[ i - 1 ] = s_aPrefetch[ i ];
+
+		if ( s_iNumPrefetch > 0 )
+			s_iNumPrefetch--;
+	}
+
+	return TNULL;
+}
+
+static TBOOL IsBlockCached( TINT a_iEntry, TUINT32 a_uiBlock )
+{
+	for ( TINT i = 0; i < MAX_BLOCKS; i++ )
+	{
+		if ( s_aBlocks[ i ].iEntry == a_iEntry && s_aBlocks[ i ].uiBlock == a_uiBlock )
+			return TTRUE;
+	}
+
+	return TFALSE;
+}
+
+// Needs the lock
+static void RequestBlock( TINT a_iEntry, TUINT32 a_uiBlock )
+{
+	for ( TINT i = 0; i < s_iNumPrefetch; i++ )
+	{
+		if ( s_aPrefetch[ i ].iEntry == a_iEntry && s_aPrefetch[ i ].uiBlock == a_uiBlock )
+			return;
+	}
+
+	if ( s_iNumPrefetch == MAX_PREFETCH )
+		return;
+
+	s_aPrefetch[ s_iNumPrefetch ].iEntry  = a_iEntry;
+	s_aPrefetch[ s_iNumPrefetch ].uiBlock = a_uiBlock;
+	s_iNumPrefetch++;
+
+	if ( !s_bPrefetchThread )
+	{
+		s_bPrefetchThread = TTRUE;
+
+		pthread_t oThread;
+		pthread_create( &oThread, TNULL, PrefetchThread, TNULL );
+		pthread_detach( oThread );
+	}
 }
 
 // Copies from a cached block, -1 if it isn't cached. Needs the lock
@@ -565,7 +696,7 @@ TSIZE TNativeFile::Read( void* a_pDst, TSIZE a_uiSize )
 		if ( uiOffset == 0 && uiLeft >= BLOCK_SIZE )
 		{
 			const TUINT32 uiWhole = uiLeft - uiLeft % BLOCK_SIZE;
-			const TUINT32 uiGot   = WASM_DownloadRange( szPath, m_uiPosition, uiWhole, pDst );
+			const TUINT32 uiGot   = DownloadRange( szPath, m_uiPosition, uiWhole, pDst );
 
 			if ( uiGot != uiWhole )
 			{
@@ -592,7 +723,7 @@ TSIZE TNativeFile::Read( void* a_pDst, TSIZE a_uiSize )
 			const TUINT32 uiSize       = TMath::Min( uiFileSize - uiBlockStart, BLOCK_SIZE );
 
 			TUINT8*       pData  = TSTATICCAST( TUINT8, malloc( BLOCK_SIZE ) );
-			const TUINT32 uiUsed = WASM_DownloadRange( szPath, uiBlockStart, uiSize, pData );
+			const TUINT32 uiUsed = DownloadRange( szPath, uiBlockStart, uiSize, pData );
 
 			if ( uiUsed != uiSize )
 				TERROR( "TNativeFile: couldn't download %s (%u bytes at %u)\n", szPath, uiSize, uiBlockStart );
@@ -613,6 +744,62 @@ TSIZE TNativeFile::Read( void* a_pDst, TSIZE a_uiSize )
 	}
 
 	return uiToRead - uiLeft;
+}
+
+TBOOL TNativeFile::ReadIfCached( void* a_pDst, TSIZE a_uiSize )
+{
+	TMutexLock oLock( s_oMutex );
+
+	const WASMFileEntry& rEntry = s_pEntries[ m_iEntry ];
+
+	if ( m_uiPosition >= rEntry.uiSize )
+		return TFALSE;
+
+	const TUINT32 uiToRead = TMath::Min( TUINT32( a_uiSize ), rEntry.uiSize - m_uiPosition );
+
+	if ( rEntry.pWritten )
+	{
+		TUtil::MemCopy( a_pDst, rEntry.pWritten + m_uiPosition, uiToRead );
+		m_uiPosition += uiToRead;
+		return TTRUE;
+	}
+
+	const TUINT32 uiFirst = m_uiPosition / BLOCK_SIZE;
+	const TUINT32 uiLast  = ( m_uiPosition + uiToRead - 1 ) / BLOCK_SIZE;
+	TBOOL         bCached = TTRUE;
+
+	for ( TUINT32 uiBlock = uiFirst; uiBlock <= uiLast; uiBlock++ )
+	{
+		if ( !IsBlockCached( m_iEntry, uiBlock ) )
+		{
+			RequestBlock( m_iEntry, uiBlock );
+			bCached = TFALSE;
+		}
+	}
+
+	if ( !bCached )
+		return TFALSE;
+
+	// A reader going through the file gets the next block before it needs it
+	if ( m_uiPosition % BLOCK_SIZE >= BLOCK_SIZE / 2 && ( uiLast + 1 ) * BLOCK_SIZE < rEntry.uiSize && !IsBlockCached( m_iEntry, uiLast + 1 ) )
+		RequestBlock( m_iEntry, uiLast + 1 );
+
+	TUINT8* pDst  = TSTATICCAST( TUINT8, a_pDst );
+	TUINT32 uiLeft = uiToRead;
+
+	while ( uiLeft > 0 )
+	{
+		const TINT iCopied = CopyFromBlock( m_iEntry, m_uiPosition / BLOCK_SIZE, m_uiPosition % BLOCK_SIZE, pDst, uiLeft );
+
+		if ( iCopied <= 0 )
+			break;
+
+		pDst += iCopied;
+		m_uiPosition += iCopied;
+		uiLeft -= iCopied;
+	}
+
+	return uiLeft == 0;
 }
 
 TSIZE TNativeFile::Write( const void* a_pSrc, TSIZE a_uiSize )

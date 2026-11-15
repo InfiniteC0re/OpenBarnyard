@@ -118,6 +118,8 @@ void AGUI2RendererGL::BeginScene()
 
 void AGUI2RendererGL::EndScene()
 {
+	FlushBatch();
+
 	auto pRender = TRenderGLInterface::Interface();
 
 	pRender->SetZWriteEnable( TTRUE );
@@ -135,6 +137,8 @@ void AGUI2RendererGL::EndScene()
 
 void AGUI2RendererGL::ResetRenderer()
 {
+	FlushBatch();
+
 	auto pRender = TRenderGLInterface::Interface();
 
 	pRender->SetBlendOp( GL_FUNC_ADD );
@@ -151,6 +155,8 @@ void AGUI2RendererGL::ResetRenderer()
 
 void AGUI2RendererGL::PrepareRenderer()
 {
+	FlushBatch();
+
 	auto pRender        = TRenderGLInterface::Interface();
 	auto pDisplayParams = pRender->GetCurrentDisplayParams();
 
@@ -194,6 +200,8 @@ void AGUI2RendererGL::SetMaterial( T2GUIMaterial* a_pMaterial )
 	{
 		return;
 	}
+
+	FlushBatch();
 
 	pRender->SetAlphaTestEnable( TFALSE );
 	pRender->SetCullMode( TRenderGLInterface::CULL_NONE );
@@ -376,6 +384,8 @@ void AGUI2RendererGL::SetColour( TUINT32 a_uiColour )
 
 void AGUI2RendererGL::SetScissor( TFLOAT a_fVal1, TFLOAT a_fVal2, TFLOAT a_fVal3, TFLOAT a_fVal4 )
 {
+	FlushBatch();
+
 	auto pRender        = TRenderGLInterface::Interface();
 	auto pDisplayParams = pRender->GetCurrentDisplayParams();
 	auto pTransform     = m_pTransforms + m_iTransformCount;
@@ -408,6 +418,8 @@ void AGUI2RendererGL::SetScissor( TFLOAT a_fVal1, TFLOAT a_fVal2, TFLOAT a_fVal3
 
 void AGUI2RendererGL::ClearScissor()
 {
+	FlushBatch();
+
 	auto pRender        = TRenderGLInterface::Interface();
 	auto pDisplayParams = pRender->GetCurrentDisplayParams();
 
@@ -421,6 +433,17 @@ void AGUI2RendererGL::ClearScissor()
 	pRender->SetTransform( TRenderGLInterface::TRANSFORM_PROJECTION, projection );
 }
 
+void AGUI2RendererGL::FlushBatch()
+{
+	if ( sm_uiNumBatchVertices == 0 )
+		return;
+
+	const TUINT32 uiCount = sm_uiNumBatchVertices;
+	sm_uiNumBatchVertices = 0;
+
+	TRenderGLInterface::Interface()->DrawNonIndexedImmediate( GL_TRIANGLES, sm_aBatchVertices, uiCount, sizeof( Vertex ) );
+}
+
 void AGUI2RendererGL::RenderRectangle( const Toshi::TVector2& a, const Toshi::TVector2& b, const Toshi::TVector2& uv1, const Toshi::TVector2& uv2 )
 {
 	if ( m_bIsTransformDirty )
@@ -428,27 +451,37 @@ void AGUI2RendererGL::RenderRectangle( const Toshi::TVector2& a, const Toshi::TV
 		UpdateTransform();
 	}
 
-	sm_Vertices[ 0 ].Position = { a.x, a.y, sm_fZCoordinate };
-	sm_Vertices[ 0 ].Colour   = m_uiColour;
-	sm_Vertices[ 0 ].UV       = { uv1.x, uv1.y };
+	// Two triangles in the order the strip had
+	if ( sm_uiNumBatchVertices + 6 > MAX_BATCH_VERTICES )
+		FlushBatch();
 
-	sm_Vertices[ 1 ].Position = { b.x, a.y, sm_fZCoordinate };
-	sm_Vertices[ 1 ].Colour   = m_uiColour;
-	sm_Vertices[ 1 ].UV       = { uv2.x, uv1.y };
+	Vertex* pVertices = sm_aBatchVertices + sm_uiNumBatchVertices;
+	sm_uiNumBatchVertices += 6;
 
-	sm_Vertices[ 2 ].Position = { a.x, b.y, sm_fZCoordinate };
-	sm_Vertices[ 2 ].Colour   = m_uiColour;
-	sm_Vertices[ 2 ].UV       = { uv1.x, uv2.y };
+	pVertices[ 0 ].Position = { a.x, a.y, sm_fZCoordinate };
+	pVertices[ 0 ].Colour   = m_uiColour;
+	pVertices[ 0 ].UV       = { uv1.x, uv1.y };
 
-	sm_Vertices[ 3 ].Position = { b.x, b.y, sm_fZCoordinate };
-	sm_Vertices[ 3 ].Colour   = m_uiColour;
-	sm_Vertices[ 3 ].UV       = { uv2.x, uv2.y };
+	pVertices[ 1 ].Position = { b.x, a.y, sm_fZCoordinate };
+	pVertices[ 1 ].Colour   = m_uiColour;
+	pVertices[ 1 ].UV       = { uv2.x, uv1.y };
 
-	TRenderGLInterface::Interface()->DrawNonIndexedImmediate( GL_TRIANGLE_STRIP, sm_Vertices, 4, sizeof( Vertex ) );
+	pVertices[ 2 ].Position = { a.x, b.y, sm_fZCoordinate };
+	pVertices[ 2 ].Colour   = m_uiColour;
+	pVertices[ 2 ].UV       = { uv1.x, uv2.y };
+
+	pVertices[ 3 ] = pVertices[ 2 ];
+	pVertices[ 4 ] = pVertices[ 1 ];
+
+	pVertices[ 5 ].Position = { b.x, b.y, sm_fZCoordinate };
+	pVertices[ 5 ].Colour   = m_uiColour;
+	pVertices[ 5 ].UV       = { uv2.x, uv2.y };
 }
 
 void AGUI2RendererGL::RenderTriStrip( Toshi::TVector2* vertices, Toshi::TVector2* UV, uint32_t numverts )
 {
+	FlushBatch();
+
 	if ( m_bIsTransformDirty )
 	{
 		UpdateTransform();
@@ -494,6 +527,8 @@ void AGUI2RendererGL::RenderLine( const Toshi::TVector2& a, const Toshi::TVector
 
 void AGUI2RendererGL::RenderLine( TFLOAT x1, TFLOAT y1, TFLOAT x2, TFLOAT y2 )
 {
+	FlushBatch();
+
 	auto pMaterial = m_pMaterial;
 	SetMaterial( TNULL );
 
@@ -517,6 +552,8 @@ void AGUI2RendererGL::RenderLine( TFLOAT x1, TFLOAT y1, TFLOAT x2, TFLOAT y2 )
 
 void AGUI2RendererGL::RenderOutlineRectangle( const Toshi::TVector2& a, const Toshi::TVector2& b )
 {
+	FlushBatch();
+
 	auto pMaterial = m_pMaterial;
 	SetMaterial( TNULL );
 
@@ -552,6 +589,8 @@ void AGUI2RendererGL::RenderOutlineRectangle( const Toshi::TVector2& a, const To
 
 void AGUI2RendererGL::RenderFilledRectangle( const Toshi::TVector2& a, const Toshi::TVector2& b )
 {
+	FlushBatch();
+
 	auto pMaterial = m_pMaterial;
 	SetMaterial( TNULL );
 
@@ -599,6 +638,8 @@ void AGUI2RendererGL::ResetZCoordinate()
 
 void AGUI2RendererGL::UpdateTransform()
 {
+	FlushBatch();
+
 	T2GUITransform* pTransform = m_pTransforms + m_iTransformCount;
 
 	TMatrix44 worldMatrix;
@@ -642,6 +683,8 @@ void AGUI2RendererGL::SetupProjectionMatrix( TMatrix44& a_rOutMatrix, TINT a_iLe
 
 void AGUI2RendererGL::RenderIndexedTriList( Toshi::TVector2* a_pVertices, Toshi::TVector2* a_pUVs, TINT* a_pIndices, TUINT32 a_uiNumIndices, TUINT32 a_uiNumVertices, TFLOAT a_fScaleX, TFLOAT a_fScaleY )
 {
+	FlushBatch();
+
 	if ( m_bIsTransformDirty )
 		UpdateTransform();
 

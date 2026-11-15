@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ATreeManager.h"
+#include "AOptions.h"
 #include "Terrain/ATerrainInterface.h"
 #include "Terrain/ATerrainLocator.h"
 #include "Render/AGlowViewport.h"
@@ -37,6 +38,11 @@ ATreeManager::ATreeManager()
 {
 	m_apUnk6670[ 0 ] = TNULL;
 	m_apUnk6670[ 1 ] = TNULL;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	m_fRenderDistance *= AOptions::GetRenderDistanceScale();
+	m_fBlendingDistance *= AOptions::GetRenderDistanceScale();
+#endif
 }
 
 // $Barnyard: FUNCTION 005eff00

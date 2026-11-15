@@ -141,6 +141,11 @@ void AOptions::LoadSettings()
 #endif
 	m_bForcedWindowed    = TFALSE;
 
+#ifdef TOSHI_SKU_WASM
+	if ( strstr( GetCommandLineA(), "-lowgrass" ) )
+		m_bHighDetailGrass = TFALSE;
+#endif
+
 	HKEY hKey;
 
 	if ( ERROR_SUCCESS == RegOpenKeyExA( HKEY_CURRENT_USER, "Software\\THQ\\Barnyard", 0, KEY_READ, &hKey ) )
@@ -408,3 +413,27 @@ TBOOL AOptions::WriteExtraSettings()
 }
 
 #endif // BARNYARD_LATEST
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+TFLOAT AOptions::GetRenderDistanceScale()
+{
+	static TFLOAT s_fScale = 0.0f;
+
+	if ( s_fScale == 0.0f )
+	{
+		s_fScale = 1.0f;
+
+		if ( const TCHAR* szArgument = strstr( GetCommandLineA(), "-renderdistance " ) )
+		{
+			const TINT iPercent = atoi( szArgument + 16 );
+
+			if ( iPercent >= 25 && iPercent <= 100 )
+				s_fScale = iPercent / 100.0f;
+		}
+	}
+
+	return s_fScale;
+}
+
+#endif // BARNYARD_COMMUNITY_PATCH

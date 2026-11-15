@@ -37,8 +37,16 @@ layout( std140 ) uniform Constants
 	vec4 g_vFogColour;
 	vec4 g_vLightingLerp;
 	vec4 g_vStages;         // texture of stage 0
+#ifdef INSTANCED
+	vec4 g_aInstances[ 220 ]; // 11 per instance: MVP 4, bone rows 3, light direction, ambient, light colour, up vector (w: lighting lerp)
+#else
 	vec4 g_aBoneRows[ 84 ]; // 3 rows of the transposed transform of each bone
+#endif
 };
+
+#ifdef INSTANCED
+#  define INSTANCE( i ) g_aInstances[ gl_InstanceID * 11 + i ]
+#endif
 
 #ifdef VERTEX_SHADER
 
@@ -50,6 +58,13 @@ layout( location = 4 ) in vec2 a_vUV;
 
 void SkinVertex( out vec4 a_vOutPosition, out vec3 a_vOutNormal )
 {
+#  ifdef INSTANCED
+	// One bone, every weight is for it
+	float fWeight = dot( a_vWeights, vec4( 1.0 ) );
+	vec4  vRow0   = INSTANCE( 4 ) * fWeight;
+	vec4  vRow1   = INSTANCE( 5 ) * fWeight;
+	vec4  vRow2   = INSTANCE( 6 ) * fWeight;
+#  else
 	vec4 vBones   = g_vBoneIndexScale * a_vBones.bgra;
 	vec4 vWeights = a_vWeights.bgra;
 	vec4 vRow0    = vec4( 0.0 );
@@ -63,6 +78,7 @@ void SkinVertex( out vec4 a_vOutPosition, out vec3 a_vOutNormal )
 		vRow1 += g_aBoneRows[ iBone + 1 ] * vWeights[ i ];
 		vRow2 += g_aBoneRows[ iBone + 2 ] * vWeights[ i ];
 	}
+#  endif
 
 	vec4 vPosition = vec4( a_vPosition, 1.0 );
 	a_vOutPosition = vec4( dot( vRow0, vPosition ), dot( vRow1, vPosition ), dot( vRow2, vPosition ), 1.0 );
@@ -73,22 +89,41 @@ out vec4 v_vColour;
 out vec2 v_vUV;
 out vec2 v_vLightingUV;
 
+#  ifdef INSTANCED
+out float v_fLightingLerp;
+#  endif
+
 void main()
 {
 	vec4 vPosition;
 	vec3 vNormal;
 	SkinVertex( vPosition, vNormal );
 
-	gl_Position = ToClipSpace( vPosition * g_mModelViewProjection );
+#  ifdef INSTANCED
+	mat4 mModelViewProjection = mat4( INSTANCE( 0 ), INSTANCE( 1 ), INSTANCE( 2 ), INSTANCE( 3 ) );
+	vec4 vLightDirection      = INSTANCE( 7 );
+	vec4 vAmbientColour       = INSTANCE( 8 );
+	vec4 vLightColour         = INSTANCE( 9 );
+	vec4 vUpVector            = INSTANCE( 10 );
+	v_fLightingLerp           = vUpVector.w;
+#  else
+	mat4 mModelViewProjection = g_mModelViewProjection;
+	vec4 vLightDirection      = g_vLightDirection;
+	vec4 vAmbientColour       = g_vAmbientColour;
+	vec4 vLightColour         = g_vLightColour;
+	vec4 vUpVector            = g_vUpVector;
+#  endif
+
+	gl_Position = ToClipSpace( vPosition * mModelViewProjection );
 	v_vUV       = a_vUV;
 
 #  ifdef HD_LIGHTING
-	v_vColour     = vec4( 0.0, 0.0, 0.0, saturate( g_vAmbientColour.a ) );
-	v_vLightingUV = vec2( dot( vNormal, -g_vLightDirection.xyz ), dot( vNormal, g_vUpVector.xyz ) );
+	v_vColour     = vec4( 0.0, 0.0, 0.0, saturate( vAmbientColour.a ) );
+	v_vLightingUV = vec2( dot( vNormal, -vLightDirection.xyz ), dot( vNormal, vUpVector.xyz ) );
 #  else
-	float fDiffuse = clamp( dot( vNormal, -g_vLightDirection.xyz ), g_vLightingRange.z, g_vLightingRange.w );
+	float fDiffuse = clamp( dot( vNormal, -vLightDirection.xyz ), g_vLightingRange.z, g_vLightingRange.w );
 
-	v_vColour     = saturate( vec4( fDiffuse * g_vLightColour.rgb + ( 1.0 - fDiffuse ) * g_vAmbientColour.rgb, g_vAmbientColour.a ) );
+	v_vColour     = saturate( vec4( fDiffuse * vLightColour.rgb + ( 1.0 - fDiffuse ) * vAmbientColour.rgb, vAmbientColour.a ) );
 	v_vLightingUV = vec2( 0.0 );
 #  endif
 }
@@ -98,6 +133,10 @@ void main()
 in vec4 v_vColour;
 in vec2 v_vUV;
 in vec2 v_vLightingUV;
+
+#  ifdef INSTANCED
+in float v_fLightingLerp;
+#  endif
 
 uniform sampler2D g_Texture0;
 
@@ -124,8 +163,14 @@ void main()
 	vec4 vLighting2 = texture( g_Texture3, v_vLightingUV );
 	vec4 vLighting3 = texture( g_Texture4, v_vLightingUV );
 
-	vec4 vShadow    = mix( vLighting2, vLighting0, g_vLightingLerp );
-	vec4 vHighlight = mix( vLighting3, vLighting1, g_vLightingLerp );
+#    ifdef INSTANCED
+	vec4 vLightingLerp = vec4( vec3( v_fLightingLerp ), 0.0 );
+#    else
+	vec4 vLightingLerp = g_vLightingLerp;
+#    endif
+
+	vec4 vShadow    = mix( vLighting2, vLighting0, vLightingLerp );
+	vec4 vHighlight = mix( vLighting3, vLighting1, vLightingLerp );
 
 	vec4 vColour;
 	vColour.rgb = saturate( saturate( vTexture.rgb - vShadow.rgb ) + vHighlight.rgb );
@@ -167,6 +212,11 @@ static const TGLInputLayout s_oInputLayout = { s_aInputAttributes, TARRAYSIZE( s
 ASkinShaderHAL::ASkinShaderHAL()
     : m_uiProgram( 0 )
     , m_uiProgramHD( 0 )
+    , m_uiProgramInstanced( 0 )
+    , m_uiProgramInstancedHD( 0 )
+    , m_pInstancedMesh( TNULL )
+    , m_bInstancedHD( TFALSE )
+    , m_uiNumInstances( 0 )
     , m_iAlphaRef( 128 )
     , m_bRenderEnvMap( TFALSE )
     , m_bHighEndSkinning( TTRUE )
@@ -196,6 +246,7 @@ void ASkinShaderHAL::Flush()
 	{
 		SetStates();
 		m_aOrderTables[ 0 ].Render();
+		FlushInstances();
 		TRenderGLInterface::Interface()->SetFogEnable( TFALSE );
 	}
 
@@ -213,6 +264,7 @@ void ASkinShaderHAL::StartFlush()
 
 void ASkinShaderHAL::EndFlush()
 {
+	FlushInstances();
 	TRenderGLInterface::Interface()->SetFogEnable( TFALSE );
 }
 
@@ -241,6 +293,10 @@ TBOOL ASkinShaderHAL::Validate()
 		return TFALSE;
 	}
 
+	// Without these every mesh is drawn on its own
+	m_uiProgramInstanced   = TRenderGLInterface::CompileProgram( s_szSkinShader, "#define INSTANCED\n" );
+	m_uiProgramInstancedHD = TRenderGLInterface::CompileProgram( s_szSkinShader, "#define HD_LIGHTING\n#define INSTANCED\n" );
+
 	return BaseClass::Validate();
 }
 
@@ -251,8 +307,17 @@ void ASkinShaderHAL::Invalidate()
 	TRenderGLInterface::DestroyProgram( m_uiProgram );
 	TRenderGLInterface::DestroyProgram( m_uiProgramHD );
 
-	m_uiProgram   = 0;
-	m_uiProgramHD = 0;
+	if ( m_uiProgramInstanced )
+		TRenderGLInterface::DestroyProgram( m_uiProgramInstanced );
+
+	if ( m_uiProgramInstancedHD )
+		TRenderGLInterface::DestroyProgram( m_uiProgramInstancedHD );
+
+	m_uiProgram            = 0;
+	m_uiProgramHD          = 0;
+	m_uiProgramInstanced   = 0;
+	m_uiProgramInstancedHD = 0;
+	m_uiNumInstances       = 0;
 
 	BaseClass::Invalidate();
 }
@@ -269,6 +334,81 @@ TBOOL ASkinShaderHAL::TryValidate()
 	return TTRUE;
 }
 
+void ASkinShaderHAL::FlushInstances()
+{
+	if ( m_uiNumInstances == 0 )
+		return;
+
+	auto pRender   = TRenderGLInterface::Interface();
+	auto pMesh     = m_pInstancedMesh;
+	auto pMaterial = TSTATICCAST( ASkinMaterialHAL, pMesh->GetMaterial() );
+
+	const TUINT uiNumInstances = m_uiNumInstances;
+	m_uiNumInstances           = 0;
+
+	pRender->SetShaders( m_bInstancedHD ? m_uiProgramInstancedHD : m_uiProgramInstanced, &s_oInputLayout );
+
+	if ( m_bInstancedHD )
+	{
+		for ( TUINT i = 0; i < ASkinMaterial::LT_NUMOF; i++ )
+		{
+			pRender->SetTexture( 1 + i, pMaterial->GetLightingTexture( ASkinMaterial::ELightingTexture( i ) )->GetGLTexture() );
+			pRender->SetTextureMipFilter( 1 + i, TRenderGLInterface::TEXTUREFILTER_NONE );
+		}
+	}
+
+	static constexpr TVector4 s_vBoneIndexScale = TVector4( 256.0f, 256.0f, 256.0f, 256.0f );
+	static constexpr TVector4 s_vLightingRange  = TVector4( 1.0f, 0.0f, 0.0f, 1.0f );
+	pRender->SetVec4InVSBuffer( CONSTANT_BONEINDEXSCALE, &s_vBoneIndexScale );
+	pRender->SetVec4InVSBuffer( CONSTANT_LIGHTINGRANGE, &s_vLightingRange );
+
+	// Instanced packets are opaque
+	pRender->SetAlphaRef( TMath::Min( m_iAlphaRef, 128 ) );
+
+	if ( !ISZERO( sm_eRenderStateFlags & RENDERSTATE_ALPHABLEND ) )
+	{
+		pRender->SetAlphaBlendEnable( TFALSE );
+		sm_eRenderStateFlags &= ~RENDERSTATE_ALPHABLEND;
+	}
+
+	TVector4 vFog;
+	TVector4 vFogColour;
+	pRender->GetFogParams( vFog, vFogColour );
+
+	const TVector4 vAlphaTest = pRender->GetAlphaTestParams();
+	const TVector4 vStages( pRender->GetTexture( 0 ) ? 1.0f : 0.0f, 0.0f, 0.0f, 0.0f );
+	pRender->SetVec4InVSBuffer( CONSTANT_ALPHATEST, &vAlphaTest );
+	pRender->SetVec4InVSBuffer( CONSTANT_FOG, &vFog );
+	pRender->SetVec4InVSBuffer( CONSTANT_FOGCOLOUR, &vFogColour );
+	pRender->SetVec4InVSBuffer( CONSTANT_STAGES, &vStages );
+
+	pRender->SetVec4InVSBuffer( CONSTANT_BONES, m_aInstanceData, uiNumInstances * INSTANCE_SIZE );
+	pRender->SetConstantUploadLimit( CONSTANT_BONES + uiNumInstances * INSTANCE_SIZE );
+
+	auto pVertexPool = TSTATICCAST( TVertexPoolResource, pMesh->GetVertexPool() );
+
+	TVertexBlockResource::HALBuffer vertexHALBuffer;
+	pVertexPool->GetHALBuffer( &vertexHALBuffer );
+
+	auto pIndexPool = TSTATICCAST( TIndexPoolResource, pMesh->GetSubMesh( 0 )->pIndexPool );
+	TVALIDPTR( pIndexPool );
+
+	TIndexBlockResource::HALBuffer indexHALBuffer;
+	pIndexPool->GetHALBuffer( &indexHALBuffer );
+
+	pRender->DrawIndexedInstanced(
+	    GL_TRIANGLE_STRIP,
+	    pIndexPool->GetNumIndices(),
+	    indexHALBuffer.pIndexBuffer,
+	    indexHALBuffer.uiIndexOffset * sizeof( TIndexType ),
+	    GL_UNSIGNED_SHORT,
+	    vertexHALBuffer.apVertexBuffers[ 0 ],
+	    40,
+	    vertexHALBuffer.uiVertexOffset * 40,
+	    uiNumInstances
+	);
+}
+
 void ASkinShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 {
 	if ( !a_pRenderPacket || !a_pRenderPacket->GetMesh() )
@@ -283,24 +423,23 @@ void ASkinShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 	TVALIDPTR( pSkeletonInstance );
 
 	TVector4 vLightingLerp = TVector4( 1.0f, 1.0f, 1.0f, 1.0f );
+	TVector4 vUpVector     = TVector4( 0.0f, 0.0f, 0.0f, 1.0f );
 
 	auto pRender         = TRenderGLInterface::Interface();
 	auto pCurrentContext = TRenderContextGL::Upcast( pRender->GetCurrentContext() );
 
 	Validate();
 
-	if ( pMaterial->IsHDLighting() && pMaterial->HasLighting1Tex() && pMaterial->HasLighting2Tex() )
+	const TBOOL bHD = pMaterial->IsHDLighting() && pMaterial->HasLighting1Tex() && pMaterial->HasLighting2Tex();
+
+	if ( bHD )
 	{
 		// The HD lighting uses 4 shading textures
-		pRender->SetShaders( m_uiProgramHD, &s_oInputLayout );
-
 		TMatrix44 oViewModel;
 		oViewModel.Invert( a_pRenderPacket->GetModelViewMatrix() );
 
-		TVector4 vUpVector;
 		vUpVector.Negate3( oViewModel.AsBasisVector4( 2 ) );
 		vUpVector.w = 1.0f;
-		pRender->SetVec4InVSBuffer( CONSTANT_UPVECTOR, &vUpVector );
 
 		TFLOAT fShadeCoeff = a_pRenderPacket->GetShadeCoeff() * ( 1.0f / 256.0f );
 
@@ -311,19 +450,6 @@ void ASkinShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 		vLightingLerp.y = vLightingLerp.x;
 		vLightingLerp.z = vLightingLerp.x;
 		vLightingLerp.w = 0.0f;
-
-		for ( TUINT i = 0; i < ASkinMaterial::LT_NUMOF; i++ )
-		{
-			pRender->SetTexture( 1 + i, pMaterial->GetLightingTexture( ASkinMaterial::ELightingTexture( i ) )->GetGLTexture() );
-			pRender->SetTextureMipFilter( 1 + i, TRenderGLInterface::TEXTUREFILTER_NONE );
-		}
-	}
-	else
-	{
-		static constexpr TVector4 s_vUpVector = TVector4( 0.0f, 0.0f, 0.0f, 1.0f );
-		pRender->SetVec4InVSBuffer( CONSTANT_UPVECTOR, &s_vUpVector );
-
-		pRender->SetShaders( m_uiProgram, &s_oInputLayout );
 	}
 
 	TMatrix44 oModelViewProjection;
@@ -331,10 +457,6 @@ void ASkinShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 
 	TMatrix44 oModelViewProjectionTransposed;
 	oModelViewProjectionTransposed.Transpose( oModelViewProjection );
-
-	static constexpr TVector4 s_vBoneIndexScale = TVector4( 256.0f, 256.0f, 256.0f, 256.0f );
-	pRender->SetVec4InVSBuffer( CONSTANT_MVP, &oModelViewProjectionTransposed, 4 );
-	pRender->SetVec4InVSBuffer( CONSTANT_BONEINDEXSCALE, &s_vBoneIndexScale );
 
 	TFLOAT fLightDirX = -a_pRenderPacket->GetLightDirection().x;
 	TFLOAT fLightDirY = -a_pRenderPacket->GetLightDirection().y;
@@ -363,7 +485,55 @@ void ASkinShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 
 	const TVector4 vLightDirWorld( vLightDir.x, vLightDir.y, vLightDir.z, 0.0f );
 
-	static constexpr TVector4 s_vLightingRange = TVector4( 1.0f, 0.0f, 0.0f, 1.0f );
+	const TBOOL bBlend = pMaterial->GetBlendMode() != ASkinMaterial::BLENDMODE_DEFAULT || a_pRenderPacket->GetAlpha() < 1.0f;
+
+	// An opaque mesh of one submesh and one bone waits for more of the same mesh
+	if ( m_uiProgramInstanced && m_uiProgramInstancedHD && !bBlend && pMesh->GetNumSubMeshes() == 1 && pMesh->GetSubMesh( 0 )->uiNumBones == 1 )
+	{
+		if ( m_uiNumInstances != 0 && ( m_pInstancedMesh != pMesh || m_bInstancedHD != bHD || m_uiNumInstances == MAX_INSTANCES ) )
+			FlushInstances();
+
+		m_pInstancedMesh = pMesh;
+		m_bInstancedHD   = bHD;
+
+		TMatrix44 oBoneTransform;
+		oBoneTransform.Transpose( pSkeletonInstance->GetBone( pMesh->GetSubMesh( 0 )->aBones[ 0 ] ).m_Transform );
+
+		TVector4* pInstance = m_aInstanceData + m_uiNumInstances * INSTANCE_SIZE;
+		TUtil::MemCopy( pInstance, &oModelViewProjectionTransposed, sizeof( TVector4 ) * 4 );
+		TUtil::MemCopy( pInstance + 4, &oBoneTransform, sizeof( TVector4 ) * 3 );
+		pInstance[ 7 ]    = vLightDirWorld;
+		pInstance[ 8 ]    = vAmbientColour;
+		pInstance[ 9 ]    = vLightColour;
+		pInstance[ 10 ]   = vUpVector;
+		pInstance[ 10 ].w = vLightingLerp.x;
+
+		m_uiNumInstances++;
+		return;
+	}
+
+	FlushInstances();
+
+	if ( bHD )
+	{
+		pRender->SetShaders( m_uiProgramHD, &s_oInputLayout );
+
+		for ( TUINT i = 0; i < ASkinMaterial::LT_NUMOF; i++ )
+		{
+			pRender->SetTexture( 1 + i, pMaterial->GetLightingTexture( ASkinMaterial::ELightingTexture( i ) )->GetGLTexture() );
+			pRender->SetTextureMipFilter( 1 + i, TRenderGLInterface::TEXTUREFILTER_NONE );
+		}
+	}
+	else
+	{
+		pRender->SetShaders( m_uiProgram, &s_oInputLayout );
+	}
+
+	static constexpr TVector4 s_vBoneIndexScale = TVector4( 256.0f, 256.0f, 256.0f, 256.0f );
+	static constexpr TVector4 s_vLightingRange  = TVector4( 1.0f, 0.0f, 0.0f, 1.0f );
+	pRender->SetVec4InVSBuffer( CONSTANT_UPVECTOR, &vUpVector );
+	pRender->SetVec4InVSBuffer( CONSTANT_MVP, &oModelViewProjectionTransposed, 4 );
+	pRender->SetVec4InVSBuffer( CONSTANT_BONEINDEXSCALE, &s_vBoneIndexScale );
 	pRender->SetVec4InVSBuffer( CONSTANT_LIGHTDIRECTION, &vLightDirWorld );
 	pRender->SetVec4InVSBuffer( CONSTANT_AMBIENTCOLOUR, &vAmbientColour );
 	pRender->SetVec4InVSBuffer( CONSTANT_LIGHTCOLOUR, &vLightColour );
@@ -373,7 +543,7 @@ void ASkinShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 	if ( m_iAlphaRef < iAlpha ) iAlpha = m_iAlphaRef;
 	pRender->SetAlphaRef( iAlpha );
 
-	if ( pMaterial->GetBlendMode() != ASkinMaterial::BLENDMODE_DEFAULT || a_pRenderPacket->GetAlpha() < 1.0f )
+	if ( bBlend )
 	{
 		if ( ISZERO( sm_eRenderStateFlags & RENDERSTATE_ALPHABLEND ) )
 		{

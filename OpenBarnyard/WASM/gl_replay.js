@@ -330,6 +330,7 @@ var oGLReplay = {
 				case 51: gl.useProgram( O[ H[ i + 1 ] ] ); n = 2; break;
 				case 52: gl.vertexAttribPointer( H[ i + 1 ], H[ i + 2 ], H[ i + 3 ], !!H[ i + 4 ], H[ i + 5 ], H[ i + 6 ] ); n = 7; break;
 				case 53: gl.viewport( H[ i + 1 ], H[ i + 2 ], H[ i + 3 ], H[ i + 4 ] ); n = 5; break;
+				case 54: gl.drawElementsInstanced( H[ i + 1 ], H[ i + 2 ], H[ i + 3 ], H[ i + 4 ], H[ i + 5 ] ); oGLReplay.bDrawnInFrame = true; n = 6; break;
 				default:
 					console.error( "gl_replay: bad command " + H[ i ] + " at " + uiRead );
 					return;

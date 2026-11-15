@@ -142,6 +142,9 @@ void ASkinMaterialHAL::PostRender()
 	auto pRender = TRenderGLInterface::Interface();
 	auto pShader = TDYNAMICCAST( ASkinShaderHAL, GetShader() );
 
+	if ( pShader )
+		pShader->FlushInstances();
+
 	pRender->SetTexture( 0, 0 );
 	pRender->SetTexture( 1, 0 );
 	pRender->SetTexture( 2, 0 );

@@ -1,7 +1,7 @@
 // The page's own settings (gear button in the top left corner), kept in localStorage.
 // The game picks its resolution and canvas once, so changing those restarts it
 var oPageSettings = {
-	oValues : { szResolution : "auto", szLowLatency : "auto", bShowFps : false, bSlowDevice : false },
+	oValues : { szResolution : "auto", szLowLatency : "auto", szGrass : "auto", szDrawDistance : "auto", szSound : "auto", szFrameLimit : "0", bShowFps : false, bSlowDevice : false },
 
 	Load : function ()
 	{
@@ -68,6 +68,32 @@ var oPageSettings = {
 			return szLowLatency == "on";
 
 		return oPageSettings.IsSlowDevice();
+	},
+
+	IsLowGrass : function ()
+	{
+		var szGrass = oPageSettings.oValues.szGrass;
+
+		if ( szGrass != "auto" )
+			return szGrass == "low";
+
+		return oPageSettings.IsSlowDevice();
+	},
+
+	GetDrawDistance : function ()
+	{
+		var szDistance = oPageSettings.oValues.szDrawDistance;
+
+		if ( szDistance != "auto" )
+			return +szDistance;
+
+		return oPageSettings.IsSlowDevice() ? 75 : 100;
+	},
+
+	ApplyFrameLimit : function ()
+	{
+		if ( Module._WASM_SetFrameLimit )
+			Module._WASM_SetFrameLimit( +oPageSettings.oValues.szFrameLimit || 0 );
 	},
 
 	// In auto mode a device that stays under 22 FPS for 30 seconds is slow from the next start on
@@ -207,6 +233,14 @@ var oPageSettings = {
 			'<option value="1080">1080 lines</option><option value="full">Screen</option></select></label>' +
 			'<label>Low latency <select data-key="szLowLatency">' +
 			'<option value="auto">Auto</option><option value="on">On</option><option value="off">Off</option></select></label>' +
+			'<label>Grass detail <select data-key="szGrass">' +
+			'<option value="auto">Auto</option><option value="high">High</option><option value="low">Low</option></select></label>' +
+			'<label>Draw distance <select data-key="szDrawDistance">' +
+			'<option value="auto">Auto</option><option value="100">Full</option><option value="75">75%</option><option value="50">50%</option></select></label>' +
+			'<label>FPS limit <select data-key="szFrameLimit">' +
+			'<option value="0">Off</option><option value="60">60</option><option value="45">45</option><option value="30">30</option><option value="20">20</option></select></label>' +
+			'<label>Sound <select data-key="szSound">' +
+			'<option value="auto">Auto</option><option value="smooth">Smoother</option></select></label>' +
 			'<label>Show FPS <input type="checkbox" data-key="bShowFps"></label>' +
 			'<div class="hint" id="settingsAuto"></div>' +
 			'<div class="buttons" id="settingsTouchRow"><button id="settingsTouchLayout">Edit touch buttons</button></div>' +
@@ -225,7 +259,10 @@ var oPageSettings = {
 
 		var oStarted = {
 			szResolution : oPageSettings.oValues.szResolution,
-			szLowLatency : oPageSettings.oValues.szLowLatency
+			szLowLatency : oPageSettings.oValues.szLowLatency,
+			szGrass : oPageSettings.oValues.szGrass,
+			szDrawDistance : oPageSettings.oValues.szDrawDistance,
+			szSound : oPageSettings.oValues.szSound
 		};
 
 		// The stored data pack: bStored is what's in storage now, the game uses what was there at the start
@@ -290,9 +327,13 @@ var oPageSettings = {
 
 			if ( oContext )
 				szText += ". Sound " + oContext.sampleRate + " Hz, " + Math.round( ( Module.iAudioLag || 0 ) * 1000 / 44100 ) + " ms in the buffer (worst " +
-					Math.round( ( Module.iAudioWorst || 0 ) * 1000 / 44100 ) + " ms), " + Math.round( ( ( oContext.baseLatency || 0 ) + ( oContext.outputLatency || 0 ) ) * 1000 ) + " ms output, " +
+					Math.round( ( Module.iAudioWorst || 0 ) * 1000 / 44100 ) + " ms, target " + ( Module._WASM_GetAudioLead ? Math.round( Module._WASM_GetAudioLead() * 1000 / 44100 ) : 46 ) + " ms), " + Math.round( ( ( oContext.baseLatency || 0 ) + ( oContext.outputLatency || 0 ) ) * 1000 ) + " ms output, " +
 					( Module.iAudioGaps || 0 ) + " gaps, " + ( Module.iAudioSkips || 0 ) + " skips" +
 					( Module._WASM_GetAudioWorstStart ? ", sounds start within " + Math.round( Module._WASM_GetAudioWorstStart() ) + " ms" : "" );
+
+			// How long the game waited for its files at worst, a slow connection or storage shows here
+			if ( Module._WASM_GetFileWorstReadMs )
+				szText += ". Files from " + ( oDataPack.oPack ? "this device" : "the server" ) + ", slowest read " + Math.round( Module._WASM_GetFileWorstReadMs() ) + " ms";
 
 			document.getElementById( "settingsAbout" ).textContent = szText;
 			document.getElementById( "settingsUpdateButtons" ).style.display = navigator.serviceWorker && !/[?&]app(&|$)/.test( location.search ) ? "" : "none";
@@ -338,7 +379,7 @@ var oPageSettings = {
 			UpdateData();
 			UpdateAbout();
 
-			var bRestart = oStarted.szResolution != oPageSettings.oValues.szResolution || oStarted.szLowLatency != oPageSettings.oValues.szLowLatency || oData.bChanged;
+			var bRestart = oStarted.szResolution != oPageSettings.oValues.szResolution || oStarted.szLowLatency != oPageSettings.oValues.szLowLatency || oStarted.szGrass != oPageSettings.oValues.szGrass || oStarted.szDrawDistance != oPageSettings.oValues.szDrawDistance || oStarted.szSound != oPageSettings.oValues.szSound || oData.bChanged;
 
 			document.getElementById( "settingsRestart" ).style.display     = bRestart ? "" : "none";
 			document.getElementById( "settingsRestartHint" ).style.display = bRestart ? "" : "none";
@@ -365,6 +406,7 @@ var oPageSettings = {
 
 				oPageSettings.Save();
 				oPageSettings.ShowFps( oPageSettings.oValues.bShowFps );
+				oPageSettings.ApplyFrameLimit();
 				UpdatePanel();
 			} );
 		}

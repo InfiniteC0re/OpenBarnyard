@@ -26,6 +26,11 @@ public:
 	static constexpr TUINT NUM_ORDER_TABLES = 3;
 	static constexpr TUINT MAX_BONES        = 28;
 
+	// Most skin meshes are trees and other static things of one submesh and one bone. The same mesh drawn
+	// several times in a row is one instanced draw, its packets' constants go in an array
+	static constexpr TUINT MAX_INSTANCES = 20;
+	static constexpr TUINT INSTANCE_SIZE = 11; // in constants: MVP 4, bone 3, light direction, ambient, light colour, up vector (w: lighting lerp)
+
 	enum CONSTANT_ : TINT
 	{
 		CONSTANT_MVP             = 0,
@@ -59,6 +64,9 @@ public:
 	virtual TBOOL TryInvalidate() override;
 	virtual TBOOL TryValidate() override;
 	virtual void  Render( Toshi::TRenderPacket* a_pRenderPacket ) override;
+
+	// Draws the instances collected by Render. The material calls it before it changes the textures
+	void FlushInstances();
 
 	//-----------------------------------------------------------------------------
 	// ASkinShader
@@ -104,6 +112,13 @@ public:
 private:
 	GLuint m_uiProgram;
 	GLuint m_uiProgramHD;
+	GLuint m_uiProgramInstanced;
+	GLuint m_uiProgramInstancedHD;
+
+	class ASkinMeshHAL* m_pInstancedMesh;
+	TBOOL               m_bInstancedHD;
+	TUINT               m_uiNumInstances;
+	Toshi::TVector4     m_aInstanceData[ MAX_INSTANCES * INSTANCE_SIZE ];
 	TINT                m_iAlphaRef;
 	TBOOL               m_bRenderEnvMap;
 	Toshi::TOrderTable  m_aOrderTables[ NUM_ORDER_TABLES ];

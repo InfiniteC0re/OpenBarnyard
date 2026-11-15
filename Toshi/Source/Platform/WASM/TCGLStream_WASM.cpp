@@ -5,6 +5,7 @@
 #include <emscripten/threading.h>
 #include <GLES3/gl3.h>
 #include <string.h>
+#include <unistd.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -69,6 +70,7 @@ enum GLOp : TUINT32
 	GLOP_USE_PROGRAM,
 	GLOP_VERTEX_ATTRIB_POINTER,
 	GLOP_VIEWPORT,
+	GLOP_DRAW_ELEMENTS_INSTANCED,
 };
 
 enum GLObjectType : TUINT32
@@ -101,6 +103,15 @@ static GLStreamState s_oState = { 0, 0, 0, s_auiRing, RING_MASK };
 static TUINT32       s_uiWrite;
 static TUINT32       s_uiFramesSent;
 static GLuint        s_uiNextObject = 1;
+
+// Frames per second the game is held to, 0 for no limit. The page sets it
+static volatile int s_iFrameLimit = 0;
+static double       s_dNextFrame  = 0.0;
+
+extern "C" EMSCRIPTEN_KEEPALIVE void WASM_SetFrameLimit( int a_iFramesPerSecond )
+{
+	s_iFrameLimit = a_iFramesPerSecond;
+}
 
 extern "C" EMSCRIPTEN_KEEPALIVE GLStreamState* WASM_GetGLStream()
 {
@@ -265,6 +276,22 @@ void TCGLStream::Present()
 
 		emscripten_futex_wait( const_cast<TUINT32*>( &s_oState.uiFramesDone ), uiDone, 100.0 );
 	}
+
+	const TINT iLimit = s_iFrameLimit;
+
+	if ( iLimit > 0 )
+	{
+		const double dInterval = 1000.0 / iLimit;
+		const double dNow      = emscripten_get_now();
+
+		// A late frame starts the schedule again
+		if ( s_dNextFrame < dNow - dInterval || s_dNextFrame > dNow + dInterval )
+			s_dNextFrame = dNow;
+		else if ( s_dNextFrame > dNow )
+			usleep( useconds_t( ( s_dNextFrame - dNow ) * 1000.0 ) );
+
+		s_dNextFrame += dInterval;
+	}
 }
 
 TOSHI_NAMESPACE_END
@@ -310,6 +337,7 @@ extern "C"
 	void glDisable( GLenum cap ) { Record( GLOP_DISABLE, cap ); }
 	void glDisableVertexAttribArray( GLuint index ) { Record( GLOP_DISABLE_VERTEX_ATTRIB_ARRAY, index ); }
 	void glDrawArrays( GLenum mode, GLint first, GLsizei count ) { Record( GLOP_DRAW_ARRAYS, mode, first, count ); }
+	void glDrawElementsInstanced( GLenum mode, GLsizei count, GLenum type, const void* indices, GLsizei instancecount ) { Record( GLOP_DRAW_ELEMENTS_INSTANCED, mode, count, type, TUINT32( TUINTPTR( indices ) ), instancecount ); }
 	void glDrawElements( GLenum mode, GLsizei count, GLenum type, const void* indices ) { Record( GLOP_DRAW_ELEMENTS, mode, count, type, TUINT32( TUINTPTR( indices ) ) ); }
 	void glEnable( GLenum cap ) { Record( GLOP_ENABLE, cap ); }
 	void glEnableVertexAttribArray( GLuint index ) { Record( GLOP_ENABLE_VERTEX_ATTRIB_ARRAY, index ); }
