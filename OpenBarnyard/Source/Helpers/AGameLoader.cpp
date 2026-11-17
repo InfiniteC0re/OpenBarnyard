@@ -1254,6 +1254,27 @@ void AGameLoader::SpawnSimPlayer()
 	AUnitNameManager::GetSingleton()->SetUnitName( TPS8( simplayer ), pPlayer->GetId() );
 }
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+// Fix for a bug we used to have where player would just lose sunglasses
+// Need for saves compatibility for Android players
+static void RestoreLostSunglasses()
+{
+	if ( !AQuestManager::GetSingleton()->IsQuestComplete( TPS8D( "Pip Barnyard Secrets" ), 0 ) )
+		return;
+
+	AUnit*                        pPlayer    = APlayerManager::GetSingleton()->GetPlayerUnit( 0 );
+	AInventoryComponentInterface* pInventory = pPlayer ? AInventoryComponentInterface::GetInventory( pPlayer ) : TNULL;
+
+	if ( pInventory && !pInventory->FindItemByType( TPS8( sunglasses ) ) )
+	{
+		pInventory->AddItems( TPS8( sunglasses ), 1, AInventoryComponentInterface::ms_strDefaultInventory );
+		TINFO( "The lost sunglasses are back in the inventory\n" );
+	}
+}
+
+#endif // BARNYARD_COMMUNITY_PATCH
+
 // Loads the main game: lib_maingame, EnvMain, the sim player, then pushes ASimState
 // $Barnyard: FUNCTION 00425bc0
 // $BarnyardWiiJP: FUNCTION 80129a2c
@@ -1407,6 +1428,10 @@ static TBOOL LoadMainGameImpl()
 
 		// Spawn the animals of the time of day
 		AAnimalPopulationManager::GetSingleton()->Populate( AGameTimeManager::GetSingleton()->IsItNight() ? 6 : 5, TFALSE );
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+		RestoreLostSunglasses();
+#endif
 
 		if ( s_bLoadingSavedGame )
 		{
