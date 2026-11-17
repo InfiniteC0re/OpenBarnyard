@@ -208,7 +208,7 @@ void ASimplePlayerControlComponent::OnDisable()
 	m_fIdleTime  = 0.0f;
 	m_bSprinting = TFALSE;
 
-	if ( pOwner->GetActiveLauncher() && pOwner->GetActiveLauncher() == pOwner->GetPrimaryLauncher() )
+	if ( pOwner->GetActiveLauncher() && pOwner->GetActiveLauncher() == pOwner->GetSecondaryLauncher() )
 		pOwner->SelectLauncher( TFALSE );
 }
 
