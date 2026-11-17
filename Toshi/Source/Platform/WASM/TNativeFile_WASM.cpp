@@ -371,6 +371,21 @@ static void* PrefetchThread( void* )
 	return TNULL;
 }
 
+// Marks a cached block as just used, so other reads don't throw it out. Needs the lock
+static TBOOL TouchBlock( TINT a_iEntry, TUINT32 a_uiBlock )
+{
+	for ( TINT i = 0; i < MAX_BLOCKS; i++ )
+	{
+		if ( s_aBlocks[ i ].iEntry == a_iEntry && s_aBlocks[ i ].uiBlock == a_uiBlock )
+		{
+			s_aBlocks[ i ].uiLastUse = ++s_uiUseCounter;
+			return TTRUE;
+		}
+	}
+
+	return TFALSE;
+}
+
 static TBOOL IsBlockCached( TINT a_iEntry, TUINT32 a_uiBlock )
 {
 	for ( TINT i = 0; i < MAX_BLOCKS; i++ )
@@ -780,8 +795,8 @@ TBOOL TNativeFile::ReadIfCached( void* a_pDst, TSIZE a_uiSize )
 	if ( !bCached )
 		return TFALSE;
 
-	// A reader going through the file gets the next block before it needs it
-	if ( m_uiPosition % BLOCK_SIZE >= BLOCK_SIZE / 2 && ( uiLast + 1 ) * BLOCK_SIZE < rEntry.uiSize && !IsBlockCached( m_iEntry, uiLast + 1 ) )
+	// A reader going through the file gets the next block before it needs it and keeps it while the game loads other files
+	if ( ( uiLast + 1 ) * BLOCK_SIZE < rEntry.uiSize && !TouchBlock( m_iEntry, uiLast + 1 ) )
 		RequestBlock( m_iEntry, uiLast + 1 );
 
 	TUINT8* pDst  = TSTATICCAST( TUINT8, a_pDst );

@@ -69,6 +69,14 @@ extern "C" EMSCRIPTEN_KEEPALIVE volatile int* WASM_GetAudioRead()
 
 static volatile float s_fWorstStartMs;
 
+// Mixed chunks in which a stream had to wait for its file, shown by the page's stats
+static volatile int s_iStreamWaits;
+
+extern "C" EMSCRIPTEN_KEEPALIVE int WASM_GetAudioStreamWaits()
+{
+	return s_iStreamWaits;
+}
+
 extern "C" EMSCRIPTEN_KEEPALIVE float WASM_GetAudioWorstStart()
 {
 	return s_fWorstStartMs;
@@ -380,7 +388,10 @@ static const TINT16* GetStreamFrame( FSOUND_STREAM* a_pStream, const SampleInfo&
 			a_pStream->bWaiting = !TSTATICCAST( TNativeFile, a_pStream->pFile )->ReadIfCached( pBlock, uiBlockBytes );
 
 			if ( a_pStream->bWaiting )
+			{
+				s_iStreamWaits = s_iStreamWaits + 1;
 				return TNULL;
+			}
 		}
 
 		if ( bCompressed )

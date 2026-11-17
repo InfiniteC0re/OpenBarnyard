@@ -329,7 +329,8 @@ var oPageSettings = {
 				szText += ". Sound " + oContext.sampleRate + " Hz, " + Math.round( ( Module.iAudioLag || 0 ) * 1000 / 44100 ) + " ms in the buffer (worst " +
 					Math.round( ( Module.iAudioWorst || 0 ) * 1000 / 44100 ) + " ms, target " + ( Module._WASM_GetAudioLead ? Math.round( Module._WASM_GetAudioLead() * 1000 / 44100 ) : 46 ) + " ms), " + Math.round( ( ( oContext.baseLatency || 0 ) + ( oContext.outputLatency || 0 ) ) * 1000 ) + " ms output, " +
 					( Module.iAudioGaps || 0 ) + " gaps, " + ( Module.iAudioSkips || 0 ) + " skips" +
-					( Module._WASM_GetAudioWorstStart ? ", sounds start within " + Math.round( Module._WASM_GetAudioWorstStart() ) + " ms" : "" );
+					( Module._WASM_GetAudioWorstStart ? ", sounds start within " + Math.round( Module._WASM_GetAudioWorstStart() ) + " ms" : "" ) +
+					( Module._WASM_GetAudioStreamWaits ? ", music waited for its file " + Module._WASM_GetAudioStreamWaits() + " times" : "" );
 
 			// How long the game waited for its files at worst, a slow connection or storage shows here
 			if ( Module._WASM_GetFileWorstReadMs )
