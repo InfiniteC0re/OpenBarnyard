@@ -102,7 +102,7 @@ void AGiftQuestElement::DeinitData( AInteractionActivityData* a_pData )
 TBOOL AGiftQuestElement::GetDescription( const TWCHAR** a_ppOutText )
 {
 	// NOTE: retail passes the TCHAR strings to the wide %s
-	m_strDescription.Format( L"Give %s %d %s", m_strReceiverName.GetString(), m_iAmount, m_strGiftType.GetString() );
+	m_strDescription.Format( L"Give %s %d %s", m_strReceiverType.GetString(), m_iAmount, m_strGiftType.GetString() );
 	*a_ppOutText = m_strDescription.GetString( 0 );
 
 	return TTRUE;
