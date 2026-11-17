@@ -686,7 +686,8 @@ void ASkyDome::Render1_Impl()
 		oColorMatrix.Lerp( m_oColorMatrix, m_oTargetColorMatrix, fRatio );
 		oLightMatrix.Lerp( m_oLightMatrix, m_oTargetLightMatrix, fRatio );
 
-		TFLOAT fBlend = TMath::LERP( m_fBlend, m_fTargetBlend, fRatio );
+		// Retail doesn't use it, but does it
+		TMath::LERP( m_fBlend, m_fTargetBlend, fRatio );
 
 		pRenderContext->SetModelViewMatrix( oSkyModelViewRotated );
 
@@ -700,7 +701,7 @@ void ASkyDome::Render1_Impl()
 			    oLightMatrix.AsBasisVector4( BASISVECTOR_TRANSLATION ),
 			    oLightMatrix.AsBasisVector4( BASISVECTOR_UP ),
 			    m_apTexturedSkyMaterials[ m_iTexturedSkyIndex ],
-			    fBlend,
+			    fRatio,
 			    2
 			);
 
@@ -710,7 +711,7 @@ void ASkyDome::Render1_Impl()
 			    oLightMatrix.AsBasisVector4( BASISVECTOR_TRANSLATION ),
 			    oLightMatrix.AsBasisVector4( BASISVECTOR_UP ),
 			    m_apTexturedSkyMaterials[ m_iPrevSkyIndex ],
-			    1.0f - fBlend,
+			    1.0f - fRatio,
 			    2
 			);
 		}
@@ -724,7 +725,7 @@ void ASkyDome::Render1_Impl()
 			    oLightMatrix.AsBasisVector4( BASISVECTOR_TRANSLATION ),
 			    oLightMatrix.AsBasisVector4( BASISVECTOR_UP ),
 			    m_apTexturedSkyMaterials[ m_iPrevSkyIndex ],
-			    1.0f - fBlend,
+			    1.0f - fRatio,
 			    2
 			);
 
@@ -734,7 +735,7 @@ void ASkyDome::Render1_Impl()
 			    oLightMatrix.AsBasisVector4( BASISVECTOR_TRANSLATION ),
 			    oLightMatrix.AsBasisVector4( BASISVECTOR_UP ),
 			    m_apTexturedSkyMaterials[ m_iTexturedSkyIndex ],
-			    fBlend,
+			    fRatio,
 			    2
 			);
 		}
