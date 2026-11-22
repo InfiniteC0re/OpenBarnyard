@@ -134,6 +134,10 @@ AGopherShopMenu::~AGopherShopMenu()
 // $Barnyard: FUNCTION 00496910
 void AGopherShopMenu::Destroy()
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	s_pNegative = TNULL;
+#endif
+
 	m_oModelRenderer.RemoveAllObjects();
 	m_oModelRenderer.RemoveSelf();
 
