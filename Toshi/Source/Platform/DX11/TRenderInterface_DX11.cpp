@@ -379,11 +379,11 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 		TUINT invalidTextureData[ 32 ];
 		for ( TINT i = 0; i < 32; i++ )
 		{
-			invalidTextureData[ i ] = 0xff0fff0f;
+			invalidTextureData[ i ] = 0xfc1ffc1f;
 		}
 
 		auto pTextureFactory = GetSystemResource<TTextureFactoryHAL>( SYSRESOURCE_TEXTUREFACTORY );
-		m_pInvalidTexture    = pTextureFactory->CreateTextureFromMemory( invalidTextureData, sizeof( invalidTextureData ), TTexture::TEXTUREFLAGS_UNK0 | TTexture::TEXTUREFLAGS_LAYOUT_4444, 8, 8 );
+		m_pInvalidTexture    = pTextureFactory->CreateTextureFromMemory( invalidTextureData, sizeof( invalidTextureData ), TTexture::TEXTUREFLAGS_UNK0 | TTexture::TEXTUREFLAGS_LAYOUT_5551, 8, 8 );
 
 		// Enable color correction and mark display as created
 		EnableColourCorrection( TTRUE );
